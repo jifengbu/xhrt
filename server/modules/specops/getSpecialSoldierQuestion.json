@@ -1,0 +1,46 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "questionList": [
+            {
+                "questionContent": "我自己提问的问题",
+                "questionTime": "2014-12-23",
+                "questionID": "546",
+                "questionImages": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ],
+                "answer": {
+                    "answerTime": "2014-12-12",
+                    "answerAlias": "你发",
+                    "answerHead": "htp://sdf",
+                    "answerContent": "大家好，我是来回答问题的",
+                    "answerImages": [
+                      "http://facebook.github.io/react/img/logo_og.png",
+                      "http://facebook.github.io/react/img/logo_og.png"
+                    ]
+                }
+            },
+            {
+                "questionContent": "我的问题",
+                "questionTime": "2014-12-23",
+                "questionID": "546",
+                "questionImages": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ],
+                "answer": {
+                    "answerTime": "2014-12-12",
+                    "answerAlias": "你发",
+                    "answerHead": "htp://sdf",
+                    "answerContent": "大家好，我是来回答问题的",
+                    "answerImages": [
+                      "http://facebook.github.io/react/img/logo_og.png",
+                      "http://facebook.github.io/react/img/logo_og.png"
+                    ]
+                }
+            }
+        ]
+    }
+}

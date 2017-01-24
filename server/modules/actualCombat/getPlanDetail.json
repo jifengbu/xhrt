@@ -1,0 +1,24 @@
+{
+    "msg": "获取数据成功",
+    "success": true,
+    "context": {
+        "praise": 20000,
+        "imageArray": [
+          "http://facebook.github.io/react/img/logo_og.png",
+          "http://facebook.github.io/react/img/logo_og.png",
+          "http://facebook.github.io/react/img/logo_og.png",
+          "http://facebook.github.io/react/img/logo_og.png",
+          "http://facebook.github.io/react/img/logo_og.png",
+          "http://facebook.github.io/react/img/logo_og.png",
+          "http://facebook.github.io/react/img/logo_og.png"
+        ],
+        "audioArray": [
+            "http://sdfs",
+            "http://sdfs",
+            "http://sdfs",
+            "http://sdfs",
+            "http://sdfs",
+            "http://sdfs"
+        ]
+    }
+}

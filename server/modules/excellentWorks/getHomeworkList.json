@@ -1,0 +1,40 @@
+{
+    "msg": "获取数据成功",
+    "success": true,
+    "context": {
+        "homeworkeList": [
+            {
+                "homeworkId": "12345671",
+                "homeworkSubmitTime": "2011-01-01",
+                "authorName": "陆小凤",
+                "authorCompany": "天地会",
+                "authorPosition": "总舵主",
+                "homeworkDetail": "哈哈哈哈哈哈哈哈哈哈哈哈哈哈2222333445678哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈"
+            },
+            {
+                "homeworkId": "12345672",
+                "homeworkSubmitTime": "2011-01-03",
+                "authorName": "陆小凤",
+                "authorCompany": "天地会",
+                "authorPosition": "总舵主",
+                "homeworkDetail": "哈哈哈哈哈哈哈哈哈哈哈22哈哈哈哈哈1112哈哈哈33哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈"
+            },
+            {
+                "homeworkId": "12345673",
+                "homeworkSubmitTime": "2011-01-04",
+                "authorName": "陆小凤",
+                "authorCompany": "天地会",
+                "authorPosition": "总舵主",
+                "homeworkDetail": "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈3334444哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈"
+            },
+            {
+                "homeworkId": "12345674",
+                "homeworkSubmitTime": "2011-01-05",
+                "authorName": "陆小凤",
+                "authorCompany": "天地会",
+                "authorPosition": "总舵主",
+                "homeworkDetail": "哈哈哈哈哈哈哈哈哈哈哈哈哈666778哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈"
+            }
+        ]
+    }
+}

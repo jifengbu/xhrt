@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>赢销截拳道</title>
+</head>
+<style>
+	*,html,body {
+		margin: 0;
+		padding: 0;
+	}
+	.top {
+		width: 100%;
+		height: 200px;
+		background: url(../../img/end_red.png) no-repeat;
+		background-size: 100% 100%;
+	}
+	.top .name {
+		padding-top: 20px;
+		text-align: center;
+		font-size: 16px;
+		color: #fff;
+		font-weight: 600;
+	}
+	.centent {
+		background-color: #fff;
+		text-align: center;
+	}
+	.centent .logo {
+		position: absolute;
+		top: 120px;
+		left: 50%;
+		margin-left: -45px;
+		width: 90px;
+		height: 90px;
+	}
+	.centent .logo img {
+		width: 90px;
+		height: 90px;
+		-moz-border-radius: 45px;
+		-webkit-border-radius: 45px;
+		border-radius: 45px;
+	}
+	.centent .percentage {
+		padding-top: 30px;
+		font-size: 16px;
+		color: #444;
+	}
+	.centent .encourage {
+		padding-top: 15px;
+		font-size: 16px;
+		color: red;
+	}
+	.centent .prompt {
+		margin-top: 50px;
+		width: 100%;
+		height: 12px;
+		background: url(../../img/word.png) no-repeat;
+		background-size: 100% 100%;
+	}
+	.centent .button {
+		padding: 20px 10px;
+	}
+	.centent .button img {
+		width: 100%;
+		height: 40px;
+	}
+	.centent .introduce {
+		width: 100%;
+	}
+	.centent .introduce img {
+		width: 100%;
+		height: 315px;
+	}
+	.footer {
+		position: static;
+		width: 100%;
+	}
+	.footer img {
+		width: 100%;
+		height: 43px;
+	}
+</style>
+<body>
+	<div class="top">
+		<div id="name" class="name"><!--亲爱的特种兵罗欣同志！--></div>
+	</div>
+	<div class="centent">
+		<div class="logo"><img src="../../img/head.png" /></div>
+		<div class="percentage"><!--今天好棒哦！工作度完成80%--></div>
+		<div class="encourage"><!--加油！加油！！--></div>
+		<div class="prompt"></div>
+		<div class="button"><img src="../../img/button_1.png" /></div>
+		<div class="introduce"><img src="../../img/button_2.png"></div>
+	</div>
+	<div class="footer"><img src="../../img/button_3.png" /></div>
+</body>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script>
+
+	$(function(){
+		var name = getParameter("name");
+		var logo = getParameter("logo");
+		var percentage = getParameter("percentage");
+		var encourage = getParameter("encourage");
+		$(".top .name").html(name);
+		if (logo != "null" && logo != "") {
+			$(".centent .logo").find("img").attr("src",logo);
+		}
+		$(".centent .percentage").html(percentage);
+		$(".centent .encourage").html(encourage);
+
+		/*var userID = getParameter("userID");
+		var workDate = getParameter("workDate");
+		if(userID == null || userID == ''){
+			return;
+		}
+		$.ajax({
+            type: "get", //HTTP请求类型
+//          url: "http://www.gyyxjqd.com/app/api/getPercentage",
+			url: "http://120.76.207.78/app/api/getPercentage",
+            data: {userID:userID,workDate:workDate},
+            dataType: 'json', //服务器返回json格式数据
+            timeout:20000,//超时时间设置为20秒；
+            success: function(data){
+            	if(data.success){
+					var name = data.context.name;
+					var logo = data.context.logo;
+					if(logo == null || logo == ""){
+						logo = '../img/Head@2x.png';
+					}
+					var percentage = data.context.percentage;
+					$(".top .name").html("亲爱的特种兵"+name+"同志！");
+					$(".centent .logo").find("img").attr("src",logo);
+					if(parseInt(percentage) >= 80){
+						$(".centent .percentage").html("今天你好棒哦，你工作度完成"+percentage+"%");
+						$(".centent .encourage").html("加油！加油！！");
+					}else{
+						$(".centent .percentage").html("你的工作完成度只有"+percentage+"%");
+						$(".centent .encourage").html("你需要更加努力!");
+					}
+            	}
+            }, //服务器返回响应
+            error: function (xhr,type,errorThrown) {
+                //异常处理；
+				console.log(type);
+            }
+        });*/
+	});
+
+	$(".centent .button").on('click',function(){
+		window.location.href='../sign/download.html';
+	});
+	$(".centent .introduce").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/s?__biz=MjM5NDE5Mzg2MA==&mid=504697585&idx=1&sn=56c315f57f119b2cb1ad1b2308b37b3d&scene=18#wechat_redirect';
+	});
+	$(".footer").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NDE5Mzg2MA==&hid=2&sn=100e29f2abd43662938ce2fd3a6c580e#wechat_redirect';
+	});
+
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+</script>
+</html>

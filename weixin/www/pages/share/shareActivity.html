@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>赢销截拳道</title>
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.css">
+</head>
+<style>
+	iframe {
+        width:100%;
+        margin:0 0 1em;
+        border:0;
+    }
+    .bodyView {
+    		width: 100%;
+    		background-color: #FFFFFF;
+    }
+    #topContainer {
+        flex-direction: column;
+    }
+    #iframeContainer {
+    		flex-direction: column;
+    }
+    .bannerImg {
+    		width: 100%;
+    		height: 222px;
+    		display: flex;
+    }
+    .detailContainer {
+    		background-color: #FFFFFF;
+    }
+    #bottomContainer {
+        width: 100%;
+    }
+    .titleContainer {
+    		display: flex;
+    		align-items: center;
+    		margin-left: 22px;
+    		flex-direction: row;
+    		justify-content: space-between;
+    }
+    .detailLabelImage {
+    		width: 28px;
+    		height: 28px;
+    		position: absolute;
+    		right: 0px;
+    }
+    .title {
+        font-size:16px;
+        color: #3C3C3C;
+        line-height: 24px;
+        font-weight: 600;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        overflow: hidden;
+	 	text-overflow: ellipsis;
+	 	display: -webkit-inline-box;
+	 	-webkit-line-clamp: 2;
+	 	-webkit-box-orient: vertical;
+    }
+    .numTitle {
+    		font-size:12px;
+        color: #959595;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        margin-right: 22px;
+    }
+    .eyeIcon {
+    		width: 13px;
+    		height: 9px;
+    		margin-left: 10px;
+    		margin-bottom: 2px;
+    		margin-right: 5px;
+    }
+    .contentContainer {
+    		flex-direction: column;
+    		display: flex;
+    		align-items: center;
+    }
+    .content {
+    		height: 45px;
+    		margin-left: 22px;
+    		margin-right: 22px;
+    		display: flex;
+    		align-self: flex-start;
+        align-items: center;
+    }
+    .icon {
+    		widows: 16px;
+    		height: 16px;
+    		margin-right: 14px;
+    }
+    .contentLeft {
+    		font-size: 12px;
+    		color: #959595;
+    		display: flex;
+        align-items: center;
+    }
+    .contentRight {
+    		font-size: 12px;
+    		color: #343434;
+    		display:block;
+    		margin-left: 14px;
+    }
+    .contentRightPrice {
+    		font-size: 12px;
+    		color: #FF3F3F;
+    		display: flex;
+    		margin-left: 14px;
+    }
+    .lineView {
+    		width: 100%;
+    		height: 6px;
+    		background-color: #F4F4F4;
+    }
+    #videoContainer {
+    		width: 100%;
+    }
+    .muiimg {
+    		width: 118px;
+    		height: 70px;
+    }
+    .line {
+        height: 1px;
+        width: 100%;
+        background-color: #F2F2F2;
+    }
+    .line1 {
+    		width: 4px;
+    		height: 18px;
+    		margin-right: 10px;
+    		background-color: #FF3F3F;
+    }
+    .line2 {
+    		height: 1px;
+        width: 90%;
+        background-color: #F2F2F2;
+    }
+    .itemTitle {
+    		font-size: 14px;
+    		color: #313131;
+    		overflow: hidden;
+	 	text-overflow: ellipsis;
+	 	-webkit-line-clamp: 2;
+	 	-webkit-box-orient: vertical;
+	 	margin-right: 10px;
+ 	    display: -webkit-inline-box;
+    }
+    .itemName {
+    		font-size: 10px;
+    		color: #313131;
+    		width: 100px;
+	    white-space:nowrap;
+	    text-overflow:ellipsis;
+	    overflow: hidden;
+    }
+    .labelImage {
+    		width: 28px;
+    		height: 28px;
+    		position: absolute;
+    		top: 0px;
+    		right: 0px;
+    }
+    #listContainer {
+        background-color: #FFFFFF;
+    }
+    .listTitle {
+    		display: flex;
+    		align-items: center;
+        font-size: 16px;
+        color: #333333;
+        font-weight: 600;
+        margin: 10px 0px 10px 20px;
+    }
+    .list {
+        padding: 0px 10px;
+    }
+    .table-cell {
+    		padding-top: 12px;
+    		padding-bottom: 12px;
+    		display: flex;
+    		align-items: center;
+    }
+    .itemImg {
+    		float: left;
+    		width: 118px;
+    		height: 72px;
+    		margin-left: 11px;
+    		margin-right: 18px;
+    }
+    .signUpDiv {
+    		width: 100%;
+    		height: 68px;
+    		text-align: center;
+    		background-color: #FFFFFF;
+    }
+    .signUpBtn {
+    		width: 90%;
+    		height: 43px;
+    		margin-top: 13px;
+    		border-radius: 2px;
+    		color: #FFFFFF;
+    		font-size: 18px;
+    		line-height: 24px;
+    		background-color: #FF3F3F;
+    }
+    .div-top {
+    		
+    }
+</style>
+<body>
+	<div class="bodyView">
+	    <div id="topContainer">
+	    </div>
+	    <div class="lineView"></div>
+	    <div id="iframeContainer"></div>
+	    <div id="videoContainer">
+		    	<!--<video width="100%" height="210" poster="" controls="controls">
+		    		<source src="">
+			</video>-->
+	    </div>
+		<div class="lineView"></div>
+		<div id="listContainer">
+			<!--<div class="listTitle"><div class="line1"></div>你可能感兴趣的</div>
+			<ul class="mui-table-view">
+			    <li class="mui-table-view-cell mui-media">
+			        <a href="javascript:;">
+			            <img class="mui-media-object mui-pull-left" src="../../img/1.jpg">
+			            <div class="mui-media-body">
+			                <span class="itemTitle">上海特种兵二阶课程</span> <br />
+			                <span class='itemName'>主讲：王雩老师</span><br />
+			                <span class='itemName'>时间：8月24号 10:11—8月30号  10:30</span>
+			            </div>
+			        </a>
+			    </li>
+			</ul>-->
+		</div>
+		<div class="signUpDiv">
+			<div class="line"></div>
+			<button class="signUpBtn" onclick="submitSignData()" type="button" id="submitSignData">立即报名</button>
+		</div>
+	</div>
+</body>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+	var isEnroll = false;
+	$(function(){
+		var params = app.router.getParameter();
+		var activeityId = params.activeityId;
+		var userID = params.userID; 
+		getActiveityInfo(userID, activeityId);
+	});
+	function reinitIframe() {
+	    var iframe = document.getElementById("iframe");
+	    try{
+	        var bHeight = iframe.contentWindow.document.body.scrollHeight;
+	        var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+	        iframe.height = Math.max(bHeight, dHeight);
+	    }catch (ex){
+	        iframe.height = 30;
+	    }
+	}
+	function setTopContainer(data) {
+		var html = '';
+		var tempMode = data.mode ==1 ?'  线下':'&nbsp;&nbsp;直播';
+		var tempPrice = data.price ?('￥'+data.price):'免费'
+		if (data.introduceImage!='') {
+			html += '<img class="bannerImg" src="' + data.introduceImage +'"/>';
+		}
+	    html += '<div class="detailContainer">';
+	    html += '   <div class="titleContainer">';
+	    html += '      <div class="title">'+data.title+tempMode+'</div>';
+	    html += '      <div class="numTitle"><img class="eyeIcon" src="../../img/eye.png"/>'+data.pageViews+'</div>';
+	    if (data.mode == 1) {
+	    		html += '  <img class="detailLabelImage" src="../../img/offline.png"/>';
+	    } else {
+	    		html += '  <img class="detailLabelImage" src="../../img/liveTitle.png"/>';
+	    }
+	    html += '   </div>';
+	    html += '   <div class="line"></div>';
+	    html += '   <div class="contentContainer">';
+	    html += '       <div class="content">';
+	    html += '          <span class="contentLeft"><img class="icon" src="../../img/speaker.png"/>主&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;讲<span class="contentRight">'+data.mainTeacher+'</span></span>';
+	    html += '       </div>';
+	    html += '       <div class="line2"></div>';
+	    html += '       <div class="content">';
+	    html += '       		<span class="contentLeft"><img class="icon" src="../../img/organizer.png"/>主&nbsp;办&nbsp; 方<span class="contentRight">'+data.sponsor+'</span></span>';
+	    html += '	    </div>';
+	    html += '	    <div class="line2"></div>';
+	    html += '		<div class="content">';
+	    html += '			<span class="contentLeft"><img class="icon" src="../../img/classDate.png"/>开课日期<span class="contentRight">'+data.startDate+'</span></span>';
+	    html += '		</div>';
+	    if (data.mode != 2) {//1 线下 2直播
+	    		html += '		<div class="line2"></div>';
+		    html += '		<div class="content">';
+		    html += '       		<span class="contentLeft"><img class="icon" src="../../img/classAdress.png"/>开课地址<span class="contentRight">'+data.address+'</span></span>';
+		    html += '  		</div>';
+	    }
+	    html += '  		<div class="line2"></div>';
+	    html += '  		<div class="content">';
+	    html += '     		<span class="contentLeft"><img class="icon" src="../../img/price.png"/>价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格<span class="contentRightPrice">'+tempPrice+'</span></span>';
+	    html += '  		</div>';
+	    html += '  	</div>';
+	    html += '</div>';
+	    document.getElementById("topContainer").innerHTML = html;
+	}
+	function setBottomContainer(list) {
+		var html = '';
+	    html += '<div class="listTitle"><div class="line1"></div>你可能感兴趣的</div>';
+	    html += '<ul class="mui-table-view">';
+		var count = list.length;
+	    for (var i = 0; i < count; i++) {
+	        var item = list[i];
+	        var des;
+	        var activeityId = item.activeityId;
+	        if (item.mode == 1) {
+	            des = item.address?'地点：'+item.address:'';
+	        } else {
+	            des = item.mainTeacher?'主讲人：'+item.mainTeacher:'';
+	        }
+	        html += '<li class="table-cell"  onclick="replacePage(/'+activeityId+'/)">';
+		    html += '  <img class="itemImg" src="' + item.minImage + '"/>';
+		    html += '  <div class="mui-media-body">';
+		    html += '    <span class="itemTitle">'+item.title+'</span> <br />';
+		    html += '    <span class="itemName">'+des+'</span> <br />';
+		    html += '    <span class="itemName">时间：'+item.startDate+'</span>';
+		    html += '  </div>';
+		    if (item.mode == 1) {
+		    		html += '  <img class="labelImage" src="../../img/offline.png"/>';
+		    } else {
+		    		html += '  <img class="labelImage" src="../../img/liveTitle.png"/>';
+		    }
+	        html += '</li>';
+	        if (i !== count-1) {
+	            html += '<div class="line"></div>';
+	        }
+	    }
+	    html += '</ul>';
+	    document.getElementById("listContainer").innerHTML = html;
+	}
+	function getActiveityInfo(userID, activeityId) {
+	    var url = app.route.ROUTE_GET_HOT_AVTIVITY_DETAILED;
+	    var data = {
+	    		userID: userID,
+	        activeityId: activeityId,
+	    };
+	    app.utils.post({
+	        url: url,
+	        data: data,
+	        success: getActiveityInfoSuccess,
+	    });
+	}
+	function getActiveityInfoSuccess(data) {
+	    var context = (data || {}).context.activityDetailed || {};
+//	    var url = "http://test.gyyxjqd.com/app/api/articleJsp?userID=578ecde70cf2a4e1d94c8df8&articleID=1f9f80ace00f4def9b6238a2d1c61a94";
+	    isEnroll = context.isEnroll;
+	    var url = context.introduceHtml5;
+	    var videoUrl = context.activityVideo;
+	    if (url != '') {
+	    	 	$('#iframeContainer').html('<iframe src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
+	    }
+	    setTopContainer(context);
+	    if (videoUrl !='') {
+	    		setPlayVideo(context.activityVideo, context.activityVideoImage);
+	    }
+	    setBottomContainer(context.historyActivity);
+	}
+	function setPlayVideo(videoUrl, videoImage) {
+//		<video width="100%" height="210" poster="" controls="controls">
+//	    		<source src="">
+//		</video>
+		var html = '';
+	    html += '<video width="100%" height="210" poster="" controls="controls" poster="'+ videoImage + '">';
+	    html += '<source src="' + videoUrl + '">';
+	    html += '</video>';
+	    document.getElementById("videoContainer").innerHTML = html;
+	}
+	function replacePage(activeityId) {
+		var saved = app.router.getSavedData();
+		var strActiveityId = activeityId.toString();
+		var activeityId = strActiveityId.substring(1,strActiveityId.length-1);
+		var userID = app.router.getParameter().userID;
+//		getActiveityInfo(userID, activeityId);
+		saved.userID = app.router.getParameter().userID;
+		saved.activeityId = activeityId;
+		var params = {
+			activeityId:activeityId,
+			userID: app.router.getParameter().userID,
+		}
+		app.router.showView('./shareActivity.html', params, saved);   
+	}
+	function submitSignData() {
+		if (!isEnroll) {
+			mui.toast("活动未开始或已结束");
+			return;
+		}
+		var saved = app.router.getSavedData();
+		saved.userID = app.router.getSavedData().userID;
+		saved.activeityId = app.router.getSavedData().activeityId;
+		var params = {
+			activeityId:app.router.getParameter().activeityId,
+			userID: app.router.getParameter().userID,
+		}
+		app.router.showView('./shareActivityEnroll.html', params, saved);
+	}
+	</script>
+</html>

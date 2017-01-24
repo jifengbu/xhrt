@@ -1,0 +1,33 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "taskList": [
+            {
+                "isFinish": 0,
+                "taskName": "每日登陆",
+                "integration": 56
+            },
+            {
+                "isFinish": 1,
+                "taskName": "完整看完一次视频",
+                "integration": 55
+            },
+            {
+                "isFinish": 0,
+                "taskName": "发表一次评论",
+                "integration": 55
+            },
+            {
+                "isFinish": 0,
+                "taskName": "看一个优秀的案列",
+                "integration": 55
+            },
+            {
+                "isFinish": 1,
+                "taskName": "分享一次",
+                "integration": 55
+            }
+        ]
+    }
+}

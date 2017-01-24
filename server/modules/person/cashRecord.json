@@ -1,0 +1,29 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "applyList": [
+            {
+                "applyTime": "2016-03-05 15:45:33",
+                "value": "1000",
+                "Status": "1",
+                "playMoneyTime": "2016-04-05 15:45:33",
+                "balance": "5000"
+            },
+            {
+                "applyTime": "2016-04-05 15:45:33",
+                "value": "2000",
+                "Status": "1",
+                "playMoneyTime": "2016-05-05 15:45:33",
+                "balance": "3000"
+            },
+            {
+                "applyTime": "2016-05-05 15:45:33",
+                "value": "2000",
+                "Status": "1",
+                "playMoneyTime": "2016-06-05 15:45:33",
+                "balance": "1000"
+            }
+        ]
+    }
+}

@@ -1,0 +1,239 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "monthList": [
+            {
+                "month": "2016-05-12",
+                "content": [
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/1.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    },
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/2.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "month": "2016-04-02",
+                "content": [
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/3.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    },
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/1.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    },
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/3.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "month": "2016-04-23",
+                "content": [
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/2.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    },
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/1.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    },
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/4.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    },
+                    {
+                        "isPrize": 0,
+                        "videoType": 4,
+                        "urlImg": "http://localhost:3000/images/5.png",
+                        "urlPlay": "http://localhost:3000/video/test.m3u8",
+                        "videoID": "14",
+                        "author": "王雩老师",
+                        "clicks": 45,
+                        "likes": 456,
+                        "isPraise": 0,
+                        "length": "35:52",
+                        "isCollection": 0,
+                        "name": "1分钟介绍",
+                        "label": [
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            },
+                            {
+                                "labelID": 0,
+                                "labelName": "官方出品"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

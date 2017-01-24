@@ -1,0 +1,68 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "newsList": [
+            {
+                "time": "2015-02-04",
+                "content": "重大新闻!重大新闻!重大新闻!",
+                "isRead": 1,
+                "messageID": 1
+            },
+            {
+                "time": "2015-02-04",
+                "content": "系统通知!系统通知!系统通知!系统通知!",
+                "isRead": 1,
+                "messageID": 2
+            },
+            {
+                "time": "2015-02-04",
+                "content": "重大新闻!重大新闻!重大新闻!",
+                "isRead": 1,
+                "messageID": 3
+            },
+            {
+                "time": "2015-02-04",
+                "content": "系统通知!系统通知!",
+                "isRead": 0,
+                "messageID": 4
+            },
+            {
+                "time": "2015-02-04",
+                "content": "重大新闻!重大新闻!重大新闻!",
+                "isRead": 0,
+                "messageID": 5
+            },
+            {
+                "time": "2015-02-04",
+                "content": "重大新闻!重大新闻!重大新闻!",
+                "isRead": 0,
+                "messageID": 6
+            },
+            {
+                "time": "2015-02-04",
+                "content": "重大新闻!重大新闻!重大新闻!",
+                "isRead": 1,
+                "messageID": 7
+            },
+            {
+                "time": "2015-02-04",
+                "content": "重大新闻!重大新闻!重大新闻!",
+                "isRead": 1,
+                "messageID": 8
+            },
+            {
+                "time": "2015-02-04",
+                "content": "重大新闻!重大新闻!重大新闻!",
+                "isRead": 0,
+                "messageID": 9
+            },
+            {
+                "time": "2015-02-04",
+                "content": "重大新闻!重大新闻!重大新闻!",
+                "isRead": 0,
+                "messageID": 10
+            }
+        ]
+    }
+}

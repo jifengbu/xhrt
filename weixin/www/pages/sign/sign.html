@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">签到</h1>
+		</header>
+		<div class="mui-content">
+			<div class="panel">
+				<div class="logo"><img src="../../img/logo2.png" class="img-responsive" alt="Responsive image"></div>
+				<h5 id="warning" class="alert alert-warning" role="alert">
+					<button onclick="closeWarning()" type="button" class="close" data-dismiss="alert">
+						<span>×</span>
+					</button>
+					您好，欢迎您来到《赢销截拳道》的课程现场，请您按照下面方框的提示输入相应的信息后点击提交进行签到。<br>(<strong>PS:</strong>请务必输入准确的信息以方便我们进行后续服务哟！o^_^o)
+				</h5>
+				<div style="text-align:center; margin-top: 80px;">
+					<label style="font-size: 15px; font-weight: bold; padding-right: 20px;padding-top: 6px;">电话<span class="span1">*</span></label>
+					<input required="" id="phone" type="text" style="display: inline; height: 40px; width: 60%; border-radius:5px; color:#ccc; no-repeat right" placeholder="请输入您的手机号">
+				</div>
+				<button class="main-btn" onclick="submitSignData()" type="button" id="submitSignData">确认并提交</button>
+			</div>
+		</div>
+		<div class="case hide delete-confirm">
+			<img src="../../img/check.png" class="img-tip"/>
+			<div class="center text"></div>
+			<div class="footer">
+				<div class="left cancel">取&nbsp;&nbsp;消</div>
+				<div class="right confirm">确&nbsp;&nbsp;定</div>
+				<div class="singal cancel">确&nbsp;&nbsp;定</div>
+			</div>
+		</div>
+	</body>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		"use strict";
+		mui.init();
+		function showMessageBox(text, type) {
+			$("body").append('<div class="modal-backdrop"></div>');
+			var box = $(".case.delete-confirm");
+			box.find('.center.text').html(text);
+			if (type == 1) {
+				box.find('.singal.cancel').show();
+				box.find('.left.cancel').hide();
+				box.find('.right.confirm').hide();
+			}else if(type == 2){
+				box.find('.singal.cancel').hide();
+				box.find('.left.cancel').show();
+				box.find('.right.confirm').show();
+			} else {
+				box.find('.singal.cancel').show();
+				box.find('.left.cancel').show();
+				box.find('.right.confirm').show();
+			}
+			box.show();
+		}
+		
+		function closeWarning () {
+			document.getElementById('warning').style.display='none';
+		}
+		function submitSignData() {
+			var url = app.route.ROUTE_SIGN_DATA;
+			if(!testPhone($("#phone").val())) {
+				mui.toast("请输入正确的电话号码");
+	        		return;
+	        }
+			var data = {
+				phone: $("#phone").val(),
+				courseId:params.courseId,
+				openid:params.openid,
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: submitSignDataSuccess,
+			});
+		}
+
+		function submitSignDataSuccess(data) {
+			if (data.success === true && data.context) {
+				var context = data.context;
+				params.data = {a:1,b:2};
+				saved.personal = context;
+				app.global.set("personal", saved.personal);
+				showMessageBox("签到成功",1);
+//				mui.toast(data.msg);
+//				app.router.showView("../../pages/homework/Successfully.html",params,saved);
+			} else {
+				mui.toast(data.msg);
+			}
+		}
+		$(".case.delete-confirm").on('tap', '.cancel', function() {
+			$(".modal-backdrop").remove();
+			$(".case.delete-confirm").hide(300);
+		}).on('tap', '.confirm', function(e) {
+			var el = $(".case.delete-confirm");
+			$(".modal-backdrop").remove();
+			el.hide(300);
+			javascript:history.back(-1);
+		});
+		
+		var params = app.router.getParameter();
+		var saved = app.router.getSavedData();
+	</script>
+</html>

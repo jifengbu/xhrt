@@ -1,0 +1,68 @@
+{
+    "msg": "获取数据成功",
+    "success": true,
+    "context": {
+        "dayList": [
+            {
+                "day": "2016-06-06",
+                "content": [
+                    {
+                        "rewardTimes": "17:40:18",
+                        "headImg": "http://facebook.github.io/react/img/logo_og.png",
+                        "rewardName": "紫气东来"
+                    },
+                    {
+                        "rewardTimes": "17:40:28",
+                        "headImg": "http://facebook.github.io/react/img/logo_og.png",
+                        "rewardName": "紫气东来"
+                    }
+                ]
+            },
+            {
+                "day": "2016-06-07",
+                "content": [
+                    {
+                        "rewardTimes": "17:40:38",
+                        "headImg": "http://facebook.github.io/react/img/logo_og.png",
+                        "rewardName": "紫气东来"
+                    }
+                ]
+            },
+            {
+                "day": "2016-06-08",
+                "content": [
+                    {
+                        "rewardTimes": "17:40:48",
+                        "headImg": "http://facebook.github.io/react/img/logo_og.png",
+                        "rewardName": "紫气东来"
+                    },
+                    {
+                        "rewardTimes": "17:40:58",
+                        "headImg": "http://facebook.github.io/react/img/logo_og.png",
+                        "rewardName": "紫气东来"
+                    },
+                    {
+                        "rewardTimes": "17:40:68",
+                        "headImg": "http://facebook.github.io/react/img/logo_og.png",
+                        "rewardName": "紫气东来"
+                    }
+                ]
+            },
+            {
+                "day": "2016-06-09",
+                "content": [
+                    {
+                        "rewardTimes": "17:40:78",
+                        "headImg": "http://facebook.github.io/react/img/logo_og.png",
+                        "rewardName": "紫气东来"
+                    },
+                    {
+                        "rewardTimes": "17:40:88",
+                        "headImg": "http://facebook.github.io/react/img/logo_og.png",
+                        "rewardName": "紫气东来"
+                    }
+                ]
+            }
+        ]
+    }
+}

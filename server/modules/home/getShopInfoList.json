@@ -1,0 +1,64 @@
+{
+    "success": "true",
+    "msg": "获取成功",
+    "context": {
+        "shopInfo": [
+            {
+                "shopId": "31EC477E",
+                "shopName": "深圳市深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯腾讯",
+                "imageUrl": "http://localhost:3000/images/4.png",
+                "details": "http://",
+                "content": "商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍"
+            },
+            {
+                "shopId": "31EC477E",
+                "shopName": "深圳市深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯腾讯",
+                "imageUrl": "http://localhost:3000/images/4.png",
+                "details": "http://",
+                "content": "商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍"
+            },
+            {
+                "shopId": "31EC477E",
+                "shopName": "深圳市深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯腾讯",
+                "imageUrl": "http://localhost:3000/images/4.png",
+                "details": "http://",
+                "content": "商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍"
+            },
+            {
+                "shopId": "31EC477E",
+                "shopName": "深圳市深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯腾讯",
+                "imageUrl": "http://localhost:3000/images/4.png",
+                "details": "http://",
+                "content": "商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍"
+            },
+            {
+                "shopId": "31EC477E",
+                "shopName": "深圳市深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯腾讯",
+                "imageUrl": "http://localhost:3000/images/4.png",
+                "details": "http://",
+                "content": "商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍"
+            },
+            {
+                "shopId": "31EC477E",
+                "shopName": "深圳市深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯腾讯",
+                "imageUrl": "http://localhost:3000/images/4.png",
+                "details": "http://",
+                "content": "商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍"
+            },
+            {
+                "shopId": "31EC477E",
+                "shopName": "深圳市深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯腾讯",
+                "imageUrl": "http://localhost:3000/images/4.png",
+                "details": "http://",
+                "content": "商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍"
+            },
+            {
+                "shopId": "31EC477E",
+                "shopName": "深圳市深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯深圳市腾讯腾讯",
+                "imageUrl": "http://localhost:3000/images/4.png",
+                "details": "http://",
+                "content": "商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍商家介绍"
+            }
+        ]
+    }
+}

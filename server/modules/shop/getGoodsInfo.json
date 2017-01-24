@@ -1,0 +1,44 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "goodsList": [
+            {
+                "goodsID": "sdfsdf65",
+                "goodsLable": "点推荐",
+                "goodsDec": "很好",
+                "goodsImg": "http://localhost:3000/images/1.png",
+                "goodsPrice": "35465",
+                "goodsSale": "365",
+                "sales": "365"
+            },
+            {
+                "goodsID": "sdfsdf65",
+                "goodsLable": "点推荐",
+                "goodsDec": "很好",
+                "goodsImg": "http://localhost:3000/images/2.png",
+                "goodsPrice": "35465",
+                "goodsSale": "365",
+                "sales": "365"
+            },
+            {
+                "goodsID": "sdfsdf65",
+                "goodsLable": "点推荐",
+                "goodsDec": "很好",
+                "goodsImg": "http://localhost:3000/images/3.png",
+                "goodsPrice": "35465",
+                "goodsSale": "365",
+                "sales": "365"
+            },
+            {
+                "goodsID": "sdfsdf65",
+                "goodsLable": "点推荐",
+                "goodsDec": "很好",
+                "goodsImg": "http://localhost:3000/images/4.png",
+                "goodsPrice": "35465",
+                "goodsSale": "365",
+                "sales": "365"
+            }
+        ]
+    }
+}

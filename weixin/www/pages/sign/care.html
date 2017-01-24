@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">关注公众号</h1>
+		</header>
+		<img id="test" src= "../../img/getqrcode.jpg" style="width: 100%;margin-top: 50px;"/>
+		<p style="text-align: center;font-size: 16px;margin:10px">您还没有关注公众号无法签到，请长按关注公众号</p>
+		<div style="text-align: center;color: #007AFF; margin-bottom: 40px;font-size: 13px;">技术支持@贵阳赢销截拳道网络科技有限公司</div>
+		<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+		<script src="../../js/utils/app.js"></script>
+		<script>
+			if(app.serverType == 0){
+				$("#test").attr('src',"../../img/getqrcode.jpg");
+			}else {
+				$("#test").attr('src',"../../img/carePublicNumber.jpg"); 
+			}
+		</script>	
+	</body>
+</html>

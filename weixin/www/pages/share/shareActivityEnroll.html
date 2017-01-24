@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--<link rel="stylesheet" type="text/css" href="../../css/common.css"/>-->
+		<style>
+			body {
+		    		display: block;
+		    		margin: auto;
+			}
+			.bodyView {
+		    		width: 100%;
+		    		text-align: center;
+		    }
+			.bodyView .panel {
+				border-radius: 8px;
+				background-color: #fff;
+				margin-top: 1px;
+				text-align: center;
+			}
+			.bodyView .panel .td1 {
+			    font-size: 15px;
+			    text-align: left;
+			    width: 25%;
+			    color: #666666;
+			    padding-left: 20px;
+			    font-weight: bold;
+			}
+			.line {
+		        height: 1px;
+		        width: 100%;
+		        background-color: #F2F2F2;
+		    }
+			table td input[type=text] {
+				margin-bottom: 0;
+				height: 40px; 
+				width: 100%; 
+				border-radius:5px; 
+				color:#999999;
+				font-size: 13px;
+			}
+			table tr {
+				height: 55px;
+			}
+			.main-btn {
+			    cursor: pointer;
+			    width: 50%;
+			    height: 42px;
+			    border-bottom: 2px solid #900719;
+			    margin-top: 31px;
+			    margin-bottom: 20px;
+			    background: #FF3F3F;
+			    border-radius: 3px;
+			    border: 0;
+			    font-family: "微软雅黑";
+			    font-size: 16px;
+			    line-height: 24px;
+			    font-weight: 700;
+			    color: #fff;
+			    text-shadow: 0 1px 2px rgba(0,0,0,.1);
+			    -o-transition: all .2s;
+			    -moz-transition: all .2s;
+			    -webkit-transition: all .2s;
+			    -ms-transition: all .2s;
+			}
+			 /******隐藏********/
+			.hide {
+				display: none;
+			}
+			/***********遮罩层***************/
+			.modal-backdrop {
+				position: fixed;
+			    top: 0;
+			    bottom: 0;
+			    left: 0;
+			    right: 0;
+			    background-color: #000;
+			    z-index: 1040;
+			    transition: opacity 0.15s linear 0s;
+			    opacity: 0.3;
+			}
+			/********弹框*******/
+			.case{
+				position: fixed;
+			    top: 35%;
+			    width: 262px;
+			    left: 50%;
+			    margin-left: -131px;
+			    border: 1px solid rgba(0, 0, 0, 0.3);
+			    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+			    outline: 0 none;
+			    -moz-border-radius: 5px;
+				-webkit-border-radius: 5px;
+				background: rgba(255,255,255,0.90);
+				border-radius: 12px;
+				font-size: 16px;
+			    z-index: 1050;
+			}
+			.case .center {
+				padding: 20px 20px;
+				text-align: center;
+				color: #6a6761;
+			}
+			.line {
+				height: 1px;
+				background: rgba(77,77,77,0.20);
+			}
+			.case .footer {
+				height: 40px;
+				line-height: 40px;
+				color: #0076FF;
+				text-align: center;
+			}
+			.case .footer .singal {
+				display: inline-block;
+			}
+		</style>
+	</head>
+	<body bgcolor="#F6F6F6">
+		<div class="bodyView">
+			<div style="background-color: #FFFFFF;">
+				<div class="panel">
+					<div style="width: 100%;">
+						<table width="100%" cellpadding="10" cellspacing="0" border="0px">
+							<tbody>
+								<tr class="commonDisplay" style="border-bottom:1px solid #F4F4F4;">
+									<td class="td1">手机</td>
+									<td width="75%">
+										<input style="border-style:none" required="" type="text" id="phone" placeholder="请输入手机号"/>
+									</td>
+								</tr>
+								<tr class="enrollDisplay" style="border-bottom:1px solid #F4F4F4;">
+									<td class="td1">姓名</td>
+									<td width="75%">
+										<input style="border-style:none" required="" type="text" id="name" placeholder="请输入姓名"/>
+									</td>
+								</tr>
+								<tr class="enrollDisplay" style="border-bottom:1px solid #F4F4F4;">
+									<td class="td1">企业</td>
+									<td width="75%">
+										<input style="border-style:none" required="" type="text" id="company" placeholder="如：珏盛教育科技有限公司"/>
+									</td>
+								</tr>
+								<tr class="enrollDisplay" style="border-bottom:1px solid #F4F4F4;">
+									<td class="td1">职务</td>
+									<td width="75%">
+										<input style="border-style:none" required="" type="text" id="position" placeholder="请输入您的职位"/>
+									</td>
+								</tr>
+								<tr class="enrollDisplay" style="border-bottom:1px solid #F4F4F4;">
+									<td class="td1">报名人数</td>
+									<td width="75%">
+										<input style="border-style:none" required="" type="text" id="person" placeholder="请输入报名的人数"/>
+									</td>
+								</tr>
+								<tr class="enrollDisplay" style="border-bottom:1px solid #F4F4F4;">
+									<td class="td1">邮箱</td>
+									<td width="75%">
+										<input style="border-style:none" required="" type="text" id="email" placeholder="请输入电子邮箱"/>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<button id="show" onclick="checkEnrollData()" class="main-btn" type="button">提交报名</button>
+		</div>
+		<div class="case hide delete-confirm">
+			<div class="center text"></div>
+			<div class="line"></div>
+			<div class="footer">
+				<div class="singal cancel">确&nbsp;&nbsp;定</div>
+			</div>
+		</div>
+	</body>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		function checkEnrollData() {
+	        if(!testPhone($("#phone").val())) {
+				mui.toast("请输入正确的电话号码");
+	        		return;
+	        }
+	        if($("#name").val() == null || $("#name").val() == "") {
+				mui.toast("姓名不能为空");
+	        		return;
+	        }
+	        if($("#company").val() == null || $("#company").val() == "") {
+				mui.toast("公司名称不能为空");
+	        		return;
+	        }
+	        if($("#position").val() == null || $("#position").val() == "") {
+				mui.toast("职务不能为空");
+	        		return;
+	        }
+	        if($("#person").val() == null || $("#person").val() == "") {
+				mui.toast("报名人数不能为空");
+	        		return;
+	        }
+    	        if($("#email").val() != null && $("#email").val() != "") {
+	        		if(!checkEmail($("#email").val())) {
+					mui.toast("请输入正确的邮箱");
+		        		return;
+		        }
+	        }
+    	        submitEnrollData();
+		}
+
+		//报名
+		function submitEnrollData() {
+			var params = app.router.getParameter();
+			var url = app.route.ROUTE_SHARE_ENROLL;
+			var data = {
+				userID: params.userID,
+				activeityId: params.activeityId,
+				phone: $("#phone").val(),
+				userName: $("#name").val(),
+				company: $("#company").val(),
+				post: $("#position").val(),
+				enrollCount: $("#person").val(),
+				email: $("#email").val(),
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: submitEnrollDataSuccess,
+			});
+		}
+		function submitEnrollDataSuccess(data) {
+			if (data.success === true) {
+				showMessageBox("报名成功，我们会尽快联系你");
+			} else {
+				showMessageBox("已经报名或报名失败");
+			}
+		}
+		function showMessageBox(text) {
+			$("body").append('<div class="modal-backdrop"></div>');
+			var box = $(".case.delete-confirm");
+			box.find('.center.text').html(text);
+			box.find('.singal.cancel').show();
+			box.show();
+		}
+		//弹出框事件注册
+		$(".case.delete-confirm").on('tap', '.cancel', function() {
+			$(".modal-backdrop").remove();
+			$(".case.delete-confirm").hide(300);
+		}).on('tap', '.confirm', function(e) {
+			var el = $(".case.delete-confirm");
+			$(".modal-backdrop").remove();
+			el.hide(300);
+			javascript:history.back(-1);
+		});
+	</script>
+</html>

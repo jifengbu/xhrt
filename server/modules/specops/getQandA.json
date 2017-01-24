@@ -1,0 +1,46 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "questionList": [
+            {
+                "questionContent": "如何快速获得积分",
+                "questionTime": "2014-12-12",
+                "questionID": "123456",
+                "questionImages": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ],
+                "answer": {
+                    "answerTime": "2014-12-12",
+                    "answerAlias": "赢销大侠",
+                    "answerHead": "http://facebook.github.io/react/img/logo_og.png",
+                    "answerContent": "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈",
+                    "answerImages": [
+                        "http://facebook.github.io/react/img/logo_og.png",
+                        "http://facebook.github.io/react/img/logo_og.png"
+                    ]
+                }
+            },
+            {
+                "questionContent": "如何快速获得赢销币",
+                "questionTime": "2015-12-12",
+                "questionID": "3456",
+                "questionImages": [
+                    "http://sdf",
+                    "http://sdf"
+                ],
+                "answer": {
+                    "answerTime": "2015-12-12",
+                    "answerAlias": "赢销大侠",
+                    "answerHead": "http://facebook.github.io/react/img/logo_og.png",
+                    "answerContent": "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈",
+                    "answerImages": [
+                        "http://facebook.github.io/react/img/logo_og.png",
+                        "http://facebook.github.io/react/img/logo_og.png"
+                    ]
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,1 @@
+{    "success": true,    "msg": "获取数据成功",    "context": {        "myIntegral": 3323,        "rewardImg": "http://localhost:3000/images/prize.png"    }}

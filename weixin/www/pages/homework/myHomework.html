@@ -1,0 +1,427 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+
+	</head>
+	<style type="text/css">
+		textarea {
+			height: 200px;
+			width: 100%;
+			background-color: white;
+			color: #808080;
+			padding: 10px;
+			margin-top: 6px;
+			text-indent:2em;
+		}
+		.parent-container {
+			background-color: white;
+			color: #808080;
+			padding: 8px;
+			border-radius: 6px;
+			margin: 10px;
+		}
+		.text-attributes {
+			margin-top: 30px;
+		}
+		.empty_list {
+				color: red;
+				padding-top: 150px;
+				padding-bottom: 450px;
+				background-color: #efeff4;
+				text-align: center;
+				font-size: 25px;
+		}
+		.share {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 1050;
+			margin: 0 auto;
+			text-align: center;
+		}
+		.share img {
+			float: right;
+			width: 272px;
+			height: 264px;
+			margin-top: 5px;
+			margin-right: 25px;
+		}
+		.confirm-btn {
+			background-color: red;
+			color: white;
+		}
+		.shareBtn {
+			background-color: #5cb85c;
+			color: white;
+		}
+		.footer {
+			padding-top: 15px;
+			padding-bottom: 15px;
+		}
+		#tipTime1{
+			text-align:center;
+		}
+		.alignLeft{
+			text-align:left;
+			margin-left: 10px;
+		}
+	</style>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">我的作业</h1>
+		</header>
+		<div id="myHomework" class="mui-content" style="background-color: #EEEEEE;">
+			<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+				<a style="color: #666666;font-size: 16px;font-weight: bold;" class="mui-control-item homework-menu mui-active" href="#day1" data-tap=1>
+					第一天
+				</a>
+				<a style="color: #666666;font-size: 16px;font-weight: bold;" class="mui-control-item homework-menu" href="#day2" data-tap=2>
+					第二天
+				</a>
+				<a style="color: #666666;font-size: 16px;font-weight: bold;" class="mui-control-item homework-menu" href="#day3" data-tap=3>
+					第三天
+				</a>
+			</div>
+			<div class="panel" >
+				<div class="logo"><img src="../../img/logo2.png" class="img-responsive" alt="Responsive image"></div>
+				<h5 id="warning" class="alert alert-warning" role="alert">
+					<button onclick="closeWarning()" type="button" class="close" data-dismiss="alert">
+						<span aria-hidden="true">×</span>
+					</button><strong>温馨提示:</strong>可以在手机的其他程序（比如：便签、记事本等）中先把作业写好，然后再复制-粘帖到方框里哦，这样就不会有写到一半不小心关掉了的杯具发生了呢！
+				</h5>
+				<div class="mui-slider-group" id="homework-container">
+					<div id="day1" class="mui-slider-item mui-control-content homework-content mui-active">
+						<div class="text-attributes">
+							<p id="tipTitle1"></p>
+							<hr />
+						</div>
+						<div class="text-attributes">
+							<p id="tipContent1"></p>
+							<p id="tipTime1"></p>
+						</div>
+					</div>
+					<div id="day2" class="mui-slider-item mui-control-content homework-content">
+						<div class="text-attributes">
+							<p id="tipTitle2"></p>
+							<hr />
+						</div>
+						<div class="text-attributes">
+							<p id="tipContent2"></p>
+							<p id="tipTime2"></p>
+						</div>
+					</div>
+					<div id="day3" class="mui-slider-item mui-control-content homework-content">
+						<div class="text-attributes">
+							<p id="tipTitle3"></p>
+							<hr />
+						</div>
+						<div class="text-attributes">
+							<p id="tipContent3"></p>
+							<p id="tipTime3"></p>
+						</div>
+					</div>
+				</div>
+				<div class="subContent">
+					<!--<div style="margin: 10px;">
+						<textarea wrap="soft" id="homeworkDetail" placeholder="请输入您要写的作业内容"></textarea>
+					</div>-->
+					<div class="questionAndAnswer"></div>
+					<!--<div style="text-align: right; margin-right: 10px; margin-bottom: 20px;">
+						<label style="font-size: 16px;"><input name="isOpen" type="checkbox" value="0" checked=""/>公开作业</label>
+					</div>-->
+					<div style="margin: 10px;" id="phoneDiv">
+						<input type="text" id="phone" placeholder="请输入您报名时的手机号"/>
+					</div>
+					<div class="mui-card">
+						<div class="mui-input-row mui-checkbox mui-left" style="background-color: #eeeeee;">
+							<label style="font-size: 13px;color: #666666;">您在本平台分享发布的内容，版权归重庆珏盛教育科技有限公司所有。您的内容将视为可以对外公开分享发布，为了让您有更好的展示自我的机会，我们会选择优秀作品、优秀学员与优秀企业对外传播，在课堂上、视频里等各种传播媒介上进行公开分享，让您有一个全面的展示自己的机会。</label>
+							<input style="margin-top: 35px;" name="checkbox" type="checkbox" checked>
+						</div>
+					</div>
+					<div class="footer">
+						<button onclick="gotoShare()" class="shareBtn">我写的太好了，我要分享</button>
+						<button onclick="submitClick()" class="confirm-btn">确认并提交</button>
+					</div>
+				</div>
+			</div>
+			<div class="share over-share hide">
+				<img src="../../img/arrow.png" />
+			</div>
+		</div>
+		<div class="technical-support">技术支持@贵阳赢销截拳道网络科技有限公司</div>
+		<div class="case hide delete-confirm">
+			<img src="../../img/check.png" class="img-tip"/>
+			<div class="center text"></div>
+			<div class="footer">
+				<div class="singal cancel">确&nbsp;&nbsp;定</div>
+			</div>
+		</div>
+	</body>
+
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		"use strict";
+		mui.init();
+
+		function closeWarning () {
+			document.getElementById('warning').style.display='none';
+		}
+
+		//点击分享弹出遮罩
+		function gotoShare() {
+			$("body").append('<div class="modal-backdrop over-share"></div>');
+			$(".share").show();
+			setTimeout(function() {
+				$(".modal-backdrop").remove();
+				$(".share").hide();
+			}, 3000);
+		}
+
+		function submitHomework() {
+			//0表示公开 1表示不公开
+//				var tempIsOpen = isOpen == 0?0:1
+			var url = app.route.ROUTE_SUBMIT_HOMEWORK;
+			var data = {
+				userID: saved.userID,
+				courseId: params.courseId,//params.courseId,
+				dayType: params.type?params.type:1,//params.dayType,
+				phone:params.phone,
+				openid:params.openid,
+				detail:params.homeworkDetail,
+//					isOpen: tempIsOpen
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: submitHomeworkSuccess,
+			});
+		}
+
+		function submitHomeworkSuccess(data) {
+			if(data.success === true) {
+				saved.userID = data.context.userID;
+				app.router.showView('./successfully.html', params, saved);
+				mui.toast(data.msg);
+			} else {
+				showMessageBox("该用户未签到!");
+			}
+		}
+
+		function showMessageBox(text) {
+			$("body").append('<div class="modal-backdrop"></div>');
+			var box = $(".case.delete-confirm");
+			box.find('.center.text').html(text);
+			box.show();
+		}
+
+		//弹出框事件注册
+		$(".case.delete-confirm").on('tap', '.cancel', function() {
+			$(".modal-backdrop").remove();
+			$(".case.delete-confirm").hide(300);
+		});
+
+		//点击提交作业
+		function submitClick() {
+			if (params.checked == false) {
+				mui.toast('请勾选提示选项');
+				return;
+			}
+			params.phone = $("#phone").val();
+			if(!testPhone(params.phone)){
+			  	if(!testPhone($("#phone").val())) {
+					mui.toast("请输入正确的电话号码");
+		        		return;
+		       }
+			}
+			var homeworkDetail="";
+			var j = 0;
+			for (var i = 0; i < saved.tipList.length; i++) {
+					var item = saved.tipList[i];
+					if (params.type == item.type) {
+						var detailItem = document.getElementById('homeworkDetail'+j).value;
+						j++;
+						if (detailItem.length< item.minNumber) {
+							showMessageBox('题目'+(i+1)+"作业内容不能小于"+item.minNumber+"个字!");
+							return;
+						} else {
+							homeworkDetail += (item.content + '♔' + detailItem + '♖');
+						}
+					}
+				}
+			params.homeworkDetail = homeworkDetail.substring(0,homeworkDetail.length-1)
+			submitHomework();
+		}
+
+		function getHomeworkTipData() {
+			var url = app.route.ROUTE_GET_HOMEWORK_TIP_DATA;
+			var data = {
+				courseId: params.courseId,
+				type: 2
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: getHomeworkTipDataSuccess,
+			});
+		}
+
+		function getHomeworkTipDataSuccess(data) {
+			if(data.success === true && data.context) {
+				var list = data.context.list;
+				if (!list || !list.length) {
+					$('.subContent').hide();
+					$('.questionAndAnswer').hide();
+					$('#tipTitle1').text("当前不能提交作业！");
+					return;
+				} else {
+					params.type = data.context.currentDay;
+					setTabSegment(data.context.currentDay);
+					saved.tipList = list;
+					$('.questionAndAnswer').empty();
+					var html = '';
+					var j = 0;
+					for (var i = 0; i < list.length; i++) {
+						var item = list[i];
+						if (params.type == item.type) {
+							html += getListItem(item,j);
+							j++;
+						}
+					}
+					$('.questionAndAnswer').append(html);
+					getHomeworkListData(params.type, 1);
+					$('#hr').html('<hr />');
+					$('#tipTime'+params.type).text('结束时间:' + list[params.type-1].endTime);
+				}
+			}
+			if (data.success === false) {
+				$('.subContent').hide();
+				$('.questionAndAnswer').hide();
+				$('#tipTitle1').text("当前不能提交作业！");
+			} else {
+				$('.subContent').show();
+			}
+		}
+
+		function getListItem(item,i) {
+			//  placeholder="请输入您要写的内容,最少'+item.minNumber+'字"
+			var html = '';
+			html += '<p class="alignLeft" id="tipQuestion'+i+'">'+item.content+'</p>'
+			html +=	'<div style="margin: 10px;">'
+			html +=		'<textarea wrap="soft" id="homeworkDetail'+i+'"></textarea>'
+			html +=	'</div>'
+			return html;
+		}
+
+		function getHomeworkListData(tempDayType, pageNo) {
+			var url = app.route.ROUTE_GET_HOMEWORK_LIST;
+			var data = {
+				courseId : params.courseId,
+				openid: params.openid,
+				userID: saved.userID,
+				dayType:tempDayType,
+				isSelf: 1,
+				pageNo:pageNo
+			};
+
+			app.utils.post({
+				url: url,
+				data: data,
+				success: getHomeworkListDataSuccess,
+			});
+		}
+
+		function getHomeworkListDataSuccess(data) {
+			if (data.success === true && data.context) {
+				var list = data.context.homeworkList;
+				if (!list || !list.length) {
+//						mui.toast("作业数据为空！")
+				} else {
+					$('#homeworkDetail').text(list[0].homeworkDetail);
+					var arr = list[0].homeworkDetail.split('♖');
+					for (var i = 0;i<arr.length;i++) {
+						var tmp = arr[i].split('♔');
+						$('#tipQuestion'+i).text(tmp[0]);
+						$('#homeworkDetail'+i).text(tmp[1]);
+					}
+				}
+			}
+//				mui.toast(data.msg);
+		}
+
+		function setTabSegment(index) {
+			$('#sliderSegmentedControl .homework-menu.mui-active').removeClass("mui-active");
+			$('#sliderSegmentedControl .homework-menu[data-tap="'+index+'"]').addClass("mui-active");
+			$('#homework-container .homework-content.mui-active').removeClass("mui-active");
+			$($('#homework-container .homework-content')[index-1]).addClass("mui-active");
+		}
+		function showTabBody(index) {
+				if (index!=params.type) {
+					$('.subContent').hide();
+					$('#tipTitle'+index).text("当前不能提交作业！");
+				} else{
+					$('#homeworkDetail').text("");
+					$('.subContent').show();
+					params.type = index;//saved.tipList[0].type;
+					$('.questionAndAnswer').empty();
+					var html = '';
+					var j = 0;
+					for (var i = 0; i < saved.tipList.length; i++) {
+						var item = saved.tipList[i];
+						if (params.type == item.type) {
+							html += getListItem(item,j);
+							j++;
+						}
+					}
+					$('.questionAndAnswer').append(html);
+					getHomeworkListData(index, 1);
+				}
+		}
+		mui('.mui-card').on('change', 'input', function() {
+			params.checked = this.checked;
+			if (this.checked==false) {
+				mui.toast("不勾选无法提交作业");
+			}
+		});
+
+		mui('.mui-slider-group').on('shown.mui.tab', '.mui-control-content', function(e) {
+			var id = e.target.id;
+			var dayType = 1*id.slice(3);
+			showTabBody(dayType);
+		})
+		var params = app.router.getParameter();
+		var saved = app.router.getSavedData();
+		if(testPhone(params.phone)){
+			document.getElementById('phone').value=params.phone;
+			$("#phoneDiv").hide()
+		} else {
+			$("#phoneDiv").show();
+		}
+		if (params.isShare==1) {
+			$('.footer').hide();
+			$('.mui-card').hide();
+		}
+		if (typeof(saved.userID) == "undefined") {
+			saved.userID = params.userID;
+		}
+		var tmpUrl = "myHomework.html"+'?userID='+params.userID+'&phone='+params.phone+'&courseId='+params.courseId+'&openid='+params.openid;
+		window.history.pushState({},"首页",tmpUrl+"&isShare=1");
+		getHomeworkTipData();
+	</script>
+</html>

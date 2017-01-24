@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<style>
+			.title {
+				margin: 6px 0px 6px;
+				color: #6d6d72;
+				font-size: 13px;
+			}
+			div{
+				margin: 0px 6px 0px;
+			}
+			.input-but{
+				
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">查询签到课程</h1>
+		</header>
+		<div class="mui-content">
+			<div class="title">
+				请输入报名时填写的报名者姓名和手机号
+			</div>
+			<form id='login-form' class="mui-input-group">
+				<div class="mui-input-row">
+					<label>姓名</label>
+					<input id="account" type="text" class="mui-input-clear mui-input" placeholder="请输入账号">
+				</div>
+				<div class="mui-input-row">
+					<label>手机</label>
+					<input id='account' type="text" class="mui-input-clear mui-input" placeholder="请输入密码">
+				</div>
+				<a href="CourseList.html">
+					<input  type="button" value="查询" 
+						style="background-color: dodgerblue;color:white;margin-left: 40%; width: 20%;height: 30px;margin-top: 6px;margin-bottom: 6px;border-radius:5px;" />
+				</a>
+			</form>
+			
+		</div>
+		<div class="technical-support">技术支持@贵阳赢销截拳道网络科技有限公司</p></div>
+
+	</body>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script>
+		mui.init({
+			swipeBack:true //启用右滑关闭功能
+		});
+	</script>
+</html>

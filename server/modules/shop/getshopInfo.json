@@ -1,0 +1,13 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "detaiList": [
+            {
+                "title": "关于俏江南",
+                "detail": "俏江南是一个xx"
+            }
+        ],
+        "shopImage": "http://localhost:3000/images/4.png"
+    }
+}

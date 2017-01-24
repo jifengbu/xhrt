@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>赢销截拳道</title>
+</head>
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: #EEEEEE;
+	}
+	.header {
+		width: 100%;
+		height: 52px;
+		background-color: #a61f45;
+	}
+	.header .name {
+		padding-top: 20px;
+		text-align: center;
+		font-size: 16px;
+		color: #fff;
+		font-weight: 600;
+	}
+	.assignment {
+		background-color: white;
+		margin-top: 20px;
+		padding-top: 20px;
+		padding-bottom: 60px;
+		padding-left: 8px;
+		padding-right: 8px;
+		margin-left: 8px;
+		margin-right: 8px;
+	}
+	.assignment .detail {
+		word-wrap:break-word; 
+		word-break:break-all; 
+		text-align: left;
+		margin-left: 3px;
+		margin-right: 3px;
+		border-radius: 3px;
+	}
+	.centent .prompt {
+		margin-top: 88px;
+		width: 100%;
+		height: 12px;
+		background: url(../../img/word.png) no-repeat;
+		background-size: 100% 100%;
+	}
+	.centent .button {
+		padding-top: 60px;
+		padding-bottom: 30px;
+		margin-left: 20px;
+		margin-right: 20px;
+	}
+	.centent .button img {
+		width: 100%;
+		height: 40px;
+	}
+	.centent .introduce {
+		width: 100%;
+	}
+	.centent .introduce img {
+		width: 100%;
+		height: 315px;
+	}
+	.footer {
+		position: static;
+		width: 100%;
+	}
+	.footer img {
+		width: 100%;
+		height: 43px;
+	}
+    h3.title {
+        color: #F2AE11;
+        font-size: 1em;
+        margin-bottom: 1em;
+        text-align: center;
+        font-weight: 500;
+        line-height: 1.1;
+    }
+    h3.title span {
+        display: block;     /*设置为块级元素会独占一行形成上下居中的效果*/
+        color: #212121;
+        position: relative;   /*定位横线（当横线的父元素）*/
+    }
+    h3.title span:before, h3.title span:after {
+        content: '';                 /*CSS伪类用法*/
+        position: absolute;         /*定位背景横线的位置*/
+        top: 52%;
+        background: grey;       /*宽和高做出来的背景横线*/
+        width: 30%;
+        height: 1px;
+    }
+    h3.title span:before{
+        left: 2%;        /*调整背景横线的左右距离*/
+    }
+    h3.title span:after {
+        right: 2%;
+    }
+</style>
+<body>
+	<!--<div class="header">
+		<div class="name">特种兵交流场房间</div>
+	</div>-->
+	<div class="centent">
+		 <h3 class="title"> <span>分享我的作业</span></h3>
+		<div class="assignment">
+			<Text class="detail"></Text>
+		</div>
+		<!--<div class="prompt"></div>-->
+		<div class="button"><img src="../../img/button_1.png" /></div>
+	</div>
+	<div class="footer"><img src="../../img/button_3.png" /></div>
+</body>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script src="../../js/utils/regular.js"></script>
+<script src="../../js/thirdparty/crypto-js.js"></script>
+<script src="../../js/utils/app.js"></script>
+<script>
+	$(function(){
+		var homeworkID = getParameter("homeworkID");
+		getData(homeworkID);
+		
+	});
+	$(".centent .button").on('click',function(){
+		window.location.href='../sign/download.html';
+	});
+	$(".centent .introduce").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/s?__biz=MjM5NDE5Mzg2MA==&mid=504697585&idx=1&sn=56c315f57f119b2cb1ad1b2308b37b3d&scene=18#wechat_redirect';
+	});
+	$(".footer").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NDE5Mzg2MA==&hid=2&sn=100e29f2abd43662938ce2fd3a6c580e#wechat_redirect';
+	});
+
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+	function getData(taskID) {
+		var url = app.route.ROUTE_GET_ONE_SPECIAL_SOLDIER_TASK;
+		var data = {
+			"userID" : "58047b410cf2fcc38d0b6840",
+			id : taskID,
+		};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: getDataSuccess,
+		});
+	}
+	function getDataSuccess(data) {
+		if (data.success) {
+			$(".centent .assignment .detail").html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+data.context.answer);
+		}
+	}
+</script>
+</html>

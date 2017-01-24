@@ -1,0 +1,40 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "taskList": [
+            {
+                "date": "2015-02-05",
+                "login": 1,
+                "share": 20,
+                "wacthVideo": 21,
+                "case": 21,
+                "publish": 18
+            },
+            {
+                "date": "2015-02-08",
+                "login": 1,
+                "share": 2,
+                "wacthVideo": 3,
+                "case": 2,
+                "publish": 5
+            },
+            {
+                "date": "2015-02-12",
+                "login": 1,
+                "share": 0,
+                "wacthVideo": 8,
+                "case": 8,
+                "publish": 15
+            },
+            {
+                "date": "2015-02-21",
+                "login": 1,
+                "share": 2,
+                "wacthVideo": 4,
+                "case": 5,
+                "publish": 0
+            }
+        ]
+    }
+}

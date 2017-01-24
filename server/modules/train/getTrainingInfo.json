@@ -1,0 +1,30 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "trainingList": [
+            {
+                "trainingID": 1,
+                "trainingName": "一分钟自我介绍",
+                "trainingTime": 60,
+                "backColor": "#239fdb",
+                "trainingLogo": "http://localhost:3000/images/IPHONE.png",
+                "trainingBackImg": "http://localhost:3000/images/3.png",
+                "trainingIntroduce": "通过一分钟的自我介绍来短时间提高自己",
+                "victoryIntegral": 240,
+                "victoryTimes": 30
+            },
+            {
+                "trainingID": 2,
+                "trainingName": "45秒打一个必接电话",
+                "trainingTime": 60,
+                "backColor": "#a0d468",
+                "trainingLogo": "http://localhost:3000/images/IPHONE.png",
+                "trainingBackImg": "http://localhost:3000/images/3.png",
+                "trainingIntroduce": "通过精炼的语言，在简短的时间内约客户见面",
+                "victoryIntegral": 240,
+                "victoryTimes": 30
+            }
+        ]
+    }
+}

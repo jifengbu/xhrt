@@ -1,0 +1,54 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "haveWeeklyPlan": 1,
+        "haveMonthPlan": 1,
+        "specialSoldierVedioName": "3p的应用",
+        "specialSoldierVedioID": "3p的应用",
+        "specialSoldierVedioUrl": "视频播放路径",
+        "specialSoldierLiveName": "话题名称",
+        "specialSoldierImgUrl": "直播|视频预览图",
+        "specialSoldierLiveID": "",
+        "specialSoldierLiveTime": "2016-04-12 12:40",
+        "reportEmail": "a@b.com",
+        "dayPlan": [
+            {
+                "content": "日计划内容",
+                "id": "单条日计划id",
+                "isOver": 0,
+                "planId": "日计划id",
+                "submitDate": "提交时间",
+                "updateDate": "更新时间",
+                "userID": "用户id",
+                "week": 1,
+                "weekIsDate": "2016-09-30",
+                "weekPlanId": "周计划id"
+            }
+        ],
+        "weekPlan": [
+            {
+                "content": "周计划内容",
+                "id": "单条记录id",
+                "isOver": 0,
+                "monthPlanId": "月计划ID",
+                "planId": "周计划ID",
+                "submitDate": "提交时间",
+                "updateDate": "更新时间",
+                "userID": "用户ID",
+                "weekNum": "属于第几周"
+            }
+        ],
+        "monthPlan": [
+            {
+                "content": "月计划",
+                "id": "57ebbeda2ce37bf96ca3df",
+                "isOver": 0,
+                "planId": "月计划id",
+                "submitDate": "提交时间",
+                "updateDate": "更新时间",
+                "userID": "用户id"
+            }
+        ]
+    }
+}

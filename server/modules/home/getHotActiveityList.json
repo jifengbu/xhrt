@@ -1,0 +1,62 @@
+{
+  "success": "true",
+    "msg": "获取数据成功",
+    "context":{
+    "HotActivity": [
+      {
+         "activeityId":"fdsa432",
+         "title":"活动标题",
+         "minImage":"http://facebook.github.io/react/img/logo_og.png",
+         "mode":"2",
+         "address":"贵阳赢销截拳道办公楼",
+         "startDate":"2016-12-21 11:30:00",
+         "endDate":"2016-12-25 11:30:00"
+      },
+      {
+         "activeityId":"fdsa432",
+         "title":"活动标题",
+         "minImage":"http://facebook.github.io/react/img/logo_og.png",
+         "mode":"2",
+         "address":"贵阳赢销截拳道办公楼",
+         "startDate":"2016-12-21 11:30:00",
+         "endDate":"2016-12-25 11:30:00"
+      },
+      {
+         "activeityId":"fdsa432",
+         "title":"活动标题",
+         "minImage":"http://facebook.github.io/react/img/logo_og.png",
+         "mode":"2",
+         "address":"贵阳赢销截拳道办公楼",
+         "startDate":"2016-12-21 11:30:00",
+         "endDate":"2016-12-25 11:30:00"
+      },
+      {
+         "activeityId":"fdsa432",
+         "title":"活动标题",
+         "minImage":"http://facebook.github.io/react/img/logo_og.png",
+         "mode":"2",
+         "address":"贵阳赢销截拳道办公楼",
+         "startDate":"2016-12-21 11:30:00",
+         "endDate":"2016-12-25 11:30:00"
+      },
+      {
+         "activeityId":"fdsa432",
+         "title":"活动标题",
+         "minImage":"http://facebook.github.io/react/img/logo_og.png",
+         "mode":"1",
+         "address":"贵阳赢销截拳道办公楼",
+         "startDate":"2016-12-21 11:30:00",
+         "endDate":"2016-12-25 11:30:00"
+      },
+      {
+         "activeityId":"fdsa432",
+         "title":"活动标题",
+         "minImage":"http://facebook.github.io/react/img/logo_og.png",
+         "mode":"1",
+         "address":"贵阳赢销截拳道办公楼",
+         "startDate":"2016-12-21 11:30:00",
+         "endDate":"2016-12-25 11:30:00"
+      }
+    ]
+  } 
+}

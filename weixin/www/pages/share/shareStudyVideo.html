@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>赢销截拳道</title>
+</head>
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: #EEEEEE;
+	}
+	.header {
+		width: 100%;
+		height: 52px;
+		background-color: #a61f45;
+	}
+	.header .name {
+		padding-top: 20px;
+		text-align: center;
+		font-size: 16px;
+		color: #fff;
+		font-weight: 600;
+	}
+	.centent {
+		text-align: center;
+	}
+	.centent video{
+		text-align: center;
+	}
+	.videoInfo {
+		background-color: white;
+		height: 80px;
+		text-align: left;
+		margin-left: 3px;
+		margin-right: 3px;
+		border-radius: 3px;
+	}
+	.videoInfo .top {
+		height:40px;
+	}
+	.videoInfo .top .title {
+		float: left;
+		padding-top: 10px;
+		padding-left: 10px;
+		font-size: 15px;
+		color: #444444;
+	}
+	.videoInfo .top img {
+		float: right;
+		width: 35px;
+		height: 35px;
+	}
+	.videoInfo .line {
+		height: 0.5px;
+		background-color: #EEEEEE;
+	}
+	.videoInfo .playTimes {
+		margin-top: 10px;
+		padding-left: 10px;
+		height:40px;
+		font-size: 10px;
+		color: #999999;
+	}
+	.centent .prompt {
+		margin-top: 88px;
+		width: 100%;
+		height: 12px;
+		background: url(../../img/word.png) no-repeat;
+		background-size: 100% 100%;
+	}
+	.centent .button {
+		padding-top: 20px;
+		padding-bottom: 78px;
+	}
+	.centent .button img {
+		width: 100%;
+		height: 40px;
+	}
+	.centent .introduce {
+		width: 100%;
+	}
+	.centent .introduce img {
+		width: 100%;
+		height: 315px;
+	}
+	.footer {
+		position: static;
+		width: 100%;
+	}
+	.footer img {
+		width: 100%;
+		height: 43px;
+	}
+</style>
+<body>
+	<!--<div class="header">
+		<div class="name">特种兵交流场房间</div>
+	</div>-->
+	<div class="centent">
+		<video width="100%" height="210" poster="" controls="controls">
+		  <source src="">
+		  <!--<source src="movie.mp4" type="video/mp4">
+		  <source src="movie.webm" type="video/webm">
+		  <object data="movie.mp4" width="320" height="240">
+		    <embed width="320" height="240" src="movie.swf">
+		  </object>-->
+		</video>
+		<div class="videoInfo">
+			<div class="top">
+				<div class="title">
+					一分钟自我介绍
+				</div>
+				<img src="../../img/mark1.png"></img>
+			</div>
+			<div class="line"></div>
+			<div class="playTimes">播放次数：99999+</div>
+		</div>
+		<div class="prompt"></div>
+		<div class="button"><img src="../../img/button_1.png" /></div>
+	</div>
+	<div class="footer"><img src="../../img/button_3.png" /></div>
+</body>
+<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script>
+	$(function(){
+		var videoTitle = getParameter("videoTitle");
+		var playTimes = getParameter("playTimes");
+		var videoUrl = getParameter("videoUrl");
+		var videoType = getParameter("videoType");
+		var videoImg = getParameter("videoImg");
+		$(".videoInfo .top .title").html(videoTitle);
+		$(".videoInfo .playTimes").html('播放次数:'+playTimes);
+		$(".videoInfo .top").find("img").attr("src",'../../img/mark'+videoType+'.png');
+		$(".centent video").find("source").attr("src",videoUrl);
+		$(".centent video").attr("poster",videoImg);
+	});
+	$(".centent .button").on('click',function(){
+		window.location.href='../sign/download.html';
+	});
+	$(".centent .introduce").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/s?__biz=MjM5NDE5Mzg2MA==&mid=504697585&idx=1&sn=56c315f57f119b2cb1ad1b2308b37b3d&scene=18#wechat_redirect';
+	});
+	$(".footer").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NDE5Mzg2MA==&hid=2&sn=100e29f2abd43662938ce2fd3a6c580e#wechat_redirect';
+	});
+
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+</script>
+</html>

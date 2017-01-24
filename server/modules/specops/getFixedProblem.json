@@ -1,0 +1,23 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "fixedProblem": [
+            {
+                "problemId":"111111",
+                "problemTitle": "今天哪些事做得最好?可不可以持续性复制?",
+                "problemContent":""
+            },
+            {
+                "problemId":"222222",
+                "problemTitle": "还能不能做得更好?",
+                "problemContent":""
+            },
+            {
+                "problemId":"333333",
+                "problemTitle": "今天哪些事做得最差?如何去避免?",
+                "problemContent":""
+            }
+        ]
+    }
+}

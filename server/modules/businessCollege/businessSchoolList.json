@@ -1,0 +1,28 @@
+{
+    "msg": "获取数据成功",
+    "success": true,
+    "context": {
+        "businessSchoolList": [
+            {
+                "schoolID": "24458373773w737w",
+                "schoolName": "罗技网络科技有限公司",
+                "schoolIntroduction": "贵阳赢销截拳道网络科技有限公司贵阳赢销截拳道网络科技有限公司贵阳赢销截拳道网络科技有限公司"
+            },
+            {
+                "schoolID": "2445837377ea737w",
+                "schoolName": "贵阳赢销截拳道网络科技有限公司",
+                "schoolIntroduction": "贵阳赢销截拳道网络科技有限公司贵阳赢销截拳道网络科技有限公司贵阳赢销截拳道网络科技有限公司"
+            },
+            {
+                "schoolID": "2445837377rt737w",
+                "schoolName": "百度网络科技有限公司",
+                "schoolIntroduction": "贵阳赢销截拳道网络科技有限公司贵阳赢销截拳道网络科技有限公司贵阳赢销截拳道网络科技有限公司"
+            },
+            {
+                "schoolID": "2445837ty73w737w",
+                "schoolName": "腾讯网络科技有限公司",
+                "schoolIntroduction": "贵阳赢销截拳道网络科技有限公司贵阳赢销截拳道网络科技有限公司贵阳赢销截拳道网络科技有限公司"
+            }
+        ]
+    }
+}

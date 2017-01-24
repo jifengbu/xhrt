@@ -1,0 +1,26 @@
+{
+    "msg": "获取数据成功",
+    "success": true,
+    "context": {
+        "schoolImg": "http://facebook.github.io/react/img/logo_og.png",
+        "schoolName": "sdfdg",
+        "schoolVideoList": [
+            {
+                "vedioName": "步步高点读机",
+                "vedioImg": "http://www.gyyxjqd.com/group1/M00/00/07/eEwYkVcgdfiAK9fzAAJgy1PLOFM594.png",
+                "vedioAddr": "http://www.gyyxjqd.com/download/videos/goods/videos/3D05D43A3E78473FBDF18C8DA6A1AB5C.har/3D05D43A3E78473FBDF18C8DA6A1AB5C.m3u8"
+            },
+            {
+                "vedioName": "哪里不会",
+                "vedioImg": "http://www.gyyxjqd.com/group1/M00/00/07/eEwYkVcgdfaAGZmrAAOiv-kk8j0028.png",
+                "vedioAddr": "http://www.gyyxjqd.com/download/videos/goods/videos/3BBABAD50818467CB7BA2049A1D690C8.har/3BBABAD50818467CB7BA2049A1D690C8.m3u8"
+            }
+        ],
+        " schoolDetailList ": [
+            {
+                "title": "商家介绍",
+                "content": "内容内容内容内容内容内容内容内容内容内容内容内容"
+            }
+        ]
+      }
+}

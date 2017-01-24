@@ -1,0 +1,19 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "commentList": [
+            {
+                "startNum": "3.5",
+                "name": "刘先生",
+                "date": "2015-02-12 14:25:56",
+                "comment": "很好",
+                "imageList": [
+                    "http://localhost:3000/images/4.png",
+                    "http://img2.3lian.com/img2007/10/28/123.jpg"
+                ]
+            }
+        ],
+        " favorableRate": "98%"
+    }
+}

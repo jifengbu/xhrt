@@ -1,0 +1,50 @@
+{
+    "msg": "获取数据成功",
+    "success": true,
+    "context": {
+        "kitList": [
+            {
+                "id ": "56e6175a88428",
+                "title": "养老保险计划",
+                "jointime": "2016-06-06",
+                "score": 4,
+                "isWin":0
+            },
+            {
+                "id ": "56e6175a88428",
+                "title": "懂啊了开始卡了",
+                "jointime": "2016-06-06",
+                "score": 2,
+                "isWin":1
+            },
+            {
+                "id ": "56e6175a88428",
+                "title": "我俺看上哪款",
+                "jointime": "2016-06-06",
+                "score": 3,
+                "isWin":0
+            },
+            {
+                "id ": "56e6175a88428",
+                "title": "为此十多万次",
+                "jointime": "2016-06-06",
+                "score": 2,
+                "isWin":1
+            },
+            {
+                "id ": "56e6175a88428",
+                "title": "瓦莱萨科技",
+                "jointime": "2016-06-06",
+                "score": 3,
+                "isWin":1
+            },
+            {
+                "id ": "56e6175a88428",
+                "title": "破阿卡丽",
+                "jointime": "2016-06-06",
+                "score": 5,
+                "isWin":0
+            }
+        ]
+    }
+}

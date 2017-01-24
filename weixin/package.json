@@ -1,0 +1,15 @@
+{"main":"www/pages/homework/CourseList.html",
+    "name":"调试",
+    "window": {
+        "title": "本地调试客户端",
+        "width": 375,
+        "height": 627,
+        "always-on-top":false,
+        "show_in_taskbar":true,
+        "transparent": false,
+        "resizable": true,
+        "frame": true,
+        "toolbar": true,
+        "show": true
+    }
+}

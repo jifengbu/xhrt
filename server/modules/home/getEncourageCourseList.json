@@ -1,0 +1,218 @@
+{
+    "success": "true",
+    "msg": "获取成功",
+    "context": {
+        "articleList": [
+            {
+                "isPrize": 0,
+                "isFree": 0,
+                "urlImg": "http://localhost:3000/images/4.png",
+                "videoListImg": "http://localhost:3000/images/4.png",
+                "urlPlay": "http://sdfsdfs",
+                "videoID": "14",
+                "author": "王雩老师",
+                "clicks": 405,
+                "likes": 4560,
+                "videoPrice": 99,
+                "isPraise": 1,
+                "length": "35:52",
+                "isCollection": 0,
+                "collections": 100,
+                "name": "1分钟的粉丝地方",
+                "profile": "这是视这是视频这是视这是视频的简介频的简介这是视这是视频的这是视这是视频这是视这是视频的简介频的简介这是视这是视频的简介频的简介这是视这是视频的简介频的简介的简介频的简介简介频的简介这是视这是视频的简介频的简介的简介频的简介",
+                "videoType": 6,
+                "createDate": "2016-11-32",
+                "label": [
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    },
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    }
+                ]
+            },
+            {
+                "isPrize": 0,
+                "isFree": 0,
+                "urlImg": "http://localhost:3000/images/4.png",
+                "videoListImg": "http://localhost:3000/images/4.png",
+                "urlPlay": "http://sdfsdfs",
+                "videoID": "14",
+                "author": "王雩老师",
+                "clicks": 45,
+                "likes": 456,
+                "videoPrice": 99,
+                "isPraise": 0,
+                "length": "35:52",
+                "isCollection": 0,
+                "collections": 100,
+                "name": "1分钟的粉丝地方",
+                "profile": "这是视频的简介",
+                "videoType": 6,
+                "createDate": "2016-11-32",
+                "label": [
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    },
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    }
+                ]
+            },
+            {
+                "isPrize": 0,
+                "isFree": 0,
+                "urlImg": "http://localhost:3000/images/4.png",
+                "videoListImg": "http://localhost:3000/images/4.png",
+                "urlPlay": "http://sdfsdfs",
+                "videoID": "14",
+                "author": "王雩老师",
+                "clicks": 45,
+                "likes": 456,
+                "videoPrice": 99,
+                "isPraise": 0,
+                "length": "35:52",
+                "isCollection": 0,
+                "collections": 100,
+                "name": "1分钟的粉丝地方",
+                "profile": "这是视频的简介",
+                "videoType": 4,
+                "createDate": "2016-11-32",
+                "label": [
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    },
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    }
+                ]
+            },
+            {
+                "isPrize": 0,
+                "isFree": 0,
+                "urlImg": "http://localhost:3000/images/4.png",
+                "videoListImg": "http://localhost:3000/images/4.png",
+                "urlPlay": "http://sdfsdfs",
+                "videoID": "14",
+                "author": "王雩老师",
+                "clicks": 45,
+                "likes": 456,
+                "videoPrice": 99,
+                "isPraise": 0,
+                "length": "35:52",
+                "isCollection": 0,
+                "collections": 100,
+                "name": "1分钟的粉丝地方",
+                "profile": "这是视频的简介",
+                "videoType": 4,
+                "createDate": "2016-11-32",
+                "label": [
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    },
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    }
+                ]
+            },
+            {
+                "isPrize": 0,
+                "isFree": 0,
+                "urlImg": "http://localhost:3000/images/4.png",
+                "videoListImg": "http://localhost:3000/images/4.png",
+                "urlPlay": "http://sdfsdfs",
+                "videoID": "14",
+                "author": "王雩老师",
+                "clicks": 45,
+                "likes": 456,
+                "videoPrice": 99,
+                "isPraise": 0,
+                "length": "35:52",
+                "isCollection": 0,
+                "collections": 100,
+                "name": "1分钟的粉丝地方",
+                "profile": "这是视频的简介",
+                "videoType": 4,
+                "createDate": "2016-11-32",
+                "label": [
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    },
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    }
+                ]
+            },
+            {
+                "isPrize": 0,
+                "isFree": 0,
+                "urlImg": "http://localhost:3000/images/4.png",
+                "videoListImg": "http://localhost:3000/images/4.png",
+                "urlPlay": "http://sdfsdfs",
+                "videoID": "14",
+                "author": "王雩老师",
+                "clicks": 45,
+                "likes": 456,
+                "videoPrice": 99,
+                "isPraise": 0,
+                "length": "35:52",
+                "isCollection": 0,
+                "collections": 100,
+                "name": "1分钟的粉丝地方",
+                "profile": "这是视频的简介",
+                "videoType": 4,
+                "createDate": "2016-11-32",
+                "label": [
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    },
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    }
+                ]
+            },
+            {
+                "isPrize": 0,
+                "isFree": 0,
+                "urlImg": "http://localhost:3000/images/4.png",
+                "videoListImg": "http://localhost:3000/images/4.png",
+                "urlPlay": "http://sdfsdfs",
+                "videoID": "14",
+                "author": "王雩老师",
+                "clicks": 45,
+                "likes": 456,
+                "videoPrice": 99,
+                "isPraise": 0,
+                "length": "35:52",
+                "isCollection": 0,
+                "collections": 100,
+                "name": "1分钟的粉丝地方",
+                "profile": "这是视频的简介",
+                "videoType": 4,
+                "createDate": "2016-11-32",
+                "label": [
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    },
+                    {
+                        "labelID": 0,
+                        "labelName": "官方出品"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<link rel="stylesheet" href="../../css/mui.picker.min.css" />
+		<style>
+			.mui-btn {
+				font-size: 16px;
+				padding: 8px;
+				margin: 3px;
+			}
+			* {
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+			}
+			.mui-dtpicker-header button {
+				width: 50px;
+			}
+			.message-box{
+				display: none;
+				position: fixed;
+			    width: 100%;
+			    height: 100%;
+			    left: 0px;
+			    top: 0px;
+			    right: 0px;
+			    background-color: rgba(0,0,0,0.3);
+			    border: 1px solid rgba(0, 0, 0, 0.3);
+			    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+			    outline: 0 none;
+			    -moz-border-radius: 5px;
+				-webkit-border-radius: 5px;
+				border-radius: 5px;
+				font-size: 16px;
+			    z-index: 1050;
+			}
+			.modal-dialog {
+			    position: relative;
+			    top:25%;
+			    width: auto;
+			    margin: 10px;
+			}
+			.modal-content {
+			    position: relative;
+			    background-color: #fff;
+			    -webkit-background-clip: padding-box;
+			    background-clip: padding-box;
+			    border: 1px solid #999;
+			    border: 1px solid rgba(0,0,0,.2);
+			    border-radius: 6px;
+			    outline: 0;
+			    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+			    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+			    height: 100%;
+			}
+			.modal-body {
+			    text-align: left;
+			    color: #787878;
+			    font-size: 16px;
+			    padding-left: 15px;
+			    padding-right: 15px;
+			    margin-top: 20px;
+			}
+			.modal-footer {
+			    text-align: center;
+			    padding: 15px;
+    				border-top: 1px solid #e5e5e5;
+			}
+			.btn-warning {
+			    color: #fff;
+			    background-color: #f0ad4e;
+			    border-color: #eea236;
+			}
+			.btn-success {
+			    color: #fff;
+			    background-color: #5cb85c;
+			    border-color: #4cae4c;
+			}
+			p {
+				line-height: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">课程签到－赢销截拳道</h1>
+		</header>
+
+		<div class="mui-content">
+			<div style="padding: 5px; height: auto; margin: 0 auto;background: #EEEEEE;">
+				<!--<div style="height: 35px; background-color: #efefef; border-top-left-radius: calc(8px); border-top-right-radius:calc(8px); border: 1px solid #c8c9ca;" >
+					<label style="color: #7d7e7f; line-height: 35px; margin-left: 10px;">请认真填写表单</label>
+				</div>-->
+				<div class="panel">
+					<div class="logo"><img src="../../img/logo2.png" class="img-responsive" alt="Responsive image"></div>
+					<h5 id="warning" class="alert alert-warning" role="alert">
+						<button onclick="closeWarning()" type="button" class="close" data-dismiss="alert">
+							<span>×</span>
+						</button>
+						您好，欢迎您来到《赢销截拳道》的课程现场，请您按照下面方框的提示输入相应的信息后点击提交进行报名。<br>(<strong>PS:</strong>请务必输入准确的信息以方便我们进行后续服务哟！o^_^o)
+					</h5>
+					<div style="background-color: #fff;">
+						<div style="text-align:center; padding-top: 10px; padding-bottom: 10px;color: #666666;font-weight: bold;font-size: 13px;">
+							<span>有“</span><span class="span1">*</span><span>”为必填项目</span>
+						</div>
+					</div>
+					<div style="padding:5px 10px;">
+						<table width="100%" cellpadding="10" cellspacing="0" border="0px">
+							<tbody>
+								<tr class="enrollDisplay">
+									<td class="td1">姓名<span class="span1">*</span></td>
+									<td width="75%">
+										<input required="" type="text" id="name" placeholder="请输入您的姓名"/>
+									</td>
+								</tr>
+								<tr class="commonDisplay">
+									<td class="td1">手机<span class="span1">*</span></td>
+									<td width="75%">
+										<input required="" type="text" id="phone" placeholder="请输入您的手机号"/>
+									</td>
+								</tr>
+								<tr class="enrollDisplay">
+									<td class="td1">公司全称<span class="span1">*</span></td>
+									<td width="75%">
+										<input required="" type="text" id="company" placeholder="请输入您的公司名"/>
+									</td>
+								</tr>
+								<tr class="enrollDisplay">
+									<td class="td1">职务<span class="span1">*</span></td>
+									<td width="75%">
+										<input required="" type="text" id="position" placeholder="请输入您的职位"/>
+									</td>
+								</tr>
+								<!--<tr class="enrollDisplay">
+									<td class="td1">介绍人<span class="span1">*</span></td>
+									<td width="75%">
+										<input required="" type="text" id="reference" placeholder="请输入介绍人" />
+									</td>
+								</tr>-->
+								<!--<tr class="enrollDisplay">
+									<td class="td1">参课金额<span class="span1">*</span></td>
+									<td width="75%">
+										<input required="" type="text" id="price" placeholder="请输入参课金额" readonly="true"/>
+									</td>
+								</tr>-->
+								<!--<tr>
+									<td class="td1">邮箱</td>
+									<td width="75%">
+										<input required="" type="text" id="email" placeholder="电子邮箱，格式如：email@example.com"/>
+									</td>
+								</tr>
+								<tr>
+									<td class="td1">出生日期</td>
+									<td width="75%">
+										<input required="" type="button" id="brithday" data-options='{"type":"date","beginYear":1900,"endYear":2050}' class="btn mui-btn mui-btn-block" style="text-align: left;"/>
+									</td>
+								</tr>
+								<tr>
+									<td class="td1">年营业额</td>
+									<td width="75%">
+										<input required="" type="text" id="annualTurnover" placeholder="所在公司年营业额" />
+									</td>
+								</tr>
+								<tr>
+									<td class="td1">员工人数</td>
+									<td width="75%">
+										<input required="" type="text" id="staffNumber" placeholder="所在公司员工人数" />
+									</td>
+								</tr>
+								<tr>
+									<td class="td1">投资产品</td>
+									<td width="75%">
+										<input required="" type="text" id="investOtherName" placeholder="投资其他金融产品名称" />
+									</td>
+								</tr>
+								<tr>
+									<td class="td1">是否复训&nbsp;?</td>
+									<td width="75%" style="text-align: center;">
+										<div style="width: 50%; float: left;"><label><input name="course" id="course1" type="radio" value="1" />是</label></div>
+										<div style="width: 50%; float: right;"><label ><input name="course" id="course2" type="radio" value="0" checked="" />否</label> </div>
+									</td>
+								</tr>-->
+							</tbody>
+						</table>
+					</div>
+					<button id="show" onclick="checkEnrollData()" class="main-btn" type="button">确认并提交</button>
+				</div>
+			</div>
+		</div>
+		<div id="messageBox" class="message-box">
+			<div class="modal-dialog">
+		        <div class="modal-content">
+		            <div id="boxWarning" class="modal-header alert alert-warning" role="alert">
+						<button onclick="closeBoxWarning()" type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+						<h4 class="modal-title">请您检查以下信息是否填写正确</h4>
+					</div>
+					<div class="modal-body">
+						<p id="p1"></p>
+						<p id="p2"></p>
+		                <p id="p3"></p>
+		                <p id="p4"></p>
+		                <p id="p5"></p>
+		                <p id="p6"></p>
+		                <!--<p id="p7"></p>
+		                <p id="p8"></p>
+		                <p id="p9"></p>
+		                <p id="p10"></p>
+		                <p id="p11"></p>
+		                <p id="p12"></p>-->
+					</div>
+					<div class="modal-footer">
+						<button id="close" type="button" class="btn-warning" data-dismiss="modal">错了，我要重新填写</button>
+						<button onclick="submitEnrollData()" type="button" class="btn-success">完全正确</button>
+					</div>
+				</div><!-- /.modal-content -->1
+			</div>
+		</div>
+		<div class="case hide delete-confirm">
+			<img src="../../img/check.png" class="img-tip"/>
+			<div class="center text"></div>
+			<div class="footer">
+				<div class="left cancel">取&nbsp;&nbsp;消</div>
+				<div class="right confirm">确&nbsp;&nbsp;定</div>
+				<div class="singal cancel">确&nbsp;&nbsp;定</div>
+			</div>
+		</div>
+	</body>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/mui.picker.min.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		"use strict";
+		mui.init();
+		(function($) {
+			$.init();
+//				var result = $('#brithday')[0];
+			var btns = $('.btn');
+			btns.each(function(i, btn) {
+				btn.addEventListener('tap', function() {
+					var optionsJson = this.getAttribute('data-options') || '{}';
+					var options = JSON.parse(optionsJson);
+					var id = this.getAttribute('id');
+					/*
+					 * 首次显示时实例化组件
+					 * 示例为了简洁，将 options 放在了按钮的 dom 上
+					 * 也可以直接通过代码声明 optinos 用于实例化 DtPicker
+					 */
+					var picker = new $.DtPicker(options);
+					picker.show(function(rs) {
+						/*
+						 * rs.value 拼合后的 value
+						 * rs.text 拼合后的 text
+						 * rs.y 年，可以通过 rs.y.vaue 和 rs.y.text 获取值和文本
+						 * rs.m 月，用法同年
+						 * rs.d 日，用法同年
+						 * rs.h 时，用法同年
+						 * rs.i 分（minutes 的第二个字母），用法同年
+						 */
+						document.getElementById('brithday').value=rs.text
+//							result.innerText = '选择结果: ' + rs.text;
+						/*
+						 * 返回 false 可以阻止选择框的关闭
+						 * return false;
+						 */
+						/*
+						 * 释放组件资源，释放后将将不能再操作组件
+						 * 通常情况下，不需要示放组件，new DtPicker(options) 后，可以一直使用。
+						 * 当前示例，因为内容较多，如不进行资原释放，在某些设备上会较慢。
+						 * 所以每次用完便立即调用 dispose 进行释放，下次用时再创建新实例。
+						 */
+						picker.dispose();
+					});
+				}, false);
+			});
+		})(mui);
+
+		function checkEnrollData() {
+	        if(!testPhone($("#phone").val())) {
+				mui.toast("请输入正确的电话号码");
+	        		return;
+	        }
+	        if($("#name").val() == null || $("#name").val() == "") {
+				mui.toast("姓名不能为空");
+	        		return;
+	        }
+	        if($("#company").val() == null || $("#company").val() == "") {
+				mui.toast("公司名称不能为空");
+	        		return;
+	        }
+	        if($("#position").val() == null || $("#position").val() == "") {
+				mui.toast("职务不能为空");
+	        		return;
+	        }
+//	        if($("#reference").val() == null || $("#reference").val() == "") {
+//				mui.toast("介绍人不能为空");
+//	        		return;
+//	        }
+//	        if(!checkUnIntNum($("#price").val())) {
+//				mui.toast("金额为非负整数");
+//	        		return;
+//	        }
+//	        if($("#email").val() != null && $("#email").val() != "") {
+//	        		if(!checkEmail($("#email").val())) {
+//					mui.toast("请输入正确的邮箱");
+//		        		return;
+//		        }
+//	        }
+//	        if($("#brithday").val() != null && $("#brithday").val() != "") {
+//	        		if(!chkDate($("#brithday").val())) {
+//					mui.toast("您选择的出生日期大于当前时间");
+//		        		return;
+//		        }
+//	        }
+//	        if($("#annualTurnover").val() != null && $("#annualTurnover").val() != "") {
+//		        if(!checkNum($("#annualTurnover").val())) {
+//					mui.toast("请输入正确的年营业额");
+//		        		return;
+//		        }
+//	        }
+//	        if($("#staffNumber").val() != null && $("#staffNumber").val() != "") {
+//		        if(!checkIntNum($("#staffNumber").val())) {
+//					mui.toast("请输入正确的员工人数");
+//		        		return;
+//		        }
+//	        }
+//			var tempValue = "";
+//			if (GetRadioValue("course") == 0) {
+//				tempValue = "否";
+//			} else {
+//				tempValue = "是";
+//			}
+			$('#p1').text("姓名："+$("#name").val());
+			$('#p2').text("手机号："+$("#phone").val());
+			$('#p3').text("公司名："+$("#company").val());
+			$('#p4').text("职位："+$("#position").val());
+//			$('#p5').text("介绍人："+$("#reference").val());
+//			$('#p6').text("参课金额："+$("#price").val());
+//			$('#p7').text("EMAIL："+$("#email").val());
+//			$('#p8').text("出生日期："+$("#brithday").val());
+//			$('#p9').text("年营业额："+$("#annualTurnover").val());
+//			$('#p10').text("员工人数："+$("#staffNumber").val());
+//			$('#p11').text("投资产品："+$("#investOtherName").val());
+//			$('#p12').text("是否复训："+tempValue);
+			$("#messageBox").show();
+		}
+
+		//报名
+		function submitEnrollData() {
+			$("#messageBox").hide();
+			var url = app.route.ROUTE_ENROLL_DATA;
+	        var value = GetRadioValue("course"); //单选按钮
+			var data = {
+				courseId: params.courseId,
+				name: $("#name").val(),
+				phone: $("#phone").val(),
+				company: $("#company").val(),
+				position: $("#position").val(),
+//				reference: $("#reference").val(),
+				price: 0,
+//				email: $("#email").val(),
+//				brithday: $("#brithday").val(),
+//				annualTurnover: $("#annualTurnover").val(),
+//				staffNumber: $("#staffNumber").val(),
+//				investOtherName: $("#investOtherName").val(),
+//				isRefresher:  value
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: submitEnrollDataSuccess,
+			});
+		}
+
+		//报名回调
+		function submitEnrollDataSuccess(data) {
+			if (data.success === true && data.context) {
+				if (params.type == 2) {
+					var context = data.context;
+					saved.personal = context;
+					app.global.set("personal", saved.personal);
+					submitSignData();
+				} else{
+					document.getElementById('name').value=""
+					document.getElementById('phone').value=""
+					document.getElementById('company').value=""
+					document.getElementById('position').value=""
+//					document.getElementById('reference').value=""
+	//				document.getElementById('price').value=""
+	//				document.getElementById('email').value=""
+	//				document.getElementById('brithday').value=""
+	//				document.getElementById('annualTurnover').value=""
+	//				document.getElementById('staffNumber').value=""
+	//				document.getElementById('investOtherName').value=""
+					var context = data.context;
+					saved.personal = context;
+					app.global.set("personal", saved.personal);
+					showMessageBox("您的信息我们已经收到，是否继续报名",1);
+				}
+			} else {
+				mui.toast(data.msg);
+			}
+		}
+
+		//签到
+		function submitSignData() {
+			var url = app.route.ROUTE_SIGN_DATA;
+			var data = {
+				phone: $("#phone").val(),
+				courseId:params.courseId,
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: submitSignDataSuccess,
+			});
+		}
+
+		function submitSignDataSuccess(data) {
+			if (data.success === true && data.context) {
+				document.getElementById('name').value=""
+				document.getElementById('phone').value=""
+				document.getElementById('company').value=""
+				document.getElementById('position').value=""
+//				document.getElementById('reference').value=""
+				var context = data.context;
+				saved.personal = context;
+				app.global.set("personal", saved.personal);
+				if (params.type == 2) {
+					showMessageBox("签到成功");
+				} else{
+					showMessageBox("签到成功",1);
+				}
+			} else {
+				mui.toast(data.msg);
+			}
+		}
+
+		function showMessageBox(text, type) {
+			$("body").append('<div class="modal-backdrop"></div>');
+			var box = $(".case.delete-confirm");
+			box.find('.center.text').html(text);
+			if (type != null) {
+				box.find('.singal.cancel').hide();
+				box.find('.left.cancel').show();
+				box.find('.right.confirm').show();
+			} else {
+				box.find('.singal.cancel').show();
+				box.find('.left.cancel').hide();
+				box.find('.right.confirm').hide();
+			}
+			box.show();
+		}
+
+//		$('#phone').bind('input propertychange', function() {
+//			var phone = $("#phone").val();
+//			var phoneArray = eval('(' + params.enrollArray + ')');
+//			var isPhone = testPhone(phone);
+//			var isContain = $.inArray(phone,phoneArray);
+//			if(phone.length>10) {
+//				if (isPhone&&(isContain!=-1) ) {
+//					$(".enrollDisplay").hide();
+//					$("#show").attr("onclick","submitSignData()");
+//				} else{
+//					$(".enrollDisplay").show();
+//					$("#show").attr("onclick","checkEnrollData()");
+//				}
+//			}
+//		});
+
+
+		$("#close").click(function() {
+			$("#messageBox").hide();
+		})
+
+		//弹出框事件注册
+		$(".case.delete-confirm").on('tap', '.cancel', function() {
+			$(".modal-backdrop").remove();
+			$(".case.delete-confirm").hide(300);
+		}).on('tap', '.confirm', function(e) {
+			var el = $(".case.delete-confirm");
+			$(".modal-backdrop").remove();
+			el.hide(300);
+			javascript:history.back(-1);
+		});
+		var MESSAGEOBX_TYPE_DELETE_ITEM = 1;
+		var params = app.router.getParameter();
+		var saved = app.router.getSavedData();
+		params.type = 2;
+//		var enrollStatus = $.inArray($("#phone").val(),eval('(' + params.enrollArray + ')'));
+//		if (params.type == 2) {
+//			$(".enrollDisplay").hide();
+//		}
+//		$("#price").val(params.courseType==1?12800:50000);
+		function closeWarning () {
+			document.getElementById('warning').style.display='none';
+		}
+		function closeBoxWarning () {
+			document.getElementById('boxWarning').style.display='none';
+		}
+	</script>
+</html>

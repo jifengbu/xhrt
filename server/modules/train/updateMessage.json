@@ -1,0 +1,42 @@
+{
+    "success": true,
+    "msg": "抽奖成功",
+    "context": {
+        "messageID": 564,
+        "infoList": [
+            {
+                "messageType": 1,
+                "spoker": "刘刚",
+                "content": "你好棒啊",
+                "propName": "鲜花",
+                "fromUserName": "lidfi",
+                "propCode": 56,
+                "propType": 1,
+                "toUserName": "binbin",
+                "propValue": 45
+            },
+            {
+                "messageType": 1,
+                "spoker": "刘刚",
+                "content": "你好棒啊",
+                "propName": "踩",
+                "fromUserName": "lidfi",
+                "propCode": 5,
+                "propType": 1,
+                "toUserName": "binbin",
+                "propValue": 45
+            },
+            {
+                "messageType": 2,
+                "spoker": "刘刚",
+                "content": "你好棒啊",
+                "propName": "鲜花",
+                "fromUserName": "lidfi",
+                "propCode": 8,
+                "propType": 4,
+                "toUserName": "binbin",
+                "propValue": 45
+            }
+        ]
+    }
+}

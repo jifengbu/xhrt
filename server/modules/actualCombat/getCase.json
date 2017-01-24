@@ -1,0 +1,1 @@
+{    "msg": "获取数据成功",    "success": true,    "context": {        "caseList": [            {                "schemeID ": "56e6175a88428",                "title": "good",                "publisherName": "李大大",                "publisherImg": "http://sf",                "score": 2            }        ]    }}

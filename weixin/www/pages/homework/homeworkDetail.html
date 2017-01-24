@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css" />
+	</head>
+	<style>
+		img {
+			width: 14px;
+			height: 18px;
+			float: left;
+			padding: 4px 0 0px;
+		}
+		body{
+			background-color: white;
+		}
+		p {
+			color: #333333;
+			margin-top: 10px;
+			font-size: 13.7px;
+			line-height: 22px;
+			letter-spacing: 1px;
+		}
+		.mui-time {
+			color: #999999;
+			float: left;
+			font-size: 11px;
+			font-weight: 400;
+			padding-left: 4px;
+			margin-top: 2px;
+		}
+
+		.mui-herder-projection {
+			margin: 9px;
+			height: 65px;
+			border-radius: 8px;
+			background: #d6d6d6-#ffffff;
+			padding-right: 5px;
+		}
+
+		.mui-header {
+			height: 60px;
+			border-radius: 8px;
+			padding: 10px;
+			background: #eeeeee;
+		}
+		.mui-footer {
+			height: 40px;
+			padding: 10px;
+			color: #999999;
+			font-size:12px
+		}
+
+		.font-size {
+			font-size: 13px;
+		}
+		.mui-icon{
+			width: 18px;
+			height: 18px;
+		}
+	</style>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title" id="authortite"></h1>
+		</header>
+		<div class="mui-content bg-color">
+			<div class="mui-herder-projection">
+				<div class="mui-header font-size">
+					<div>姓名:<span id='authorName'></span>
+						<div style="float: right; margin-right: 20px;">
+							职位:<span id='authorPosition'></span>
+						</div>
+					</div>
+					<div style="padding-top: 3px;">公司:<span id='authorCompany'></span></div>
+				</div>
+			</div>
+			<div class="mui-content bg-color">
+				<div style="background-color: white;color: #808080;margin: 19px;">
+					<img src="../../img/time.png" />
+					<div id="submitTime" class="mui-time"></div><br />
+					<p id="homeworkDetail"></p>
+				</div>
+			</div>
+			<div class="mui-footer">
+				<div style="float: left; margin-left: 2px;margin-top:3px">字数:<span id='homeworkLength'></span></div>
+				<div style="float: left; margin-left: 40px;" id='praiseDiv'></div>
+				<div id='leaveMessage' style="float: right; margin-right: 12px;margin-top:2px">
+					<img class="mui-icon" src="../../img/leaveMessage.png" />&nbsp写留言
+				</div>
+			</div>
+
+		</div>
+	<body>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		"use strict";
+		function getData(homeworkId) {
+			var url = app.route.ROUTE_GET_HOMEWORK_BY_ID;
+			var data = {
+				openid:params.openid,
+				homeworkId : homeworkId,
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: getDataSuccess,
+			});
+		}
+
+		function getDataSuccess(data) {
+			if (data.success) {
+				showPage(data.context||{})
+				app.weixin.registerWeixinConfig(window.location.href, function() {
+					app.weixin.setWeixinMenuShare(window.location.href, {
+						homeworkId:params.homeworkId,
+						title:params.courseName,
+						desc:data.context.authorCompany+data.context.authorPosition+data.context.authorName+params.courseName==undefined?'':params.courseName+'的作业',
+					});
+				});
+			}
+		}
+		function praiseHomework() {
+			var data = {
+				openid: params.openid,
+				courseId: params.courseId,
+				homeworkId: params.homeworkId,
+			};
+			app.utils.post({
+				url: app.route.ROUTE_PRAISE_HOMEWORK,
+				data: data,
+				success: praiseHomeworkSuccess,
+			});
+		}
+
+		function praiseHomeworkSuccess(data) {
+			if(data.success === true) {
+				params.isPraise = true;
+				params.praise++;
+				updatePraise();
+			}
+			mui.toast(data.msg);
+		}
+		function showPage(data) {
+			var tempHomeworkDetail = data.homeworkDetail;
+			var str = "";
+			var html = "";
+			if (tempHomeworkDetail.indexOf("♖")>0 || tempHomeworkDetail.indexOf("♔")>0) {
+				str =  tempHomeworkDetail.split("♖");
+				for (var i=0; i<str.length; i++ ) {
+					if(i != str.length-1){
+						html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+str[i].split("♔")[1]+"<br/><br/>";
+					}else{
+						html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+str[i].split("♔")[1];
+					}
+				}
+			} else {
+				html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+tempHomeworkDetail;
+			}
+			/*var tmp1 = tempHomeworkDetail.replace(/\r\n/g,"")
+			var tmp2 = tmp1.replace(/♖/g,"<br/><br/>")
+			var detail = tmp2.replace(/♔/g,"<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			var html = '<span id="homeworkDetail">'+detail+'</span>'*/
+
+			$('#homeworkDetail').html(html);
+			$('#authortite').text(data.authorName);
+			$('#submitTime').text(data.homeworkSubmitTime);
+			$('#authorName').text(data.authorName);
+			$('#authorCompany').text(data.authorCompany);
+			$('#authorPosition').text(data.authorPosition);
+			$('#homeworkLength').text(data.homeworkDetail.length);
+			updatePraise();
+		}
+		function updatePraise() {
+			var html = "";
+			html =	'<span class="homeworkPraise"><span class="mui-icon">'+'<img class="mui-icon" src="'+(params.isPraise==1?'../../img/praise-on.png':'../../img/praise-off.png')+'" />'+'</span>&nbsp<span class=number>'+params.praise+'</span></span>'
+			html += '</div>'
+			$('#praiseDiv').html(html);
+		}
+		mui('#praiseDiv').on('tap','.homeworkPraise', function() {
+			praiseHomework();
+		});
+		mui('.mui-content').on('tap','#leaveMessage', function() {
+			var data = {
+				openid: params.openid,
+				courseId: params.courseId,
+				homeworkId: params.homeworkId,
+			};
+			app.router.showView('./leaveMessage.html', data);
+		});
+		mui.init({
+			swipeBack: true
+		});
+		var params = app.router.getParameter();
+		getData(params.homeworkId);
+	</script>
+</html>

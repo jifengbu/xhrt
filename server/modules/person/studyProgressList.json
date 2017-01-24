@@ -1,0 +1,104 @@
+{
+    "success": "true",
+    "msg": "获取数据成功",
+    "context": {
+        "courseList": [
+            {
+                "isWatchVideo": 1,
+                "createTime": "2016-10-19 13:43:34",
+                "videoID": "C0AE487E1F8F44619BA57E0B19E39782",
+                "studyProgress": 20,
+                "likes": 11,
+                "clicks": 721,
+                "isTaskShare": 0,
+                "isOverTest": 0,
+                "isOverTask": 1,
+                "videoName": "(第1集)测试视频"
+            },
+            {
+                "isWatchVideo": 1,
+                "createTime": "2016-10-19 13:43:34",
+                "videoID": "C0AE487E1F8F44619BA57E0B19E39782",
+                "studyProgress": 80,
+                "likes": 11,
+                "clicks": 721,
+                "isTaskShare": 0,
+                "isOverTest": 0,
+                "isOverTask": 1,
+                "videoName": "(第2集)测试视频"
+            },
+            {
+                "isWatchVideo": 1,
+                "createTime": "2016-10-19 13:43:34",
+                "videoID": "C0AE487E1F8F44619BA57E0B19E39782",
+                "studyProgress": 60,
+                "likes": 11,
+                "clicks": 721,
+                "isTaskShare": 0,
+                "isOverTest": 0,
+                "isOverTask": 1,
+                "videoName": "(第3集)测试视频"
+            },
+            {
+                "isWatchVideo": 1,
+                "createTime": "2016-10-19 13:43:34",
+                "videoID": "C0AE487E1F8F44619BA57E0B19E39782",
+                "studyProgress": 100,
+                "likes": 11,
+                "clicks": 721,
+                "isTaskShare": 0,
+                "isOverTest": 0,
+                "isOverTask": 1,
+                "videoName": "(第4集)测试视频"
+            },
+            {
+                "isWatchVideo": 1,
+                "createTime": "2016-10-19 13:43:34",
+                "videoID": "C0AE487E1F8F44619BA57E0B19E39782",
+                "studyProgress": 10,
+                "likes": 11,
+                "clicks": 721,
+                "isTaskShare": 0,
+                "isOverTest": 0,
+                "isOverTask": 1,
+                "videoName": "(第5集)测试视频"
+            },
+            {
+                "isWatchVideo": 1,
+                "createTime": "2016-10-19 13:43:34",
+                "videoID": "C0AE487E1F8F44619BA57E0B19E39782",
+                "studyProgress": 30,
+                "likes": 11,
+                "clicks": 721,
+                "isTaskShare": 0,
+                "isOverTest": 0,
+                "isOverTask": 1,
+                "videoName": "(第6集)测试视频"
+            },
+            {
+                "isWatchVideo": 1,
+                "createTime": "2016-10-19 13:43:34",
+                "videoID": "C0AE487E1F8F44619BA57E0B19E39782",
+                "studyProgress": 50,
+                "likes": 11,
+                "clicks": 721,
+                "isTaskShare": 0,
+                "isOverTest": 0,
+                "isOverTask": 1,
+                "videoName": "(第7集)测试视频"
+            },
+            {
+                "isWatchVideo": 1,
+                "createTime": "2016-10-19 13:43:34",
+                "videoID": "C0AE487E1F8F44619BA57E0B19E39782",
+                "studyProgress": 0,
+                "likes": 11,
+                "clicks": 721,
+                "isTaskShare": 0,
+                "isOverTest": 0,
+                "isOverTask": 1,
+                "videoName": "(第8集)测试视频"
+            }
+        ]
+    }
+}

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>赢销截拳道</title>
+</head>
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: #EEEEEE;
+	}
+	.header {
+		width: 100%;
+		height: 52px;
+		background-color: #a61f45;
+	}
+	.header .name {
+		padding-top: 20px;
+		text-align: center;
+		font-size: 16px;
+		color: #fff;
+		font-weight: 600;
+	}
+	.centent {
+		text-align: center;
+	}
+	.roomInfo {
+		margin-top: 20px;
+		background-color: white;
+		height: 102px;
+		text-align: left;
+		margin-left: 3px;
+		margin-right: 3px;
+		border-radius: 3px;
+	}
+	.roomInfo .title {
+		padding-top: 13px;
+		padding-left: 13px;
+		padding-bottom: 6px;
+		font-size: 15px;
+		color: #666666;
+	}
+	.roomInfo .title .roomNum{
+		color: #bf9f62;
+	}
+	.roomInfo .company {
+		display:inline;
+		background-color: #EEEEEE;
+		margin-left: 13px;
+		font-size: 12px;
+		color: #999999;
+	}
+
+	.roomInfo .time {
+		padding-top: 6px;
+		padding-left: 13px;
+		font-size: 12px;
+		color: #999999;
+	}
+	.tipInfo {
+		margin-top: 21px;
+		padding-left: 33px;
+		padding-right: 33px;
+	}
+	.tipInfo .title {
+		font-size: 10px;
+		color: #A61F45;
+	}
+	.tipInfo .content {
+		font-size: 10px;
+		color: #555555;
+	}
+	.centent .prompt {
+		margin-top: 212px;
+		width: 100%;
+		height: 12px;
+		background: url(../../img/word.png) no-repeat;
+		background-size: 100% 100%;
+	}
+	.centent .button {
+		padding: 20px 10px;
+	}
+	.centent .button img {
+		width: 100%;
+		height: 40px;
+	}
+	.centent .introduce {
+		width: 100%;
+	}
+	.centent .introduce img {
+		width: 100%;
+		height: 315px;
+	}
+	.footer {
+		position: static;
+		width: 100%;
+	}
+	.footer img {
+		width: 100%;
+		height: 43px;
+	}
+</style>
+<body>
+	<div class="header">
+		<div class="name">特种兵交流场房间</div>
+	</div>
+	<div class="centent">
+		<div class="roomInfo">
+			<div class="title">
+				房间号:
+				<span class="roomNum">(123)</span>
+			</div>
+			
+			<div class="company">
+				华为技术有限公司
+			</div>
+			<div class="time">
+				开始时间：2016-3-11 19:30-21:00
+			</div>
+		</div>
+		<div class="tipInfo">
+			<span class="title">
+				温馨提示：
+			</span>
+			<span class="content">在有效时间内，打开赢销截拳道APP，点击训练场进入特种兵交流场内，找到相应到房间号进入</span>
+		</div>
+		<div class="prompt"></div>
+		<div class="button"><img src="../../img/button_1.png" /></div>
+		<div class="introduce"><img src="../../img/button_2.png"></div>
+	</div>
+	<div class="footer"><img src="../../img/button_3.png" /></div>
+</body>
+<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script>
+	$(function(){
+		var roomNum = getParameter("roomNum");
+		var company = getParameter("company");
+		var startTime = getParameter("startTime");
+		$(".roomInfo .title .roomNum").html('('+roomNum+')');
+		$(".roomInfo .company").html(company);
+		$(".roomInfo .time").html('开始时间:'+startTime);
+	});
+	
+	$(".centent .button").on('click',function(){
+		window.location.href='../sign/download.html';
+	});
+	$(".centent .introduce").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/s?__biz=MjM5NDE5Mzg2MA==&mid=504697585&idx=1&sn=56c315f57f119b2cb1ad1b2308b37b3d&scene=18#wechat_redirect';
+	});
+	$(".footer").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NDE5Mzg2MA==&hid=2&sn=100e29f2abd43662938ce2fd3a6c580e#wechat_redirect';
+	});
+	
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+</script>
+</html>

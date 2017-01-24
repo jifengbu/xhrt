@@ -1,0 +1,22 @@
+{
+    "success": true,
+    "msg": "成功",
+    "context": {
+        "specopsUserTask": {
+            "id": "fadfsdfasd",
+            "userID": "fdsafdsafdfrewrewrw",
+            "taskID": "rewqrewqrwq432143",
+            "title": "标题标题",
+            "content": "作业内容作业内容作业内容作业内容作业内容作业内容作业内容作业内容作业内容作业内容",
+            "imageArray": [
+                "http://test.gyyxjqd.com/app/www/img/study-video.png",
+                "http://test.gyyxjqd.com/app/www/img/army_logo.png",
+                "http://test.gyyxjqd.com/app/www/img/draw.png",
+                "http://test.gyyxjqd.com/app/www/img/logo.png",
+                "http://test.gyyxjqd.com/app/www/img/qr-code.png",
+                "http://test.gyyxjqd.com/app/www/img/reward-point.png"
+            ],
+            "isExcellent": 1
+        }
+    }
+}

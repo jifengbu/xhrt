@@ -1,0 +1,44 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "questionContent": "做好1分钟",
+        "questionTime": "提问时间",
+        "questionImages": [
+          "http://facebook.github.io/react/img/logo_og.png",
+          "http://facebook.github.io/react/img/logo_og.png"
+        ],
+        "answerList": [
+            {
+                "answerTime": "2016-12-12",
+                "answerAlias": "赢销大神",
+                "answerHead": "http://facebook.github.io/react/img/logo_og.png",
+                "answerContent": "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈",
+                "answerImages": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ]
+            },
+            {
+                "answerTime": "2015-12-12",
+                "answerAlias": "赢销小神",
+                "answerHead": "http://facebook.github.io/react/img/logo_og.png",
+                "answerContent": "大袅袅娜娜家好",
+                "answerImages": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ]
+            },
+            {
+                "answerTime": "2013-12-12",
+                "answerAlias": "赢销中神",
+                "answerHead": "http://facebook.github.io/react/img/logo_og.png",
+                "answerContent": "大啦啦啦啦啦家好",
+                "answerImages": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ]
+            }
+        ]
+    }
+}

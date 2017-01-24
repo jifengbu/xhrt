@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>赢销截拳道</title>
+</head>
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		background: url(../../img/under.png) no-repeat;
+	}
+	.header {
+		width: 100%;
+		height: 52px;
+		background-color: #a61f45;
+	}
+	.header .name {
+		padding-top: 20px;
+		text-align: center;
+		font-size: 16px;
+		color: #fff;
+		font-weight: 600;
+	}
+	.centent {
+		width: 100%;
+		text-align: center;
+	}
+	.QRCodeTip {
+		font-size: 12px;
+		color: #555555;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	.QRCode {
+		margin-left: 10%;
+		margin-right: 10%;
+		width: 80%;
+		height: 310px;
+		background-color: #a61f45;
+	}
+	.QRCode p{
+		margin-left: 20%;
+		margin-right: 20%;
+		padding-bottom: 10%;
+		font-size: 12px;
+		color: white;
+	}
+	.QRCodeImg {
+		margin-left: 10%;
+		margin-right: 10%;
+		width: 80%;
+		padding-top: 25px;
+		height: 235px;
+	}
+	.centent .prompt {
+		margin-top: 50px;
+		width: 100%;
+		height: 12px;
+		background: url(../../img/word.png) no-repeat;
+		background-size: 100% 100%;
+	}
+	.centent .button {
+		margin-top: 20px;
+		margin-left: 5%;
+		margin-right: 5%;
+		width: 90%;
+	}
+	.centent .button img {
+		width: 100%;
+		height: 40px;
+	}
+	.footer {
+		position: static;
+		width: 100%;
+	}
+	.footer img {
+		margin-top: 15px;
+		margin-bottom: 15px;
+		margin-left: 5%;
+		margin-right: 5%;
+		width: 90%;
+		height: 187px;
+	}
+</style>
+<body>
+	<div class="header">
+		<div class="name">特种兵赢销二维码</div>
+	</div>
+	<div class="centent">
+		<div class="QRCodeTip">
+			该码适用权限为1年
+		</div>
+		<div class="QRCode"><div class="QRCodeImg"></div>
+			<p>长按二维码保存本地然后打开赢销截拳道APP扫一扫</p>
+		</div>
+		<div class="prompt"></div>
+		<div class="button"><img src="../../img/button_1.png" /></div>
+	</div>
+	<div class="footer"><img src="../../img/video_1.png" /></div>
+</body>
+<script type="text/javascript" src="../../js/thirdparty/jquery-1.11.1.js" ></script>
+<script type="text/javascript" src="../../js/thirdparty/jquery-qrcode-0.14.0.js" ></script>
+<script>
+	$(function(){
+		var code = getParameter("code");
+		var options = {
+            render: 'image',
+		    background: 'white',
+		    text: code,
+            image: '../../img/circular_logo.png' 
+        };
+
+        $('.QRCodeImg').qrcode(options);
+	});
+
+	$(".centent .button").on('click',function(){
+		window.location.href='../sign/download.html';
+	});
+	$(".footer").on('click',function(){
+		window.location.href='http://mp.weixin.qq.com/s?__biz=MjM5NDE5Mzg2MA==&mid=504697577&idx=4&sn=fce235d047b730c5a753958830175b3b&scene=18#wechat_redirect';
+	});
+
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+</script>
+</html>

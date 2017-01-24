@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>赢销截拳道</title>
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+</head>
+<style>
+iframe {
+        width:100%;
+        margin:0 0 1em;
+        border:0;
+    }
+    #topContainer {
+        flex-direction: column;
+        padding: 20px 10px;
+    }
+    #bottomContainer {
+        width: 100%;
+    }
+    .title {
+        font-size: 22px;
+        font-weight: 400;
+        margin-bottom: 20px;
+    }
+    .source {
+        font-size: 16px;
+        margin-bottom: 20px;
+        color: gray;
+    }
+    .info {
+        display: flex;
+        align-items: center;
+    }
+    .iconRead {
+        width: 20px;
+        height: 14px;
+        margin-right: 12px;
+    }
+    .iconLike {
+        width: 18px;
+        height: 16px;
+        margin-right: 12px;
+    }
+    .text {
+        font-size: 14px;
+        margin-bottom: 10px;
+        color: #949494;
+        display: flex;
+        align-items: center;
+        margin-right: 50px;
+    }
+    .shareContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        color: gray;
+        height: 60px;
+        padding: 20px 10px;
+    }
+    .head {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        margin-right: 5px;
+    }
+    .line {
+        height: 1px;
+        width: 100%;
+        background-color: #E8E9EA;
+    }
+    .line1 {
+        height: 1px;
+        width: 100%;
+        background-color: #F7F8F9;
+    }
+    #listContainer {
+        padding: 20px 10px;
+    }
+    .listTitle {
+        font-size: 26px;
+        font-weight: 600;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .list {
+        padding: 0px 10px;
+    }
+    .itemTitle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0 20px 10px;
+    }
+    .headContainer {
+        display: flex;
+        align-items: center;
+    }
+    .name {
+        font-size: 20px;
+        font-weight: 200;
+    }
+    .likesContainer {
+        display: flex;
+        align-items: center;
+        color: #949494;
+        font-size: 12px;
+    }
+    .likes {
+        margin-top: 8px;
+    }
+    .itemContent {
+        font-size: 20px;
+        font-weight: 200;
+        margin-left: 55px;
+        margin-bottom: 20px;
+    }
+    .itemFooter {
+        margin-left: 55px;
+        color: gray;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+</style>
+<body>
+    <div id="topContainer">
+    </div>
+    <div id="iframeContainer">
+    </div>
+    <div class="line"></div>
+    <div id="bottomContainer">
+    </div>
+    <div class="line"></div>
+    <div id="listContainer">
+    </div>
+</body>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+	$(function(){
+		var articleID = getParameter("articleID");
+		var userID = getParameter("userID");
+//		var url = 'http://test.gyyxjqd.com/app/api/articleJsp?userID='+userID+'&articleID='+articleID;
+//		$('#iframeContainer').html('<iframe src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
+		getArticleInfo(articleID,userID);
+		getConmmentArticleList(articleID,userID);
+	});
+	function reinitIframe() {
+	    var iframe = document.getElementById("iframe");
+	    try{
+	        var bHeight = iframe.contentWindow.document.body.scrollHeight;
+	        var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+	        iframe.height = Math.max(bHeight, dHeight);
+	    }catch (ex){
+	        iframe.height = 1000;
+	    }
+	}
+	function setTopContainer(data) {
+	    var html = '';
+	    html += '<div class="title">'+data.title+'</div>';
+	    html += '<div class="source">'+data.describe+'</div>';
+	    html += '<div class="info">';
+	    html += '   <span class="text"><img src="../../img/eye.png" class="iconRead" />'+data.reads+'</span>';
+	    html += '   <span class="text"><img src="../../img/praise.png" class="iconLike" />'+data.likes+'</span>';
+	    html += '</div>';
+	    document.getElementById("topContainer").innerHTML = html;
+	}
+	function setBottomContainer(data) {
+	    var html = '';
+	    var users = (data.shareList||[]).slice(0, 5);
+	    html += '<div class="shareContainer">';
+	    html += '    <span style="margin-right: 2px;">分享过的学员：</span>';
+	    for (var i in users) {
+	        html += '    <img src="'+users[i].userLogo+'" class="head" />';
+	    }
+	    html += '</div>';
+	    document.getElementById("bottomContainer").innerHTML = html;
+	}
+	function setListContainer(list) {
+	    var html = '';
+	    var count = list.length;
+	    html += '<div class="listTitle">评论（'+count+'条）</div>';
+	    html += '<div class="list">';
+
+	    for (var i = 0; i < count; i++) {
+	        var item = list[i];
+	        html += '<div class="listItem">';
+	        html += '    <div class="itemTitle">';
+	        html += '        <div class="headContainer">';
+	        html += '            <img src="'+item.userLogo+'" class="head" />';
+	        html += '            <span class="name">'+item.userName+'</span>';
+	        html += '        </div>';
+	        html += '        <div class="likesContainer">';
+	        html += '            <img src="../../img/praise.png" class="iconLike" /><span class="likes">'+item.praises+'</span>';
+	        html += '        </div>';
+	        html += '    </div>';
+	        html += '    <div class="itemContent">';
+	        html += '        '+item.content;
+	        html += '    </div>';
+	        html += '    <div class="itemFooter">';
+	        html += '        '+item.createTime;
+	        html += '    </div>';
+	        html += '</div>';
+	        if (i !== count-1) {
+	            html += '<div class="line1"></div>';
+	        }
+	    }
+	    html += '</div>';
+	    document.getElementById("listContainer").innerHTML = html;
+	}
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+	function getArticleInfo(articleID,userID) {
+	    var url = app.route.ROUTE_ARTICLE_INFO;
+	    var data = {
+	        articleID: articleID,
+	        userID: userID,
+	    };
+	    app.utils.post({
+	        url: url,
+	        data: data,
+	        success: getArticleInfoSuccess,
+	    });
+	}
+	function getArticleInfoSuccess(data) {
+	    var context = (data || {}).context || {};
+	    var articleID = getParameter("articleID");
+		var userID = getParameter("userID");
+	    var url = context.type == 1 ?context.linkUrl : 'http://test.gyyxjqd.com/app/api/articleJsp?userID='+userID+'&articleID='+articleID;
+	    $('#iframeContainer').html('<iframe src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
+	    setTopContainer(context);
+	    setBottomContainer(context);
+		if (context.type == 1) {
+			$('.title').hide();
+			$('.source').hide();
+		}
+	}
+	function getConmmentArticleList(articleID,userID) {
+		var url = app.route.ROUTE_GET_COMMENT_ARTICLE_LIST;
+	    var data = {
+	        articleID: articleID,
+	        userID: userID,
+	    };
+	    app.utils.post({
+	        url: url,
+	        data: data,
+	        success: getConmmentArticleListSuccess,
+	    });
+	}
+	function getConmmentArticleListSuccess(data) {
+	    var commentList = ((data || {}).context || {}).CommentArticleList||[];
+	    setListContainer(commentList);
+	}
+
+	</script>
+</html>

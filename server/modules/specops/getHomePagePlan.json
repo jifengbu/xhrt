@@ -1,0 +1,70 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "dayPlan": [
+            {
+                "id": "57e90cd8a3bf9185439da5331",
+                "userId": "578eddaa0cf2a4e1d94c9043",
+                "planId": "2016-09-26578eddaa0cf2a4e1d94c90431",
+                "weekPlanId": "201609-3578eddaa0cf2",
+                "submitDate": "2016-09-26 19:56:08",
+                "updateDate": "2016-09-28 14:42:02",
+                "week": 1,
+                "weekIsDate": "2016-09-08",
+                "detailPlan":[
+                    {
+                        "content": "日计划测试",
+                        "isOver": 1
+                    },
+                    {
+                        "content": "哈哈哈哈哈哈",
+                        "isOver": 0
+                    }
+                ]
+            },
+            {
+                "id": "57e90cd8a3bf9185439da5331",
+                "userId": "578eddaa0cf2a4e1d94c9043",
+                "planId": "2016-09-26578eddaa0cf2a4e1d94c90431",
+                "weekPlanId": "201609-3578eddaa0cf2",
+                "submitDate": "2016-09-26 19:56:08",
+                "updateDate": "2016-09-28 14:42:02",
+                "week": 2,
+                "weekIsDate": "2016-12-09",
+                "detailPlan":[
+                    {
+                        "content": "离开就开始江东父老看水电费水电费",
+                        "isOver": 1
+                    },
+                    {
+                        "content": "亲切慰问我认为二位权威热舞",
+                        "isOver": 1
+                    }
+                ]
+            }
+        ],
+        "weekPlan": [
+            {
+                "id": "jkfdsafds4321",
+                "planId": "jklfdsafdsaf123",
+                "monthPlanId": "432412",
+                "weekNum": 1,
+                "startDate": "2012-2-2",
+                "content": "完成目标1000王",
+                "isOver": 1
+            }
+        ],
+        "monthPlan": [
+            {
+                "content": "月计划",
+                "id": "57ebbeda2ce37bf96ca3df",
+                "isOver": 0,
+                "planId": "月计划id",
+                "submitDate": "提交时间",
+                "updateDate": "更新时间",
+                "userID": "用户id"
+            }
+        ]
+    }
+}

@@ -1,0 +1,10 @@
+export interface PopupProps {
+    animationType?: string;
+    maskClosable?: boolean;
+    visible: boolean;
+}
+declare var _default: {
+    show(content: any, options: any): void;
+    hide(): void;
+};
+export default _default;

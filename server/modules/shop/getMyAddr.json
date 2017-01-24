@@ -1,0 +1,30 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {addressList:[
+        {
+            "addNo": "0",
+            "name": "wang",
+            "addr": "贵州",
+            "phone": "贵州"
+        },
+        {
+            "addNo": "1",
+            "name": "wang",
+            "addr": "beijing",
+            "phone": "贵州"
+        },
+        {
+            "addNo": "2",
+            "name": "",
+            "addr": "",
+            "phone": ""
+        },
+        {
+            "addNo": "3",
+            "name": "",
+            "addr": "",
+            "phone": ""
+        }
+    ]}
+}

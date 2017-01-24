@@ -1,0 +1,24 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "bannerArray": [
+            "http://localhost:3000/images/4.png",
+            "http://localhost:3000/images/3.png",
+            "http://localhost:3000/images/2.png",
+            "http://localhost:3000/images/1.png",
+            "http://img2.3lian.com/img2007/10/28/123.jpg"
+        ],
+        "detailDec": "这是个丑与美的完美结合",
+        "phone": "18984805902",
+        "shopID": "18984805902",
+        "vedioArray": [
+            "http://localhost:3000/video/test.m3u8",
+            "http://localhost:3000/video/test.m3u8"
+        ],
+        "infoImageArray": [
+            "http://img2.3lian.com/img2007/10/28/123.jpg",
+            "http://localhost:3000/images/4.png"
+        ]
+    }
+}

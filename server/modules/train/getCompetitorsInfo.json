@@ -1,0 +1,33 @@
+{
+    "success": true,
+    "msg": "抽奖成功",
+    "context": {
+        "roomID": "12",
+        "userInfoList": [
+            {
+                "userImg": "http://localhost:3000/images/3.png",
+                "userName": "王城1",
+                "userLevel": 56,
+                "sex": 0,
+                "userAlias": "赢销达人",
+                "userID": "56cc02859a58f51d88c7b883"
+            },
+            {
+                "userImg": "http://localhost:3000/images/3.png",
+                "userName": "王城2",
+                "userLevel": 56,
+                "sex": 1,
+                "userAlias": "赢销达人",
+                "userID": "56cfb282c76ac713cc5f04c7"
+            }
+        ],
+        "propList": [
+            {
+                "propImg": "http://localhost:3000/images/IPHONE.png",
+                "propType": 0,
+                "propValue": 56,
+                "propID": 1
+            }
+        ]
+    }
+}

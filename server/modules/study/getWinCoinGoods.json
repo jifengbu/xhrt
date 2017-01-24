@@ -1,0 +1,27 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "winCoinList": [
+            {
+                "winCoinImg": "http://localhost:3000/images/4.png",
+                "winCoinNum": 0,
+                "winCoinID": 0,
+                "price": 0
+            },
+            {
+                "winCoinImg": "http://localhost:3000/images/4.png",
+                "winCoinNum": 0,
+                "winCoinID": 0,
+                "price": 0
+            },
+            {
+                "winCoinImg": "http://localhost:3000/images/4.png",
+                "winCoinNum": 0,
+                "winCoinID": 0,
+                "price": 0
+            }
+        ]
+    }
+
+}

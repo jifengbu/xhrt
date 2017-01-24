@@ -1,0 +1,20 @@
+{
+    "success": true,
+    "msg": "抽奖成功",
+    "context": {
+        "virtualfigure": [
+            {
+                "userImg": "http://localhost:3000/images/3.png",
+                "userName": "王城",
+                "userLevel": 56,
+                "userAlias": "赢销达人"
+            }
+        ],
+        "virtualCommentList": [
+            {
+                "commentID": 25,
+                " comment": "棒极了"
+            }
+        ]
+    }
+}

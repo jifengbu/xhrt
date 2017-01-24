@@ -1,0 +1,12 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "homeworkId": " ert45561",
+        "homeworkSubmitTime": "2016-3-25",
+        "authorName": "王大拿",
+        "authorCompany": "北京天华科技",
+        "authorPosition": "公司总监",
+        "homeworkDetail": "asfsdf"
+    }
+}

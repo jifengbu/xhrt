@@ -1,0 +1,1 @@
+{    "success": true,    "msg": "获取数据成功",    "context": {        "hotSearch": [            {                "keyword": "1分钟自介绍",                "searchType": 0            }        ],        "historySearch": [            {                "keyword": "1分钟我介绍",                "searchType": 0            }        ]    }}

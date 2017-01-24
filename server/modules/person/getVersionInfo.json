@@ -1,0 +1,1 @@
+{    "success": true,    "msg": "获取数据成功",    "context": {        "versionInfoUrl": "http://localhost:3000/download/version.json",        "apkUrl": "http://localhost:3000/download/apk/jxjqd.apk",        "jsIosUrl": "http://localhost:3000/download/www/android/www.zip",        "jsAndroidUrl": "http://localhost:3000/download/www/ios/www.zip",        "enable": true    }}

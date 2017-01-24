@@ -1,0 +1,11 @@
+{
+    "success": true,
+    "msg": "删除成功",
+    "context":{
+    	"isWatchVideo":1,
+    	"isOverTest":0,
+    	"isOverTask":0,
+    	"isTaskShare":0,
+    	"studyProgress":50
+    }
+}

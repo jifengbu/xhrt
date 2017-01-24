@@ -1,0 +1,26 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "integralList": [
+            {
+                "integralImg": "http://localhost:3000/images/IPHONE.png",
+                "winCoin": 0,
+                "integralNum": 555,
+                "integralID": 0
+            },
+            {
+                "integralImg": "http://localhost:3000/images/IPHONE.png",
+                "winCoin": 0,
+                "integralNum": 555,
+                "integralID": 0
+            },
+            {
+                "integralImg": "http://localhost:3000/images/IPHONE.png",
+                "winCoin": 0,
+                "integralNum": 555,
+                "integralID": 0
+            }
+        ]
+    }
+}

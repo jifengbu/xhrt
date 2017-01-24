@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+	</head>
+	<style>
+		div {
+			margin: 6px 13px 6px;
+		}
+		textarea {
+			height: 200px;
+			width: 100%;
+			background-color: white;
+			color: #808080;
+			padding: 10px;
+			margin-top: 6px;
+			text-indent:2em;
+		}
+		.confirm-btn {
+			background-color: red;
+			color: white;
+			width: 45%;
+		}
+		.shareBtn {
+			background-color: #5cb85c;
+			color: white;
+			width: 45%;
+		}
+	</style>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">意见反馈</h1>
+		</header>
+		<div class="mui-content">
+			<div style="margin: 10px;">
+				<textarea wrap="soft" id="feedbackContent" placeholder="请输入您要反馈的内容"></textarea>
+			</div>
+			<div>
+				<button onclick="doCancel()" class="shareBtn">取消</button>
+				<button onclick="doSubmit()" class="confirm-btn">确认并提交</button>
+			</div>
+		</div>
+		<div class="technical-support">技术支持@贵阳赢销截拳道网络科技有限公司</div>
+	</body>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		"use strict";
+		 function doCancel() {
+	       $('#feedbackContent').val('');
+	  	}
+	    function doSubmit() {
+	   	 	if($("#feedbackContent").val() == null || $("#feedbackContent").val() == "") {
+				mui.toast("请填写您需要反馈的内容");
+	        		return;
+	       }
+	        var param = {
+		    	openid: params.openid,
+	            content: $("#feedbackContent").val(),
+	        };
+	        app.utils.post({
+				url: app.route.ROUTE_SUBMIT_FEEDBACK,
+				data: param,
+				success: doSubmitSuccess,
+			});
+	    }
+	    function doSubmitSuccess(data) {
+	    		mui.toast(data.msg);
+	    }
+		mui.init({
+			swipeBack: true
+		});
+		var params = app.router.getParameter();
+	</script>
+</html>

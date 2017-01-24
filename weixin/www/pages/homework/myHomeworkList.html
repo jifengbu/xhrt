@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8"/>
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+		<meta http-equiv="content-security-policy"/>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css"/>
+		<!--App自定义的css-->
+		<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+	</head>
+	<body>
+		<style>
+		  .mui-bar~.mui-content .mui-fullscreen {
+				top: 44px;
+				height: auto;
+			}
+
+			.mui-pull-top-tips {
+				position: absolute;
+				top: -20px;
+				left: 50%;
+				margin-left: -25px;
+				width: 40px;
+				height: 40px;
+				border-radius: 100%;
+				z-index: 1;
+			}
+			.mui-bar~.mui-pull-top-tips {
+				top: 24px;
+			}
+			.mui-pull-top-wrapper {
+				width: 42px;
+				height: 42px;
+				display: block;
+				text-align: center;
+				background-color: #efeff4;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+				box-shadow: 0 4px 10px #bbb;
+				overflow: hidden;
+			}
+			.mui-pull-top-tips.mui-transitioning {
+				-webkit-transition-duration: 200ms;
+				transition-duration: 200ms;
+			}
+			.mui-pull-top-tips .mui-pull-loading {
+				/*-webkit-backface-visibility: hidden;
+				-webkit-transition-duration: 400ms;
+				transition-duration: 400ms;*/
+
+				margin: 0;
+			}
+			.mui-pull-top-wrapper .mui-icon,
+			.mui-pull-top-wrapper .mui-spinner {
+				margin-top: 7px;
+			}
+			.mui-icon{
+				width: 18px;
+				height: 18px;
+				margin-top: 3px;
+			}
+			.mui-pull-top-wrapper .mui-icon.mui-reverse {
+				/*-webkit-transform: rotate(180deg) translateZ(0);*/
+			}
+			.mui-pull-bottom-tips {
+				text-align: center;
+				background-color: #efeff4;
+				font-size: 15px;
+				line-height: 40px;
+				color: #777;
+			}
+			.mui-pull-top-canvas {
+				overflow: hidden;
+				background-color: #fafafa;
+				border-radius: 40px;
+				box-shadow: 0 4px 10px #bbb;
+				width: 40px;
+				height: 40px;
+				margin: 0 auto;
+			}
+			.mui-pull-top-canvas canvas {
+				width: 40px;
+			}
+			.mui-slider-indicator.mui-segmented-control {
+				background-color: white;
+			}
+
+			.mui-margin-li {
+				border-radius: 6px;
+				margin: 0 6px 6px;
+			}
+
+			.mui-control-content .mui-loading {
+				margin-top: 50px;
+			}
+			.threeLines {
+			  width:100%
+			  word-break:break-all;
+			  display:-webkit-box;
+			  -webkit-line-clamp:3;
+			  -webkit-box-orient:vertical;
+			  overflow:hidden;
+			}
+			.mui-radius{
+				border-radius: 6px;
+			}
+            .tip{
+	            	text-align: center;
+	            	font-size: 12px;
+	            	color: gray;
+            }
+			.homeworkTime {
+				display: inline;
+				font-size: 14px;
+			}
+			.number {
+				font-size: 14px;
+			}
+			.homeworkPraise {
+				float: right;
+				margin-right: 10px;
+				margin-top: -2px;
+			}
+			.homeworkAuthor {
+				display: inline;
+				color: black;
+			}
+			.authorCompany {
+				float: right;
+				margin-right: 5px;
+			}
+			li {
+				background: white;
+			}
+			img{
+				width: 14px;
+				height: 14px;
+				padding-top: 3px;
+			}
+			.mui-homework-style{
+				background-color: white;
+				border-radius: 6px;
+				padding: 10px 13px 15px;
+				margin: 10px;
+			}
+			.mui-homework-detail{
+				color: #666666;
+				font-size: 14px;
+				line-height: 22px;
+				letter-spacing: 1px;
+			}
+			.mui-homework-title{
+				color: #333333;
+				padding-top: 3px;
+				font-size: 15px;
+				font-weight: bold;
+			}
+			.detail-margin{
+				margin-left: -13px ;
+				margin-right: -13px;
+			}
+			.div-bottom{
+				margin-top: 5px;
+			}
+			.div-top{
+				margin-top: -8px;
+			}
+			.empty_list {
+				color: red;
+				padding-top: 150px;
+				padding-bottom: 450px;
+				background-color: #efeff4;
+				text-align: center;
+				font-size: 25px;
+			}
+		</style>
+		<header class="mui-bar mui-bar-nav">
+			<h1 id="courseName" class="mui-title">我的作业</h1>
+		</header>
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper back-color">
+			<div class="mui-scroll">
+				<ul id="homework-list" class="mui-table-view"></ul>
+			</div>
+		</div>
+	</body>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/mui.pullToRefresh.js" ></script>
+	<script src="../../js/thirdparty/mui.pullToRefresh.material.js" ></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		"use strict";
+		mui.init({
+			pullRefresh: {
+				container: '#pullrefresh',
+				down: {
+					callback: pulldownRefresh
+				},
+				up: {
+					contentrefresh: '正在加载...',
+					callback: pullupRefresh
+				}
+			}
+		});
+
+		function pulldownRefresh() {
+			query.pageNo = FIRST_PAGE_NO;
+			query.dir = 'down';
+			getHomeworkListData(query.pageNo);
+		}
+
+		function pullupRefresh() {
+			query.pageNo++;
+			query.dir = 'up';
+			getHomeworkListData(query.pageNo);
+		}
+
+		function getHomeworkListData( page) {
+			var url = app.route.ROUTE_GET_HOMEWORK_LIST_BY_OPENID;
+			var data = {
+				openid: params.openid,
+				pageNo: page,
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: getHomeworkListDataSuccess,
+			});
+		}
+
+		function getHomeworkListDataSuccess(data) {
+			if(data.success === true && data.context) {
+				var list = data.context.homeworkList;
+				if(!list || !list.length) {
+					// mui.toast('暂无数据');
+					if(query.pageNo == FIRST_PAGE_NO) {
+						showEmptyList();
+					}
+					if (query.dir === 'down') {
+						mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+					} else if (query.dir === 'up') {
+						mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+					}
+				} else {
+					if(query.dir === 'up') {
+						showList(list, saved.list.length);
+						saved.list = saved.list.concat(list);
+					} else {
+						showList(list);
+						saved.list = list;
+					}
+				}
+				if(query.dir === 'down') {
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+					mui('#pullrefresh').pullRefresh().refresh(true);
+				} else if(query.dir === 'up') {
+					mui('#pullrefresh').pullRefresh().endPullupToRefresh();
+				}
+			} else {
+				if(query.pageNo == FIRST_PAGE_NO) {
+					showEmptyList();
+				}
+				if (query.dir === 'down') {
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+				} else if (query.dir === 'up') {
+					mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+				}
+			}
+			query.dir = 'none';
+		}
+
+		function getListItem(item,index,append) {
+			index = index * 1 + (append || 0) * 1;
+			var html = '';
+			// var tmp = item.homeworkDetail.replace(/♖/g,'')
+			// var detail = tmp.replace(/♔/g,'');
+			var str = "";
+			var detail = "";
+			if (item.homeworkDetail.indexOf("♖")>0 || item.homeworkDetail.indexOf("♔")>0) {
+				str =  item.homeworkDetail.split("♖");
+				for (var i=0; i<str.length; i++ ) {
+					if(i != str.length-1){
+						detail += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+str[i].split("♔")[1]+"<br/><br/>";
+					}else{
+						detail += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+str[i].split("♔")[1];
+					}
+				}
+			} else {
+				detail = item.homeworkDetail;
+			}
+			html += '<li class="mui-table-view-cell" style="'+(item.isLooked?"background:#eeeeee":"background:white")+'" data-index="'+index+'">'
+			html +=	'<div class="div-top">'
+			html +=	'<p class="homeworkAuthor">'+item.authorName+'</p>'
+			html +=	'<p class="authorCompany">'+item.authorCompany+'<p>'
+			html +=	'<p>'+item.authorPosition+'<p>'
+			html +=	'<p class="threeLines">'+detail+'</p>'
+			html += '</div>'
+			html +=	'<div class="div-bottom">'
+			html +=	'<p class="homeworkTime">'+'<span class="mui-icon">'+'<img class="mui-icon" src="../../img/clock.png" />'+'</span>&nbsp'+item.homeworkSubmitTime+'</p>'
+			html +=	'<p class="homeworkPraise"><span class="mui-icon">'+'<img class="mui-icon" src="'+(item.isPraise==1?'../../img/praise-on.png':'../../img/praise-off.png')+'" />'+'</span>&nbsp<span class=number>'+item.praise+'</span></p>'
+			html += '</div>'
+			html +='</li>'
+			return html;
+		}
+
+		function showEmptyList() {
+			$('#pullrefresh').html('<div class="empty_list">没有相关数据</div>');
+		}
+
+		mui('#homework-list').on('tap','li', function() {
+			var index = $(this).data('index');
+			var data = {
+				openid:params.openid,
+				homeworkId: saved.list[index].homeworkId,
+				isPraise: saved.list[index].isPraise,
+				praise: saved.list[index].praise,
+				courseName:params.courseName,
+			}
+			saved.list[index].isLooked = true;
+			saved.homeworkScrollTop = app.utils.getScrollTop($('.mui-scroll-wrapper .mui-scroll'));
+			app.router.showView('./homeworkDetail.html', data, saved);
+		});
+
+		function showList(list, append) {
+			var html = '';
+			for(var i in list) {
+				html += getListItem(list[i],i,append);
+			}
+			if(!append) {
+				$('#homework-list').html(html);
+			} else {
+				$('#homework-list').append(html);
+			}
+			if(query.dir === "none") {
+				app.router.resetScollerBar(setScrollTop);
+			}
+		}
+
+		function setScrollTop() {
+			var y = saved.homeworkScrollTop;
+			setTimeout(function() {
+				mui('#pullrefresh').pullRefresh().scrollTo(0, y);
+			}, 0);
+		}
+		var FIRST_PAGE_NO = 1;
+		var params = app.router.getParameter();
+		var saved = app.router.getSavedData();
+		if (typeof(saved.courseId) == "undefined") {
+			saved.courseId = params.courseId;
+		}
+		var query = saved.query || {
+			pageNo: FIRST_PAGE_NO,
+			type: params.typeID,
+			dir: 'none'
+		};
+		// $('#courseName').text(params.courseName);
+		if(saved.list) {
+			showList(saved.list);
+		} else {
+			getHomeworkListData(1,query.pageNo);
+		}
+	</script>
+</html>

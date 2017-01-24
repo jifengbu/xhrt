@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>赢销截拳道</title>
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+</head>
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: #EEEEEE;
+	}
+	.header {
+		width: 100%;
+		height: 52px;
+		background-color: #a61f45;
+	}
+	.header .title {
+		padding-top: 20px;
+		text-align: center;
+		font-size: 16px;
+		color: #fff;
+		font-weight: 600;
+	}
+	.centent {
+		background-color: #EEEEEE;
+	}
+	.top {
+		width: 100%;
+		height: 67px;
+	}
+	.top .left{
+		float: left;
+		align-items: center;
+		align-content: center;
+	}
+	.top .right{
+		float: right;
+		margin-top: 15px;
+	}
+	.left .headImg{
+		float: left;
+		margin-top: 15px;
+		margin-left: 10px;
+	}
+	.left .headImg img{
+		width: 45px;
+		height: 45px;
+		-moz-border-radius: 22.5px;
+		-webkit-border-radius: 22.5px;
+	}
+	.left .userName {
+		float: right;
+		margin-top: 45px;
+		margin-left: 5px;
+		font-size: 13px;
+		font-weight: 600;
+	}
+	.right .time {
+		margin-top: 25px;
+		padding-right: 10px;
+		height: 25px;
+	}
+	.right .time img{
+		float: left;
+		width: 16px;
+		height: 16px;
+		margin-top: 1px;
+	}
+	.right .time .timeValue{
+		float: right;
+		color: #555555;
+		font-size: 12px;
+		height: 12px;
+		font-weight: 600;
+		margin-top: 2px;
+	}
+	.question {
+		padding: 6px;
+		background-color: #fff;
+	}
+	.answer {
+		background-color: #fff;
+		margin-top: 2px;
+		padding-bottom: 10px;
+		padding-left: 5px;
+		width: 100%;
+		word-wrap:break-word; 
+		word-break:break-all; 
+	}
+	.answer .images img{
+		margin-top: 6px;
+		margin-right: 3px;
+		width: 24%;
+		height:75px
+	}
+	.answer .texts{
+		padding-left: 5px;
+		padding-right: 5px;
+		font-size: 14;
+		color: #333333;
+	}
+</style>
+<body>
+	<div class="header">
+		<div class="title">赢销截拳道-特种兵罗欣的周任务</div>
+	</div>
+	<div class="centent">
+		<div class="top">
+			<div class="left">
+				<div class="headImg"><img src="../../img/head.png" /></div>
+				<div class="userName"></div>
+			</div>
+			<div class="right">
+				<div class="time"><img src="../../img/calendar.png" /><span class="timeValue">2016.11.22 星期日</span></div>
+			</div>
+		</div>
+		<div class="question"></div>
+		<div class="answer">
+			<div class="images">
+			</div>
+			<div class="texts"></div>
+		</div>
+	</div>
+</body>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+<script>
+
+	$(function(){
+		var userName = getParameter("userName");
+		var headImg = getParameter("headImg");
+		var homeworkID = getParameter("homeworkID");
+		$(".centent .top .left .userName").text(userName==undefined||userName=="null"?"":userName);
+		$(".header .title").text("赢销截拳道-特种兵"+(userName==undefined||userName=="null"?"":userName)+"的周任务");
+		if (headImg != "null" && headImg != "") {
+			$(".centent .top .left .headImg").find("img").attr("src",headImg);
+		}
+		getData(homeworkID);
+	});
+
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+
+	function getData(taskID) {
+			var url = app.route.ROUTE_GET_ONE_SPECIAL_SOLDIER_TASK;
+			var data = {
+				id : taskID,
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: getDataSuccess,
+			});
+		}
+
+	function getDataSuccess(data) {
+		if (data.success) {
+			showPage(data.context||{})
+		}
+	}
+	function showPage(data) {
+		var html = ''
+		for (var index in data.images) {
+			if (data.images.hasOwnProperty(index)) {
+				html += '<img src="'+data.images[index]+'" />'
+			}
+		}
+		$('.answer .images').html(html);
+		$(".centent .question").text(data.homeworkContent);
+		var tmpHtml = '<span>'+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+data.answer+'</span>'
+		$(".centent .answer .texts").html(tmpHtml);
+		$('.timeValue').text(showDateTime(data.homeworkTime));
+	}
+</script>
+</html>

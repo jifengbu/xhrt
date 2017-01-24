@@ -1,0 +1,19 @@
+{
+    "success": true,
+    "msg": "抽奖成功",
+    "context": {
+        "lotteryId": "56cd7899c584e492ddf75c53",
+        "isLottery": "2",
+        "prize": {
+            "_id": "56",
+            "name": "火星币",
+            "img": "http://localhost:3000/images/IPHONE.png",
+            "totalCount": 20,
+            "startAngle": 180,
+            "endAngle": 240,
+            "consMarsCoin": 30,
+            "prizeType": 1,
+            "prizeTypeCode": 10001
+        }
+    }
+}

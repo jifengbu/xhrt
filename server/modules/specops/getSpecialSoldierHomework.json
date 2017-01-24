@@ -1,0 +1,48 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "homeworkList": [
+            {
+                "homeworkContent": "做1分钟",
+                "homeworkTime": "2016-12-12",
+                "homeworkID": "1234",
+                "answer": "1、要保证3要素",
+                "images": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ]
+            },
+            {
+                "homeworkContent": "做1分钟",
+                "homeworkTime": "2016-12-11",
+                "homeworkID": "1234",
+                "answer": "1、要保证3要素",
+                "images": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ]
+            },
+            {
+                "homeworkContent": "做1分钟",
+                "homeworkTime": "2016-12-23",
+                "homeworkID": "1234",
+                "answer": "1、要保证3要素",
+                "images": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ]
+            },
+            {
+                "homeworkContent": "做1分钟",
+                "homeworkTime": "2016-12-34",
+                "homeworkID": "1234",
+                "answer": "1、要保证3要素",
+                "images": [
+                  "http://facebook.github.io/react/img/logo_og.png",
+                  "http://facebook.github.io/react/img/logo_og.png"
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+	</head>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title"></h1>
+	</header>
+	<style>
+	    .mui-bg-color{
+			background-color: #EEEEEE;
+		}
+	</style>
+	<body>
+		<div class="mui-content mui-bg-color">
+			<div style="background-color: #d8ead3;margin:30% 10% 10%; border-radius:10px;">
+				<img src="../../img/complete.png" style="width: 30%;height: 30%;padding-left: 10%;padding-top: 30px;" />
+				<p style="color: darkgreen;font-size: 18px;padding:5% 10% 5%;"> <b>作业提交成功</b></p>
+				<a onclick="goback()" style="text-decoration:underline"><div style="padding: 2% 10% 10%;"> 如果你的浏览器没有自动跳转,请点击此链接</div></a>
+			</div>
+			<div class="technical-support">技术支持@贵阳赢销截拳道网络科技有限公司</div>
+		</div>
+	</body>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script type="text/javascript">
+		var params = app.router.getParameter();
+		var saved = app.router.getSavedData();
+//		setInterval (function() {app.router.pop(3,saved);}, 2000);
+		function goback(url, param, saved) {
+			app.router.pop(1, param, saved);
+		}
+	</script>
+</html>

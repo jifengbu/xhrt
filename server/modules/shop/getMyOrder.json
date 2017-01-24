@@ -1,0 +1,53 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "orderList": [
+            {
+                "orderNo": "111",
+                "shopName": "商店名称",
+                "shopPhone": "商店电话",
+                "goodsImg": "http://img2.3lian.com/img2007/10/28/123.jpg",
+                "goodsID": "商品ID",
+                "goodsDec": "商品描述",
+                "totalPrice": "123.00",
+                "goodsNum": "购买数量",
+                "isOver": 1,
+                "isComment": 1
+            },
+            {
+                "orderNo": "222",
+                "shopPhone": "商店电话",
+                "goodsImg": "http://localhost:3000/images/4.png",
+                "goodsID": "商品ID",
+                "goodsDec": "商品描述",
+                "totalPrice": "123.00",
+                "goodsNum": "购买数量",
+                "isOver": 1,
+                "isComment": 0
+            },
+            {
+                "orderNo": "333",
+                "shopPhone": "商店电话",
+                "goodsImg": "http://localhost:3000/images/3.png",
+                "goodsID": "商品ID",
+                "goodsDec": "商品描述",
+                "totalPrice": "123.00",
+                "goodsNum": "购买数量",
+                "isOver": 0,
+                "isComment": 1
+            },
+            {
+                "orderNo": "444",
+                "shopPhone": "商店电话",
+                "goodsImg": "http://localhost:3000/images/6.png",
+                "goodsID": "商品ID",
+                "goodsDec": "商品描述",
+                "totalPrice": "123.00",
+                "goodsNum": "购买数量",
+                "isOver": 0,
+                "isComment": 0
+            }
+        ]
+    }
+}
