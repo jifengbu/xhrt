@@ -36,6 +36,7 @@ var CompanyDetail = React.createClass({
         AppState.addEventListener('change', this._handleAppStateChange);
     },
     getDetail() {
+        app.showProgressHUD();
         var param = {
             userID: app.personal.info.userID,
             starCompanyID: this.props.starCompanyID,
@@ -82,6 +83,9 @@ var CompanyDetail = React.createClass({
     changePlaying() {
         this.setState({playing: true});
     },
+    onLoadEnd() {
+        app.dismissProgressHUD();
+    },
     onBridgeMessage(message){
         const { webviewbridge } = this.refs;
         let type, data;
@@ -127,6 +131,8 @@ var CompanyDetail = React.createClass({
                             <WebView
                                 style={[styles.webview,{height: this.state.webHeight+30}]}
                                 ref="webviewbridge"
+                                startInLoadingState={true}
+                                onLoadEnd={this.onLoadEnd}
                                 onBridgeMessage={this.onBridgeMessage}
                                 injectedJavaScript={injectScript}
                                 scrollEnabled={false}

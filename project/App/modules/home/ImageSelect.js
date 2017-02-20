@@ -11,6 +11,8 @@ const ViewPager = React.createClass({
         var _scrollView: ScrollView;
         this.scrollView = _scrollView;
         this.addIndex = false;
+        this.moveX = 0;
+        this.endX = 0;
 
         this._panResponder = PanResponder.create({
           onPanResponderGrant: (evt, gestureState) => {
@@ -95,7 +97,7 @@ const ViewPager = React.createClass({
             if (this.lastSelectedIndex < 0) this.lastSelectedIndex=0;
             if (this.lastSelectedIndex > this.props.pageCount-1) this.lastSelectedIndex=this.props.pageCount-1;
 
-            console.log('onScrollEnd---', this.lastSelectedIndex);
+            console.log('onScrollEnd---ios', this.lastSelectedIndex);
            InteractionManager.runAfterInteractions(() => {
                this.scrollView.scrollTo({x: sr.ws(254*this.lastSelectedIndex)});
            });
@@ -104,10 +106,17 @@ const ViewPager = React.createClass({
            }
        }
        if (app.isandroid) {
+
+           if (this.moveX < this.endX) {
+               this.lastSelectedIndex = this.lastSelectedIndex - 1;
+           }
+           this.endX = this.moveX;
+
            if (this.lastSelectedIndex < 0) this.lastSelectedIndex=0;
            if (this.lastSelectedIndex > this.props.pageCount-1) this.lastSelectedIndex=this.props.pageCount-1;
 
-           console.log('onScrollEnd---', this.lastSelectedIndex);
+           console.log('onScrollEnd---android', this.lastSelectedIndex);
+
           InteractionManager.runAfterInteractions(() => {
               this.scrollView.scrollTo({x: sr.ws(254*this.lastSelectedIndex)});
           });
@@ -133,8 +142,9 @@ const ViewPager = React.createClass({
     updateIndex(x) {
         let {width, afterChange, pageCount} = this.props;
         let selectedIndex = Math.ceil((x) / width);
+        this.moveX = x;
 
-        console.log('selectedIndex---', selectedIndex);
+        // console.log('selectedIndex---', x, selectedIndex);
         if (this.lastSelectedIndex!==selectedIndex) {
             this.lastSelectedIndex = selectedIndex;
 

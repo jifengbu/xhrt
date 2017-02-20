@@ -233,4 +233,23 @@ module.exports = {
     ROUTE_GET_TRAIN_TASK: SERVER+'getTrainTask', //获取训练任务列表
     ROUTE_GET_STUDY_TASK: SERVER+'getStudyTask', //获取学习任务列表
     ROUTE_GET_PLATFORM_TASK: SERVER+'getPlatformTask', //获取平台任务列表
+    ROUTE_INSERT_CURRENT_TASK_LOG: SERVER+'insertCurrentTaskLog', //插入任务
+
+    //boss接口
+    ROUTE_GET_HOMEWORK_DETAILS: SERVER+'getHomeworkDetails', //获取课后作业列表
+    ROUTE_GET_COMPANY_INFO: SERVER+'getCompanyInfo', //获取公司信息
+    ROUTE_GET_WORK_SITUATION_ABSTRACT: SERVER+'getWorkSituationAbstract', //获取员工工作情况
+    ROUTE_GET_SPECIAL_LIST: SERVER+'getSpecialList', //获取企业下属特种兵列表
+    ROUTE_GET_STUDY_SITUATION_ABSTRACT: SERVER+'getStudySituationAbstract', //获取学习情况概要
+    ROUTE_GET_MONTH_CENTEXE_USER_LIST: SERVER+'getMonthCentexeUserList', //获取员工月目标列表
+    ROUTE_GET_DAY_PLAN_USER_LIST: SERVER+'getDayPlanUserList', //获取员工日计划列表
+    ROUTE_GET_DAY_SUMMER_USER_LIST: SERVER+'getDaySummerUserList', //获取员工日总结列表
+    ROUTE_GET_QUIZZES_DETAIL: SERVER+'getQuizzesDetails', //获取随堂测试
+    ROUTE_GET_STUDY_SITUATION_DETAILS: SERVER+'getStudySituationDetails', //获取学习情况详情
+    ROUTE_GET_PERSONAL_STUDY_DETAILS: SERVER+'getPersonalStudyDetails', //获取个人学习情况详情
+    ROUTE_GET_PERSONAL_QUIZZES_DETAILS: SERVER+'getPersonalQuizzesDetails', //获取个人随堂测试详情
+    ROUTE_GET_PERSONAL_HOMEWORK_DETAILS: SERVER+'getPersonalHomeworkDetails', //获取个人课后作业详情
+    ROUTE_GET_USER_TASK_SUBMIT_RATE: SERVER+'getUserTaskSubmitRate', //获取员工任务提交率
+    ROUTE_GET_USER_TASK_SUBMIT_RATE_DETAILS: SERVER+'getUserTaskSubmitRateDetails', //获取员工任务提交率详情
+
 };

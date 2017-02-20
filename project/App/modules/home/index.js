@@ -18,6 +18,8 @@ var Study = require('../study/index.js');
 var TrainHome = require('../train/TrainHome.js');
 var ActualCombat = require('./Empty.js');//require('../actualCombat/index.js');
 var Specops = require('../specops/index.js');
+var PersonalInfoMgr = require('../../manager/PersonalInfoMgr.js');
+var Subscribable = require('Subscribable');
 
 var INIT_ROUTE_INDEX = 0;
 var ROUTE_STACK = [
@@ -51,6 +53,9 @@ var HomeTabBar = React.createClass({
     },
     componentWillUnmount() {
         app.hasLoadMainPage = false;
+    },
+    componentWillReceiveProps(nextProps) {
+        this.setState({tabIndex: nextProps.initTabIndex});
     },
     getInitialState() {
         return {
@@ -115,15 +120,23 @@ var HomeTabBar = React.createClass({
 });
 
 module.exports = React.createClass({
+    mixins: [Subscribable.Mixin],
     statics: {
         color: CONSTANTS.THEME_COLORS[1],
         title: ROUTE_STACK[INIT_ROUTE_INDEX].component.title,
         leftButton: ROUTE_STACK[INIT_ROUTE_INDEX].component.leftButton,
         rightButton: ROUTE_STACK[INIT_ROUTE_INDEX].component.rightButton,
     },
+    componentWillMount: function() {
+        this.addListenerOn(PersonalInfoMgr, 'INDEX_TAB_CHANGE_EVENT', (param)=>{
+            this.setState({initTabIndex: param.index});
+            this._navigator.jumpTo(_.find(ROUTE_STACK, (o)=>o.index===param.index));
+        });
+    },
     getInitialState() {
         return {
             hasEdit: false,
+            initTabIndex:0,
         };
     },
     onWillFocus() {
@@ -144,7 +157,7 @@ module.exports = React.createClass({
         return <route.component ref={(ref)=>{if(ref)route.ref=ref}} setEditFlag={this.setEditFlag}/>;
     },
     render() {
-        var hasEdit = this.state.hasEdit;
+        var {hasEdit,initTabIndex} = this.state;
         return (
                 <Navigator
                     debugOverlay={false}
@@ -152,7 +165,7 @@ module.exports = React.createClass({
                     ref={(navigator) => {
                         this._navigator = navigator;
                     }}
-                    initialRoute={ROUTE_STACK[INIT_ROUTE_INDEX]}
+                    initialRoute={ROUTE_STACK[initTabIndex]}
                     initialRouteStack={ROUTE_STACK}
                     renderScene={this.renderScene}
                     onDidFocus={(route)=>{
@@ -177,8 +190,9 @@ module.exports = React.createClass({
                     })}
                     navigationBar={
                         <HomeTabBar
-                            initTabIndex={INIT_ROUTE_INDEX}
+                            initTabIndex={initTabIndex}
                             onTabIndex={(index) => {
+                                this.setState({initTabIndex: index});
                                 this._navigator.jumpTo(_.find(ROUTE_STACK, (o)=>o.index===index));
                             }}
                             hasEdit={hasEdit}

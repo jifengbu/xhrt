@@ -31,10 +31,10 @@ module.exports = React.createClass({
             <View style={styles.separator} key={rowID}/>
         );
     },
-    _onPressRow(obj) {
-        this.props.doRestart(obj, this.props.routeIndex);
+    _onPressRow(obj, rowID) {
+        this.props.doRestart(obj, rowID, this.props.routeIndex);
     },
-    renderRow(obj) {
+    renderRow(obj, sectionID, rowID) {
         var videoType = "";
         if (obj.videoType === 1) {
             videoType = "精品课程: ";
@@ -47,7 +47,7 @@ module.exports = React.createClass({
         }
         return (
             <TouchableHighlight
-                onPress={this._onPressRow.bind(null, obj)}
+                onPress={this._onPressRow.bind(null, obj, rowID)}
                 style={styles.itemContainer}
                 underlayColor="#EEB422">
                 <View style={styles.itemStyle}>
@@ -59,7 +59,7 @@ module.exports = React.createClass({
                     <View style={styles.titleStyle}>
                         <Text
                             numberOfLines={1}
-                            style={styles.itemNameText}>
+                            style={[styles.itemNameText, obj.isOver?{color: '#151515'}:{color: '#989898'}]}>
                             {videoType+obj.name||app.login.list[0]}
                         </Text>
                         <View style={styles.iconContainer}>
@@ -163,7 +163,6 @@ var styles = StyleSheet.create({
         width: sr.w-144,
         fontSize: 16,
         marginLeft: 17,
-        color: '#151515',
         fontFamily: 'STHeitiSC-Medium'
     },
     iconContainer: {

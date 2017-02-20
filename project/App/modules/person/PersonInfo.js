@@ -26,6 +26,7 @@ var AgentManager = require('./AgentManager.js');
 var AgentReturns = require('../theAgent/AgentReturns.js');
 var AppointmentSetting = require('../live/AppointmentSetting.js');
 var MyIntegral = require('./MyIntegral.js');
+var BossIndex = require('../specopsBoss/index.js');
 
 var {Button, DImage, WebviewMessageBox} = COMPONENTS;
 import Badge from 'react-native-smart-badge'
@@ -54,9 +55,22 @@ var MenuItem = React.createClass({
             });
             return;
         }
+        if (this.props.page.title==='企业管理') {
+            app.updateNavbarColor(CONSTANTS.THEME_COLORS[1]);
+            app.navigator.push({
+                component: this.props.page.module,
+                passProps: {companyInfo:this.props.companyInfo},
+                sceneConfig: {
+                    ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null
+                }
+            });
+            return;
+        }
     },
     render() {
         var {title, img, info, seprator} = this.props.page;
+        let {companyInfo} = this.props;
+        let headUrl = companyInfo.logo?companyInfo.logo:app.img.common_default;
         return (
             <View>
                 <TouchableOpacity
@@ -74,6 +88,56 @@ var MenuItem = React.createClass({
                             style={styles.icon_go}  />
                     </View>
                 </TouchableOpacity>
+                {
+                    (title==='企业管理' && companyInfo.companyId) &&
+                    <TouchableOpacity onPress={this.showChildPage.bind(null, this.props.page)}>
+                        <View style={styles.companyContainer}>
+                            <View style={styles.companyInfoContainer}>
+                                <DImage
+                                    resizeMode='cover'
+                                    defaultSource={app.img.personal_head}
+                                    source={companyInfo.logo?{uri: headUrl}:headUrl}
+                                    style={styles.headerIcon}  />
+                                <View style={styles.companyInfoStyle}>
+                                    <Text style={styles.companyNameText} numberOfLines={2}>
+                                        {companyInfo.name}
+                                    </Text>
+                                    <Image resizeMode='stretch' source={app.img.specopsBoss_boss_entrance} style={styles.goBossIcon}>
+                                        <Text style={styles.goBossText} numberOfLines={1}>{'进入管理端'}</Text>
+                                    </Image>
+                                </View>
+                            </View>
+                            <View style={styles.companyDetailContainer}>
+                                <View style={styles.panelContainer}>
+                                    <View style={styles.numberContainer}>
+                                        <Text style={styles.numberStyle}>
+                                            {companyInfo.operatorCount}
+                                        </Text>
+                                    </View>
+                                    <Text style={styles.numberText}>开通特种兵人数</Text>
+                                </View>
+                                <View style={styles.vline}/>
+                                <View style={styles.panelContainer}>
+                                    <View style={styles.numberContainer}>
+                                        <Text style={styles.numberStyle}>
+                                            {companyInfo.enterDays}
+                                        </Text>
+                                    </View>
+                                    <Text style={styles.numberText}>企业入驻天数</Text>
+                                </View>
+                                <View style={styles.vline}/>
+                                <View style={styles.panelContainer}>
+                                    <View style={styles.numberContainer}>
+                                        <Text style={styles.numberStyle}>
+                                            {companyInfo.todaySignInCount}
+                                        </Text>
+                                    </View>
+                                    <Text style={styles.numberText}>今日登录人数</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                }
                 {
                     title==='我的课程' &&
                     <CourseRecords showCount={true} />
@@ -93,18 +157,20 @@ module.exports = React.createClass({
         leftButton: { image: app.img.common_back, handler: ()=>{app.scene.goBack&&app.scene.goBack()}},
         rightButton: { image: app.img.personal_set, handler: ()=>{app.scene.toggleMenuPanel()}},
     },
-    getChildPages(courseData,learningRecordBase) {
+    getChildPages(courseData,learningRecordBase, companyInfo) {
         let total = learningRecordBase.total || '';
         const {isAgent, isSpecialSoldier} = app.personal.info;
         return [
+            {seprator:true, title:'企业管理', module: BossIndex, img:app.img.personal_order, info:'',hidden:!companyInfo.companyId},
             {seprator:true, title:'我的课程', module: CourseRecords, img:app.img.personal_order, info:courseData&&courseData.length+'节课',hidden:(isAgent==0&&isSpecialSoldier==0)},
             {seprator:true, title:'学习记录', module: LearningRecords, img:app.img.personal_order, info:'已经学习'+total+'节课'},
-        ].map((item, i)=>!item.hidden&&<MenuItem page={item} key={i} learningRecordBase={learningRecordBase} courseData={courseData} />)
+        ].map((item, i)=>!item.hidden&&<MenuItem page={item} key={i} learningRecordBase={learningRecordBase} courseData={courseData} companyInfo={companyInfo}/>)
     },
     getInitialState() {
         return {
             learningRecordBase:{},
             courseData:[],
+            companyInfo: {},
         };
     },
     componentWillMount() {
@@ -131,6 +197,7 @@ module.exports = React.createClass({
         this.doGetPersonalInfo();
         this.getLearningRecord();
         this.getStudyProgressList();//获取我的课程列表
+        this.getCompanyInfoData();
     },
     getLearningRecord() {
         var param = {
@@ -166,6 +233,20 @@ module.exports = React.createClass({
             if (courseList) {
                 this.setState({courseData:courseList});
             }
+        }
+    },
+    getCompanyInfoData() {
+        var param = {
+            userID: app.personal.info.userID,
+        };
+        POST(app.route.ROUTE_GET_COMPANY_INFO, param, this.getCompanyInfoDataSuccess);
+    },
+    getCompanyInfoDataSuccess(data) {
+        if (data.success) {
+            var context = data.context;
+            app.personal.info.companyId = context.companyId;
+            app.personal.set(app.personal.info);
+            this.setState({companyInfo: context});
         }
     },
     doGetPersonalInfo() {
@@ -235,7 +316,7 @@ module.exports = React.createClass({
         let post = info.post?info.post:'';
         let company = info.company?info.company:'';
         let headUrl = info.headImg?info.headImg:info.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
-        let {courseData, learningRecordBase} = this.state;
+        let {courseData, learningRecordBase, companyInfo} = this.state;
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -360,7 +441,7 @@ module.exports = React.createClass({
                     </View>
                 </View>
                     {
-                        this.getChildPages(courseData,learningRecordBase)
+                        this.getChildPages(courseData,learningRecordBase,companyInfo)
                     }
                 </ScrollView>
             </View>
@@ -630,48 +711,88 @@ var styles = StyleSheet.create({
         fontFamily: 'STHeitiSC-Medium',
         color: '#878787',
     },
-    overlayContainer: {
-        position:'absolute',
-        top:0,
-        left:0,
-        width:sr.w,
-        height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0)'
+    companyContainer: {
+        width: sr.w,
+        height: 157,
+        alignSelf: 'center',
+        borderRadius: 6,
+        backgroundColor: '#FFFFFF',
+    },
+    companyInfoContainer: {
+        height: 82,
+        flexDirection: 'row',
+    },
+    headerIcon: {
+        width: 48,
+        height: 48,
+        marginLeft: 30,
+        marginTop: 16,
+        borderRadius: 24,
+    },
+    companyInfoStyle: {
+        flex:1,
+        marginLeft: 17,
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    companyNameText: {
+        width: 170,
+        fontSize: 18,
+        color: '#000000',
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    goBossIcon: {
+        width: 96,
+        height: 47,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    goBossText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#FFFFFF',
+        marginLeft: 5,
+        marginBottom: 4,
+        backgroundColor: 'transparent',
+    },
+    divisionLine: {
+        width: sr.w-24,
+        height: 1,
+        alignSelf: 'center',
+        backgroundColor: '#F8F8F8',
+    },
+    companyDetailContainer: {
+        height: 62,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     panelContainer: {
-        marginHorizontal: 5,
-        top: 0,
-        alignSelf: 'flex-end',
-        borderRadius: 4,
-        width:sr.w/3,
-        backgroundColor:CONSTANTS.THEME_COLOR,
-    },
-    panelContainerHeight: {
-        height:400,
-    },
-    panelContainerHeight1: {
-        height:345,
-    },
-    btnSet: {
-        marginTop: 15,
-        width: 100,
-        alignSelf: 'center',
+        flex: 1,
+        alignItems: 'center',
         justifyContent: 'center',
-        height: 40,
-        borderRadius: 4,
-        backgroundColor:'white',
+        flexDirection: 'column',
     },
-    btnText: {
-        fontSize: 13,
-        alignSelf: 'center',
-        color: '#555555',
+    numberContainer: {
+        height: 24,
+        flexDirection: 'row',
+        marginBottom: 6,
     },
-    lineContainer: {
-        marginRight: 30,
-        top: 0,
-        alignSelf: 'flex-end',
-        width:5,
-        height:10,
-        backgroundColor:CONSTANTS.THEME_COLOR,
+    numberStyle: {
+        color: '#FF5E5F',
+        fontSize: 20,
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    numberText: {
+        color: '#848484',
+        fontSize: 12,
+        lineHeight: 21,
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    vline: {
+        width: 1,
+        height: 45,
+        backgroundColor: '#EEEEEE',
     },
 });

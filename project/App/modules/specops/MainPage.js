@@ -88,11 +88,13 @@ module.exports = React.createClass({
         }
     },
     getStudyProgress(specialSoldierVedioID) {
-        var param = {
-            userID:app.personal.info.userID,
-            videoID: specialSoldierVedioID,
-        };
-        POST(app.route.ROUTE_STUDY_PROGRESS, param, this.getStudyProgressSuccess);
+        if (app.personal.info && app.personal.info.userID) {
+            var param = {
+                userID:app.personal.info.userID,
+                videoID: specialSoldierVedioID,
+            };
+            POST(app.route.ROUTE_STUDY_PROGRESS, param, this.getStudyProgressSuccess);
+        }
     },
     getStudyProgressSuccess(data) {
         if (data.success) {
@@ -238,7 +240,7 @@ module.exports = React.createClass({
                     <View style={styles.personIntroductionStyle}>
                         <View style={[styles.titleContainer, {marginLeft: 8}]}>
                             <Text style={[styles.nameText, {color: '#404040'}]}>{strHour}</Text>
-                            <Text style={[styles.nameText, {marginLeft: 15, color: '#FF6363'}]}>{app.personal.info.name}</Text>
+                            <Text numberOfLines={1} style={[styles.nameText, {marginLeft: 15, color: '#FF6363', width: sr.ws(150)}]}>{app.personal.info.name}</Text>
                         </View>
                         <View style={styles.divisionLine}></View>
                         <View style={styles.personStyle}>

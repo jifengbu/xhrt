@@ -34,15 +34,13 @@ var ReadingDetail = require('./ReadingDetail.js');
 var RecommendVideoPlayer = require('./RecommendVideoPlayer.js');
 var CoursePlayer = require('../specops/CoursePlayer.js');
 var ShowWebView = require('./ShowWebView.js');
-var specialTask = require('../task/index.js')
+var specialTask = require('../task/index.js');
+var EmployeeMonthPlan = require('../specopsBoss/EmployeeMonthPlan.js');
+var EmployeePlanAndSummary = require('../specopsBoss/EmployeePlanAndSummary.js');
+
 var {DImage} = COMPONENTS;
 
-const LABEL_IMAGES = [
-    app.img.home_boutique_curriculum,
-    app.img.home_good_case,
-    app.img.home_editor_recommend,
-    app.img.home_course_highlights,
-];
+const VIDEO_TYPES = ['精品课程', '精彩案例', '编辑推荐', '课程亮点'];
 
 module.exports = React.createClass({
     statics: {
@@ -55,6 +53,9 @@ module.exports = React.createClass({
         }},
     },
     getInitialState() {
+
+        this.isBig = false;
+        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return {
             ShowMealBox: false,
             bannerList:[],
@@ -66,15 +67,20 @@ module.exports = React.createClass({
             activityIndex: 0,
             studyInfo: null,
             task:null,
+            submitLog: this.ds.cloneWithRows([]),
+            dataSource: this.ds.cloneWithRows([]),
         };
     },
     componentDidMount() {
         this.getHomePageData();
         this.getUserStudyInfo();
+        this.getWorkSituationAbstract();
         this.selectedIndex = this.state.activityIndex;
     },
     onWillFocus() {
+        this.isBig = true;
         this.getUserStudyInfo();
+        this.getWorkSituationAbstract();
         this.getHomePageData();
     },
     doCancle() {
@@ -109,8 +115,10 @@ module.exports = React.createClass({
                 if (hotActiveityList.length > 2) {
                     mergeHotActiveityList = mergeHotActiveityList.concat(hotActiveityList);
                     mergeHotActiveityList = mergeHotActiveityList.concat(hotActiveityList);
-                    this.setState({activityIndex:1});
-                    this.selectedIndex = 1;
+                    if (!this.isBig) {
+                        this.setState({activityIndex:1});
+                        this.selectedIndex = 1;
+                    }
                 }else {
                     mergeHotActiveityList = mergeHotActiveityList.concat(hotActiveityList);
                 }
@@ -157,7 +165,7 @@ module.exports = React.createClass({
 
                 }
             }
-            this.setState({bannerList, hotActiveityList, mergeHotActiveityList, encourageReadList, encourageCourseList, shopInfoList,task}, ()=>{
+            this.setState({bannerList, hotActiveityList, mergeHotActiveityList, encourageReadList, encourageCourseList, shopInfoList,task, dataSource: this.ds.cloneWithRows(encourageCourseList)}, ()=>{
                 app.dismissProgressHUD();
             });
         } else {
@@ -200,37 +208,7 @@ module.exports = React.createClass({
                 break;
             case 3:
                 if (bannerInfo.videoInfo) {
-                    const {isAgent, isSpecialSoldier} = app.personal.info;
-                    let authorized = isAgent||isSpecialSoldier; //是否是特种兵1—是  0—不是
-                    if (bannerInfo.videoInfo.videoType==6) {
-                        if (!authorized) {
-                            //跳转到购买特种兵页
-                            app.showMainScene(1);
-                        } else {
-                            //跳转到特种兵视频播放页
-                            var param = {
-                                userID:app.personal.info.userID,
-                                videoID: bannerInfo.videoInfo.videoID,
-                            };
-                            POST(app.route.ROUTE_STUDY_PROGRESS, param, (data)=>{
-                                if (data.success) {
-                                    app.navigator.push({
-                                        component: CoursePlayer,
-                                        passProps: {isCourseRecord:true, lastStudyProgress: data.context},
-                                    });
-                                } else {
-                                    Toast('该特种兵课程学习进度获取失败，请重试！');
-                                }
-                            });
-                        }
-                    } else {
-                        //跳转到普通视频播放页
-                        app.navigator.push({
-                            title: bannerInfo.videoInfo.name,
-                            component: RecommendVideoPlayer,
-                            passProps: {videoInfo:bannerInfo.videoInfo},
-                        });
-                    }
+                    this.playVideo(bannerInfo.videoInfo, true);
                 }
                 break;
             case 4:
@@ -355,81 +333,82 @@ module.exports = React.createClass({
     },
     renderTask() {
         var {task} = this.state;
-        console.log(task);
         return (
-            <View style={styles.taskView}>
-                <View style={styles.columnTopView}>
-                    <View style={styles.columnRedLine}></View>
-                    <Text style={styles.columnTitle}>
-                      当前任务
-                    </Text>
-                </View>
-                <View style={styles.columnContainer}>
-                    <View style={styles.rowContainer}>
-                        <TouchableOpacity onPress={this.goSpecialTask.bind(null,0)}>
-                            <Image style={styles.cell} source={app.img.task_special_task}>
-                                <Text style={styles.cellTitle}>
-                                  特种兵任务
-                                </Text>
-                                <View style={styles.cellContent}>
-                                    <Badge style={styles.cellContentLabelLeft} textStyle={{color: '#FFFFFF'}}>
-                                      {task&&task.specialTask.unfinished}
-                                    </Badge>
-                                    <Text style={styles.cellContentLabelRight}>
-                                      条未完成
-                                    </Text>
-                                </View>
-                            </Image>
-                        </TouchableOpacity>
-                      <TouchableOpacity onPress={this.goSpecialTask.bind(null,1)}>
-                          <Image style={styles.cell} source={app.img.task_study_task}>
-                           <Text style={styles.cellTitle}>
-                             学习任务
-                           </Text>
-                           <View style={styles.cellContent}>
-                               <Badge style={styles.cellContentLabelLeft} textStyle={{color: '#FFFFFF'}}>
-                                 {task&&task.studyTask.unfinished}
-                               </Badge>
-                               <Text style={styles.cellContentLabelRight}>
-                                 条未完成
-                               </Text>
-                           </View>
-                          </Image>
-                      </TouchableOpacity>
+            <View>
+                <View style={styles.taskView}>
+                    <View style={styles.columnTopView}>
+                        <View style={styles.columnRedLine}></View>
+                        <Text style={styles.columnTitle}>
+                          当前任务
+                        </Text>
                     </View>
-                    <View style={styles.rowContainer}>
-                        <TouchableOpacity onPress={this.goSpecialTask.bind(null,2)}>
-                            <Image style={styles.cell} source={app.img.task_practice_task}>
-                             <Text style={styles.cellTitle}>
-                               训练任务
-                             </Text>
-                             <View style={styles.cellContent}>
-                                 <Badge style={styles.cellContentLabelLeft} textStyle={{color: '#FFFFFF'}}>
-                                   {task&&task.trainTask.unfinished}
-                                 </Badge>
-                                 <Text style={styles.cellContentLabelRight}>
-                                   条未完成
-                                 </Text>
-                             </View>
-                            </Image>
-                        </TouchableOpacity>
-                      <TouchableOpacity onPress={this.goSpecialTask.bind(null,3)}>
-                          <Image style={styles.cell} source={app.img.task_space_task}>
-                           <Text style={styles.cellTitle}>
-                             平台任务
-                           </Text>
-                           <View style={styles.cellContent}>
-                               <Badge style={styles.cellContentLabelLeft} textStyle={{color: '#FFFFFF'}}>
-                                 {task&&task.platformTask.unfinished}
-                               </Badge>
-                               <Text style={styles.cellContentLabelRight}>
-                                 条未完成
-                               </Text>
-                           </View>
-                          </Image>
-                      </TouchableOpacity>
+                    <View style={styles.columnContainer}>
+                        <View style={styles.rowContainer}>
+                            <TouchableOpacity onPress={this.goSpecialTask.bind(null,0)}>
+                                <Image style={styles.cell} source={app.img.task_special_task}>
+                                    {
+                                        (task&&task.specialTask.unfinished>0) &&
+                                        <View style={styles.cellContent}>
+                                            <Badge style={styles.cellContentLabelLeft} textStyle={{color: '#FFFFFF'}}>
+                                              {task&&task.specialTask.unfinished}
+                                            </Badge>
+                                            <Text style={styles.cellContentLabelRight}>
+                                              条未完成
+                                            </Text>
+                                        </View>
+                                    }
+                                </Image>
+                            </TouchableOpacity>
+                          <TouchableOpacity onPress={this.goSpecialTask.bind(null,1)}>
+                              <Image style={styles.cell} source={app.img.task_study_task}>
+                               {
+                                   (task&&task.studyTask.unfinished>0) &&
+                                   <View style={styles.cellContent}>
+                                       <Badge style={styles.cellContentLabelLeft} textStyle={{color: '#FFFFFF'}}>
+                                         {task&&task.studyTask.unfinished}
+                                       </Badge>
+                                       <Text style={styles.cellContentLabelRight}>
+                                         条未完成
+                                       </Text>
+                                   </View>
+                                }
+                              </Image>
+                          </TouchableOpacity>
+                        </View>
+                        <View style={styles.rowContainer}>
+                            <TouchableOpacity onPress={this.goSpecialTask.bind(null,2)}>
+                                <Image style={styles.cell} source={app.img.task_practice_task}>
+                                 {
+                                     (task&&task.trainTask.unfinished>0) &&
+                                     <View style={styles.cellContent}>
+                                         <Badge style={styles.cellContentLabelLeft} textStyle={{color: '#FFFFFF'}}>
+                                           {task&&task.trainTask.unfinished}
+                                         </Badge>
+                                         <Text style={styles.cellContentLabelRight}>
+                                           条未完成
+                                         </Text>
+                                     </View>
+                                 }
+                                </Image>
+                            </TouchableOpacity>
+                          <TouchableOpacity onPress={this.goSpecialTask.bind(null,3)}>
+                              <Image style={styles.cell} source={app.img.task_space_task}>
+                            {
+                            //       <View style={styles.cellContent}>
+                            //        <Badge style={styles.cellContentLabelLeft} textStyle={{color: '#FFFFFF'}}>
+                            //          {task&&task.platformTask.unfinished}
+                            //        </Badge>
+                            //        <Text style={styles.cellContentLabelRight}>
+                            //          条未完成
+                            //        </Text>
+                            //    </View>
+                           }
+                              </Image>
+                          </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
+                <View style={styles.bottomLine}/>
             </View>
         )
     },
@@ -499,6 +478,134 @@ module.exports = React.createClass({
                 </View>
                 <View style={styles.bottomLine}/>
             </TouchableOpacity>
+        );
+    },
+    renderWorkRow(obj, sectionID, rowID) {
+        return (
+            <View>
+                {
+                    <View style={styles.separatorBoss} />
+                }
+                <View style={styles.rowContainerBoss}>
+                    <Text style={styles.rowTime}>{obj.date?obj.date.slice(5):''}</Text>
+                    <Text style={styles.rowName}>{obj.name}</Text>
+                    <Text style={styles.rowTip}>{obj.context}</Text>
+                </View>
+            </View>
+        )
+    },
+    getWorkSituationAbstract() {
+        var param = {
+            companyId: app.personal.info.companyId,
+        };
+        POST(app.route.ROUTE_GET_WORK_SITUATION_ABSTRACT, param, this.getWorkSituationAbstractSuccess,true);
+    },
+    getWorkSituationAbstractSuccess(data) {
+        if (data.context) {
+            this.setState({submitLog:this.ds.cloneWithRows(data.context.submitLog),monthWeekPlanNum:data.context.monthWeekPlanNum,dayPlanNum:data.context.dayPlanNum,summaryNum:data.context.summaryNum})
+        }
+    },
+    toEmployeeTarget() {
+        app.navigator.push({
+            title: '员工目标',
+            component: EmployeeMonthPlan,
+        });
+    },
+    toEmployeePlan() {
+        app.navigator.push({
+            title: '员工计划',
+            component: EmployeePlanAndSummary,
+            passProps: {isDayPlan: true, isDaySummary: false},
+        });
+    },
+    toEmployeeSummary() {
+        app.navigator.push({
+            title: '员工总结',
+            component: EmployeePlanAndSummary,
+            passProps: {isDayPlan: false, isDaySummary: true},
+        });
+    },
+    renderEmployeeWork(){
+        let {monthWeekPlanNum,dayPlanNum,summaryNum,submitLog}=this.state;
+        return (
+            <View>
+                <View style={styles.businessContainer}>
+                    <View style={styles.workStyle}>
+                        <View style={styles.vertical}></View>
+                        <Text style={styles.workText}>员工工作情况</Text>
+                    </View>
+                    <View style={styles.bottomLine1}></View>
+                    <View style={styles.studyDetail}>
+                        <TouchableOpacity onPress={this.toEmployeeTarget} style={styles.buttonContainer}>
+                            <DImage
+                                resizeMode='contain'
+                                source={app.img.specopsBoss_target}
+                                style={styles.imageContainer}>
+                                <Text style={styles.buttonText}>员工目标</Text>
+                            </DImage>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={this.toEmployeePlan} style={styles.buttonContainer}>
+                            <DImage
+                                resizeMode='contain'
+                                source={app.img.specopsBoss_plan}
+                                style={styles.imageContainer}>
+                                <Text style={styles.buttonText}>员工计划</Text>
+                            </DImage>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={this.toEmployeeSummary} style={styles.buttonContainer}>
+                            <DImage
+                                resizeMode='contain'
+                                source={app.img.specopsBoss_summary}
+                                style={styles.imageContainer}>
+                                <Text style={styles.buttonText}>员工总结</Text>
+                            </DImage>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.studyDetail}>
+                        <View style={styles.panelContainer}>
+                            <View style={styles.contentContainer}>
+                                <Text style={styles.numberBlackStyle}>
+                                    {monthWeekPlanNum?monthWeekPlanNum.complete:''}
+                                </Text>
+                                <Text style={styles.numberAllStyle}>{'/'}</Text>
+                                <Text style={styles.numberAllStyle}>{monthWeekPlanNum?monthWeekPlanNum.unfinished:''}</Text>
+                            </View>
+                            <Text style={styles.numberTipStyle}>目标提交人数</Text>
+                        </View>
+                        <View style={styles.vline}/>
+                        <View style={styles.panelContainer}>
+                            <View style={styles.contentContainer}>
+                                <Text style={styles.numberBlackStyle}>
+                                    {dayPlanNum?dayPlanNum.complete:''}
+                                </Text>
+                                <Text style={styles.numberAllStyle}>{'/'}</Text>
+                                <Text style={styles.numberAllStyle}>{dayPlanNum?dayPlanNum.unfinished:''}</Text>
+                            </View>
+                            <Text style={styles.numberTipStyle}>计划提交人数</Text>
+                        </View>
+                        <View style={styles.vline}/>
+                        <View style={styles.panelContainer}>
+                            <View style={styles.contentContainer}>
+                                <Text style={styles.numberBlackStyle}>
+                                    {summaryNum?summaryNum.complete:''}
+                                </Text>
+                                <Text style={styles.numberAllStyle}>{'/'}</Text>
+                                <Text style={styles.numberAllStyle}>{summaryNum?summaryNum.unfinished:''}</Text>
+                            </View>
+                            <Text style={styles.numberTipStyle}>总结提交人数</Text>
+                        </View>
+                    </View>
+                    <ListView
+                        initialListSize={1}
+                        enableEmptySections={true}
+                        style={styles.list}
+                        dataSource={submitLog}
+                        renderRow={this.renderWorkRow}
+                        />
+                </View>
+                <View style={styles.bottomLine}/>
+            </View>
+
         );
     },
     renderHotActiveity() {
@@ -624,6 +731,92 @@ module.exports = React.createClass({
             </View>
         );
     },
+    playVideo(obj, isFromBanner) {
+        const {isAgent, isSpecialSoldier} = app.personal.info;
+        let authorized = isAgent||isSpecialSoldier; //是否是特种兵1—是  0—不是
+        if (obj.videoType==6) {
+            if (!authorized) {
+                //跳转到购买特种兵页
+                app.navigator.pop();
+                app.showMainScene(1);
+            } else {
+                //跳转到特种兵视频播放页
+                var param = {
+                    userID:app.personal.info.userID,
+                    videoID: obj.videoID,
+                };
+                POST(app.route.ROUTE_STUDY_PROGRESS, param, (data)=>{
+                    if (data.success) {
+                        app.navigator.push({
+                            component: CoursePlayer,
+                            passProps: {isCourseRecord:true, lastStudyProgress: data.context, otherVideoID: isFromBanner?null:obj.videoID},
+                        });
+                    } else {
+                        Toast('该特种兵课程学习进度获取失败，请重试！');
+                    }
+                });
+            }
+        } else {
+            //跳转到普通视频播放页
+            app.navigator.push({
+                component: RecommendVideoPlayer,
+                passProps: {videoInfo:obj},
+            });
+        }
+    },
+    renderRow(obj, sectionID, rowID, onRowHighlighted) {
+        let videoType = obj.videoType&&obj.videoType < 5? VIDEO_TYPES[obj.videoType-1]+'：':'';
+        let name = obj.name ? obj.name: '';
+        return (
+            <TouchableHighlight
+                onPress={this.playVideo.bind(null, obj, false)}
+                underlayColor="#EEB422">
+                <View style={styles.listViewItemContain}>
+                    {
+                      rowID==0?<View style={{backgroundColor: '#FFFFFF'}}/>:
+                      <View style={styles.separator}/>
+                    }
+                    <View style={styles.ItemContentContain}>
+                        <Image
+                            resizeMode='stretch'
+                            source={{uri:obj.urlImg}}
+                            style={styles.LeftImage} />
+                        <View style={styles.flexConten}>
+                            <View style={styles.rowViewStyle}>
+                                <Text
+                                    numberOfLines={1}
+                                    style={styles.nameTextStyles}>
+                                    {videoType+name}
+                                </Text>
+                                <Text
+                                    numberOfLines={2}
+                                    style={styles.detailTextStyles}>
+                                    {obj.detail}
+                                </Text>
+                            </View>
+                            <View style={styles.columnViewStyle}>
+                                <View style={styles.mainSpeakStyles}>
+                                    <Image
+                                        resizeMode='stretch'
+                                        source={app.img.personal_eye}
+                                        style={styles.eyeImage} />
+                                    <Text style={styles.mainSpeakTag}>{obj.clicks*3+50}</Text>
+                                    <Image
+                                        resizeMode='stretch'
+                                        source={obj.isPraise === 0?app.img.personal_praise_pressed:app.img.personal_praise}
+                                        style={styles.praiseImage} />
+                                    <Text style={styles.mainSpeakTag}>{obj.likes}</Text>
+                                </View>
+                                <Text numberOfLines={1} style={styles.lastTimeText}>
+                                    { moment(obj.createTime).format('YYYY.MM.DD')}
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </TouchableHighlight>
+        )
+    },
     renderEncourageCourse() {
         var {encourageCourseList} = this.state;
         return (
@@ -632,7 +825,7 @@ module.exports = React.createClass({
                     <View style={styles.titleContainer}>
                         <View style={styles.leftTitleStyle}>
                             <View style={styles.titleView}></View>
-                            <Text style={styles.titleText}>推荐课程</Text>
+                            <Text style={styles.titleText}>精品课程</Text>
                         </View>
                         <TouchableOpacity style={styles.rightTitleStyle} onPress={this.toRecommendVideoPage}>
                             <Text style={styles.targetText}>查看更多</Text>
@@ -641,7 +834,14 @@ module.exports = React.createClass({
                     <View style={styles.titleDivisionLine}></View>
                     {
                         encourageCourseList.length>0&&
-                        <RecommendVideo encourageCourseList={encourageCourseList} briefDisplay={true}/>
+                        <ListView
+                            initialListSize={1}
+                            onEndReachedThreshold={10}
+                            enableEmptySections={true}
+                            style={styles.listStyle}
+                            dataSource={this.state.dataSource}
+                            renderRow={this.renderRow}
+                            />
                     }
                 </View>
                 <View style={styles.bottomLine}/>
@@ -721,9 +921,12 @@ module.exports = React.createClass({
                         <this.renderBanner />
                     }
                     {
-                        // <this.renderTask/>
+                        <this.renderTask/>
                     }
                     <this.renderUserInfo />
+                    {
+                    <this.renderEmployeeWork />
+                    }
                     {
                         hotActiveityList.length >= 1 &&
                         <this.renderHotActiveity />
@@ -885,6 +1088,11 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
         marginTop: 12,
         borderRadius: 6,
+        backgroundColor: '#FFFFFF',
+    },
+    listStyle: {
+        marginVertical: 8,
+        alignSelf:'stretch',
         backgroundColor: '#FFFFFF',
     },
     titleContainer: {
@@ -1134,7 +1342,6 @@ var styles = StyleSheet.create({
        flex: 1,
        width:170,
        height: 101,
-       opacity: 0.55,
    },
    cellTitle: {
        fontSize: 20,
@@ -1174,10 +1381,10 @@ var styles = StyleSheet.create({
        backgroundColor: 'rgba(0, 0, 0, 0.65)',
        height: 30,
        justifyContent: 'center',
-       marginTop:10,
+       marginTop:72,
    },
    cellContentLabelLeft: {
-       marginTop: 10,
+       marginTop: app.isandroid?5:8,
        marginLeft:55,
        backgroundColor:'red'
    },
@@ -1187,7 +1394,178 @@ var styles = StyleSheet.create({
        textAlign: 'left',
        fontFamily: 'STHeitiSC-Medium',
        color: '#FFFFFF',
-       marginTop: 10,
+       marginTop: app.isandroid?6:8,
        marginLeft:3,
+   },
+   separator: {
+       position: 'absolute',
+       width: sr.w-20,
+       height: 1,
+       left: 10,
+       right: 10,
+       top: 0,
+       backgroundColor: '#F7F7F7',
+   },
+   columnViewStyle: {
+       position: 'absolute',
+       bottom: 0,
+       left: 0,
+       width: 240,
+       height: 20,
+       flexDirection: 'row',
+       alignItems: 'flex-end',
+       justifyContent: 'space-between',
+   },
+   listViewItemContain: {
+       flexDirection: 'row',
+       width: sr.w,
+       paddingVertical: 2,
+       backgroundColor: '#FFFFFF',
+   },
+   ItemContentContain: {
+       flexDirection: 'row',
+       width: sr.w-20,
+       margin: 10,
+   },
+   LeftImage: {
+       width: 100,
+       height:72,
+       borderRadius: 2,
+   },
+   flexConten: {
+       width: 245,
+       marginLeft: 10,
+       flexDirection: 'column',
+   },
+   rowViewStyle: {
+       backgroundColor: 'transparent',
+   },
+   nameTextStyles: {
+       color: '#252525',
+       fontSize:16,
+       backgroundColor: 'transparent',
+   },
+   detailTextStyles: {
+       marginTop: 3,
+       color: '#989898',
+       fontSize:12,
+       backgroundColor: 'transparent',
+   },
+   mainSpeakStyles: {
+       flexDirection: 'row',
+       alignItems: 'center',
+   },
+   eyeImage: {
+       height: 12,
+       width: 13,
+   },
+   praiseImage: {
+       height: 12,
+       width: 12,
+   },
+   mainSpeakTag: {
+       color: '#989898',
+       fontSize: 12,
+       marginLeft: 5,
+       marginRight: 15,
+   },
+   lastTimeText: {
+       color: '#B2B2B2',
+       fontSize: 12,
+   },
+   rowContainerBoss: {
+       height: 32,
+       flexDirection: 'row',
+       alignItems:'center',
+   },
+   rowTime: {
+       marginLeft:18,
+       fontFamily: 'STHeitiSC-Medium',
+       fontSize:14,
+       color: '#919191',
+   },
+   rowName: {
+       marginLeft:29,
+       fontFamily: 'STHeitiSC-Medium',
+       fontSize:14,
+       color: '#919191',
+   },
+   rowTip: {
+       marginLeft:18,
+       fontFamily: 'STHeitiSC-Medium',
+       fontSize:14,
+       color: '#919191',
+   },
+   separatorBoss: {
+       height:1,
+       backgroundColor: '#fafafa'
+   },
+   list: {
+       alignSelf:'stretch',
+       marginVertical: 5,
+   },
+   numberAllStyle: {
+       fontSize: 14,
+       fontFamily: 'STHeitiSC-Medium',
+       color:'#919191',
+       lineHeight:30,
+   },
+   numberTipStyle: {
+       fontSize: 14,
+       fontFamily: 'STHeitiSC-Medium',
+       color:'#919191',
+   },
+   numberBlackStyle: {
+       fontSize: 20,
+       fontFamily: 'STHeitiSC-Medium',
+       color:'#242424',
+   },
+   contentContainer: {
+       height: 24,
+       flexDirection: 'row',
+       marginBottom: 6,
+   },
+   studyDetail: {
+       height: 62,
+       flexDirection: 'row',
+       alignItems: 'center',
+       justifyContent: 'center',
+   },
+   bottomLine1: {
+       height: 1,
+       backgroundColor: '#ededed',
+   },
+   vertical: {
+       width: 4,
+       height: 16,
+       borderRadius: 1,
+       backgroundColor: '#FF6363',
+   },
+   workText: {
+       fontSize: 20,
+       color: '#333333',
+       marginLeft: 14,
+       fontFamily: 'STHeitiSC-Medium',
+   },
+   workStyle: {
+       height: 47,
+       marginLeft: 16,
+       alignItems: 'center',
+       flexDirection: 'row',
+   },
+   buttonText: {
+       color: '#FFFFFF',
+       backgroundColor:'transparent',
+       fontSize: 20,
+       fontFamily: 'STHeitiSC-Medium',
+   },
+   imageContainer: {
+       borderRadius:2,
+       height:42,
+       width: 106,
+       marginLeft:8,
+       marginRight:8,
+       alignItems: 'center',
+       justifyContent: 'center',
    },
 });

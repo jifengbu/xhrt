@@ -238,9 +238,9 @@
 		}
 		function submitEnrollDataSuccess(data) {
 			if (data.success === true) {
-				showMessageBox("报名成功，我们会尽快联系你");
+				showMessageBox(data.msg);
 			} else {
-				showMessageBox("已经报名或报名失败");
+				showMessageBox(data.msg);
 			}
 		}
 		function showMessageBox(text) {

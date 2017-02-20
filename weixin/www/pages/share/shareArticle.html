@@ -43,6 +43,7 @@ iframe {
         width: 18px;
         height: 16px;
         margin-right: 12px;
+        vertical-align: bottom;
     }
     .text {
         font-size: 14px;
@@ -103,8 +104,6 @@ iframe {
         font-weight: 200;
     }
     .likesContainer {
-        display: flex;
-        align-items: center;
         color: #949494;
         font-size: 12px;
     }
@@ -176,7 +175,8 @@ iframe {
 	    html += '<div class="shareContainer">';
 	    html += '    <span style="margin-right: 2px;">分享过的学员：</span>';
 	    for (var i in users) {
-	        html += '    <img src="'+users[i].userLogo+'" class="head" />';
+	    		var tempUserLogo = users[i].userLogo ? users[i].userLogo : '../../img/sex_male.png'
+	        html += '    <img src="'+tempUserLogo+'" class="head" />';
 	    }
 	    html += '</div>';
 	    document.getElementById("bottomContainer").innerHTML = html;
@@ -186,13 +186,13 @@ iframe {
 	    var count = list.length;
 	    html += '<div class="listTitle">评论（'+count+'条）</div>';
 	    html += '<div class="list">';
-
 	    for (var i = 0; i < count; i++) {
 	        var item = list[i];
+	        var tempUserLogo = item.userLogo ? item.userLogo : '../../img/sex_male.png'
 	        html += '<div class="listItem">';
 	        html += '    <div class="itemTitle">';
 	        html += '        <div class="headContainer">';
-	        html += '            <img src="'+item.userLogo+'" class="head" />';
+	        html += '            <img src="'+tempUserLogo+'" class="head" />';
 	        html += '            <span class="name">'+item.userName+'</span>';
 	        html += '        </div>';
 	        html += '        <div class="likesContainer">';

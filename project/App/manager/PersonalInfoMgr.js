@@ -34,6 +34,12 @@ class Manager extends EventEmitter {
     setUserHead(head) {
         this.emit('USER_HEAD_CHANGE_EVENT', {head:head});
     }
+    setIndexTab(index) {
+        this.emit('INDEX_TAB_CHANGE_EVENT', {index:index});
+    }
+    updateSpecopsTask() {
+        this.emit('UPDATE_SPECOPS_TASK_EVENT');
+    }
     setSpecialSoldier(flag) {
         this.info.isSpecialSoldier = flag;
         this.info.becomeSpecialSoldierDay = moment().format('YYYY-MM-DD HH:mm:ss');

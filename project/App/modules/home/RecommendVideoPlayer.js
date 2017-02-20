@@ -16,7 +16,6 @@ var dismissKeyboard = require('dismissKeyboard');
 var SpecopsVideoMenuPanel = require('../specops/SpecopsVideoMenuPanel.js');
 var RecommendHisttory = require('./RecommendHisttory.js');
 var Player = require('../study/Player.js');
-var VideoTimeMgr = require('../../manager/VideoTimeMgr.js');
 var VideoCollect = require('../specops/VideoCollectBox.js');
 var TimerMixin = require('react-timer-mixin');
 
@@ -285,8 +284,8 @@ var styles = StyleSheet.create({
         alignItems:'center',
     },
     video_icon: {
-        height: 40,
-        width: 40,
+        height: 51,
+        width: 51,
     },
     personCtainer: {
       width: sr.w,

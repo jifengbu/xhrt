@@ -16,10 +16,10 @@ import com.remobile.alipay.AliPayPlugin;
 import com.remobile.audioRecorder.AudioRecorderAPI;
 import com.remobile.hlsplayer.RCTHLSPlayerViewManager;
 import com.remobile.phone.RCTPhone;
+import com.remobile.JsCallAndroid.CameraPermissionModule;
 import com.remobile.umeng.UMengSharePlugin;
 import com.remobile.utils.UtilsModule;
 import com.remobile.vhall.RCTVhallPlayerViewManager;
-import com.remobile.vhall.RCTVhallPublishViewManager;
 import com.remobile.wxpay.WeixinPay;
 
 public class RCTRemobilePackage implements ReactPackage {
@@ -38,6 +38,7 @@ public class RCTRemobilePackage implements ReactPackage {
                 new AliPayPlugin(reactContext),
                 new RCTPhone(reactContext, activity),
                 new UtilsModule(reactContext, activity),
+                new CameraPermissionModule(reactContext, activity),
                 new AudioRecorderAPI(reactContext)
         );
     }

@@ -10,6 +10,8 @@ var {
     Image,
     TouchableOpacity,
     TouchableHighlight,
+    ScrollView,
+    RefreshControl,
 } = ReactNative;
 
 const TaskItem = React.createClass({
@@ -62,11 +64,18 @@ module.exports = React.createClass({
     render() {
         const {taskList} = this.state;
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container} refreshControl={
+                <RefreshControl
+                    style={{
+                        backgroundColor : 'transparent',
+                    }}
+                    refreshing={false}
+                    onRefresh={this.getTaskList}
+                    title="正在刷新..."/> }>
                 {taskList.map((item, i)=>(
                     <TaskItem {...item} key={i} />
                 ))}
-            </View>
+            </ScrollView>
         );
     },
 });
@@ -111,9 +120,9 @@ var styles = StyleSheet.create({
     itemBottom: {
         height: 80,
         justifyContent: 'center',
-        marginLeft: 60,
     },
     label: {
         fontSize: 16,
+        textAlign:'center',
     },
 });

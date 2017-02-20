@@ -135,6 +135,7 @@ var styles = StyleSheet.create({
         marginTop: 10,
         fontFamily: 'STHeitiSC-Medium',
         color: '#FFFFFF',
+        backgroundColor:'transparent'
     },
     cartoonImage: {
         width: sr.w/4+15,

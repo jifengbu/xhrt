@@ -71,9 +71,7 @@
     }
     .eyeIcon {
     		width: 13px;
-    		height: 9px;
     		margin-left: 10px;
-    		margin-bottom: 2px;
     		margin-right: 5px;
     }
     .contentContainer {
@@ -99,12 +97,14 @@
     		color: #959595;
     		display: flex;
         align-items: center;
+        white-space:nowrap;
     }
     .contentRight {
     		font-size: 12px;
     		color: #343434;
     		display:block;
     		margin-left: 14px;
+    		white-space:nowrap;
     }
     .contentRightPrice {
     		font-size: 12px;
@@ -271,14 +271,13 @@
 	}
 	function setTopContainer(data) {
 		var html = '';
-		var tempMode = data.mode ==1 ?'  线下':'&nbsp;&nbsp;直播';
 		var tempPrice = data.price ?('￥'+data.price):'免费'
 		if (data.introduceImage!='') {
 			html += '<img class="bannerImg" src="' + data.introduceImage +'"/>';
 		}
 	    html += '<div class="detailContainer">';
 	    html += '   <div class="titleContainer">';
-	    html += '      <div class="title">'+data.title+tempMode+'</div>';
+	    html += '      <div class="title">'+data.title+'</div>';
 	    html += '      <div class="numTitle"><img class="eyeIcon" src="../../img/eye.png"/>'+data.pageViews+'</div>';
 	    if (data.mode == 1) {
 	    		html += '  <img class="detailLabelImage" src="../../img/offline.png"/>';
@@ -289,11 +288,11 @@
 	    html += '   <div class="line"></div>';
 	    html += '   <div class="contentContainer">';
 	    html += '       <div class="content">';
-	    html += '          <span class="contentLeft"><img class="icon" src="../../img/speaker.png"/>主&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;讲<span class="contentRight">'+data.mainTeacher+'</span></span>';
+	    html += '          <span class="contentLeft"><img class="icon" src="../../img/speaker.png"/>主&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;讲<span class="contentRight">'+data.mainTeacher+'</span></span>';
 	    html += '       </div>';
 	    html += '       <div class="line2"></div>';
 	    html += '       <div class="content">';
-	    html += '       		<span class="contentLeft"><img class="icon" src="../../img/organizer.png"/>主&nbsp;办&nbsp; 方<span class="contentRight">'+data.sponsor+'</span></span>';
+	    html += '       		<span class="contentLeft"><img class="icon" src="../../img/organizer.png"/>主&nbsp;办&nbsp;方<span class="contentRight">'+data.sponsor+'</span></span>';
 	    html += '	    </div>';
 	    html += '	    <div class="line2"></div>';
 	    html += '		<div class="content">';
@@ -307,7 +306,7 @@
 	    }
 	    html += '  		<div class="line2"></div>';
 	    html += '  		<div class="content">';
-	    html += '     		<span class="contentLeft"><img class="icon" src="../../img/price.png"/>价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格<span class="contentRightPrice">'+tempPrice+'</span></span>';
+	    html += '     		<span class="contentLeft"><img class="icon" src="../../img/price.png"/>价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格<span class="contentRightPrice">'+tempPrice+'</span></span>';
 	    html += '  		</div>';
 	    html += '  	</div>';
 	    html += '</div>';
@@ -379,7 +378,7 @@
 //	    		<source src="">
 //		</video>
 		var html = '';
-	    html += '<video width="100%" height="210" poster="" controls="controls" poster="'+ videoImage + '">';
+	    html += '<video width="100%" height="210" controls="controls" poster="'+ videoImage + '">';
 	    html += '<source src="' + videoUrl + '">';
 	    html += '</video>';
 	    document.getElementById("videoContainer").innerHTML = html;

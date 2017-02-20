@@ -3,6 +3,7 @@
 var React = require('react');var ReactNative = require('react-native');
 
 var {
+    AppState,
     Image,
     StyleSheet,
     Text,
@@ -27,8 +28,21 @@ module.exports = React.createClass({
     },
     componentDidMount() {
         this.getArticleInfo();
+        AppState.addEventListener('change', this._handleAppStateChange);
+    },
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this._handleAppStateChange);
+    },
+    _handleAppStateChange: function(currentAppState) {
+        this.setState({currentAppState});
+        if (currentAppState === 'active') {
+            // this.playerPlay && this.playerPlay.stopPlayVideo();
+        } else {
+            this.refs.webviewbridge.reload();// 重新加载webview 让视频播放暂停
+        }
     },
     getArticleInfo() {
+        app.showProgressHUD();
         var param = {
             userID: app.personal.info.userID,
             articleID: this.props.articleId,
@@ -121,7 +135,7 @@ module.exports = React.createClass({
             case 0:
                 if (articleInfo) {
                     let linkUrl = CONSTANTS.SHARE_SHAREDIR_SERVER+'shareArticle.html?userID='+app.personal.info.userID+'&articleID='+this.props.articleId;
-                    UmengMgr.doActionSheetShare(linkUrl, '赢销截拳道', '赢销截拳道推荐阅读文章', 'web', this.state.articleInfo.imgUrl, this.doShareCallback);
+                    UmengMgr.doActionSheetShare(linkUrl, '赢销截拳道', articleInfo.describe, 'web', articleInfo.imgUrl, this.doShareCallback);
                 }
                 break;
             case 1:
@@ -134,6 +148,8 @@ module.exports = React.createClass({
                 )
                 break;
             case 2:
+                if(this.doCollection) return;
+                this.doCollection = true
                 if (articleInfo.isCollection == 1) {
                     var param = {
                         userID:app.personal.info.userID,
@@ -148,6 +164,7 @@ module.exports = React.createClass({
                         } else {
                             Toast('取消收藏失败');
                         }
+                        this.doCollection = false;
                     });
                 }else {
                     var param = {
@@ -163,10 +180,13 @@ module.exports = React.createClass({
                         } else {
                             Toast('收藏失败');
                         }
+                        this.doCollection = false;
                     });
                 }
                 break;
             case 3:
+                if(this.doPraise) return;
+                this.doPraise = true
                 var param = {
                     userID:app.personal.info.userID,
                     praiseType: 0, //0：推荐阅读点赞，1：阅读评论点赞
@@ -182,6 +202,7 @@ module.exports = React.createClass({
                         } else {
                             Toast('取消点赞失败');
                         }
+                        this.doPraise = false;
                     });
                 }else {
                     POST(app.route.ROUTE_PRAISE_LOG, param, (data)=>{
@@ -193,12 +214,16 @@ module.exports = React.createClass({
                         } else {
                             Toast('点赞失败');
                         }
+                        this.doPraise = false;
                     });
                 }
                 break;
             default:
 
         }
+    },
+    onLoadEnd() {
+        app.dismissProgressHUD();
     },
     renderSeparator(sectionID, rowID) {
         return (
@@ -244,14 +269,14 @@ module.exports = React.createClass({
                     articleInfo&&
                     <ScrollView style={styles.container}>
                         {
-                            articleInfo.type == 0&&
+                            // articleInfo.type == 0&&
                             <View style={styles.titleStyle}>
                                 <Text style={styles.titleText}>{articleInfo.title}</Text>
                             </View>
                         }
                         <View style={styles.iconContainer}>
                             {
-                                articleInfo.type == 0&&
+                                // articleInfo.type == 0&&
                                 <Text style={styles.dateStyle}>
                                     {moment(articleInfo.createTime).format('YYYY.MM.DD')}
                                 </Text>
@@ -275,17 +300,22 @@ module.exports = React.createClass({
                                 </Text>
                             </View>
                         </View>
-                        <View style={styles.midView}>
-                            <WebView
-                                style={[styles.webview,{height: this.state.webHeight+30}]}
-                                ref="webviewbridge"
-                                onBridgeMessage={this.onBridgeMessage}
-                                injectedJavaScript={injectScript}
-                                scrollEnabled={false}
-                                source={{uri: linkUrl}}
-                                scalesPageToFit={false}
-                                />
-                        </View>
+                        {
+                            !!articleInfo &&
+                            <View style={styles.midView}>
+                                <WebView
+                                    style={[styles.webview,{height: this.state.webHeight+30}]}
+                                    ref="webviewbridge"
+                                    startInLoadingState={true}
+                                    onLoadEnd={this.onLoadEnd}
+                                    onBridgeMessage={this.onBridgeMessage}
+                                    injectedJavaScript={injectScript}
+                                    scrollEnabled={false}
+                                    source={{uri: linkUrl}}
+                                    scalesPageToFit={false}
+                                    />
+                            </View>
+                        }
                         {
                             shareList.length != 0&&
                             <View style={styles.sharedPersonStyle}>

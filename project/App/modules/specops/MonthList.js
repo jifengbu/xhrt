@@ -79,9 +79,6 @@ var MonthListRow = React.createClass({
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
-    statics: {
-        title: '历史记录',
-    },
     getWeekArray(start,end){
         var range = moment.range(start, end);
         return range.toArray('weeks');

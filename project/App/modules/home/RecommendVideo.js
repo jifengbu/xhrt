@@ -35,11 +35,7 @@ module.exports = React.createClass({
         };
     },
     componentDidMount() {
-        if (this.props.briefDisplay) {
-            this.setState({dataSource: this.ds.cloneWithRows(this.props.encourageCourseList)});
-        } else {
-            this.getList();
-        }
+        this.getList();
     },
     getList() {
         var param = {
@@ -53,8 +49,8 @@ module.exports = React.createClass({
         if (data.success) {
             var length = 0;
             if (data.context.videoList) {
-                let list = !this.props.briefDisplay&&data.context.videoList.length != 0&&data.context.videoList;
-                var infiniteLoadStatus = (!this.props.briefDisplay && length < CONSTANTS.PER_PAGE_COUNT) ? STATUS_ALL_LOADED : STATUS_TEXT_HIDE;
+                let list = data.context.videoList.length != 0&&data.context.videoList;
+                var infiniteLoadStatus = (list.length < CONSTANTS.PER_PAGE_COUNT) ? STATUS_ALL_LOADED : STATUS_TEXT_HIDE;
                 this.setState({
                     dataSource: this.ds.cloneWithRows(list),
                     infiniteLoadStatus: infiniteLoadStatus
@@ -185,20 +181,17 @@ module.exports = React.createClass({
     render() {
         return (
             <View style={styles.container}>
-                {
-                    !this.props.briefDisplay&&
-                    <View style={styles.line}/>
-                }
+                <View style={styles.line}/>
                 <ListView
                     ref={listView=>this.listView=listView}
                     initialListSize={1}
                     onEndReachedThreshold={10}
                     enableEmptySections={true}
-                    onEndReached={this.props.briefDisplay?null:this.onEndReached}
-                    style={[styles.listStyle, this.props.briefDisplay?{marginVertical: 8}:null]}
+                    onEndReached={this.onEndReached}
+                    style={styles.listStyle}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
-                    renderFooter={this.props.briefDisplay?null:this.renderFooter}
+                    renderFooter={this.renderFooter}
                     />
             </View>
         )

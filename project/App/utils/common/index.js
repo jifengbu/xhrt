@@ -129,6 +129,32 @@ module.exports = {
         }
         return ret;
     },
+    getCustomTimeDisplayString(str) {
+        var now = moment();
+        var time = moment(str);
+        var hours = now.diff(time, 'hours');
+        var mut = now.diff(time, 'minutes')
+        var sec = now.diff(time, 'seconds');
+        console.log(hours,mut,sec);
+        if (0<=hours &&hours<6) {
+            if (hours==0) {
+                return mut==0?'刚刚':(mut+'分钟前')
+            } else {
+                return (hours+'小时前')
+            }
+        } else if (6<=hours &&hours<24) {
+            var hs = time.hours();
+            if (0<=hs &&hs<12) {
+                return ('上午'+time.format('hh:mm'))
+            } else {
+                return ('下午'+time.format('hh:mm'))
+            }
+        } else if (24<hours &&hours<48) {
+            return ('昨天'+time.format('hh:mm'))
+        }  else {
+            return (time.format('DD日hh:mm'))
+        }
+    },
     getStrlen(str){
         var len = 0;
         for (var i=0; i<str.length; i++) {

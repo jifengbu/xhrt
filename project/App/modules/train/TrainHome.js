@@ -137,6 +137,12 @@ module.exports = React.createClass({
             component: TrainSelfRecord,
             passProps: {trainingCode:obj.trainingCode}
         });
+        var param = {
+            userID: app.personal.info.userID,
+            objID: obj.id,
+            type: 2,
+        };
+        POST(app.route.ROUTE_INSERT_CURRENT_TASK_LOG, param);
     },
     applyCustomRoom() {
         if (app.personal.info.isSpecialSoldier === 1) {

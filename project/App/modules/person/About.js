@@ -5,8 +5,11 @@ var ReactNative = require('react-native');
 var {
     StyleSheet,
     View,
+    Text,
     WebView,
 } = ReactNative;
+
+var {DImage} = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
@@ -16,6 +19,10 @@ module.exports = React.createClass({
     render() {
         return (
           <View style={styles.container}>
+              <View style={styles.versionView}>
+                  <DImage resizeMode='contain' source={app.img.login_logo} style={styles.logoImage}></DImage>
+                  <Text style={styles.versionText}>{'版本号:' + (app.isandroid ? '2.3.0' : '2.1.0')}</Text>
+              </View>
               <WebView
                   style={styles.webview}
                   source={{uri:app.route.ROUTE_ABOUT_PAGE}}
@@ -32,6 +39,22 @@ var styles = StyleSheet.create({
         height:sr.ch,
         alignItems: 'center',
         backgroundColor: '#FFFFFF',
+    },
+    versionView: {
+        marginTop: 10,
+        width:sr.w,
+        // justifyContent: 'center',
+        alignItems: 'center',
+        // flexDirection: 'row',
+    },
+    logoImage: {
+        width: 50,
+        height: 50
+    },
+    versionText: {
+        fontSize: 14,
+        color: '#313131',
+        marginTop: 10,
     },
     webview: {
         width:sr.w-40,

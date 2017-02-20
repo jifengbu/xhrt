@@ -7,6 +7,8 @@ var {
     View,
     Text,
     Image,
+    ScrollView,
+    RefreshControl,
 } = ReactNative;
 var Button = require('@remobile/react-native-simple-button');
 
@@ -53,6 +55,19 @@ module.exports = React.createClass({
     componentDidMount() {
         this.getTaskList();
     },
+    insertCurrentTaskLog(timingTaskID,week) {
+            var param = {
+                userID: app.personal.info.userID,
+                timingTaskID: timingTaskID,
+                week:week,
+                type: 2,
+            };
+            POST(app.route.ROUTE_INSERT_CURRENT_TASK_LOG, param,this.insertCurrentTaskLogSuccess);
+    },
+    insertCurrentTaskLogSuccess(data){
+        app.navigator.popToTop();
+        app.personal.setIndexTab(3);
+    },
     getTaskList() {
 		var param = {
 			userID: app.personal.info.userID,
@@ -66,17 +81,24 @@ module.exports = React.createClass({
 			Toast(data.msg);
 		}
 	},
-    doStartTrain() {
-
+    doStartTrain(timingTaskID,week) {
+        this.insertCurrentTaskLog(timingTaskID,week);
     },
     render() {
         const {taskList} = this.state;
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container} refreshControl={
+                <RefreshControl
+                    style={{
+                        backgroundColor : 'transparent',
+                    }}
+                    refreshing={false}
+                    onRefresh={this.getTaskList}
+                    title="正在刷新..."/> }>
                 {taskList.map((item, i)=>(
-                    <TaskItem {...item} key={i} doStartTrain={this.doStartTrain}/>
+                    <TaskItem {...item} key={i} doStartTrain={this.doStartTrain.bind(null,item.timingTaskID,item.week)}/>
                 ))}
-            </View>
+            </ScrollView>
         );
     },
 });
@@ -121,10 +143,10 @@ var styles = StyleSheet.create({
     itemBottom: {
         height: 80,
         justifyContent: 'center',
-        marginLeft: 60,
     },
     label: {
         fontSize: 16,
+        textAlign:'center'
     },
     button: {
         height: 40,

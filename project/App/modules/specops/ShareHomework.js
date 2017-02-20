@@ -94,6 +94,7 @@ module.exports = React.createClass({
         let {taskContent} = this.props.data;
         if (!taskContent && !this.state.isSummit) {
             this.setState({isShare: false, isFirstTap: true});
+            this.setState({inputText: ''});
         } else {
             this.setState({isShare: true,isFirstTap: false});
         }

@@ -42,6 +42,7 @@ module.exports = React.createClass({
         var pages = [SpecopsTask, StudyTask, TrainTask, CommonTask];
         return (
             <View style={styles.container}>
+                <View style={styles.divisionLine}></View>
                 <View style={styles.tabContainer}>
                     {
                         !app.GlobalVarMgr.getItem('isFullScreen') &&
@@ -53,7 +54,7 @@ module.exports = React.createClass({
                                     onPress={this.changeTab.bind(null, i)}
                                     style={styles.touchTab}>
                                     <View style={styles.tabButton}>
-                                        <Text style={[styles.tabText, tabIndex===i?{color:'#FC4145'}:{color:'#666666'}]} >
+                                        <Text style={tabIndex===i?{color:'#FC4145',fontSize: 15}:{color:'#666666',fontSize: 13}} >
                                             {item}
                                         </Text>
                                         <View style={[styles.tabLine, tabIndex===i?{backgroundColor: '#FC4145'}:null]}>
@@ -75,7 +76,6 @@ var styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        paddingTop: 20,
     },
     tabContainer: {
         width:sr.w,
@@ -89,13 +89,14 @@ var styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
     },
-    tabText: {
-        fontSize: 13,
-    },
     tabLine: {
         width: sr.w/8,
         height: 2,
         marginTop: 10,
         alignSelf: 'center',
+    },
+    divisionLine: {
+        height: 1,
+        backgroundColor: '#f4f4f4',
     },
 });

@@ -27,6 +27,7 @@ module.exports = React.createClass({
         leftButton: {handler: ()=>app.scene.goBack()},
         rightButton: { image: app.img.specops_history_record, handler: ()=>{
             app.navigator.push({
+                title: '历史记录',
                 component: MonthList,
             });
         }},
@@ -49,6 +50,9 @@ module.exports = React.createClass({
         }
     },
     goBack() {
+        if (this.props.refreshTask) {
+            this.props.refreshTask();
+        }
         app.navigator.pop();
     },
     getInitialState() {
@@ -626,7 +630,6 @@ module.exports = React.createClass({
             <RecordItemView
                 data={obj}
                 rowHeight={12}
-                onPress = {this.modifyMonthPlanContent.bind(null, obj)}
                 />
         )
     },
@@ -666,9 +669,9 @@ module.exports = React.createClass({
     monthPlanPurpose() {
         var monthStr = '';
         if (this.state.isNextMonth) {
-            monthStr = moment().add(1, 'M').format('YYYY年MM月');
+            monthStr = moment(this.state.memWeekTime[0]).add(1, 'M').format('YYYY年M月');
         }else{
-            monthStr = moment().format('YYYY年MM月DD日');
+            monthStr = moment(this.state.memWeekTime[0]).format('YYYY年M月');
         }
 
         return (
@@ -681,7 +684,7 @@ module.exports = React.createClass({
                                 本月工作目标
                             </Text>
                             <Text style={styles.headItemText2}>
-                                {'（'+this.currentYearNum+'年'+this.currentMonthNum+'月）'}
+                                {'（'+monthStr+'）'}
                             </Text>
                         </View>
                     </View>
@@ -719,6 +722,13 @@ module.exports = React.createClass({
             menuAdminArray = menuAdminArray1;
         }
 
+        var monthStr = '';
+        if (this.state.isNextMonth) {
+            monthStr = moment(this.state.memWeekTime[0]).add(1, 'M').format('YYYY年M月');
+        }else{
+            monthStr = moment(this.state.memWeekTime[0]).format('YYYY年M月');
+        }
+
         return (
             <View style={styles.monthPlanInfoViewStyle}>
                 <View style={styles.separator2}></View>
@@ -729,7 +739,7 @@ module.exports = React.createClass({
                             周工作目标
                         </Text>
                         <Text style={styles.headItemText2}>
-                            {'（'+this.currentYearNum+'年'+this.currentMonthNum+'月）'}
+                            {'（'+monthStr+'）'}
                         </Text>
                     </View>
                 </View>

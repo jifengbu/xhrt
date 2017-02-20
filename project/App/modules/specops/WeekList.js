@@ -79,9 +79,6 @@ var WeekListRow = React.createClass({
 });
 module.exports = React.createClass({
     mixins: [SceneMixin],
-    statics: {
-        title: '每日工作记录',
-    },
     getWeekArray(start,end){
         var firstDay = moment(start).date(1)
         var firstMonday = moment(firstDay).day(1);

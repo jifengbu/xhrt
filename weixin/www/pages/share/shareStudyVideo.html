@@ -6,6 +6,7 @@
 	<meta http-equiv="content-security-policy">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 	<title>赢销截拳道</title>
+	<link rel="stylesheet" type="text/css" href="../../css/video.css" />
 </head>
 <style>
 	body {
@@ -101,14 +102,7 @@
 		<div class="name">特种兵交流场房间</div>
 	</div>-->
 	<div class="centent">
-		<video width="100%" height="210" poster="" controls="controls">
-		  <source src="">
-		  <!--<source src="movie.mp4" type="video/mp4">
-		  <source src="movie.webm" type="video/webm">
-		  <object data="movie.mp4" width="320" height="240">
-		    <embed width="320" height="240" src="movie.swf">
-		  </object>-->
-		</video>
+		<video id="video" width="100%" height="210" controls="controls"></video>
 		<div class="videoInfo">
 			<div class="top">
 				<div class="title">
@@ -124,7 +118,10 @@
 	</div>
 	<div class="footer"><img src="../../img/button_3.png" /></div>
 </body>
+<script src="../../js/thirdparty/mui.min.js"></script>
 <script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script src="../../js/thirdparty/video.js"></script>
+<script src="../../js/thirdparty/videojs-live.js"></script>
 <script>
 	$(function(){
 		var videoTitle = getParameter("videoTitle");
@@ -135,7 +132,7 @@
 		$(".videoInfo .top .title").html(videoTitle);
 		$(".videoInfo .playTimes").html('播放次数:'+playTimes);
 		$(".videoInfo .top").find("img").attr("src",'../../img/mark'+videoType+'.png');
-		$(".centent video").find("source").attr("src",videoUrl);
+		$(".centent video").html("<source src="+videoUrl+">")
 		$(".centent video").attr("poster",videoImg);
 	});
 	$(".centent .button").on('click',function(){

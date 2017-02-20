@@ -25,7 +25,7 @@ var ClassTest = require('./ClassTest.js');
 var moment = require('moment');
 var TimerMixin = require('react-timer-mixin');
 
-var {StarBar,Button,DImage} = COMPONENTS;
+var {StarBar,Button,DImage,MessageBox} = COMPONENTS;
 
 var CoursePlayer = React.createClass({
     mixins: [TimerMixin],
@@ -51,6 +51,7 @@ var CoursePlayer = React.createClass({
           showVideoFinishBox: (taskNum>=1 && this.props.lastStudyProgress.isWatchVideo===1) || false,
           taskNum: taskNum,
           studyProgressDetail: this.props.lastStudyProgress,
+          showMessageBox:false,
         };
     },
     componentDidMount() {
@@ -63,6 +64,7 @@ var CoursePlayer = React.createClass({
         AppState.addEventListener('change', this._handleAppStateChange);
     },
     goBack() {
+        this.stopVideoSaveTime();
         // var routes = app.navigator.getCurrentRoutes();
         // const {routeIndex} = this.props;
         // if (routeIndex === undefined) {
@@ -70,6 +72,7 @@ var CoursePlayer = React.createClass({
         // } else {
         //     app.navigator.popToRoute(routes[routeIndex-1]);
         // }
+        app.personal.updateSpecopsTask();
         if (this.props.isCourseRecord) {
             app.navigator.pop();
             this.props.refreshProgress&&this.props.refreshProgress();
@@ -123,21 +126,25 @@ var CoursePlayer = React.createClass({
         this.playerPlay && this.playerPlay.stopPlayVideo();
         var videoUrl = this.state.pageData?this.state.pageData.urlPlay:null;
         var time = this.playerPlay && this.playerPlay.getPlayTime();
+
+        console.log("stop time is ", time, videoUrl);
         if (time && videoUrl) {
             VideoTimeMgr.setPlayTime(videoUrl, time);
         }
         this.setState({playing:false});
     },
     getVideoTimeSeek(){
-        this.setState({playing: true});
+        if (!this.props.update) {
+            this.setState({playing: true});
+        }
         var videoUrl = this.state.pageData?this.state.pageData.urlPlay:null;
         if (videoUrl) {
             var time = VideoTimeMgr.getPlayTime(videoUrl);
             if (time > 0) {
-                // this.setState({playing: true});
                 this.setTimeout(()=>{
                     this.playerPlay && this.playerPlay.setLastPlayTime(time);
-                }, 500);
+                    console.log("seek time is ", time, videoUrl);
+                }, 60);
             }
         }
     },
@@ -155,9 +162,13 @@ var CoursePlayer = React.createClass({
             this.detailsMap['userTaskID'] = data.context.userTaskID||'';
             this.detailsMap['videoID'] = data.context.videoID||'';
             this.detailsMap['taskName'] = data.context.taskName||'';
-            this.videoArray = data.context.oldVideoList;
+            this.videoArray = data.context.watchVideoList;
             this.setState({pageData: data.context});
             this.doUpdateClicks(data.context.videoID);
+            this.getVideoTimeSeek();
+            if (this.props.update) {
+                this.upDateCurrentView(this.props.otherVideoID, this.props.newSee, this.props.lastSee);
+            }
         } else {
             //防止获取数据失败后点击内容交互时崩溃问题
             app.navigator.pop();
@@ -186,7 +197,7 @@ var CoursePlayer = React.createClass({
         if (showVideoFinishBox) {
             this.setState({playing: false});
         } else {
-            this.setState({playing: true});
+            // this.setState({playing: true});
         }
         if (data.success) {
             //点击视频播放接口返回成功后通知列表更新点击数
@@ -252,7 +263,6 @@ var CoursePlayer = React.createClass({
             } else {
                 this.state.showVideoFinishBox = false;
                 if (this.state.pageData.isNextVideo) {
-                    this.getVideoTimeSeek();
                     this.getSpecopsVideoData();
                 }
             }
@@ -335,16 +345,32 @@ var CoursePlayer = React.createClass({
         app.navigator.push({
             title: '特种兵往期课程',
             component: SpecopsHistoryVideo,
-            passProps: {doRestart:this.doRestart, videoList:this.state.pageData.oldVideoList, routeIndex}
+            passProps: {doRestart:this.doRestart, videoList:this.state.pageData.watchVideoList, routeIndex}
         });
     },
-    doRestart(obj, routeIndex) {
+    doRestart(obj, rowID, routeIndex) {
         this.stopVideoSaveTime();
+        var {watchVideoList} = this.state.pageData;
+        if (!obj.isOver && !watchVideoList[rowID+1].isOver) {
+            Toast('请按顺序把前面未看完的视频完整看完后，才能按顺序解锁下一集视频哦！');
+            return;
+        }
         app.navigator.replace({
             title: '课程学习',
             component: CoursePlayer,
             passProps: {otherVideoID: obj.videoID, routeIndex}
         });
+    },
+    upDateCurrentView(videoID, newSee, lastSee) {
+        if (newSee<lastSee) {
+            this.setState({showMessageBox:true});
+        } else {
+            app.navigator.replace({
+                title: '课程学习',
+                component: CoursePlayer,
+                passProps: {otherVideoID: videoID}
+            });
+        }
     },
     doLookAll() {
         this.setState({isLookAll: !this.state.isLookAll});
@@ -360,7 +386,6 @@ var CoursePlayer = React.createClass({
         this.getSpecopsVideoData();
     },
     changePlaying() {
-        this.setState({playing: true});
         this.getVideoTimeSeek();
     },
     doStudyWork(btnTitle) {
@@ -532,10 +557,10 @@ var CoursePlayer = React.createClass({
                     (!this.state.isFullScreen && this.state.pageData)&&
                     <View style={styles.listContainer}>
                         <View style={styles.titleContainer}>
-                            <Text style={styles.titleTypeText}>特种兵往期课程</Text>
+                            <Text style={styles.titleTypeText}>该用户有资格看的视频列表</Text>
                         </View>
                         <View style={styles.divisionCrossLine}></View>
-                        <SpecopsHistoryVideo briefDisplay={true} doRestart={this.doRestart} videoList={this.state.pageData.oldVideoList}/>
+                        <SpecopsHistoryVideo briefDisplay={true} doRestart={this.doRestart} videoList={this.state.pageData.watchVideoList}/>
                         <TouchableOpacity onPress={this.goVideoListPage} style={styles.btnContainer}>
                             <Text style={styles.btnTypeText}>查看全部</Text>
                         </TouchableOpacity>
@@ -547,6 +572,19 @@ var CoursePlayer = React.createClass({
                     <VideoCollect
                         doCancel={() => this.setState({showCollectBox: false})}>
                     </VideoCollect>
+                }
+                {
+                    this.state.showMessageBox &&
+                    <MessageBox
+                        content="请按顺序把前面未看完的视频完整看完后，才能按顺序解锁下一集视频哦！"
+                        doConfirm={()=>{
+                                this.setState({showMessageBox:false});
+                                app.navigator.replace({
+                                title: '课程学习',
+                                component: CoursePlayer,
+                            });
+                        }}
+                        />
                 }
             </View>
         );

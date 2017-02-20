@@ -31,6 +31,7 @@ module.exports = React.createClass({
         leftButton: {handler: ()=>app.scene.goBack()},
         rightButton: { image: app.img.specops_history_record, handler: ()=>{
             app.navigator.push({
+                title: '每日工作记录',
                 component: WeekList,
             });
         }},
@@ -53,6 +54,9 @@ module.exports = React.createClass({
         }
     },
     goBack() {
+        if (this.props.refreshTask) {
+            this.props.refreshTask();
+        }
         app.navigator.pop();
     },
     getInitialState() {
@@ -1162,6 +1166,8 @@ module.exports = React.createClass({
     },
     //本月工作计划
     monthPlanPurpose() {
+        var monthStr = moment(this.state.memDayTime[0]).format('M月');
+
         return (
                 <View>
                     <View style={styles.separator2}></View>
@@ -1173,7 +1179,7 @@ module.exports = React.createClass({
                                 月工作目标
                             </Text>
                             <Text style={styles.headItemText2}>
-                                {this.currentMonthNum+'月'}
+                                {monthStr}
                             </Text>
                         </View>
                         <Image
