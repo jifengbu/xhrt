@@ -113,7 +113,7 @@ module.exports = React.createClass({
         var dayPlan = this.weekData.dayPlan[index];
         this.setState({daySummary:''});
         var param = {
-            userID:app.personal.info.userID,
+            userID:this.userID,
             planDate:moment(this.state.memDayTime[index]).format('YYYY-MM-DD'),
         };
         POST(app.route.ROUTE_GET_DAY_SUMMARY, param, this.getDaySummarySuccess, true);
@@ -134,7 +134,7 @@ module.exports = React.createClass({
     },
     getFixedProblem(index) {
         var param = {
-            userID: app.personal.info.userID,
+            userID: this.userID,
             date:this.state.memDayTime[index],
         };
         POST(app.route.ROUTE_GET_FIXED_PROBLEM, param, this.getFixedProblemSuccess);
@@ -193,6 +193,12 @@ module.exports = React.createClass({
         );
     },
     componentDidMount() {
+        if (this.props.userID) {
+            this.userID = this.props.userID;
+        }else {
+            this.userID = app.personal.info.userID;
+        }
+
         this.weekData = {};
         this.onInputBoxFun = null;
         this.currentTime = this.props.time.format('YYYY-MM-DD');
@@ -249,7 +255,7 @@ module.exports = React.createClass({
     //获取实际做的事
     getActually(index) {
         var param = {
-            userID: app.personal.info.userID,
+            userID: this.userID,
             workDate:this.state.memDayTime[index],
         };
         POST(app.route.ROUTE_GET_ACTUAL_COMPLETE_WORK, param, this.getActuallySuccess, true);
@@ -268,14 +274,14 @@ module.exports = React.createClass({
     },
     getWeekPlan(time){
         var param = {
-            userID:app.personal.info.userID,
+            userID:this.userID,
             planDate:time,
         };
         POST(app.route.ROUTE_GET_WEEK_PLAN, param, this.getWeekDataSuccess, true);
     },
     getServerDayPlan(time){
         var param = {
-            userID:app.personal.info.userID,
+            userID:this.userID,
             planDate:time,
         };
         POST(app.route.ROUTE_GET_DAY_PLAN, param, this.getServerDayPlanSuccess, true);
@@ -289,6 +295,7 @@ module.exports = React.createClass({
                 <WeekRecordItemView
                     data={obj}
                     rowHeight={10}
+                    haveImage={this.props.haveImage}
                     />
             </View>
         )

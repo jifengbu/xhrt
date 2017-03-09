@@ -11,6 +11,7 @@ var {
     AppState,
     ActivityIndicator,
     NativeModules,
+    BackAndroid,
 } = ReactNative;
 
 var TimerMixin = require('react-timer-mixin');
@@ -144,6 +145,11 @@ module.exports = React.createClass({
             }
         }
     },
+    onHardwareBackPress() {
+        BackAndroid.removeEventListener('hardwareBackPress', this.onHardwareBackPress);
+        this.toggleFullScreen();
+        return true;
+    },
     componentDidMount() {
         this.hasLastTime = false;
         AppState.addEventListener('change', this._handleAppStateChange);
@@ -177,6 +183,9 @@ module.exports = React.createClass({
     },
     toggleFullScreen() {
         var isFullScreen = !this.state.isFullScreen;
+        if (app.isandroid && isFullScreen) {
+            BackAndroid.addEventListener('hardwareBackPress', this.onHardwareBackPress);
+        }
         this.props.fullScreenListener(isFullScreen);
         this.setState({
             isFullScreen: isFullScreen,
@@ -329,7 +338,7 @@ module.exports = React.createClass({
                     onResume={this.onResume}
                     style={!this.state.isFullScreen?styles.videoNormalFrame:styles.videoFullFrame}
                     />
-                {  
+                {
                     <TouchableOpacity
                         activeOpacity={1}
                         onPress={this.toggleControlPanel}

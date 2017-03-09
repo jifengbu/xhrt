@@ -444,7 +444,7 @@ var styles = StyleSheet.create({
         width: sr.w-185,
         fontSize: 12,
         color: '#3A3A3A',
-        lineHeight: 15,
+        lineHeight: 17,
         marginLeft: 15,
         fontFamily: 'STHeitiSC-Medium',
     },

@@ -251,5 +251,7 @@ module.exports = {
     ROUTE_GET_PERSONAL_HOMEWORK_DETAILS: SERVER+'getPersonalHomeworkDetails', //获取个人课后作业详情
     ROUTE_GET_USER_TASK_SUBMIT_RATE: SERVER+'getUserTaskSubmitRate', //获取员工任务提交率
     ROUTE_GET_USER_TASK_SUBMIT_RATE_DETAILS: SERVER+'getUserTaskSubmitRateDetails', //获取员工任务提交率详情
+    ROUTE_GET_NO_FINISH_EMPLOYEES: SERVER+'getNoFinishEmployees', //获取未提交员工列表
+    ROUTE_GET_PERSONAL_MONTH_TASK: SERVER+'getPersonalMonthTask', //获取员工任务提交率详情
 
 };

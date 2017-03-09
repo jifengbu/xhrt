@@ -17,11 +17,13 @@ module.exports = React.createClass({
         leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
     },
     render() {
+        //备注：为防止测试版不拉取版本号数据 所以默认一个版本号
+        let appVersionName = app.appVersionName==undefined?(app.isandroid ? '2.3.0' : '2.1.0'):app.appVersionName;
         return (
           <View style={styles.container}>
               <View style={styles.versionView}>
                   <DImage resizeMode='contain' source={app.img.login_logo} style={styles.logoImage}></DImage>
-                  <Text style={styles.versionText}>{'版本号:' + (app.isandroid ? '2.3.0' : '2.1.0')}</Text>
+                  <Text style={styles.versionText}>{'版本号:' + appVersionName}</Text>
               </View>
               <WebView
                   style={styles.webview}

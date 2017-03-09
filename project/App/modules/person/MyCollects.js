@@ -248,8 +248,8 @@ var styles = StyleSheet.create({
         marginLeft: 20,
     },
     icon: {
-        height: 72,
-        width: 100,
+        height: 77,
+        width: 112,
         borderRadius: 3,
     },
     rowRight: {

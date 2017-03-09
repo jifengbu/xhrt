@@ -13,28 +13,51 @@ import Echarts from 'native-echarts';
 
 module.exports = React.createClass({
     render() {
+        const xData = this.props.xData;
+        const yData = this.props.yData;
         const option = {
             grid: {
-                x: 40,
-                y: 50,
-                x2: 40,
-                y2: 40,
+                left: '5%',
+                right: '6%',
+                bottom: '3%',
+                containLabel: true
             },
             color:["#ff8f8f"],
             xAxis: {
-              boundaryGap : false,
-              data: this.props.xData
+                boundaryGap : false,
+                data: xData,
+                axisLine:{
+                    lineStyle:{
+                        color:'#DDDDDD',
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#AEAEAE'
+                    }
+                },
             },
-            yAxis: {type : 'value'},
+            yAxis: {
+                type : 'value',
+                axisLine:{
+                    lineStyle:{
+                        color:'#DDDDDD',
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#AEAEAE'
+                    },
+                },
+            },
             series: [{
                 name: '销量',
                 type: 'line',
                 itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                data: this.props.yData,
+                data: yData,
                 markPoint : {
                 data : [
-                   {type : 'max', name: '最大值'},
-                   {type : 'min', name: '最小值'}
+                    {name: '当前', xAxis: xData[xData.length-1],yAxis:yData[yData.length-1]}
                ]},
                markLine : {
                    symbol:[],

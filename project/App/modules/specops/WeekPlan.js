@@ -21,6 +21,7 @@ var WeekList = require('./WeekList.js');
 var MonthPlan = require('./MonthPlan.js');
 var TimerMixin = require('react-timer-mixin');
 var CopyBox = require('../home/CopyBox.js');
+var InputTextMgr = require('../../manager/InputTextMgr.js');
 
 var {Button, InputBox} = COMPONENTS;
 
@@ -565,10 +566,13 @@ module.exports = React.createClass({
         }
     },
     addDayPlanContent() {
+        var textID = 'specops_weekPlan2';
+        var textContent = InputTextMgr.getTextContent(textID);
         app.showModal(
             <InputBox
                 doConfirm={this.submitDayPlan}
-                inputText={''}
+                textID={textID}
+                inputText={textContent}
                 doCancel={app.closeModal}
                 />
         )
@@ -659,7 +663,7 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    submitDayPlan(content) {
+    submitDayPlan(content, textID) {
         if (content === '') {
             return;
         }
@@ -670,9 +674,9 @@ module.exports = React.createClass({
             planDate:this.state.memDayTime[this.state.tabIndex],
             weekNum: this.state.tabIndex,
         };
-        POST(app.route.ROUTE_ADD_TODAY_PLAN, param, this.submitDayPlanSuccess, true);
+        POST(app.route.ROUTE_ADD_TODAY_PLAN, param, this.submitDayPlanSuccess.bind(null, textID), true);
     },
-    submitDayPlanSuccess(data) {
+    submitDayPlanSuccess(textID, data) {
         if (data.success) {
             var dayData = this.getDayPlan(this.state.tabIndex);
             //请求接口成功更新页面
@@ -683,7 +687,7 @@ module.exports = React.createClass({
             const {actually} = this.state;
             actually.push({'id': data.context.actualWork.id, 'content':data.context.actualWork.content, isOver: data.context.actualWork.isOver})
             this.setState({actually});
-
+            InputTextMgr.removeItem(textID);
             this.setDayActually();
             Toast('新增成功');
         } else {
@@ -715,13 +719,19 @@ module.exports = React.createClass({
         this.setState({showAddDayPlanDlg:false});
     },
     addDayProblemView() {
+        var textID = 'specops_weekPlan3';
+        var textTitleID = 'specops_weekPlan4';
+        var textContent = InputTextMgr.getTextContent(textID);
+        var textTitleContent = InputTextMgr.getTextContent(textTitleID);
         app.showModal(
             <InputBox
                 doConfirm={this.submitDayProblem}
-                inputText={''}
+                textID={textID}
+                inputText={textContent}
                 doCancel={app.closeModal}
                 haveTitle={true}
-                title={''}
+                textTitleID={textTitleID}
+                title={textTitleContent}
                 modifyTitle={true}
                 />
         )
@@ -745,15 +755,18 @@ module.exports = React.createClass({
                 />
         )
     },
-    modifyFixDayProblemView(obj) {
+    modifyFixDayProblemView(obj, index) {
         if (!this.state.isProblemModify && obj.problemContent !== '') {
             return;
         }
+        var textID = 'specops_weekPlan5'+index;
+        var textContent = InputTextMgr.getTextContent(textID);
         this.setState({currentProblemID: obj.problemId});
         app.showModal(
             <InputBox
                 doConfirm={this.modifyFixDayProblem}
-                inputText={obj.problemContent}
+                textID={textID}
+                inputText={obj.problemContent?obj.problemContent:textContent}
                 doCancel={app.closeModal}
                 haveTitle={true}
                 title={obj.problemTitle}
@@ -762,7 +775,7 @@ module.exports = React.createClass({
                 />
         )
     },
-    submitDayProblem(strTitle, strContent) {
+    submitDayProblem(strTitle, strContent, textID, textTitleID) {
         if (strTitle === '' || strContent === '') {
             return;
         }
@@ -772,9 +785,9 @@ module.exports = React.createClass({
             title: strTitle,
             content: strContent,
         };
-        POST(app.route.ROUTE_ADD_USER_QUESTION, param, this.submitDayProblemSuccess, true);
+        POST(app.route.ROUTE_ADD_USER_QUESTION, param, this.submitDayProblemSuccess.bind(null, textID, textTitleID), true);
     },
-    submitDayProblemSuccess(data) {
+    submitDayProblemSuccess(textID, textTitleID, data) {
         if (data.success) {
             //请求接口成功更新页面
             const {problemArray} = this.state;
@@ -787,7 +800,8 @@ module.exports = React.createClass({
 
             problemArray.push(problemItem);
             this.setState({problemArray});
-
+            InputTextMgr.removeItem(textID);
+            InputTextMgr.removeItem(textTitleID);
             Toast('新增成功');
 
         } else {
@@ -826,7 +840,7 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    modifyFixDayProblem(strTitle, strContent) {
+    modifyFixDayProblem(strTitle, strContent, textID) {
         if (strTitle === '' || strContent === '') {
             return;
         }
@@ -836,9 +850,9 @@ module.exports = React.createClass({
             problemId: this.state.currentProblemID,
             problemContent: strContent,
         };
-        POST(app.route.ROUTE_ADD_PROBLEM_ANSWER, param, this.modifyFixDayProblemSuccess, true);
+        POST(app.route.ROUTE_ADD_PROBLEM_ANSWER, param, this.modifyFixDayProblemSuccess.bind(null, textID), true);
     },
-    modifyFixDayProblemSuccess(data) {
+    modifyFixDayProblemSuccess(textID, data) {
         if (data.success) {
             const {problemArray} = this.state;
             var item = _.find(problemArray, (o)=>o.problemId==this.state.currentProblemID);
@@ -848,7 +862,7 @@ module.exports = React.createClass({
                 problemItem.problemId = data.context.answer.problemId;
                 problemItem.problemTitle = item.problemTitle;
                 problemItem.problemContent = data.context.answer.content?data.context.answer.content:'';
-
+                InputTextMgr.removeItem(textID);
                 Object.assign(item, problemItem);
                 this.setState({problemArray});
             }
@@ -882,10 +896,13 @@ module.exports = React.createClass({
             Toast('不能填写未来的事');
             return;
         }
+        var textID = 'specops_weekPlan1';
+        var textContent = InputTextMgr.getTextContent(textID);
         app.showModal(
             <InputBox
                 doConfirm={this.submitDayActually}
-                inputText={''}
+                textID={textID}
+                inputText={textContent}
                 doCancel={app.closeModal}
                 doClass={this}
                 />
@@ -916,7 +933,7 @@ module.exports = React.createClass({
                 />
         )
     },
-    submitDayActually(content) {
+    submitDayActually(content, textID) {
         if (content === '') {
             return;
         }
@@ -925,15 +942,15 @@ module.exports = React.createClass({
             workDate: this.state.memDayTime[this.state.tabIndex],
             content: content,
         };
-        POST(app.route.ROUTE_ADD_ACTUAL_COMPLETE_WORK, param, this.submitDayActuallySuccess, true);
+        POST(app.route.ROUTE_ADD_ACTUAL_COMPLETE_WORK, param, this.submitDayActuallySuccess.bind(null, textID), true);
     },
-    submitDayActuallySuccess(data) {
+    submitDayActuallySuccess(textID, data) {
         if (data.success) {
             //请求接口成功更新页面
             const {actually} = this.state;
             actually.push({'id': data.context.actualWork.id, 'content':data.context.actualWork.content, isOver: data.context.actualWork.isOver})
             this.setState({actually});
-
+            InputTextMgr.removeItem(textID);
             this.setDayActually();
 
             Toast('新增成功');
@@ -1027,15 +1044,19 @@ module.exports = React.createClass({
         if (!this.state.isDaySummaryModify && this.state.daySummary !== '') {
             return;
         }
+        var textID = 'specops_weekPlan6';
+        var textContent = InputTextMgr.getTextContent(textID);
+        var {daySummary} = this.state;
         app.showModal(
             <InputBox
                 doConfirm={this.saveDaySummary}
-                inputText={this.state.daySummary}
+                textID={textID}
+                inputText={daySummary?daySummary:textContent}
                 doCancel={app.closeModal}
                 />
         )
     },
-    saveDaySummary(strContext) {
+    saveDaySummary(strContext, textID) {
         if (strContext === '') {
             return;
         }
@@ -1044,10 +1065,11 @@ module.exports = React.createClass({
             context:strContext,
             planDate:this.state.memDayTime[this.state.tabIndex],
         };
-        POST(app.route.ROUTE_SUBMIT_DAY_SUMMARY, param, this.submitDaySummarySuccess.bind(null, strContext), true);
+        POST(app.route.ROUTE_SUBMIT_DAY_SUMMARY, param, this.submitDaySummarySuccess.bind(null, strContext, textID), true);
     },
-    submitDaySummarySuccess(strContext, data) {
+    submitDaySummarySuccess(strContext, textID, data) {
         Toast("保存日总结成功");
+        InputTextMgr.removeItem(textID);
         this.setState({daySummary:strContext});
         this.setDaySummaryObj();
     },
@@ -1435,7 +1457,7 @@ module.exports = React.createClass({
                             </Text>
                         </View>
                         <TouchableOpacity style={item.problemContent&&textInputHeight>44?styles.inputContainer:[styles.inputContainer,{height:sr.ws(44)}]}
-                                        onPress={i<3?this.modifyFixDayProblemView.bind(null, item):this.modifyDayProblemView.bind(null, item)}
+                                        onPress={i<3?this.modifyFixDayProblemView.bind(null, item, i):this.modifyDayProblemView.bind(null, item)}
                                         onLongPress={this.onLongPress.bind(null, item.problemContent)}>
                                         {
                                             item.problemContent==''?

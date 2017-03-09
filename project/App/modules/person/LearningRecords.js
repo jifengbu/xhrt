@@ -383,13 +383,13 @@ var styles = StyleSheet.create({
         paddingRight:15,
     },
     LeftImage: {
-        width: 100,
-        height:72,
+        width: 112.5,
+        height:77,
         borderRadius: 2,
     },
     flexConten: {
         width: 210,
-        marginLeft:23,
+        marginLeft: 10,
         flexDirection: 'column',
     },
     rowViewStyle: {

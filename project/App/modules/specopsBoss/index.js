@@ -23,26 +23,68 @@ var EmployeePlanAndSummary = require('./EmployeePlanAndSummary.js');
 var LineStackChart = require('./lineStackChart.js');
 var EmployeeMonthCommit = require('./EmployeeMonthCommit.js');
 
+const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '赢销截拳道',
     },
     getInitialState() {
+        this.list = [];
+        this.pageNo = 1;
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return {
-            specopsList: this.ds.cloneWithRows([]),
+            specopsList: this.ds.cloneWithRows(this.list),
             submitLog: this.ds.cloneWithRows([]),
-            companyInfo:this.props.companyInfo,
             monthWeekPlanNum:{},
             dayPlanNum:{},
             summaryNum:{},
+            userSum:0,
             xData:[],
             yData:[],
             avgWhenLong:0,
             rose:0,
-            taskSubmitRateData: null,
+            taskSubmitRateData: {},
+            haveData: false,
         };
+    },
+    onWillFocus() {
+        // this.setState({haveData: false});
+        // setTimeout(()=>{
+        //     this.setState({haveData: true});
+        // }, 400);
+    },
+    generateMyCurrentYearMonth(){
+        // find month first monday
+        var isFirstMonday = false;
+        var addPos = 0;
+
+        var firstDay = '';
+        firstDay = moment().set('date', 1).format('YYYY-MM-DD');
+
+        var firstMonday = '';
+        while (isFirstMonday === false) {
+            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            if (isMonday === 1) {
+                isFirstMonday = true;
+                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                break;
+            }
+            addPos++;
+        }
+
+        let ret = {};
+        ret.year = moment().year();
+        ret.month = moment().month();
+        if (moment(firstMonday).date() > moment().date()) {
+            ret.month = ret.month - 1;
+            if (ret.month < 0) {
+                ret.month = 11;
+                ret.year = ret.year - 1;
+            }
+        }
+        return ret;
     },
     componentDidMount: function() {
         this.getWorkSituationAbstract();
@@ -51,10 +93,15 @@ module.exports = React.createClass({
         this.getUserTaskSubmitRate();
     },
     getUserTaskSubmitRate() {
+        let tTime = moment();
+        tTime.set('date', 15);
+        tTime.set('year', this.generateMyCurrentYearMonth().year);
+        tTime.set('month', this.generateMyCurrentYearMonth().month);
+        let info = app.personal.info;
         var param = {
-            userID: app.personal.info.userID,
-            companyId: app.personal.info.companyId,
-            date:moment().format('YYYY-MM-DD')
+            userID: info.userID,
+            companyId: info.companyInfo.companyId,
+            date:tTime.format('YYYY-MM-DD')
         };
         POST(app.route.ROUTE_GET_USER_TASK_SUBMIT_RATE, param, this.getUserTaskSubmitRateSuccess);
     },
@@ -64,47 +111,92 @@ module.exports = React.createClass({
         }
     },
     getWorkSituationAbstract() {
+        let info = app.personal.info;
         var param = {
-            userID: app.personal.info.userID,
-            companyId: app.personal.info.companyId,
+            userID: info.userID,
+            companyId: info.companyInfo.companyId,
         };
         POST(app.route.ROUTE_GET_WORK_SITUATION_ABSTRACT, param, this.getWorkSituationAbstractSuccess,true);
     },
     getWorkSituationAbstractSuccess(data) {
         if (data.context) {
-            this.setState({submitLog:this.ds.cloneWithRows(data.context.submitLog),monthWeekPlanNum:data.context.monthWeekPlanNum,dayPlanNum:data.context.dayPlanNum,summaryNum:data.context.summaryNum})
+            var {userSum} = data.context;
+            var {submitLog} = data.context;
+            var {monthWeekPlanNum} = data.context;
+            var {dayPlanNum} = data.context;
+            var {summaryNum} = data.context;
+            this.setState({submitLog:this.ds.cloneWithRows(submitLog.slice(0,4)), monthWeekPlanNum, dayPlanNum, summaryNum, userSum})
         }
     },
     getSpecialList() {
+        let info = app.personal.info;
         var param = {
-            companyId: app.personal.info.companyId,
-            pageNo:0,
+            companyId: info.companyInfo.companyId,
+            userID: info.userID,
+            pageNo:this.pageNo,
         };
-        POST(app.route.ROUTE_GET_SPECIAL_LIST, param, this.getSpecialListSuccess,true);
+        this.setState({infiniteLoadStatus: this.pageNo===1?STATUS_START_LOAD:STATUS_HAVE_MORE});
+        POST(app.route.ROUTE_GET_SPECIAL_LIST, param, this.getSpecialListSuccess, this.getSpecialListFailed);
     },
     getSpecialListSuccess(data) {
-        if (data.context) {
-            this.setState({specopsList:this.ds.cloneWithRows(data.context)})
+        if (data.success) {
+            if (data.context) {
+                var list = data.context.userList||[];
+                this.list = this.list.concat(list);
+                var infiniteLoadStatus = list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
+                this.setState({
+                    infiniteLoadStatus: infiniteLoadStatus,
+                    specopsList:this.ds.cloneWithRows(this.list)
+                });
+            } else {
+                this.setState({infiniteLoadStatus: STATUS_NO_DATA});
+            }
+            this.setState({haveData: false});
+            setTimeout(()=>{
+                this.setState({haveData: true});
+            }, 400);
+        } else {
+            this.getSpecialListFailed();
         }
     },
+    getSpecialListFailed() {
+        this.pageNo--;
+        this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
+    },
     getStudySituationAbstract() {
+        let info = app.personal.info;
         var param = {
-            companyId: app.personal.info.companyId,
+            userID: info.userID,
+            companyId: info.companyInfo.companyId,
         };
-        POST(app.route.ROUTE_GET_STUDY_SITUATION_ABSTRACT, param, this.getStudySituationAbstractSuccess,true);
+        POST(app.route.ROUTE_GET_STUDY_SITUATION_ABSTRACT, param, this.getStudySituationAbstractSuccess);
+    },
+    fomatFloat(src,pos){
+        //保留一位小数
+        return Math.round(src*Math.pow(10, pos))/Math.pow(10, pos);
     },
     getStudySituationAbstractSuccess(data) {
         if (data.context) {
             var xData=[];
             var yData=[];
-            var whenLongList=data.context.whenLongList;
-            for (var index in whenLongList) {
-                if (whenLongList.hasOwnProperty(index)) {
-                    xData.push(whenLongList[index].date.slice(5));
-                    yData.push(whenLongList[index].dayAvgWhenLong);
+            var whenLongData=data.context.studyWhenLong;
+            var coursesNumber=whenLongData.whenLongList;
+            for (var index in coursesNumber) {
+                if (coursesNumber.hasOwnProperty(index)) {
+                    xData.push(moment(coursesNumber[index].date).format('M.D'));
+                    let num = coursesNumber[index].dayAvgWhenLong;
+                    let number = this.fomatFloat(num/60,1);
+                    yData.push(number);
                 }
             }
-            this.setState({xData:xData,yData:yData,avgWhenLong:data.context.avgWhenLong,rose:data.context.rose});
+            let avgWhenLong = this.fomatFloat((whenLongData.avgWhenLong)/60,1);
+            let rose = this.fomatFloat((whenLongData.rose)/60,1);
+            if (yData.length > 2) {
+                let n = yData[yData.length-1]-yData[yData.length-2];
+                rose = this.fomatFloat(n, 1);
+            }
+
+            this.setState({xData:xData,yData:yData,avgWhenLong:avgWhenLong,rose:rose});
         }
     },
     toEmployeeTarget() {
@@ -142,7 +234,7 @@ module.exports = React.createClass({
     _onPressRow(userId) {
         app.navigator.push({
             component: SpecopsPerson,
-            passProps: {userId: userId},
+            passProps: {userID: userId},
         });
     },
     renderSeparator(sectionID, rowID) {
@@ -158,13 +250,30 @@ module.exports = React.createClass({
     renderWorkRow(obj, sectionID, rowID) {
         return (
             <View style={styles.rowContainer}>
-                <Text style={styles.rowTime}>{obj.date?obj.date.slice(5):''}</Text>
-                <Text style={styles.rowName}>{obj.name}</Text>
-                <Text style={styles.rowTip}>{obj.context}</Text>
+                <Text numberOfLines={1} style={styles.rowTime}>{obj.date&&moment(obj.date).format('M.D HH:mm')}</Text>
+                <Text numberOfLines={1} style={styles.rowName}>{obj.name}</Text>
+                <Text numberOfLines={1} style={styles.rowTip}>{obj.context}</Text>
             </View>
         )
     },
+    calculateStrLength(oldStr) {
+        let height = 0;
+        let linesWidth = 0;
+        if (oldStr) {
+            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/[\r\n]/g, '|');
+            let StrArr = oldStr.split('|');
+            for (var i = 0; i < StrArr.length; i++) {
+                //计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            }
+            return linesWidth;
+        }
+    },
     renderSpecopsRow(obj, sectionID, rowID) {
+        let headUrl = obj.userImg?obj.userImg:obj.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
+        let nameTemWidth = this.calculateStrLength(obj.userName);
+        let nameWidth = nameTemWidth*10;
         return (
             <TouchableHighlight
                 onPress={this._onPressRow.bind(null, obj.userId)}
@@ -173,20 +282,27 @@ module.exports = React.createClass({
                     <DImage
                         resizeMode='cover'
                         defaultSource={app.img.personal_head}
-                        source={{uri:obj.userImg}}
+                        source={obj.userImg?{uri: headUrl}:headUrl}
                         style={styles.rowHeaderIcon}  />
-                    <Text style={styles.rowSpecopsName}>
-                        {obj.userName}
-                    </Text>
-                    <Text style={styles.rowPosition}>
-                        {obj.post}
-                    </Text>
+                    <View style={{marginLeft:18,width: nameWidth>140?sr.ws(140):sr.ws(nameWidth)}}>
+                        <Text numberOfLines={1} style={styles.rowSpecopsName}>
+                            {obj.userName}
+                        </Text>
+                    </View>
+                    {
+                        obj.post!=''&&
+                        <View style={styles.rowPosition}>
+                            <Text numberOfLines={1} style={styles.rowPositionText}>
+                                {obj.post}
+                            </Text>
+                        </View>
+                    }
                 </View>
             </TouchableHighlight>
         )
     },
     renderUserInfo() {
-        let {companyInfo}=this.state;
+        let {companyInfo}=app.personal.info;
         let headUrl = companyInfo.logo?companyInfo.logo:app.img.common_default;
         return (
             <View>
@@ -194,9 +310,14 @@ module.exports = React.createClass({
                     <View style={styles.personalInfoContainer}>
                         <DImage
                             resizeMode='cover'
-                            defaultSource={app.img.personal_head}
-                            source={companyInfo.logo?{uri: headUrl}:headUrl}
-                            style={styles.headerIcon}  />
+                            style={styles.headerCircle}
+                            source={app.img.specopsBoss_head_circle}>
+                            <DImage
+                                resizeMode='cover'
+                                defaultSource={app.img.personal_head}
+                                source={companyInfo.logo?{uri: headUrl}:headUrl}
+                                style={styles.headerIcon}  />
+                        </DImage>
                         <View style={styles.personalInfoStyle}>
                             <View style={styles.nameContainer}>
                                 <Text style={[styles.nameText, {fontSize: 18}]} numberOfLines={1}>
@@ -239,7 +360,7 @@ module.exports = React.createClass({
         );
     },
     renderEmployeeWork(){
-        let {monthWeekPlanNum,dayPlanNum,summaryNum,submitLog}=this.state;
+        let {monthWeekPlanNum,dayPlanNum,summaryNum,submitLog, userSum}=this.state;
         return (
             <View style={styles.workContainer}>
                 <View style={styles.workStyle}>
@@ -275,34 +396,34 @@ module.exports = React.createClass({
                 </View>
                 <View style={styles.studyDetailContainer}>
                     <View style={styles.panelContainer}>
-                        <View style={styles.contentContainer}>
+                        <View style={styles.contentContainerPlan}>
                             <Text style={styles.numberBlackStyle}>
                                 {monthWeekPlanNum?monthWeekPlanNum.complete:''}
                             </Text>
                             <Text style={styles.numberAllStyle}>{'/'}</Text>
-                            <Text style={styles.numberAllStyle}>{monthWeekPlanNum?monthWeekPlanNum.unfinished:''}</Text>
+                            <Text style={styles.numberAllStyle}>{userSum}</Text>
                         </View>
                         <Text style={styles.numberTipStyle}>目标提交人数</Text>
                     </View>
                     <View style={styles.vline}/>
                     <View style={styles.panelContainer}>
-                        <View style={styles.contentContainer}>
+                        <View style={styles.contentContainerPlan}>
                             <Text style={styles.numberBlackStyle}>
                                 {dayPlanNum?dayPlanNum.complete:''}
                             </Text>
                             <Text style={styles.numberAllStyle}>{'/'}</Text>
-                            <Text style={styles.numberAllStyle}>{dayPlanNum?dayPlanNum.unfinished:''}</Text>
+                            <Text style={styles.numberAllStyle}>{userSum}</Text>
                         </View>
                         <Text style={styles.numberTipStyle}>计划提交人数</Text>
                     </View>
                     <View style={styles.vline}/>
                     <View style={styles.panelContainer}>
-                        <View style={styles.contentContainer}>
+                        <View style={styles.contentContainerPlan}>
                             <Text style={styles.numberBlackStyle}>
                                 {summaryNum?summaryNum.complete:''}
                             </Text>
                             <Text style={styles.numberAllStyle}>{'/'}</Text>
-                            <Text style={styles.numberAllStyle}>{summaryNum?summaryNum.unfinished:''}</Text>
+                            <Text style={styles.numberAllStyle}>{userSum}</Text>
                         </View>
                         <Text style={styles.numberTipStyle}>总结提交人数</Text>
                     </View>
@@ -329,7 +450,7 @@ module.exports = React.createClass({
                 </View>
                 <View style={styles.bottomLine}></View>
                 {
-                    taskSubmitRateData&&
+                    this.state.haveData &&
                     <LineStackChart taskSubmitRateData={taskSubmitRateData}/>
                 }
                 <View style={[styles.bottomLine, {marginTop: 8}]}></View>
@@ -349,51 +470,71 @@ module.exports = React.createClass({
                 </View>
                 <View style={styles.bottomLine}></View>
                 <View style={styles.chartTopRowView}>
-                    <Text style={styles.chartTopAvgText}>{avgWhenLong+'h'}</Text>
+                    <Text style={styles.chartTopAvgText}>{avgWhenLong}<Text style={styles.chartTopRoseText}>h</Text></Text>
                     <View style={styles.chartTopRoseView}>
                         <View style={[styles.chartTopRoseMark,rose<0?{transform: [{rotate: '180deg'}]}:null]}></View>
-                        <Text style={styles.chartTopRoseText}>{rose+'h'}</Text>
+                        <Text style={styles.chartTopRoseText}>{Math.abs(rose) +'h'}</Text>
                     </View>
-
                 </View>
                 <Text style={styles.chartTopText}>员工今日平均学习时长</Text>
-                <LineChart yData={this.state.yData} xData={this.state.xData?this.state.xData:[]} height={200}/>
+                {
+                    this.state.haveData &&
+                    <LineChart yData={this.state.yData} xData={this.state.xData?this.state.xData:[]} height={200}/>
+                }
                 <TouchableOpacity onPress={this.toEmployeeStudy}>
                     <Text style={styles.chartBottomText}>点击查看详情</Text>
                 </TouchableOpacity>
             </View>
         );
     },
-    renderMySpecops(){
-        let {specopsList}=this.state;
+    renderHeader() {
         return (
-            <View style={styles.workContainer}>
-                <View style={styles.workStyle}>
-                    <View style={styles.verticalLine}></View>
-                    <Text style={styles.workText}>我的赢销特总兵</Text>
+            <View style={styles.pageContainer}>
+                <this.renderUserInfo />
+                <this.renderEmployeeWork />
+                <this.renderEmployeeTask />
+                <this.renderEmployeeStudy />
+                <View style={styles.workContainer}>
+                    <View style={styles.workStyle}>
+                        <View style={styles.verticalLine}></View>
+                        <Text style={styles.workText}>我的赢销特种兵</Text>
+                    </View>
+                    <View style={styles.bottomLine}></View>
                 </View>
-                <View style={styles.bottomLine}></View>
-                <ListView
-                    initialListSize={1}
-                    enableEmptySections={true}
-                    style={styles.list}
-                    dataSource={specopsList}
-                    renderRow={this.renderSpecopsRow}
-                    renderSeparator={this.renderSeparator}
-                    />
             </View>
-        );
+        )
+    },
+    renderFooter() {
+        return (
+            <View style={styles.listFooterContainer}>
+                <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
+            </View>
+        )
+    },
+    onEndReached() {
+        if (this.state.infiniteLoadStatus === STATUS_ALL_LOADED || this.state.infiniteLoadStatus === STATUS_TEXT_HIDE) {
+            return;
+        }
+        this.pageNo++;
+        this.getSpecialList();
     },
     render() {
         return (
             <View style={styles.container}>
-                <ScrollView style={styles.pageContainer}>
-                    <this.renderUserInfo />
-                    <this.renderEmployeeWork />
-                    <this.renderEmployeeTask />
-                    <this.renderEmployeeStudy />
-                    <this.renderMySpecops />
-                </ScrollView>
+                <View style={styles.separator}></View>
+                <ListView
+                    initialListSize={1}
+                    onEndReachedThreshold={10}
+                    enableEmptySections={true}
+                    removeClippedSubviews={false}
+                    style={styles.listStyle}
+                    onEndReached={this.onEndReached}
+                    dataSource={this.state.specopsList}
+                    renderRow={this.renderSpecopsRow}
+                    renderHeader={this.renderHeader}
+                    renderFooter={this.renderFooter}
+                    renderSeparator={this.renderSeparator}
+                    />
             </View>
         );
     }
@@ -403,10 +544,19 @@ module.exports = React.createClass({
 var styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 10,
+    },
+    listStyle: {
+        alignSelf:'stretch',
+        backgroundColor: '#FFFFFF',
+    },
+    separator: {
+        width: sr.w,
+        backgroundColor: '#EDEDED',
+        height: 1,
     },
     pageContainer: {
         flex: 1,
+        backgroundColor: '#F1F1F1',
     },
     personContainer: {
         width: sr.w-6,
@@ -418,11 +568,18 @@ var styles = StyleSheet.create({
         height: 82,
         flexDirection: 'row',
     },
+    headerCircle: {
+        width: 60,
+        height: 60,
+        marginLeft: 16,
+        marginTop: 13,
+        borderRadius: 30,
+        alignItems: 'center',
+    },
     headerIcon: {
         width: 54,
         height: 54,
-        marginLeft: 18,
-        marginTop: 15,
+        marginTop: 1,
         borderRadius: 27,
     },
     rowHeaderIcon: {
@@ -492,13 +649,18 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 6,
     },
+    contentContainerPlan: {
+        height: 24,
+        flexDirection: 'row',
+        marginBottom: 6,
+    },
     numberStyle: {
         fontSize: 20,
         fontFamily: 'STHeitiSC-Medium',
         color:'#ff5e5f',
     },
     numberBlackStyle: {
-        fontSize: 20,
+        fontSize: 18,
         fontFamily: 'STHeitiSC-Medium',
         color:'#242424',
     },
@@ -506,7 +668,7 @@ var styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'STHeitiSC-Medium',
         color:'#919191',
-        lineHeight:30,
+        alignSelf: 'flex-end',
     },
     numberTipStyle: {
         fontSize: 14,
@@ -539,7 +701,7 @@ var styles = StyleSheet.create({
     },
     verticalLine: {
         width: 4,
-        height: 16,
+        height: 18,
         borderRadius: 1,
         backgroundColor: '#FF6363',
     },
@@ -556,10 +718,6 @@ var styles = StyleSheet.create({
         height:1,
         backgroundColor: '#ededed'
     },
-    separator: {
-        height:1,
-        backgroundColor: '#fafafa'
-    },
     rowContainer: {
         height: 32,
         flexDirection: 'row',
@@ -571,37 +729,41 @@ var styles = StyleSheet.create({
         alignItems:'center'
     },
     rowTime: {
+        width: 75,
         marginLeft:18,
         fontFamily: 'STHeitiSC-Medium',
         fontSize:14,
         color: '#919191',
     },
     rowName: {
-        marginLeft:29,
+        width: 99,
+        marginLeft:20,
         fontFamily: 'STHeitiSC-Medium',
         fontSize:14,
         color: '#919191',
     },
     rowTip: {
+        width: 120,
         marginLeft:18,
         fontFamily: 'STHeitiSC-Medium',
         fontSize:14,
         color: '#919191',
     },
     rowSpecopsName: {
-        marginLeft:18,
         fontFamily: 'STHeitiSC-Medium',
         fontSize:16,
         color: '#333333',
     },
     rowPosition: {
         marginLeft:18,
-        fontFamily: 'STHeitiSC-Medium',
-        fontSize:10,
-        color: '#FFFFFF',
         backgroundColor: '#FF5E5F',
         borderRadius: 2,
-        paddingHorizontal:3,
+    },
+    rowPositionText: {
+        fontFamily: 'STHeitiSC-Medium',
+        fontSize:10,
+        marginHorizontal: 3,
+        color: '#FFFFFF',
     },
     chartTopRowView: {
         flexDirection:'row',
@@ -656,5 +818,13 @@ var styles = StyleSheet.create({
         textAlign:'center',
         marginBottom:12,
     },
-
+    listFooterContainer: {
+        height: 60,
+        alignItems: 'center',
+    },
+    listFooter: {
+        marginVertical: 10,
+        color: 'gray',
+        fontSize: 14,
+    },
 });

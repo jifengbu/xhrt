@@ -28,7 +28,7 @@ module.exports = React.createClass({
                 fromLeft: true,
             });
         }},
-        rightButton: { image: app.img.study_label_button, handler: ()=>{app.scene.toggleMenuPanel();app.closeSpecopsPlayer&&app.closeSpecopsPlayer();}},
+        // rightButton: { image: app.img.study_label_button, handler: ()=>{app.scene.toggleMenuPanel();app.closeSpecopsPlayer&&app.closeSpecopsPlayer();}},
     },
     getInitialState() {
         return {
@@ -138,9 +138,9 @@ module.exports = React.createClass({
     },
     render() {
         var {tabIndex} = this.state;
-        var menuAdminArray = ['精品课程', '精彩案例', '编辑推荐'];
+        var menuAdminArray = ['精品课程', '精彩案例'];
         if (CONSTANTS.ISSUE_IOS) {
-            _.remove(menuAdminArray, (o, i)=>i===3);
+            _.remove(menuAdminArray, (o, i)=>i===2);
         }
         return (
             <View style={styles.container}>

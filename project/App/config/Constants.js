@@ -29,10 +29,9 @@ const CHAT_SERVER_IP = CONFIG.ISSUE ? BASE_CHAT_SERVERS[2] : TEST_CONFIG.ISSUE ?
 
 module.exports = {
     ISSUE_IOS: CONFIG.ISSUE_IOS,
-    NOT_NEED_UPDATE_JS_START: !(CONFIG.ISSUE || TEST_CONFIG.ISSUE), //启动时不需要更新小版本
     MINIFY: CONFIG.ISSUE, //是否压缩js文件，我们采取测试服务器为了查找问题不用压缩js文件，正式服务器需要压缩js文件，并且不能看到调试信息
     CHANNEL: CONFIG.CHANNEL,
-    API_VERSION: 2, //服务器请求的接口版本号
+    API_VERSION: 3, //服务器请求的接口版本号
     //IOS的appid
     IOS_APPID: '1096525384',
     // IOS_APPID: '',

@@ -18,15 +18,18 @@ var RecordItemView = require('./BossRecordItem.js');
 var moment = require('moment');
 var {Button, InputBox, DImage} = COMPONENTS;
 var CopyBox = require('../home/CopyBox.js');
+var SpecopsPerson = require('./SpecopsPerson.js');
 
 module.exports = React.createClass({
     getInitialState() {
+        this.dayData = {};
+        this.dayData.plan = [];
+        this.dayData.actual = [];
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return {
             weekCount: 0,
-            planDataSource: this.ds.cloneWithRows([]),
-            actualDataSource: this.ds.cloneWithRows([]),
             memWeekTime: [],
+            haveData: false,
         };
     },
     clearMonthData() {
@@ -34,92 +37,99 @@ module.exports = React.createClass({
         this.dayData.plan = [];
         this.dayData.actual = [];
 
-        this.userHeadImage = '';
-        this.userHeadName = '姓名姓名';
-        this.userHeadJob = '职位职位';
-        this.userHeadTime = '66:66';
-
-        // test data
-        let obj = {};
-        obj.content = '12345';
-        obj.isOver = 0;
-        this.dayData.plan.push(obj);
-        this.dayData.plan.push(obj);
-        this.dayData.plan.push(obj);
-        this.dayData.actual.push(obj);
-        this.dayData.actual.push(obj);
-        this.dayData.actual.push(obj);
-
         // process data.
-        if (this.props.planData && this.props.planData.length > 0) {
+        if (this.props.planData) {
             let {planData} = this.props;
 
+            this.userId = planData.userId;
             this.userHeadImage = planData.userImg;
+            this.sex = planData.sex;
             this.userHeadName = planData.userName;
             this.userHeadJob = planData.post;
             this.userHeadTime = planData.submitDate;
 
-            this.dayData.plan = planData.dayplan.slice(0);
-            this.dayData.actual = planData.actualWorks.slice(0);
+            if (planData.dayPlan) {
+                this.dayData.plan = planData.dayPlan.slice(0);
+            }
+            if (planData.actualWorks) {
+                this.dayData.actual = planData.actualWorks.slice(0);
+            }
         }
 
-        this.setState({planDataSource: this.ds.cloneWithRows(this.dayData.plan)});
-        this.setState({actualDataSource: this.ds.cloneWithRows(this.dayData.actual)});
+        setTimeout(()=>{
+            this.setState({haveData: true});
+        }, 600);
     },
     componentDidMount() {
         this.clearMonthData();
     },
-    renderSeparator(sectionID, rowID) {
-        return (
-            <View style={styles.separator3} key={rowID}/>
-        );
-    },
-    renderRowPlan(obj) {
-        return (
-            <RecordItemView
-                data={obj}
-                rowHeight={5}
-                isWideStyle={true}
-                />
-        )
-    },
-    renderRowActual(obj) {
-        return (
-            <RecordItemView
-                data={obj}
-                rowHeight={5}
-                haveImage={true}
-                />
-        )
-    },
     render() {
         return (
             <View style={styles.container}>
-                <View style={styles.separator2}></View>
-                <this.monthPlanHead />
-                <this.monthPlanPurpose />
+            {
+                this.state.haveData &&
+                <View>
+                    <View style={styles.separator2}></View>
+                    <this.monthPlanHead />
+                    <this.monthPlanPurpose />
+                </View>
+            }
             </View>
         );
     },
+    toSpecopsPerson(userId) {
+        app.navigator.push({
+            component: SpecopsPerson,
+            passProps: {userID: userId},
+        });
+    },
+    calculateStrLength(oldStr) {
+        let height = 0;
+        let linesWidth = 0;
+        if (oldStr) {
+            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/[\r\n]/g, '|');
+            let StrArr = oldStr.split('|');
+            for (var i = 0; i < StrArr.length; i++) {
+                //计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            }
+            return linesWidth;
+        }
+    },
     // 头像view
     monthPlanHead() {
+        let nameTemWidth = this.calculateStrLength(this.userHeadName);
+        let postTemWidth = this.calculateStrLength(this.userHeadJob);
+        let nameWidth = nameTemWidth*13+3;
+        let postWidth = postTemWidth*6+3;
+        let headUrl = this.userHeadImage?this.userHeadImage:this.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
         return (
             <View style={styles.monthPlanHeadView}>
                 <View style={styles.monthPlanHeadView1}>
+                    <TouchableOpacity onPress={this.toSpecopsPerson.bind(null,this.userId)}>
                     <DImage
-                        resizeMode='stretch'
+                        resizeMode='cover'
                         defaultSource={app.img.personal_head}
-                        source={this.userHeadImage!=''?{uri: this.userHeadImage}:app.img.personal_head}
+                        source={this.userHeadImage?{uri: headUrl}:headUrl}
                         style={styles.HeadViewImage}  />
-                    <Text style={styles.HeadViewTextName}>
-                        {this.userHeadName}
-                    </Text>
-                    <Text style={styles.HeadViewTextJob}>
-                        {this.userHeadJob}
-                    </Text>
+                    </TouchableOpacity>
+                    <View style={{marginLeft: 15,width: nameWidth>130?sr.ws(130):sr.ws(nameWidth)}}>
+                        <Text numberOfLines={1} style={styles.HeadViewTextName}>
+                            {this.userHeadName}
+                        </Text>
+                    </View>
+                    {
+                        this.userHeadJob != '' &&
+                        <View style={[styles.rowPosition,{width: postWidth>60?sr.ws(60):sr.ws(postWidth)}]}>
+                            <Text numberOfLines={1} style={styles.rowPositionText}>
+                                {this.userHeadJob}
+                            </Text>
+                        </View>
+                    }
                 </View>
                 <Text style={styles.HeadViewTextTime}>
-                    {this.userHeadTime}
+                    {moment(this.userHeadTime).format('M月D日 HH:mm')}
                 </Text>
             </View>
         )
@@ -135,26 +145,40 @@ module.exports = React.createClass({
                     </Text>
                 </View>
                 <View style={styles.separator3}></View>
-                <ListView
-                    style={styles.list}
-                    enableEmptySections={true}
-                    dataSource={this.state.planDataSource}
-                    renderRow={this.renderRowPlan}
-                    renderSeparator={this.renderSeparator}
-                    />
+                {
+                    this.dayData.plan.map((item, i)=>{
+                        return (
+                            <View key={i}>
+                                <RecordItemView
+                                    data={item}
+                                    rowHeight={5}
+                                    isWideStyle={true}
+                                    />
+                                <View style={styles.separator3}/>
+                            </View>
+                        )
+                    })
+                }
                 <View style={styles.titleContainerWeek}>
                     <Text style={styles.headItemText}>
                         实际工作项
                     </Text>
                 </View>
                 <View style={styles.separator3}></View>
-                <ListView
-                    style={styles.list}
-                    enableEmptySections={true}
-                    dataSource={this.state.actualDataSource}
-                    renderRow={this.renderRowActual}
-                    renderSeparator={this.renderSeparator}
-                    />
+                {
+                    this.dayData.actual.map((item, i)=>{
+                        return (
+                            <View key={i}>
+                                <RecordItemView
+                                data={item}
+                                rowHeight={5}
+                                haveImage={true}
+                                />
+                                <View style={styles.separator3}/>
+                            </View>
+                        )
+                    })
+                }
             </View>
         )
     },
@@ -162,7 +186,6 @@ module.exports = React.createClass({
 
 var styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: '#FFFFFF'
     },
     monthPlanHeadView: {
@@ -180,20 +203,24 @@ var styles = StyleSheet.create({
         marginLeft: 16,
         width: 40,
         height: 40,
+        borderRadius: 20,
     },
     HeadViewTextName: {
-        marginLeft: 12,
         fontSize: 20,
         color: '#333333',
         fontFamily:'STHeitiSC-Medium',
     },
-    HeadViewTextJob: {
-        marginLeft: 12,
-        fontSize: 10,
-        color: '#FFFFFF',
-        fontFamily:'STHeitiSC-Medium',
-        backgroundColor: '#FC6467',
+    rowPosition: {
+        marginLeft:10,
+        backgroundColor: '#FF5E5F',
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: 2,
+    },
+    rowPositionText: {
+        fontFamily: 'STHeitiSC-Medium',
+        fontSize:10,
+        color: '#FFFFFF',
     },
     HeadViewTextTime: {
         marginRight: 16,
@@ -209,9 +236,8 @@ var styles = StyleSheet.create({
     },
     headItemText: {
         marginLeft: 32,
-        fontSize: 16,
+        fontSize: 18,
         color: '#333333',
-        fontWeight: '600',
         fontFamily:'STHeitiSC-Medium',
     },
     monthPlanPurposeViewStyle: {

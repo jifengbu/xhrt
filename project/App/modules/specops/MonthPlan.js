@@ -19,6 +19,7 @@ var moment = require('moment');
 var MonthList = require('./MonthList.js');
 var {Button, InputBox} = COMPONENTS;
 var CopyBox = require('../home/CopyBox.js');
+var InputTextMgr = require('../../manager/InputTextMgr.js');
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
@@ -433,19 +434,25 @@ module.exports = React.createClass({
         }
     },
     addMonthPlanContent() {
+        var textID = 'specops_monthPlan1';
+        var textContent = InputTextMgr.getTextContent(textID);
         app.showModal(
             <InputBox
                 doConfirm={this.submitMonthPlan}
-                inputText={''}
+                textID={textID}
+                inputText={textContent}
                 doCancel={app.closeModal}
                 />
         )
     },
     addWeekPlanContent() {
+        var textID = 'specops_monthPlan2';
+        var textContent = InputTextMgr.getTextContent(textID);
         app.showModal(
             <InputBox
                 doConfirm={this.submitWeekPlan}
-                inputText={''}
+                textID={textID}
+                inputText={textContent}
                 doCancel={app.closeModal}
                 />
         )
@@ -501,7 +508,7 @@ module.exports = React.createClass({
     doCancel(){
         this.setState({isInputBoxShow: false});
     },
-    submitMonthPlan(content) {
+    submitMonthPlan(content, textID) {
         this.setState({isInputBoxShow: false});
         if (content === '') {
             return;
@@ -517,19 +524,20 @@ module.exports = React.createClass({
             userID:app.personal.info.userID,
             planDate:tTime.format('YYYY-MM-DD'),
         };
-        POST(app.route.ROUTE_ADD_MONTH_PLAN, param, this.submitMonthPlanSuccess, true);
+        POST(app.route.ROUTE_ADD_MONTH_PLAN, param, this.submitMonthPlanSuccess.bind(null, textID), true);
 
     },
-    submitMonthPlanSuccess(data) {
+    submitMonthPlanSuccess(textID, data) {
         if (data.success) {
             //请求接口成功更新页面
             this.monthData.monthPlan.push({'id': data.context.id, 'content':data.context.content, isOver: false})
             this.setState({monthDataSource: this.ds.cloneWithRows(this.monthData.monthPlan)});
+            InputTextMgr.removeItem(textID);
         } else {
             Toast(data.msg);
         }
     },
-    submitWeekPlan(content) {
+    submitWeekPlan(content, textID) {
         this.setState({isInputBoxShow: false});
         if (content=== '') {
             return;
@@ -544,16 +552,15 @@ module.exports = React.createClass({
             userID:app.personal.info.userID,
             planDate:this.state.memWeekTime[this.state.tabIndex],
         };
-        POST(app.route.ROUTE_ADD_WEEK_PLAN, param, this.submitWeekPlanSuccess, true);
+        POST(app.route.ROUTE_ADD_WEEK_PLAN, param, this.submitWeekPlanSuccess.bind(null, textID), true);
 
     },
     submitWeekPlanSuccess(data) {
         if (data.success) {
-
             var weekData = this.getWeekPlan(this.state.tabIndex);
             weekData.push({'id': data.context.id, 'planId':data.context.planId, 'content':data.context.content, isOver: false})
             this.setState({weekDataSource: this.ds.cloneWithRows(weekData)});
-
+            InputTextMgr.removeItem(textID);
         } else {
             Toast(data.msg);
         }
@@ -562,15 +569,18 @@ module.exports = React.createClass({
         if (!this.state.isModify && this.state.weekSummary != '') {
             return;
         }
+        var textID = 'specops_monthPlan3';
+        var textContent = InputTextMgr.getTextContent(textID);
         app.showModal(
             <InputBox
                 doConfirm={this.saveWeekSummary}
-                inputText={this.state.weekSummary}
+                textID={textID}
+                inputText={this.state.weekSummary?this.state.weekSummary:textContent}
                 doCancel={app.closeModal}
                 />
         )
     },
-    saveWeekSummary(strContext) {
+    saveWeekSummary(strContext, textID) {
         if (strContext == '') {
             return;
         }
@@ -579,10 +589,11 @@ module.exports = React.createClass({
             context:strContext,
             planDate:this.state.memWeekTime[this.state.tabIndex],
         };
-        POST(app.route.ROUTE_SUBMIT_WEEK_SUMMARY, param, this.submitWeekSummarySuccess.bind(null, strContext), true);
+        POST(app.route.ROUTE_SUBMIT_WEEK_SUMMARY, param, this.submitWeekSummarySuccess.bind(null, strContext, textID), true);
     },
-    submitWeekSummarySuccess(strContext, data) {
+    submitWeekSummarySuccess(strContext, textID, data) {
         Toast('工作总结保存成功');
+        InputTextMgr.removeItem(textID);
         this.setState({weekSummary:strContext});
     },
     changeTab(tabIndex) {

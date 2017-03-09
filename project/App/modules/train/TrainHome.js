@@ -33,7 +33,7 @@ module.exports = React.createClass({
                 fromLeft: true,
             });
         }},
-        rightButton: { image: app.img.study_label_button, handler: ()=>{app.scene.toggleMenuPanel()}},
+        // rightButton: { image: app.img.study_label_button, handler: ()=>{app.scene.toggleMenuPanel()}},
         guideLayer: require('../guide/TrainHome.js'),
     },
     toggleMenuPanel() {

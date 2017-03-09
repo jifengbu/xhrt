@@ -18,6 +18,7 @@ var RecordItemView = require('./BossRecordItem.js');
 var moment = require('moment');
 var {Button, InputBox, DImage} = COMPONENTS;
 var CopyBox = require('../home/CopyBox.js');
+var SpecopsPerson = require('./SpecopsPerson.js');
 
 module.exports = React.createClass({
     getInitialState() {
@@ -41,49 +42,50 @@ module.exports = React.createClass({
             this.monthData.weekPlan[i] = [];
         }
 
-        // test data
-        this.userHeadImage = '';
-        this.userHeadName = '姓名姓名';
-        this.userHeadJob = '职位职位';
-        this.userHeadTime = '66:66';
-        let obj = {};
-        obj.content = '12345';
-        obj.isOver = 0;
-        this.monthData.monthPlan.push(obj);
-        this.monthData.monthPlan.push(obj);
-        this.monthData.monthPlan.push(obj);
-        this.monthData.weekPlan[0].push(obj);
-        this.monthData.weekPlan[0].push(obj);
-
-        this.setState({monthDataSource: this.ds.cloneWithRows(this.monthData.monthPlan)});
-        this.changeTab(0);
-
         // process data.
-        if (this.props.planData && this.props.planData.length > 0) {
+        if (this.props.planData) {
             let {planData} = this.props;
 
+            this.userId = planData.userId;
             this.userHeadImage = planData.userImg;
+            this.sex = planData.sex;
             this.userHeadName = planData.userName;
             this.userHeadJob = planData.post;
             this.userHeadTime = planData.submitDate;
-
-            this.monthData.monthPlan = planData.monthPlan.slice(0);
+            this.monthData.monthPlan = this.props.planData.monthPlan.slice(0);
             // process week plan..
-            for (var i = 0; i < planData.weekPlan.length; i++) {
-                this.processWeekPlan(planData.weekPlan[i]);
+            for (var i = 0; i < this.props.planData.weekPlan.length; i++) {
+                this.processWeekPlan(this.props.planData.weekPlan[i]);
             }
+        }else {
+            // test data
+            this.userId = '';
+            this.userHeadImage = '';
+            this.userHeadName = '姓名姓名';
+            this.userHeadJob = '职位职位';
+            this.userHeadTime = '2017-02-02 04:04:04';
+            let obj = {};
+            obj.content = '12345';
+            obj.isOver = 0;
+            this.monthData.monthPlan.push(obj);
+            this.monthData.monthPlan.push(obj);
+            this.monthData.monthPlan.push(obj);
+            this.monthData.weekPlan[0].push(obj);
+            this.monthData.weekPlan[0].push(obj);
         }
+        this.setState({monthDataSource: this.ds.cloneWithRows(this.monthData.monthPlan)});
+        this.changeTab(0);
     },
     processWeekPlan(obj){
         this.monthData.weekPlan[obj.weekNum-1].push(obj);
     },
-    processWeekTime(month){
+    processWeekTime(year, month){
         // find month first monday
         var isFirstMonday = false;
         var addPos = 0;
 
         var firstDay = '';
-        firstDay = moment().set('date', 1).set('month', month).format('YYYY-MM-DD');
+        firstDay = moment().set('date', 1).set('month', month).set('year', year).format('YYYY-MM-DD');
 
         var firstMonday = '';
         while (isFirstMonday === false) {
@@ -232,12 +234,15 @@ module.exports = React.createClass({
         this.memTabIndex = 0;
         this.memWeekCount = 0;
 
-        this.currentMonthNum = this.getCurrentMonth();
-        this.currentYearNum = this.getCurrentYear();
-        this.processWeekTime(this.currentMonthNum-1);
+        this.currentMonthNum = moment(this.props.date).month();
+        this.currentYearNum = moment(this.props.date).year();
+        this.processWeekTime(this.currentYearNum, this.currentMonthNum);
         this.currentWeekSeq = this.getCurrentTimeWeekSeq();
-
         this.clearMonthData();
+        // this.setState({tabIndex: this.getCurrentWeekIndex()});
+        var weekData = this.getWeekPlan(this.getCurrentWeekIndex());
+
+        this.setState({weekDataSource: this.ds.cloneWithRows(weekData), tabIndex: this.getCurrentWeekIndex()});
     },
     renderSeparator(sectionID, rowID) {
         return (
@@ -276,25 +281,59 @@ module.exports = React.createClass({
             </View>
         );
     },
+    toSpecopsPerson(userId) {
+        app.navigator.push({
+            component: SpecopsPerson,
+            passProps: {userID: userId},
+        });
+    },
+    calculateStrLength(oldStr) {
+        let height = 0;
+        let linesWidth = 0;
+        if (oldStr) {
+            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/[\r\n]/g, '|');
+            let StrArr = oldStr.split('|');
+            for (var i = 0; i < StrArr.length; i++) {
+                //计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            }
+            return linesWidth;
+        }
+    },
     // 头像view
     monthPlanHead() {
+        let nameTemWidth = this.calculateStrLength(this.userHeadName);
+        let postTemWidth = this.calculateStrLength(this.userHeadJob);
+        let nameWidth = nameTemWidth*13+3;
+        let postWidth = postTemWidth*6+3;
+        let headUrl = this.userHeadImage?this.userHeadImage:this.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
         return (
             <View style={styles.monthPlanHeadView}>
                 <View style={styles.monthPlanHeadView1}>
+                    <TouchableOpacity onPress={this.toSpecopsPerson.bind(null,this.userId)}>
                     <DImage
-                        resizeMode='stretch'
+                        resizeMode='cover'
                         defaultSource={app.img.personal_head}
-                        source={this.userHeadImage!=''?{uri: this.userHeadImage}:app.img.personal_head}
+                        source={this.userHeadImage?{uri: headUrl}:headUrl}
                         style={styles.HeadViewImage}  />
-                    <Text style={styles.HeadViewTextName}>
-                        {this.userHeadName}
-                    </Text>
-                    <Text style={styles.HeadViewTextJob}>
-                        {this.userHeadJob}
-                    </Text>
+                    </TouchableOpacity>
+                    <View style={{width: nameWidth>140?sr.ws(140):sr.ws(nameWidth)}}>
+                        <Text onLayout={this._measureLineHeight} numberOfLines={1} style={styles.HeadViewTextName}>
+                            {this.userHeadName}
+                        </Text>
+                    </View>
+                    {
+                        this.userHeadJob != '' &&
+                        <View style={[styles.rowPosition,{width: postWidth>56?sr.ws(56):sr.ws(postWidth)}]}>
+                            <Text numberOfLines={1} style={styles.rowPositionText}>
+                                {this.userHeadJob}
+                            </Text>
+                        </View>
+                    }
                 </View>
                 <Text style={styles.HeadViewTextTime}>
-                    {this.userHeadTime}
+                    {moment(this.userHeadTime).format('M月D日 HH:mm')}
                 </Text>
             </View>
         )
@@ -417,6 +456,7 @@ var styles = StyleSheet.create({
     },
     monthPlanHeadView1: {
         height: 50,
+        width: 264,
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -424,6 +464,7 @@ var styles = StyleSheet.create({
         marginLeft: 16,
         width: 40,
         height: 40,
+        borderRadius: 20,
     },
     HeadViewTextName: {
         marginLeft: 12,
@@ -431,13 +472,16 @@ var styles = StyleSheet.create({
         color: '#333333',
         fontFamily:'STHeitiSC-Medium',
     },
-    HeadViewTextJob: {
-        marginLeft: 12,
-        fontSize: 10,
-        color: '#FFFFFF',
-        fontFamily:'STHeitiSC-Medium',
-        backgroundColor: '#FC6467',
+    rowPosition: {
+        marginLeft:8,
+        backgroundColor: '#FF5E5F',
         borderRadius: 2,
+    },
+    rowPositionText: {
+        fontFamily: 'STHeitiSC-Medium',
+        fontSize:10,
+        marginHorizontal: 3,
+        color: '#FFFFFF',
     },
     HeadViewTextTime: {
         marginRight: 16,

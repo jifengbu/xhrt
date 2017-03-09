@@ -19,7 +19,7 @@ var EmployeeStudyTable = require('./EmployeeStudyTable.js');
 var PieChart = require('./pieChart.js');
 var moment = require('moment');
 var CoursePlayer = require('../specops/CoursePlayer.js');
-var {DImage} = COMPONENTS;
+var {DImage, MessageBox} = COMPONENTS;
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
@@ -27,9 +27,12 @@ module.exports = React.createClass({
         leftButton: { handler: ()=>{app.navigator.pop()}},
     },
     getInitialState() {
+        this.isRefreshScroll = false;
         this.sections = [];
         this.radios = [];
         this.numbers = [];
+        this.startTimes = [];
+        this.endTimes = [];
         for (var i = 0; i < 5; i++) {
             this.sections[i] = [];
             this.radios[i] = [];
@@ -44,7 +47,6 @@ module.exports = React.createClass({
             avgCoursesNumber: {},
             monthStudyWhenLong:[],
             haveData: false,
-            showEcharts: true,
         };
     },
     componentDidMount() {
@@ -53,9 +55,9 @@ module.exports = React.createClass({
     getList() {
         var param = {
             userID: app.personal.info.userID,
-            pageNo: this.pageNo,
+            companyId: app.personal.info.companyInfo.companyId,
         };
-        POST(app.route.ROUTE_GET_STUDY_SITUATION_DETAILS, param, this.getListSuccess);
+        POST(app.route.ROUTE_GET_STUDY_SITUATION_DETAILS, param, this.getListSuccess, true);
     },
     getListSuccess(data) {
         if (data.success) {
@@ -68,28 +70,27 @@ module.exports = React.createClass({
                     this.radios[i] = [];
                     this.numbers[i] = [];
                 }
-
                 let {avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess,specopsUserTask, studyWhenLong, welcomeCourses,monthStudyWhenLong} = data.context;
                 this.setState({avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess,specopsUserTask, studyWhenLong, welcomeCourses,monthStudyWhenLong});
-                for (var i in quizzesSuccess) {
-                    let section = [];
-                    let radio = [];
-                    let number = [];
-                    for (var j in quizzesSuccess[i].content) {
-                        this.sections[i].push(quizzesSuccess[i].content[j].title+'('+quizzesSuccess[i].content[j].sectionMax+'~'+quizzesSuccess[i].content[j].sectionMin+')');
-                        this.radios[i].push(quizzesSuccess[i].content[j].proportion+'%');
-                        this.numbers[i].push(quizzesSuccess[i].content[j].number);
+                if (quizzesSuccess != null) {
+                    for (var i in quizzesSuccess) {
+                        this.startTimes.push(quizzesSuccess[i].startData);
+                        this.endTimes.push(quizzesSuccess[i].endData);
+                        for (var j in quizzesSuccess[i].content) {
+                            this.sections[i].push(quizzesSuccess[i].content[j].title+'('+quizzesSuccess[i].content[j].sectionMax+'~'+quizzesSuccess[i].content[j].sectionMin+')');
+                            this.radios[i].push(quizzesSuccess[i].content[j].proportion+'%');
+                            this.numbers[i].push(quizzesSuccess[i].content[j].number);
+                        }
                     }
                 }
                 _.remove(this.sections, (item)=>item.length===0);
                 _.remove(this.radios, (item)=>item.length===0);
                 _.remove(this.numbers, (item)=>item.length===0);
-
-                setTimeout(()=>{
-                    this.setState({haveData: true});
-                },100);
-                console.log('------', this.numbers);
             }
+            this.setState({haveData: false});
+            setTimeout(()=>{
+                this.setState({haveData: true});
+            },600);
         } else {
             Toast(data.msg);
         }
@@ -114,28 +115,48 @@ module.exports = React.createClass({
         };
         POST(app.route.ROUTE_STUDY_PROGRESS, param, (data)=>{
             if (data.success) {
-                app.navigator.push({
-                    component: CoursePlayer,
-                    passProps: {isCourseRecord:true, lastStudyProgress: data.context, otherVideoID: obj.videoID},
-                });
+                if (!obj.isOver) {
+                    app.navigator.push({
+                        component: CoursePlayer,
+                        passProps: {otherVideoID:obj.videoID,newSee:0,lastSee:1,update:true},
+                    });
+                } else {
+                    app.navigator.push({
+                        component: CoursePlayer,
+                        passProps: {isCourseRecord:true, lastStudyProgress: data.context, otherVideoID: obj.videoID},
+                    });
+                }
             } else {
                 Toast('该特种兵课程学习进度获取失败，请重试！');
             }
         });
     },
     onChangePage(){
-        this.setState({showEcharts: false});
-        setTimeout(()=>{
-            this.setState({showEcharts: true});
-        },200);
+        this.setState({});
+    },
+    onLayoutSwiper(e) {
+        var {height} = e.nativeEvent.layout;
+        this.viewSwiperHeight = e.nativeEvent.layout.y-height;
     },
     render() {
         let {avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess,specopsUserTask, studyWhenLong, welcomeCourses,monthStudyWhenLong} = this.state;
         return (
             <View style={styles.container}>
-                <ScrollView>
+                <ScrollView onScroll={(e) => {
+                    if (e.nativeEvent.contentOffset.y >= this.viewSwiperHeight) {
+                        if (!this.isRefreshScroll) {
+                            setTimeout(()=>{
+                                this.setState({changePage: true});
+                                this.isRefreshScroll = true;
+                            },100);
+                        }
+                    }
+                }}>
                     <View style={styles.line}/>
-                    <EmployeeStudyTable avgCoursesNumber={avgCoursesNumber} monthAvgCoursesNumber={monthAvgCoursesNumber} studyWhenLong={studyWhenLong} monthStudyWhenLong={monthStudyWhenLong}/>
+                    {
+                        this.state.haveData &&
+                        <EmployeeStudyTable avgCoursesNumber={avgCoursesNumber} monthAvgCoursesNumber={monthAvgCoursesNumber} studyWhenLong={studyWhenLong} monthStudyWhenLong={monthStudyWhenLong}/>
+                    }
                     <View style={styles.classStyle}>
                         <View style={styles.line}/>
                         <View style={styles.topStyle}>
@@ -144,6 +165,7 @@ module.exports = React.createClass({
                             </Text>
                         </View>
                         {
+                            welcomeCourses.length?
                             welcomeCourses.map((item, i)=>{
                                 return (
                                     <TouchableHighlight
@@ -171,7 +193,7 @@ module.exports = React.createClass({
                                                 <View style={styles.flexConten}>
                                                     <View style={styles.rowViewStyle}>
                                                         <Text
-                                                            numberOfLines={1}
+                                                            numberOfLines={2}
                                                             style={styles.nameTextStyles}>
                                                             {item.name}
                                                         </Text>
@@ -189,6 +211,10 @@ module.exports = React.createClass({
                                     </TouchableHighlight>
                                 )
                             })
+                            :<View style={styles.listFooterContainer}>
+                                <View style={styles.rowLineOne}/>
+                                <Text style={styles.listFooter}>{'您的员工还没有开始学习'}</Text>
+                            </View>
                         }
                         <View style={styles.line}/>
                     </View>
@@ -201,7 +227,7 @@ module.exports = React.createClass({
                         </View>
                         <View style={styles.line}/>
                         {
-                            this.state.haveData && this.sections.length > 0 &&
+                            this.state.haveData &&
                             <Swiper
                                 paginationStyle={styles.paginationStyle}
                                 dot={<View style={{backgroundColor:'#E0E0E0', width: 6, height: 6,borderRadius: 3, marginLeft: 6, marginRight: 6,}} />}
@@ -211,14 +237,24 @@ module.exports = React.createClass({
                                 loop={false}>
                                 {
                                     this.sections.map((item, i)=>{
+                                        let timeText = '';
+                                        let startMoment = moment(this.startTimes[i]),  nowMoment = moment(), endMoment = moment(this.endTimes[i]);
+                                        if (!nowMoment.isBefore(startMoment) && nowMoment.isBefore(endMoment)) {
+                                            timeText = '本周随堂测试成绩';
+                                        } else {
+                                            timeText = moment(this.startTimes[i]).format('M月D日')+' ~ '+moment(this.endTimes[i]).format('M月D日')+' 随堂测试成绩';
+                                        }
                                         return (
-                                            <View key={i} style={styles.bannerImage}>
+                                            <View  key={i} onLayout={this.onLayoutSwiper} style={styles.bannerImage}>
                                                 <View style={styles.tableTop}>
                                                     <Text style={styles.tableTopText}>
-                                                        {i === 0?'本周随堂测试成绩':moment(item.data).format('M月D日')+' ~ '+moment(moment(item.data).add(7, 'day')).format('M月D日')+' 随堂测试成绩'}
+                                                        {timeText}
                                                     </Text>
                                                 </View>
-                                                <PieChart showEcharts={this.state.showEcharts} sections={this.sections[i]} radios={this.radios[i]} numbers={this.numbers[i]} />
+                                                {
+                                                    this.state.haveData &&
+                                                    <PieChart showUnitText={'人'}  sections={this.sections[i]} radios={this.radios[i]} numbers={this.numbers[i]} />
+                                                }
                                             </View>
                                         )
                                     })
@@ -327,7 +363,7 @@ var styles = StyleSheet.create({
     },
     LeftImage: {
         width: 72,
-        height: 52,
+        height: 54,
         borderRadius: 2,
     },
     flexConten: {
@@ -345,10 +381,10 @@ var styles = StyleSheet.create({
     },
     columnViewStyle: {
         position: 'absolute',
-        bottom: 5,
+        bottom: 0,
         left: 0,
-        width: 240,
-        height: 20,
+        width: 222,
+        height: 16,
         justifyContent: 'center',
     },
     lastTimeText: {
@@ -382,5 +418,14 @@ var styles = StyleSheet.create({
     brokenStyle: {
         width: sr.w,
         height: 270,
+    },
+    listFooterContainer: {
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    listFooter: {
+        color: 'gray',
+        fontSize: 14,
     },
 });

@@ -32,6 +32,7 @@ var WeekListRow = React.createClass({
         var obj = this.props.obj.time;
         var weekNum = this.props.obj.weekNum;
         var rowID = this.props.rowID;
+        var haveImage = this.props.haveImage;
         return (
             <View
                 underlayColor="#EEB422">
@@ -67,10 +68,10 @@ var WeekListRow = React.createClass({
                 {
                     rowID==0?(
                         this.state.showFirstDetail &&
-                        <WeekRecord time = {obj}/>
+                        <WeekRecord time = {obj} haveImage={haveImage} userID={this.props.userID}/>
                     ):(
                         this.state.showDetail &&
-                        <WeekRecord time = {obj}/>
+                        <WeekRecord time = {obj} haveImage={haveImage} userID={this.props.userID}/>
                     )
                 }
             </View>
@@ -143,7 +144,7 @@ module.exports = React.createClass({
     },
     renderRow(obj, sectionID, rowID, onRowHighlighted) {
         return (
-            <WeekListRow obj = {obj} rowID = {rowID}/>
+            <WeekListRow obj = {obj} rowID = {rowID} haveImage={this.props.haveImage} userID={this.props.userID}/>
         )
     },
     renderFooter() {

@@ -13,6 +13,7 @@ var {
 } = ReactNative;
 
 var moment = require('moment');
+var CopyBox = require('../home/CopyBox.js');
 var SpecopsPerson = require('./SpecopsPerson.js');
 var {DImage} = COMPONENTS;
 
@@ -23,11 +24,28 @@ module.exports = React.createClass({
     statics: {
         leftButton: { handler: ()=>{app.navigator.pop()}},
     },
+    onStartShouldSetResponderCapture(evt){
+        app.touchPosition.x = evt.nativeEvent.pageX;
+        app.touchPosition.y = evt.nativeEvent.pageY;
+        return false;
+    },
+    onLongPress(str){
+        if (str != '' && str.length > 0) {
+            // 显示复制按钮
+            app.showModal(
+                <CopyBox copyY={app.touchPosition.y}
+                        copyX={app.touchPosition.x}
+                        copyString={str}/>,
+                        {backgroundColor: 'transparent'}
+            );
+        }
+    },
     getInitialState() {
+        this.list = [];
         this.pageNo = 1;
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return {
-            dataSource: this.ds.cloneWithRows([]),
+            dataSource: this.ds.cloneWithRows(this.list),
             infiniteLoadStatus: STATUS_TEXT_HIDE,
 
         };
@@ -38,6 +56,7 @@ module.exports = React.createClass({
     getList() {
         var param = {
             userID: app.personal.info.userID,
+            companyId: app.personal.info.companyInfo.companyId,
             pageNo: this.pageNo,
         };
         this.setState({infiniteLoadStatus: this.pageNo===1?STATUS_START_LOAD:STATUS_HAVE_MORE});
@@ -47,11 +66,16 @@ module.exports = React.createClass({
         if (data.success) {
             var length = 0;
             if (data.context.specopsUserTask) {
-                let videoList = data.context.specopsUserTask.length != 0&&data.context.specopsUserTask;
+                let videoList = [];
+                if (data.context.specopsUserTask.length > 0) {
+                    videoList = data.context.specopsUserTask.slice(0);
+                }
                 let list = (this.props.showAll == false&&videoList.length > 3)?videoList.slice(0,3):videoList;
-                var infiniteLoadStatus = (list.length < CONSTANTS.PER_PAGE_COUNT) ? '您的员工还没有完成课后作业' : STATUS_TEXT_HIDE;
+                this.list = this.list.concat(list);
+                // var infiniteLoadStatus = (list.length < CONSTANTS.PER_PAGE_COUNT) ? '您的员工还没有完成课后作业' : STATUS_TEXT_HIDE;
+                var infiniteLoadStatus = (!list.length && this.pageNo===1) ? '您的员工还没有完成课后作业' : (!list.length && this.pageNo===1) ? '您的员工还没有完成课后作业' : list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_TEXT_HIDE;
                 this.setState({
-                    dataSource: this.ds.cloneWithRows(list),
+                    dataSource: this.ds.cloneWithRows(this.list),
                     infiniteLoadStatus: infiniteLoadStatus
                 });
             }
@@ -65,6 +89,10 @@ module.exports = React.createClass({
         this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
     },
     onEndReached() {
+        if (this.props.showAll == false) {
+            return;
+        }
+
         if (this.state.infiniteLoadStatus !== STATUS_TEXT_HIDE) {
             return;
         }
@@ -74,19 +102,35 @@ module.exports = React.createClass({
 
     renderRow(obj, sectionID, rowID) {
         return (
-            <RowItem obj={obj} rowID={rowID} />
+            <RowItem obj={obj} rowID={rowID} onLongPress={this.onLongPress}/>
         );
     },
-    renderFooter() {
+    renderFooter0() {
+        var status = this.state.infiniteLoadStatus;
         return (
-            <View style={styles.listFooterContainer}>
-                <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
+            <View style={[styles.listFooterContainer, (!this.list.length && this.pageNo===1)&&{justifyContent: 'center'}]}>
+                <Text style={styles.listFooter}>{typeof status === 'string'?status:CONSTANTS.LISTVIEW_INFINITE.TEXT[status]}</Text>
+            </View>
+        )
+    },
+    renderFooter1() {
+        var status = this.state.infiniteLoadStatus;
+        return (
+            <View>
+                {
+                    (!this.list.length && this.pageNo===1)?
+                    <View style={[styles.listFooterContainer, {justifyContent: 'center'}]}>
+                        <Text style={styles.listFooter}>{typeof status === 'string'?status:CONSTANTS.LISTVIEW_INFINITE.TEXT[status]}</Text>
+                    </View>
+                    :null
+                }
             </View>
         )
     },
     render() {
         return (
-            <View style={styles.container}>
+            <View style={styles.container}
+                onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
                 <View style={styles.line}/>
                 <ListView
                     ref={listView=>this.listView=listView}
@@ -97,7 +141,7 @@ module.exports = React.createClass({
                     style={styles.listStyle}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
-                    renderFooter={this.renderFooter}
+                    renderFooter={this.props.showAll == true?this.renderFooter0:this.renderFooter1}
                     />
             </View>
         )
@@ -109,11 +153,15 @@ var RowItem = React.createClass({
         return {
             lineHeight: 0,
             isLookAll: false,
+            isShowBtn: false,
         };
     },
     _measureLineHeight(e) {
         if (!this.state.lineheight) {
             var {height} = e.nativeEvent.layout;
+            if (height > 90) {
+                this.setState({isShowBtn: true});
+            }
             this.setState({lineHeight: height+26});
         }
     },
@@ -123,12 +171,13 @@ var RowItem = React.createClass({
     toStudyDetail(userId) {
         app.navigator.push({
             component: SpecopsPerson,
-            passProps: {userId: userId},
+            passProps: {userID: userId},
         });
     },
     render() {
-        let { isLookAll } = this.state;
+        let { isLookAll ,lineHeight, isShowBtn} = this.state;
         let { obj , rowID } = this.props;
+        let headUrl = obj.userImg?obj.userImg:obj.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
         return (
             <View style={styles.listViewItemContain}>
                 {
@@ -139,9 +188,9 @@ var RowItem = React.createClass({
                     <TouchableOpacity onPress={this.toStudyDetail.bind(null,obj.userId)}>
                         <View style={styles.messageStyle}>
                             <DImage
-                                resizeMode='stretch'
+                                resizeMode='cover'
                                 defaultSource={app.img.personal_head}
-                                source={{uri:obj.userImg}}
+                                source={obj.userImg?{uri: headUrl}:headUrl}
                                 style={styles.LeftImage} />
                             <View style={styles.leftStyle}>
                                 <View style={styles.detailStyle}>
@@ -149,11 +198,14 @@ var RowItem = React.createClass({
                                         <Text style={styles.nameTextStyles}>
                                             {obj.userName}
                                         </Text>
-                                        <View style={styles.postStyle}>
-                                            <Text style={styles.postTextStyle}>
-                                                {obj.post}
-                                            </Text>
-                                        </View>
+                                        {
+                                            obj.post != ''&&
+                                            <View style={styles.postStyle}>
+                                                <Text style={styles.postTextStyle}>
+                                                    {obj.post||''}
+                                                </Text>
+                                            </View>
+                                        }
                                     </View>
                                     <Text numberOfLines={1} style={styles.lastTimeText}>
                                         {moment(obj.submitTime).format('YYYY.MM.DD HH:mm:ss')}
@@ -162,26 +214,31 @@ var RowItem = React.createClass({
                                 <Text
                                     numberOfLines={1}
                                     style={styles.detailTextStyles}>
-                                    {'课程：'+obj.courseTitle}
+                                    {'课程：'+(obj.courseTitle||'')}
                                 </Text>
                             </View>
                         </View>
                     </TouchableOpacity>
                     <View style={styles.titleStyle}>
-                        <Text style={styles.titleText}>{'题目：'+obj.taskTitle}</Text>
+                        <Text style={styles.titleText}>{'题目：'+(obj.taskTitle||'')}</Text>
                     </View>
                     <View style={styles.flexConten}>
-                        <View style={[styles.synopsisStyle, {height: this.state.lineHeight}]}>
-                            <Text onLayout={this._measureLineHeight} numberOfLines={isLookAll?200:4} style={styles.synopsisText}>
-                                {obj.taskAnswer}
-                            </Text>
-                            {
-                                !isLookAll&&
-                                <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: (this.state.lineHeight)/2}]}/>
-                            }
-                            <TouchableOpacity onPress={this.doLookAll} style={styles.lookAllStyle}>
-                                <Text style={styles.lookAllText}>{isLookAll?'点击收起':'点击展开更多'}</Text>
+                        <View style={[styles.synopsisStyle, {height: lineHeight}]}>
+                            <TouchableOpacity onLongPress={this.props.onLongPress.bind(null,obj.taskAnswer)}>
+                                <Text onLayout={this._measureLineHeight} numberOfLines={(isLookAll)?200:isShowBtn?4:10} style={styles.synopsisText}>
+                                    {obj.taskAnswer||''}
+                                </Text>
                             </TouchableOpacity>
+                            {
+                                !isLookAll&&isShowBtn&&
+                                <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: (lineHeight)/2}]}/>
+                            }
+                            {
+                                isShowBtn&&
+                                <TouchableOpacity onPress={this.doLookAll} style={styles.lookAllStyle}>
+                                    <Text style={styles.lookAllText}>{isLookAll?'点击收起':'点击展开更多'}</Text>
+                                </TouchableOpacity>
+                            }
                         </View>
                     </View>
                 </View>
@@ -199,6 +256,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     listFooterContainer: {
+        height: 60,
         alignItems: 'center',
     },
     listFooter: {
@@ -246,7 +304,6 @@ var styles = StyleSheet.create({
     LeftImage: {
         width: 36,
         height: 36,
-        marginLeft: 7,
         marginVertical: 8,
         borderRadius: 18,
     },
@@ -259,7 +316,9 @@ var styles = StyleSheet.create({
     titleText: {
         color: '#585858',
         fontSize: 14,
-        margin: 7,
+        marginTop: 7,
+        marginLeft: 7,
+        marginBottom: 7,
     },
     flexConten: {
         width: sr.w-20,
@@ -304,11 +363,10 @@ var styles = StyleSheet.create({
         marginBottom: 8,
     },
     synopsisText: {
-        width: sr.w-30,
-        marginLeft: 7,
         fontSize: 16,
         color: '#0A0A0A',
-        fontFamily: 'STHeitiSC-Medium'
+        fontFamily: 'STHeitiSC-Medium',
+        backgroundColor: 'transparent',
     },
     maskImage: {
         width: sr.w-20,
@@ -320,9 +378,10 @@ var styles = StyleSheet.create({
         width: 100,
         height: 20,
         bottom: 0,
-        left: sr.w/2-50,
+        left: (sr.w-20)/2-50,
         position: 'absolute',
         alignItems: 'center',
+        justifyContent: 'center',
         flexDirection: 'row',
     },
     lookAllText: {

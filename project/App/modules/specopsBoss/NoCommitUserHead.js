@@ -13,6 +13,7 @@ var {
 } = ReactNative;
 
 var {DImage} = COMPONENTS;
+var SpecopsPerson = require('./SpecopsPerson.js');
 
 module.exports = React.createClass({
     getInitialState() {
@@ -22,37 +23,39 @@ module.exports = React.createClass({
         return {
             dataSource: this.ds.cloneWithRows(this.firstListUser),
             isFirstUserList: true,
+            haveData: false,
         };
     },
     componentDidMount() {
-        let item = {};
-        item.urlImg = '';
-        item.userName = '222';
-        item.post = '333';
-
-        for (var i = 0; i < 5; i++) {
-            let tempArray = [];
-            for (var j = 0; j < 5; j++) {
-                tempArray.push(item);
-            }
-            this.allListUser.push(tempArray);
-            if (i == 0) {
-                this.firstListUser.push(tempArray);
-            }
-        }
-
-        this.userCount = 10;
+        // let item = {};
+        // item.userId = '';
+        // item.urlImg = '';
+        // item.userName = '222';
+        // item.post = '333';
+        //
+        // for (var i = 0; i < 5; i++) {
+        //     let tempArray = [];
+        //     for (var j = 0; j < 5; j++) {
+        //         tempArray.push(item);
+        //     }
+        //     this.allListUser.push(tempArray);
+        //     if (i == 0) {
+        //         this.firstListUser.push(tempArray);
+        //     }
+        // }
+        // this.userCount = 10;
 
         // process data
         if (this.props.userData && this.props.userData.length > 0) {
-            let {userData} = this.props;
+
+            let tempUserData = this.props.userData.slice(0);
             this.allListUser = [];
             this.firstListUser = [];
             let tempArray = [];
-            this.userCount = userData.length;
+            this.userCount = tempUserData.length;
 
-            for (var i = 0; i < userData.length; i++) {
-                tempArray.push(userData[i]);
+            for (var i = 0; i < tempUserData.length; i++) {
+                tempArray.push(tempUserData[i]);
                 if (tempArray.length == 5) {
                     if (this.firstListUser.length == 0) {
                         this.firstListUser.push(tempArray);
@@ -64,31 +67,42 @@ module.exports = React.createClass({
             if (this.firstListUser.length == 0 && tempArray.length > 0) {
                 this.firstListUser.push(tempArray);
             }
-            if (this.allListUser.length == 0 && tempArray.length > 0) {
+            if (tempArray.length > 0) {
                 this.allListUser.push(tempArray);
             }
         }
+        setTimeout(()=>{
+            this.setState({haveData: true});
+        }, 200);
     },
-
+    toSpecopsPerson(strUserId) {
+        app.navigator.push({
+            component: SpecopsPerson,
+            passProps: {userID: strUserId},
+        });
+    },
     onPressAllUser() {
         this.setState({isFirstUserList:this.state.isFirstUserList===false});
     },
-    renderRow(obj) {
+    renderRow(obj, i) {
         // 一行五个头。
         return (
-            <View style={styles.itemListView}>
+            <View key={i} style={styles.itemListView}>
                 {
                     obj.map((item, i)=>{
+                        let headUrl = item.userImg?item.userImg:item.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
                         return (
                             <View style={styles.itemView}
                                   key={i}>
-                                <DImage
-                                    resizeMode='stretch'
-                                    defaultSource={app.img.personal_head}
-                                    source={item.urlImg?{uri:item.userImg}:app.img.personal_head}
-                                    style={styles.itemImage} />
-                                <Text style={styles.itemNameText}>{item.userName}</Text>
-                                <Text style={styles.itemJobText}>{item.post}</Text>
+                                  <TouchableOpacity style={styles.itemTouch} onPress={this.toSpecopsPerson.bind(null,item.userId)}>
+                                    <DImage
+                                        resizeMode='cover'
+                                        defaultSource={app.img.personal_head}
+                                        source={item.userImg?{uri: headUrl}:headUrl}
+                                        style={styles.itemImage} />
+                                    <Text style={styles.itemNameText} numberOfLines={1}>{item.userName}</Text>
+                                    <Text style={styles.itemJobText} numberOfLines={1}>{item.post}</Text>
+                                 </TouchableOpacity>
                             </View>
                         )
                     })
@@ -105,24 +119,29 @@ module.exports = React.createClass({
         }
         return (
             <View>
-                <View style={styles.separator}/>
-                <View style={styles.listHeaderContainer}>
-                    <Text style={styles.headText}>未提交的员工   (</Text>
-                    <Text style={styles.headText}>{this.userCount}</Text>
-                    <Text style={styles.headText}>人)</Text>
-                </View>
-                <View style={styles.separator1}/>
-                <View style={styles.itemParentView}>
-                    {
-                        userList.map((item, i)=>{
-                            return (
-                                this.renderRow(item)
-                            )
-                        })
-                    }
-                </View>
                 {
-                    this.allListUser.length > 1 &&
+                    userList.length > 0 && this.state.haveData &&
+                    <View>
+                        <View style={styles.separator}/>
+                        <View style={styles.listHeaderContainer}>
+                            <Text style={styles.headText}>未提交的员工   (</Text>
+                            <Text style={styles.headText}>{this.userCount}</Text>
+                            <Text style={styles.headText}>人)</Text>
+                        </View>
+                        <View style={styles.separator1}/>
+                        <View style={styles.itemParentView}>
+                            {
+                                userList.map((item, i)=>{
+                                    return (
+                                        this.renderRow(item, i)
+                                    )
+                                })
+                            }
+                        </View>
+                    </View>
+                }
+                {
+                    this.allListUser.length > 1 && this.state.haveData &&
                     <View>
                         <View style={styles.separator1}/>
                         <TouchableOpacity style={styles.btnView}
@@ -136,7 +155,6 @@ module.exports = React.createClass({
                         </TouchableOpacity>
                     </View>
                 }
-
             </View>
         )
     },
@@ -201,9 +219,14 @@ var styles = StyleSheet.create({
         backgroundColor:'#FFFFFF',
         marginVertical: 10,
     },
+    itemTouch: {
+        alignItems: 'center',
+        // justifyContent: 'space-between',
+    },
     itemImage: {
-        height: 40,
         width: 40,
+        height: 40,
+        borderRadius: 20,
     },
     itemNameText: {
         color:'#333333',

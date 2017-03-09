@@ -66,10 +66,10 @@ var MonthListRow = React.createClass({
                 {
                     rowID==0?(
                         this.state.showFirstDetail &&
-                        <MonthRecord time = {obj}/>
+                        <MonthRecord time = {obj} userID={this.props.userID}/>
                     ):(
                         this.state.showDetail &&
-                        <MonthRecord time = {obj}/>
+                        <MonthRecord time = {obj} userID={this.props.userID}/>
                     )
                 }
             </View>
@@ -121,7 +121,7 @@ module.exports = React.createClass({
     },
     renderRow(obj, sectionID, rowID, onRowHighlighted) {
         return (
-            <MonthListRow obj = {obj} rowID = {rowID}/>
+            <MonthListRow obj = {obj} rowID = {rowID} userID={this.props.userID}/>
         )
     },
     renderFooter() {

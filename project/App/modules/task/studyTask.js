@@ -50,6 +50,7 @@ module.exports = React.createClass({
     getInitialState() {
         return {
             taskList: [],
+            showNoData:false,
         };
     },
     componentDidMount() {
@@ -77,6 +78,7 @@ module.exports = React.createClass({
 	getTaskListSuccess(data) {
 		if (data.success) {
 			this.setState({taskList: data.context.studyTask||[]});
+            data.context.studyTask.length==0?this.setState({showNoData: true}):this.setState({showNoData: false})
 		} else {
 			Toast(data.msg);
 		}
@@ -85,7 +87,7 @@ module.exports = React.createClass({
         this.insertCurrentTaskLog(timingTaskID,week);
     },
     render() {
-        const {taskList} = this.state;
+        const {taskList,showNoData} = this.state;
         return (
             <ScrollView style={styles.container} refreshControl={
                 <RefreshControl
@@ -98,6 +100,7 @@ module.exports = React.createClass({
                 {taskList.map((item, i)=>(
                     <TaskItem {...item} key={i} doStartStudy={this.doStartStudy.bind(null,item.timingTaskID,item.week)}/>
                 ))}
+                {showNoData&&<Text style={{color: 'gray',fontSize: 14,textAlign:'center',marginTop:20}}>{'暂无数据！'}</Text>}
             </ScrollView>
         );
     },

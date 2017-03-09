@@ -40,12 +40,9 @@
   
   [RCTJPush application:application didFinishLaunchingWithOptions:launchOptions];
   
-  //腾讯云分析
-  [MTA startWithAppkey:@"￼￼￼￼IDIMHG5X397Q"];
-  
 #ifdef DEBUG
   NSURL *jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
-#else //DEBUG
+#else //DEBUG画丶
   NSURL *jsCodeLocation = [RCTUpdate getBundleUrl];
 #endif //DEBUG
   
@@ -60,6 +57,13 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  //腾讯云分析
+  [MTA startWithAppkey:@"￼￼￼￼IDIMHG5X397Q"];
+  if ([MTA startWithAppkey:@"IDIMHG5X397Q" checkedSdkVersion:MTA_SDK_VERSION]) {
+    
+    NSLog(@"MTA Start successs!");
+    
+  }
   return YES;
 }
 

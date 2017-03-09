@@ -149,8 +149,8 @@ var styles = StyleSheet.create({
         marginVertical: 10,
     },
     videoImg: {
-        width: 105,
-        height: 76,
+        width: 112,
+        height: 77,
         marginLeft:12,
         borderRadius: 4,
         justifyContent:'flex-end',
@@ -160,9 +160,9 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
     },
     itemNameText: {
-        width: sr.w-144,
+        width: sr.w-148,
         fontSize: 16,
-        marginLeft: 17,
+        marginLeft: 15,
         fontFamily: 'STHeitiSC-Medium'
     },
     iconContainer: {

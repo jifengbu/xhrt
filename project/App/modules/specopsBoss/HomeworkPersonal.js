@@ -13,6 +13,7 @@ var {
 } = ReactNative;
 
 var moment = require('moment');
+var CopyBox = require('../home/CopyBox.js');
 var {MessageBox} = COMPONENTS;
 
 const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
@@ -23,20 +24,39 @@ module.exports = React.createClass({
         leftButton: { handler: ()=>{app.navigator.pop()}},
     },
     getInitialState() {
+        this.list = [];
         this.pageNo = 1;
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return {
-            dataSource: this.ds.cloneWithRows([]),
+            dataSource: this.ds.cloneWithRows(this.list),
             infiniteLoadStatus: STATUS_TEXT_HIDE,
 
         };
+    },
+    onStartShouldSetResponderCapture(evt){
+        app.touchPosition.x = evt.nativeEvent.pageX;
+        app.touchPosition.y = evt.nativeEvent.pageY;
+        return false;
+    },
+    onLongPress(str){
+        if (str != '' && str.length > 0) {
+            // 显示复制按钮
+            app.showModal(
+                <CopyBox copyY={app.touchPosition.y}
+                        copyX={app.touchPosition.x}
+                        copyString={str}/>,
+                        {backgroundColor: 'transparent'}
+            );
+        }
     },
     componentDidMount() {
         this.getList();
     },
     getList() {
+        let info = app.personal.info;
         var param = {
-            userID: app.personal.info.userID,
+            userID: this.props.userID,
+            companyId: info.companyInfo.companyId,
             pageNo: this.pageNo,
         };
         this.setState({infiniteLoadStatus: this.pageNo===1?STATUS_START_LOAD:STATUS_HAVE_MORE});
@@ -45,15 +65,15 @@ module.exports = React.createClass({
     getListSuccess(data) {
         if (data.success) {
             var length = 0;
-            if (data.context.specopsUserTask) {
-                let videoList = data.context.specopsUserTask.length != 0&&data.context.specopsUserTask;
-                let list = (this.props.showAll == false&&videoList.length > 3)?videoList.slice(0,3):videoList;
-                var infiniteLoadStatus = (list.length < CONSTANTS.PER_PAGE_COUNT) ? '您的员工还没有完成课后作业' : STATUS_TEXT_HIDE;
-                this.setState({
-                    dataSource: this.ds.cloneWithRows(list),
-                    infiniteLoadStatus: infiniteLoadStatus
-                });
-            }
+            let userTaskList = data.context.specopsUserTask.length != 0?data.context.specopsUserTask:[];
+            let list = (this.props.showAll == false&&userTaskList.length > 3)?userTaskList.slice(0,3):userTaskList;
+            this.list = this.list.concat(list);
+            // var infiniteLoadStatus = (list.length < CONSTANTS.PER_PAGE_COUNT) ? '您的员工还没有完成课后作业' : STATUS_TEXT_HIDE;
+            var infiniteLoadStatus = (!list.length && this.pageNo===1) ? '您的员工还没有完成课后作业' : (!list.length && this.pageNo===1) ? '您的员工还没有完成课后作业' : list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_TEXT_HIDE;
+            this.setState({
+                dataSource: this.ds.cloneWithRows(this.list),
+                infiniteLoadStatus: infiniteLoadStatus
+            });
 
         } else {
             this.getListFailed();
@@ -64,6 +84,9 @@ module.exports = React.createClass({
         this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
     },
     onEndReached() {
+        if (this.props.showAll == false) {
+            return;
+        }
         if (this.state.infiniteLoadStatus !== STATUS_TEXT_HIDE) {
             return;
         }
@@ -73,19 +96,35 @@ module.exports = React.createClass({
 
     renderRow(obj, sectionID, rowID) {
         return (
-            <RowItem obj={obj} rowID={rowID} />
+            <RowItem obj={obj} rowID={rowID} onLongPress={this.onLongPress}/>
         );
     },
-    renderFooter() {
+    renderFooter0() {
+        var status = this.state.infiniteLoadStatus;
         return (
-            <View style={styles.listFooterContainer}>
-                <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
+            <View style={[styles.listFooterContainer, (!this.list.length && this.pageNo===1)&&{justifyContent: 'center'}]}>
+                <Text style={styles.listFooter}>{typeof status === 'string'?status:CONSTANTS.LISTVIEW_INFINITE.TEXT[status]}</Text>
+            </View>
+        )
+    },
+    renderFooter1() {
+        var status = this.state.infiniteLoadStatus;
+        return (
+            <View>
+                {
+                    (!this.list.length && this.pageNo===1)?
+                    <View style={[styles.listFooterContainer, {justifyContent: 'center'}]}>
+                        <Text style={styles.listFooter}>{typeof status === 'string'?status:CONSTANTS.LISTVIEW_INFINITE.TEXT[status]}</Text>
+                    </View>
+                    :null
+                }
             </View>
         )
     },
     render() {
         return (
-            <View style={styles.container}>
+            <View style={styles.container}
+                onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
                 <View style={styles.line}/>
                 <ListView
                     ref={listView=>this.listView=listView}
@@ -96,7 +135,7 @@ module.exports = React.createClass({
                     style={styles.listStyle}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
-                    renderFooter={this.renderFooter}
+                    renderFooter={this.props.showAll == true?this.renderFooter0:this.renderFooter1}
                     />
             </View>
         )
@@ -108,11 +147,15 @@ var RowItem = React.createClass({
         return {
             lineHeight: 0,
             isLookAll: false,
+            isShowBtn: false,
         };
     },
     _measureLineHeight(e) {
         if (!this.state.lineheight) {
             var {height} = e.nativeEvent.layout;
+            if (height > 90) {
+                this.setState({isShowBtn: true});
+            }
             this.setState({lineHeight: height+26});
         }
     },
@@ -120,7 +163,7 @@ var RowItem = React.createClass({
         this.setState({isLookAll: !this.state.isLookAll});
     },
     render() {
-        let { isLookAll } = this.state;
+        let { isLookAll, isShowBtn, lineHeight } = this.state;
         let { obj , rowID } = this.props;
         return (
             <View>
@@ -134,27 +177,33 @@ var RowItem = React.createClass({
                             <Text
                                 numberOfLines={1}
                                 style={styles.detailTextStyles}>
-                                {obj.courseTitle}
+                                {obj.courseTitle||''}
                             </Text>
                             <Text numberOfLines={1} style={styles.lastTimeText}>
                                 {moment(obj.submitTime).format('YYYY.MM.DD HH:mm:ss')}
                             </Text>
                         </View>
                         <View style={styles.titleStyle}>
-                            <Text style={styles.titleText}>{'题目：'+obj.taskTitle}</Text>
+                            <Text style={styles.titleText}>{'题目：'+(obj.taskTitle||'')}</Text>
                         </View>
                         <View style={styles.flexConten}>
-                            <View style={[styles.synopsisStyle, {height: this.state.lineHeight}]}>
-                                <Text onLayout={this._measureLineHeight} numberOfLines={isLookAll?200:4} style={styles.synopsisText}>
-                                    {obj.taskAnswer}
-                                </Text>
-                                {
-                                    !isLookAll&&
-                                    <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: (this.state.lineHeight)/2}]}/>
-                                }
-                                <TouchableOpacity onPress={this.doLookAll} style={styles.lookAllStyle}>
-                                    <Text style={styles.lookAllText}>{isLookAll?'点击收起':'点击展开更多'}</Text>
+                            <View style={[styles.synopsisStyle, {height: lineHeight}]}>
+                                <TouchableOpacity onLongPress={this.props.onLongPress.bind(null,obj.taskAnswer)}>
+                                    <Text onLayout={this._measureLineHeight} numberOfLines={isLookAll?200:isShowBtn?4:10} style={styles.synopsisText}>
+                                        {obj.taskAnswer||''}
+                                    </Text>
                                 </TouchableOpacity>
+
+                                {
+                                    !isLookAll&&isShowBtn&&
+                                    <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: (lineHeight)/2}]}/>
+                                }
+                                {
+                                    isShowBtn&&
+                                    <TouchableOpacity onPress={this.doLookAll} style={styles.lookAllStyle}>
+                                        <Text style={styles.lookAllText}>{isLookAll?'点击收起':'点击展开更多'}</Text>
+                                    </TouchableOpacity>
+                                }
                             </View>
                         </View>
                     </View>
@@ -173,6 +222,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     listFooterContainer: {
+        height: 60,
         alignItems: 'center',
     },
     listFooter: {

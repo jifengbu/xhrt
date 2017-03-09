@@ -39,15 +39,37 @@ module.exports = React.createClass({
         const date = this.props.date;
         const option = {
             grid: {
-                x: 40,
-                y: 50,
-                x2: 40,
-                y2: 40,
+                left: '5%',
+                right: '6%',
+                bottom: '3%',
+                containLabel: true
             },
             xAxis: {
-              data: date
+                data: date,
+                axisLine:{
+                    lineStyle:{
+                        color:'#DDDDDD',
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#AEAEAE'
+                    }
+                },
             },
-            yAxis: {name: ''},
+            yAxis: {
+                name: '',
+                axisLine:{
+                    lineStyle:{
+                        color:'#DDDDDD',
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#AEAEAE'
+                    },
+                },
+            },
             series: [{
                 name: '销量',
                 type: 'bar',
@@ -72,8 +94,7 @@ module.exports = React.createClass({
                       }
                   },
                    data : [
-                       {type : 'max', name: '最大值'},
-                       {type : 'min', name: '最小值'}
+                       {name: '当前', xAxis: date[date.length-1],yAxis:data[data.length-1]}
                    ]
                },
             }]

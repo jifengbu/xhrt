@@ -32,7 +32,7 @@ module.exports = React.createClass({
                         {data.content}
                     </Text>
                     {
-                        data.isOver === 1&&
+                        (data.isOver === 1&&this.props.haveImage)&&
                         <Image
                             resizeMode='contain'
                             source={app.img.specops_green_right_mark}

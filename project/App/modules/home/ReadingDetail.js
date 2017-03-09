@@ -18,6 +18,7 @@ var WebView = require('react-native-webview-bridge');
 var CommentBox = require('./CommentBox.js');
 var ReadingDetailComment = require('./ReadingDetailComment.js');
 var UmengMgr = require('../../manager/UmengMgr.js');
+var InputTextMgr = require('../../manager/InputTextMgr.js');
 var {DImage, PageList} = COMPONENTS;
 
 module.exports = React.createClass({
@@ -27,7 +28,9 @@ module.exports = React.createClass({
         }
     },
     componentDidMount() {
+        app.showProgressHUD();
         this.getArticleInfo();
+        this.doWatchLog();
         AppState.addEventListener('change', this._handleAppStateChange);
     },
     componentWillUnmount() {
@@ -42,7 +45,6 @@ module.exports = React.createClass({
         }
     },
     getArticleInfo() {
-        app.showProgressHUD();
         var param = {
             userID: app.personal.info.userID,
             articleID: this.props.articleId,
@@ -52,7 +54,6 @@ module.exports = React.createClass({
     getArticleInfoSuccess(data) {
         if (data.success) {
             this.setState({articleInfo: data.context});
-            this.doWatchLog();
 
             // if (!app.isandroid) {
             //     if (data.context.type == 1) {
@@ -89,7 +90,7 @@ module.exports = React.createClass({
             }
         });
     },
-    modifyComment(context) {
+    modifyComment(context, textID) {
         var param = {
             userID:app.personal.info.userID,
             articleID: this.props.articleId,
@@ -108,6 +109,7 @@ module.exports = React.createClass({
                     userName: info.name,
                 }
                 this.commentList.doRefresh(curComment);
+                InputTextMgr.removeItem(textID);
                 Toast(data.msg);
             } else {
                 Toast(data.msg);
@@ -122,6 +124,7 @@ module.exports = React.createClass({
         };
         POST(app.route.ROUTE_SHARE_LOG, param, (data)=>{
             if (data.success) {
+                this.getArticleInfo();
                 // Toast(data.msg);
             } else {
                 Toast(data.msg);
@@ -139,10 +142,13 @@ module.exports = React.createClass({
                 }
                 break;
             case 1:
+                var textID = 'specops_readingDetail1';
+                var textContent = InputTextMgr.getTextContent(textID);
                 app.showModal(
                     <CommentBox
                         doConfirm={this.modifyComment}
-                        inputText={''}
+                        textID={textID}
+                        inputText={textContent}
                         doCancel={app.closeModal}
                         />
                 )

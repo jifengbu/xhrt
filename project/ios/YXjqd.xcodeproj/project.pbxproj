@@ -55,7 +55,6 @@
 		3201A8C81C858C2900AA7980 /* CDVWxpay.m in Sources */ = {isa = PBXBuildFile; fileRef = 3201A8C41C858C2900AA7980 /* CDVWxpay.m */; };
 		3201A8C91C858C2900AA7980 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3201A8C51C858C2900AA7980 /* libWeChatSDK.a */; };
 		320215B81D2F95E1008F67AE /* UtilsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 320215B71D2F95E1008F67AE /* UtilsModule.m */; };
-		3202B37E1C72C97700AA4EE8 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3202B37D1C72C97700AA4EE8 /* libz.tbd */; };
 		3202B3801C72C98100AA4EE8 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3202B37F1C72C98100AA4EE8 /* libsqlite3.0.tbd */; };
 		321390EC1D2E863700B07737 /* RCTVhallRTMPPlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 321390EB1D2E863700B07737 /* RCTVhallRTMPPlayerManager.m */; };
 		322163521DD570890073D3DA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322163511DD570890073D3DA /* Security.framework */; };
@@ -119,6 +118,11 @@
 		32B98A781DD9884D0067AC49 /* libReact-Native-Webview-Bridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 32B98A771DD988330067AC49 /* libReact-Native-Webview-Bridge.a */; };
 		48AD543A4C4D2087AF72C633 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5773755A6FF3A351DB3B1FA9 /* libPods.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		886DE06F1E51924800AC0498 /* libmtasdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 886DE06E1E51924800AC0498 /* libmtasdk.a */; settings = {ATTRIBUTES = (Required, ); }; };
+		886DE0711E5193C700AC0498 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 886DE0701E5193C700AC0498 /* AdSupport.framework */; };
+		886DE0731E5193E300AC0498 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 886DE0721E5193E300AC0498 /* SystemConfiguration.framework */; };
+		886DE11B1E519ED900AC0498 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 886DE11A1E519ED900AC0498 /* libsqlite3.dylib */; };
+		886DE11C1E519EFD00AC0498 /* libz.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 886DE1181E519E0F00AC0498 /* libz.1.dylib */; };
 		FE1C69281C8D6A7500B45AAF /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FE1C69271C8D6A7500B45AAF /* libstdc++.tbd */; };
 		FE1DC2E21D29FD7600F971D9 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE1DC2E11D29FD7600F971D9 /* JavaScriptCore.framework */; };
 		FE1DC3011D29FD9500F971D9 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE1DC3001D29FD9500F971D9 /* CoreMedia.framework */; };
@@ -543,6 +547,12 @@
 		5773755A6FF3A351DB3B1FA9 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		886DE06E1E51924800AC0498 /* libmtasdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmtasdk.a; path = "../../../../../../../Downloads/mta-ios-stats-sdk-1.6.6/libmtasdk.a"; sourceTree = "<group>"; };
+		886DE0701E5193C700AC0498 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		886DE0721E5193E300AC0498 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		886DE0741E5193F000AC0498 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		886DE1181E519E0F00AC0498 /* libz.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.dylib; path = ../../../../../../usr/lib/libz.1.dylib; sourceTree = "<group>"; };
+		886DE11A1E519ED900AC0498 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = ../../../../../../usr/lib/libsqlite3.dylib; sourceTree = "<group>"; };
 		DAA772E9F0D0886B3D7328B7 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		FE1C69271C8D6A7500B45AAF /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		FE1C69291C8D6A8A00B45AAF /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
@@ -580,6 +590,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				886DE11C1E519EFD00AC0498 /* libz.1.dylib in Frameworks */,
+				886DE11B1E519ED900AC0498 /* libsqlite3.dylib in Frameworks */,
+				886DE06F1E51924800AC0498 /* libmtasdk.a in Frameworks */,
+				886DE0731E5193E300AC0498 /* SystemConfiguration.framework in Frameworks */,
+				3201A8AA1C858A9200AA7980 /* CoreTelephony.framework in Frameworks */,
+				886DE0711E5193C700AC0498 /* AdSupport.framework in Frameworks */,
 				322163521DD570890073D3DA /* Security.framework in Frameworks */,
 				FE396F431DCAD8BA0043B753 /* MessageUI.framework in Frameworks */,
 				FE396F411DCAD8B30043B753 /* Social.framework in Frameworks */,
@@ -595,14 +611,12 @@
 				FE1DC3031D29FDA200F971D9 /* QuartzCore.framework in Frameworks */,
 				FE56625B1D2BB9390044F463 /* libVHLivePlay.a in Frameworks */,
 				FE1DC3011D29FD9500F971D9 /* CoreMedia.framework in Frameworks */,
-				3201A8AA1C858A9200AA7980 /* CoreTelephony.framework in Frameworks */,
 				FE1DC2E21D29FD7600F971D9 /* JavaScriptCore.framework in Frameworks */,
 				FE1C69281C8D6A7500B45AAF /* libstdc++.tbd in Frameworks */,
 				FE56625A1D2BB9390044F463 /* libVHallSDK.a in Frameworks */,
 				3233C8BC1C87066900E360AB /* libwebrtc-ios.a in Frameworks */,
 				3201A87B1C858A4400AA7980 /* libUMSocial_Sdk_5.0.a in Frameworks */,
 				3202B3801C72C98100AA4EE8 /* libsqlite3.0.tbd in Frameworks */,
-				3202B37E1C72C97700AA4EE8 /* libz.tbd in Frameworks */,
 				3201A8901C858A4400AA7980 /* libSocialWechat.a in Frameworks */,
 				329758E91C9D265800785683 /* libART.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -935,6 +949,7 @@
 		320215B61D2F95E1008F67AE /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				886DE06E1E51924800AC0498 /* libmtasdk.a */,
 				320215B71D2F95E1008F67AE /* UtilsModule.m */,
 			);
 			path = utils;
@@ -1249,6 +1264,11 @@
 		748A4B5CC9EFD3A1B9430D67 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				886DE11A1E519ED900AC0498 /* libsqlite3.dylib */,
+				886DE1181E519E0F00AC0498 /* libz.1.dylib */,
+				886DE0741E5193F000AC0498 /* libsqlite3.tbd */,
+				886DE0721E5193E300AC0498 /* SystemConfiguration.framework */,
+				886DE0701E5193C700AC0498 /* AdSupport.framework */,
 				322163511DD570890073D3DA /* Security.framework */,
 				FE396F421DCAD8BA0043B753 /* MessageUI.framework */,
 				FE396F401DCAD8B30043B753 /* Social.framework */,
@@ -1414,6 +1434,7 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 7F39YYNBU4;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1952,7 +1973,7 @@
 			baseConfigurationReference = 549F1C9F634A6C002C03A83C /* Pods.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Distribution: guiyang ying xiao jie quan dao NetworkTechnology Co., Ltd. (7F39YYNBU4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: guiyang ying xiao jie quan dao NetworkTechnology Co., Ltd. (7F39YYNBU4)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEAD_CODE_STRIPPING = NO;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2005,7 +2026,7 @@
 			baseConfigurationReference = DAA772E9F0D0886B3D7328B7 /* Pods.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Distribution: guiyang ying xiao jie quan dao NetworkTechnology Co., Ltd. (7F39YYNBU4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: guiyang ying xiao jie quan dao NetworkTechnology Co., Ltd. (7F39YYNBU4)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

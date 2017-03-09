@@ -96,7 +96,7 @@ module.exports = React.createClass({
     getWeekSummary(index) {
         this.setState({weekSummary:''});
         var param = {
-            userID:app.personal.info.userID,
+            userID:this.userID,
             planDate:moment(this.state.memWeekTime[index]).format('YYYY-MM-DD'),
         };
         POST(app.route.ROUTE_GET_WEEK_SUMMARY, param, this.getWeekSummarySuccess, true);
@@ -129,6 +129,12 @@ module.exports = React.createClass({
         return index;
     },
     componentDidMount() {
+        if (this.props.userID) {
+            this.userID = this.props.userID;
+        }else {
+            this.userID = app.personal.info.userID;
+        }
+
         this.monthData = {};
         this.onInputBoxFun = null;
         this.memTabIndex = 0;
@@ -139,7 +145,7 @@ module.exports = React.createClass({
     },
     getMonthData(){
         var param = {
-            userID:app.personal.info.userID,
+            userID:this.userID,
             planDate:moment(this.state.memWeekTime[0]).format('YYYY-MM-DD'),
         };
         POST(app.route.ROUTE_GET_MONTH_PLAN, param, this.getMonthDataSuccess, true);

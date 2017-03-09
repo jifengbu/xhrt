@@ -9,7 +9,8 @@ var {
     Text,
     ScrollView,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
+    InteractionManager
 } = ReactNative;
 
 var Player = require('./Player.js');
@@ -23,6 +24,9 @@ var CompanyDetail = React.createClass({
         leftButton: { handler: ()=>{app.navigator.pop()}},
     },
     getInitialState() {
+        this.posHeight = 0;
+        var _scrollView: ScrollView;
+        this.scrollView = _scrollView;
         return {
             webHeight: 0,
             playing: false,
@@ -75,6 +79,14 @@ var CompanyDetail = React.createClass({
                 app.GlobalVarMgr.setItem('isFullScreen', isFullScreen);
             }, 100);
         }
+        setTimeout(()=>{
+            if (!isFullScreen&&this.posHeight > sr.h) {
+                InteractionManager.runAfterInteractions(() => {
+                    this.scrollView.scrollTo({y: this.posHeight-sr.ws(350)});
+                });
+            }
+        }, 600);
+
     },
     onEnd() {
         this.fullScreenListener(false);
@@ -85,6 +97,9 @@ var CompanyDetail = React.createClass({
     },
     onLoadEnd() {
         app.dismissProgressHUD();
+    },
+    onLayoutPos(e) {
+        this.posHeight = e.nativeEvent.layout.y;
     },
     onBridgeMessage(message){
         const { webviewbridge } = this.refs;
@@ -112,7 +127,7 @@ var CompanyDetail = React.createClass({
           }());`;
         return (
             <View style={styles.container}>
-                <ScrollView style={styles.container}
+                <ScrollView style={styles.container} ref={(scrollView) => { this.scrollView = scrollView}}
                             scrollEnabled={this.state.scrollEnabled}>
                     {
                         !this.state.isFullScreen &&
@@ -128,50 +143,58 @@ var CompanyDetail = React.createClass({
                                     source={{uri:dataDetail.logo}}
                                     style={styles.imageStyle} />
                             </View>
-                            <WebView
-                                style={[styles.webview,{height: this.state.webHeight+30}]}
-                                ref="webviewbridge"
-                                startInLoadingState={true}
-                                onLoadEnd={this.onLoadEnd}
-                                onBridgeMessage={this.onBridgeMessage}
-                                injectedJavaScript={injectScript}
-                                scrollEnabled={false}
-                                source={{uri: app.route.ROUTE_STAR_COMPANY_PAGE+'?userID='+app.personal.info.userID+'&starCompanyID='+this.props.starCompanyID}}
-                                scalesPageToFit={false}
-                                />
-                            <View style={styles.blankView}></View>
+
                         </View>
                     }
                     {
-                        dataDetail.videoDesc != undefined && dataDetail.videoDesc != '' && dataDetail.videoDescImg != '' &&
-                        (
-                            this.state.playing?
-                                <Player
-                                    ref={(ref)=>this.playerPlay = ref}
-                                    uri={dataDetail.videoDesc}
-                                    fullScreenListener={this.fullScreenListener}
-                                    onEnd={this.onEnd}
-                                    width={sr.ws(343)}
-                                    height={sr.ws(231)}
-                                    />
-                                :
-                                <DImage
-                                    resizeMode='stretch'
-                                    defaultSource={app.img.common_default}
-                                    source={{uri: dataDetail.videoDescImg}}
-                                    style={styles.playerContainer}>
-                                    <TouchableOpacity
-                                        style={styles.video_icon_container}
-                                        onPress={this.changePlaying}>
-                                        <Image
-                                            resizeMode='stretch'
-                                            source={app.img.specops_play}
-                                            style={styles.video_icon}>
-                                        </Image>
-                                    </TouchableOpacity>
-                                </DImage>
-                        )
+                        <WebView
+                            style={[!this.state.isFullScreen?styles.webview:styles.webviewFull,{height: this.state.webHeight+30}]}
+                            ref="webviewbridge"
+                            startInLoadingState={true}
+                            onLoadEnd={this.onLoadEnd}
+                            onBridgeMessage={this.onBridgeMessage}
+                            injectedJavaScript={injectScript}
+                            scrollEnabled={false}
+                            source={{uri: app.route.ROUTE_STAR_COMPANY_PAGE+'?userID='+app.personal.info.userID+'&starCompanyID='+this.props.starCompanyID}}
+                            scalesPageToFit={false}
+                            />
                     }
+                    {
+                        !this.state.isFullScreen &&
+                        <View style={styles.blankView}></View>
+                    }
+                    <View  onLayout={this.onLayoutPos} >
+                        {
+                            dataDetail.videoDesc != undefined && dataDetail.videoDesc != '' && dataDetail.videoDescImg != '' &&
+                            (
+                                this.state.playing?
+                                    <Player
+                                        ref={(ref)=>this.playerPlay = ref}
+                                        uri={dataDetail.videoDesc}
+                                        fullScreenListener={this.fullScreenListener}
+                                        onEnd={this.onEnd}
+                                        width={sr.ws(343)}
+                                        height={sr.ws(231)}
+                                        />
+                                    :
+                                    <DImage
+                                        resizeMode='stretch'
+                                        defaultSource={app.img.common_default}
+                                        source={{uri: dataDetail.videoDescImg}}
+                                        style={styles.playerContainer}>
+                                        <TouchableOpacity
+                                            style={styles.video_icon_container}
+                                            onPress={this.changePlaying}>
+                                            <Image
+                                                resizeMode='stretch'
+                                                source={app.img.specops_play}
+                                                style={styles.video_icon}>
+                                            </Image>
+                                        </TouchableOpacity>
+                                    </DImage>
+                            )
+                        }
+                    </View>
                     {
                         !this.state.isFullScreen &&
                         <View style={styles.blankView}></View>
@@ -218,6 +241,13 @@ var styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     webview: {
+        width: sr.w,
+        backgroundColor: '#FFFFFF',
+    },
+    webviewFull: {
+        position: 'absolute',
+        top: 0,
+        right: -sr.w,
         width: sr.w,
         backgroundColor: '#FFFFFF',
     },

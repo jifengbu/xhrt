@@ -16,6 +16,7 @@ var {
 var RecordItemView = require('./RecordItemView.js');
 var moment = require('moment');
 var MonthPlan = require('./MonthPlan.js')
+var InputTextMgr = require('../../manager/InputTextMgr.js');
 
 var {Button, InputBox} = COMPONENTS;
 
@@ -209,10 +210,13 @@ module.exports = React.createClass({
         }
     },
     addDayPlanContent() {
+        var textID = 'specops_nextWeekPlan1';
+        var textContent = InputTextMgr.getTextContent(textID);
         app.showModal(
             <InputBox
                 doConfirm={this.submitDayPlan}
-                inputText={''}
+                textID={textID}
+                inputText={textContent}
                 doCancel={app.closeModal}
                 />
         );
@@ -249,7 +253,7 @@ module.exports = React.createClass({
         );
         this.setState({currentDayID: obj.id});
     },
-    submitDayPlan(content) {
+    submitDayPlan(content, textID) {
         if (content === '') {
             return;
         }
@@ -260,14 +264,15 @@ module.exports = React.createClass({
             planDate:this.state.memDayTime[this.state.tabIndex],
             weekNum: this.state.tabIndex,
         };
-        POST(app.route.ROUTE_ADD_TODAY_PLAN, param, this.submitDayPlanSuccess, true);
+        POST(app.route.ROUTE_ADD_TODAY_PLAN, param, this.submitDayPlanSuccess.bind(null, textID), true);
     },
-    submitDayPlanSuccess(data) {
+    submitDayPlanSuccess(textID, data) {
         if (data.success) {
             var dayData = this.getDayPlan(this.state.tabIndex);
             //请求接口成功更新页面
             dayData.push({'id': data.context.dayPlan.id, 'planId':data.context.dayPlan.planId, 'content':data.context.dayPlan.content, isOver: false})
             this.setState({dayDataSource: this.ds.cloneWithRows(dayData)});
+            InputTextMgr.removeItem(textID);
             Toast('新增成功');
         } else {
             Toast(data.msg);

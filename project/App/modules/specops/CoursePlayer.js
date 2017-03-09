@@ -343,7 +343,7 @@ var CoursePlayer = React.createClass({
         let {routeIndex} = this.props;
         routeIndex = (routeIndex === undefined) ? app.navigator.getCurrentRoutes().length-1 : routeIndex;
         app.navigator.push({
-            title: '特种兵往期课程',
+            title: '特种兵视频列表',
             component: SpecopsHistoryVideo,
             passProps: {doRestart:this.doRestart, videoList:this.state.pageData.watchVideoList, routeIndex}
         });
@@ -351,7 +351,8 @@ var CoursePlayer = React.createClass({
     doRestart(obj, rowID, routeIndex) {
         this.stopVideoSaveTime();
         var {watchVideoList} = this.state.pageData;
-        if (!obj.isOver && !watchVideoList[rowID+1].isOver) {
+        var index = rowID==0 ? 1 : watchVideoList.length-1 == rowID ? rowID : parseInt(rowID)+1;
+        if (!obj.isOver && !watchVideoList[index].isOver) {
             Toast('请按顺序把前面未看完的视频完整看完后，才能按顺序解锁下一集视频哦！');
             return;
         }
@@ -557,7 +558,7 @@ var CoursePlayer = React.createClass({
                     (!this.state.isFullScreen && this.state.pageData)&&
                     <View style={styles.listContainer}>
                         <View style={styles.titleContainer}>
-                            <Text style={styles.titleTypeText}>该用户有资格看的视频列表</Text>
+                            <Text style={styles.titleTypeText}>特种兵视频列表</Text>
                         </View>
                         <View style={styles.divisionCrossLine}></View>
                         <SpecopsHistoryVideo briefDisplay={true} doRestart={this.doRestart} videoList={this.state.pageData.watchVideoList}/>
@@ -760,6 +761,7 @@ var styles = StyleSheet.create({
         left: sr.w/2-50,
         position: 'absolute',
         alignItems: 'center',
+        justifyContent: 'center',
         flexDirection: 'row',
     },
     lookAllText: {

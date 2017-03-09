@@ -74,14 +74,14 @@ module.exports = React.createClass({
     componentDidMount() {
         this.getHomePageData();
         this.getUserStudyInfo();
-        this.getWorkSituationAbstract();
+        app.personal.info.companyInfo&&this.getWorkSituationAbstract();
         this.selectedIndex = this.state.activityIndex;
     },
     onWillFocus() {
         this.isBig = true;
         this.getUserStudyInfo();
-        this.getWorkSituationAbstract();
         this.getHomePageData();
+        app.personal.info.companyInfo&&this.getWorkSituationAbstract();
     },
     doCancle() {
         this.setState({ShowMealBox: false});
@@ -294,6 +294,20 @@ module.exports = React.createClass({
             passProps: {index},
         });
     },
+    calculateStrLength(oldStr) {
+        let height = 0;
+        let linesWidth = 0;
+        if (oldStr) {
+            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/[\r\n]/g, '|');
+            let StrArr = oldStr.split('|');
+            for (var i = 0; i < StrArr.length; i++) {
+                //计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            }
+            return linesWidth;
+        }
+    },
     renderBanner() {
         var {bannerList} = this.state;
         return (
@@ -416,7 +430,8 @@ module.exports = React.createClass({
         var info = app.personal.info;
         let headUrl = info.headImg?info.headImg:info.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
         var {studyInfo} = this.state;
-
+        let nameTemWidth = this.calculateStrLength(info.name);
+        let nameWidth = nameTemWidth*10;
         return (
             <TouchableOpacity onPress={this.toPersonInfo}>
                 <View style={styles.personContainer}>
@@ -428,12 +443,12 @@ module.exports = React.createClass({
                             style={styles.headerIcon}  />
                         <View style={styles.personalInfoStyle}>
                             <View style={styles.nameContainer}>
-                                <Text style={[styles.nameText, {fontSize: 18}]} numberOfLines={1}>
+                                <Text style={[styles.nameText, {width: nameWidth>160?sr.ws(160):sr.ws(nameWidth)}]} numberOfLines={1}>
                                     {info.name}
                                 </Text>
                                 <View style={styles.verticalLine}>
                                 </View>
-                                <Text style={[styles.nameText, {fontSize: 12}]}>
+                                <Text style={styles.aliasText}>
                                     {info.alias}
                                 </Text>
                             </View>
@@ -487,22 +502,29 @@ module.exports = React.createClass({
                     <View style={styles.separatorBoss} />
                 }
                 <View style={styles.rowContainerBoss}>
-                    <Text style={styles.rowTime}>{obj.date?obj.date.slice(5):''}</Text>
-                    <Text style={styles.rowName}>{obj.name}</Text>
-                    <Text style={styles.rowTip}>{obj.context}</Text>
+                    <Text numberOfLines={1} style={styles.rowTime}>{obj.date&&moment(obj.date).format('M.D HH:mm')}</Text>
+                    <Text numberOfLines={1} style={styles.rowName}>{obj.name}</Text>
+                    <Text numberOfLines={1} style={styles.rowTip}>{obj.context}</Text>
                 </View>
             </View>
         )
     },
     getWorkSituationAbstract() {
+        let info = app.personal.info;
         var param = {
-            companyId: app.personal.info.companyId,
+            userID: info.userID,
+            companyId: info.companyInfo.companyId,
         };
         POST(app.route.ROUTE_GET_WORK_SITUATION_ABSTRACT, param, this.getWorkSituationAbstractSuccess,true);
     },
     getWorkSituationAbstractSuccess(data) {
         if (data.context) {
-            this.setState({submitLog:this.ds.cloneWithRows(data.context.submitLog),monthWeekPlanNum:data.context.monthWeekPlanNum,dayPlanNum:data.context.dayPlanNum,summaryNum:data.context.summaryNum})
+            var {userSum} = data.context;
+            var {submitLog} = data.context;
+            var {monthWeekPlanNum} = data.context;
+            var {dayPlanNum} = data.context;
+            var {summaryNum} = data.context;
+            this.setState({submitLog:this.ds.cloneWithRows(submitLog.slice(0,4)), monthWeekPlanNum, dayPlanNum, summaryNum, userSum});
         }
     },
     toEmployeeTarget() {
@@ -526,7 +548,7 @@ module.exports = React.createClass({
         });
     },
     renderEmployeeWork(){
-        let {monthWeekPlanNum,dayPlanNum,summaryNum,submitLog}=this.state;
+        let {monthWeekPlanNum, dayPlanNum, summaryNum, submitLog, userSum}=this.state;
         return (
             <View>
                 <View style={styles.businessContainer}>
@@ -568,7 +590,7 @@ module.exports = React.createClass({
                                     {monthWeekPlanNum?monthWeekPlanNum.complete:''}
                                 </Text>
                                 <Text style={styles.numberAllStyle}>{'/'}</Text>
-                                <Text style={styles.numberAllStyle}>{monthWeekPlanNum?monthWeekPlanNum.unfinished:''}</Text>
+                                <Text style={styles.numberAllStyle}>{userSum}</Text>
                             </View>
                             <Text style={styles.numberTipStyle}>目标提交人数</Text>
                         </View>
@@ -579,7 +601,7 @@ module.exports = React.createClass({
                                     {dayPlanNum?dayPlanNum.complete:''}
                                 </Text>
                                 <Text style={styles.numberAllStyle}>{'/'}</Text>
-                                <Text style={styles.numberAllStyle}>{dayPlanNum?dayPlanNum.unfinished:''}</Text>
+                                <Text style={styles.numberAllStyle}>{userSum}</Text>
                             </View>
                             <Text style={styles.numberTipStyle}>计划提交人数</Text>
                         </View>
@@ -590,7 +612,7 @@ module.exports = React.createClass({
                                     {summaryNum?summaryNum.complete:''}
                                 </Text>
                                 <Text style={styles.numberAllStyle}>{'/'}</Text>
-                                <Text style={styles.numberAllStyle}>{summaryNum?summaryNum.unfinished:''}</Text>
+                                <Text style={styles.numberAllStyle}>{userSum}</Text>
                             </View>
                             <Text style={styles.numberTipStyle}>总结提交人数</Text>
                         </View>
@@ -925,7 +947,8 @@ module.exports = React.createClass({
                     }
                     <this.renderUserInfo />
                     {
-                    <this.renderEmployeeWork />
+                        app.personal.info.companyInfo&&
+                        <this.renderEmployeeWork />
                     }
                     {
                         hotActiveityList.length >= 1 &&
@@ -1022,6 +1045,12 @@ var styles = StyleSheet.create({
         marginBottom: 10,
     },
     nameText: {
+        fontSize: 18,
+        color: '#2A2A2A',
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    aliasText: {
+        fontSize: 12,
         color: '#2A2A2A',
         fontFamily: 'STHeitiSC-Medium',
     },
@@ -1410,7 +1439,7 @@ var styles = StyleSheet.create({
        position: 'absolute',
        bottom: 0,
        left: 0,
-       width: 240,
+       width: 228,
        height: 20,
        flexDirection: 'row',
        alignItems: 'flex-end',
@@ -1428,12 +1457,12 @@ var styles = StyleSheet.create({
        margin: 10,
    },
    LeftImage: {
-       width: 100,
-       height:72,
+       width: 112.5,
+       height:77,
        borderRadius: 2,
    },
    flexConten: {
-       width: 245,
+       width: 232,
        marginLeft: 10,
        flexDirection: 'column',
    },
@@ -1479,18 +1508,21 @@ var styles = StyleSheet.create({
        alignItems:'center',
    },
    rowTime: {
+       width: 75,
        marginLeft:18,
        fontFamily: 'STHeitiSC-Medium',
        fontSize:14,
        color: '#919191',
    },
    rowName: {
-       marginLeft:29,
+       width: 99,
+       marginLeft:20,
        fontFamily: 'STHeitiSC-Medium',
        fontSize:14,
        color: '#919191',
    },
    rowTip: {
+       width: 120,
        marginLeft:18,
        fontFamily: 'STHeitiSC-Medium',
        fontSize:14,
@@ -1508,7 +1540,7 @@ var styles = StyleSheet.create({
        fontSize: 14,
        fontFamily: 'STHeitiSC-Medium',
        color:'#919191',
-       lineHeight:30,
+       alignSelf: 'flex-end',
    },
    numberTipStyle: {
        fontSize: 14,
@@ -1516,7 +1548,7 @@ var styles = StyleSheet.create({
        color:'#919191',
    },
    numberBlackStyle: {
-       fontSize: 20,
+       fontSize: 18,
        fontFamily: 'STHeitiSC-Medium',
        color:'#242424',
    },

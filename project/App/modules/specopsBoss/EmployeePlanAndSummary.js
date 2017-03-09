@@ -16,7 +16,7 @@ var moment = require('moment');
 var {Button, InputBox, DImage} = COMPONENTS;
 var CopyBox = require('../home/CopyBox.js');
 import Swiper from 'react-native-swiper2';
-import Picker from 'react-native-picker';
+import Picker from './Picker.js';
 
 var NoCommitUserHead = require('./NoCommitUserHead.js');
 var WeekPlanItem = require('./WeekPlanItem.js');
@@ -25,55 +25,91 @@ const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, ST
 
 module.exports = React.createClass({
     onStartShouldSetResponderCapture(evt){
-        console.log('----onStartShouldSetResponderCapture',evt.nativeEvent.pageX, evt.nativeEvent.pageY);
         app.touchPosition.x = evt.nativeEvent.pageX;
         app.touchPosition.y = evt.nativeEvent.pageY;
         return false;
     },
     getInitialState() {
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.pageNo = 1;
         this.monthData = [];
-        this.NoCommitUser = [];
-        this.DayPlanAndActual = [0,1];
-        this.DaySummaryAndProblem = [0,1];
+        this.isDayPlan = true;
+        this.isDaySummary = false;
+        this.tabIndex = 0;
         return {
             weekCount: 0,
             pickerData: ['', ''],
             defaultSelectValue: '',
-            haveData: false,
-            isDayPlan: true,
-            isDaySummary: false,
+            haveTimeData: false,
+            infiniteLoadStatus: STATUS_TEXT_HIDE,
+            NoCommitUser: [],
+            DayPlanAndActual: [],
+            DaySummaryAndProblem: [],
         };
     },
     clearMonthData() {
-        this.NoCommitUser = [];
-        this.DayPlanAndActual = [0,1];
-        this.DaySummaryAndProblem = [0,1];
+        this.setState({NoCommitUser: []});
+        this.setState({DayPlanAndActual: []});
+        this.setState({DaySummaryAndProblem: []});
+        this.pageNo = 1;
+    },
+    componentDidMount() {
+        this.clearMonthData();
+
+        // is plan and summary
+        if (this.props.isDayPlan == true) {
+            this.isDayPlan = true;
+            this.isDaySummary = false;
+        }else if (this.props.isDaySummary == true){
+            this.isDayPlan = false;
+            this.isDaySummary = true;
+        }
+
+        // generate month data
+        this.currentMonth = this.generateMyCurrentYearMonth().month;
+        this.currentYear = this.generateMyCurrentYearMonth().year;
+        this.generateMonthData(this.currentYear, this.currentMonth);
 
         this.currentTimeStr = this.generateCurrentTimeStr(moment().format('YYYY-MM-DD'));
         this.currentIndex = this.getCurrentWeekIndex();
         this.tabIndex = this.getCurrentDayIndex();
 
-        // is plan and summary
-        if (this.props.isDayPlan) {
-            this.setState({isDayPlan:this.props.isDayPlan});
-            this.setState({isDaySummary:false});
-        }else if (this.props.isDaySummary){
-            this.setState({isDaySummary:this.props.isDaySummary});
-            this.setState({isDayPlan:false});
-        }
-
-        // generate month data
-        this.currentMonth = moment().month();
-        this.currentYear = moment().year();
-        this.generateMonthData(this.currentYear, this.currentMonth);
-
-        this.onChangePage(this.currentIndex);
+        this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
+        this.getMonthPlanNoFinishList(this.monthData[this.currentIndex][this.tabIndex]);
 
         setTimeout(()=>{
-            this.setState({haveData: true});
-        }, 200);
+            this.setState({haveTimeData: true});
+        }, 600);
+    },
+    generateMyCurrentYearMonth(){
+        // find month first monday
+        var isFirstMonday = false;
+        var addPos = 0;
+
+        var firstDay = '';
+        firstDay = moment().set('date', 1).format('YYYY-MM-DD');
+
+        var firstMonday = '';
+        while (isFirstMonday === false) {
+            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            if (isMonday === 1) {
+                isFirstMonday = true;
+                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                break;
+            }
+            addPos++;
+        }
+
+        let ret = {};
+        ret.year = moment().year();
+        ret.month = moment().month();
+        if (moment(firstMonday).date() > moment().date()) {
+            ret.month = ret.month - 1;
+            if (ret.month < 0) {
+                ret.month = 11;
+                ret.year = ret.year - 1;
+            }
+        }
+        return ret;
     },
     generateCurrentTimeStr(timeStr){
         let currentTimeStr = moment(timeStr).format('YYYY年MM月D日')
@@ -130,23 +166,7 @@ module.exports = React.createClass({
             }
             addPos++;
         }
-        if (moment().date() < moment(firstMonday).date()) {
-            isFirstMonday = false;
-            addPos = 0;
-            firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
-            firstMonday = '';
-            while (isFirstMonday === false) {
-                var isMonday = moment(firstDay).add(1*addPos, 'd').day();
-                if (isMonday === 1) {
-                    isFirstMonday = true;
-                    firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
-                    break;
-                }
-                addPos++;
-            }
-        }
         // get week first day date
-        this.currentMonth = month;
         for (var i = 0; i < 6; i++) {
             if (moment(firstMonday).add(7*i, 'd').month() === moment(firstMonday).month()) {
                 this.monthData[i].push(moment(firstMonday).add(7*i, 'd').format('YYYY-MM-DD'));
@@ -258,11 +278,11 @@ module.exports = React.createClass({
     // get time data
     createTimeData(joinTime) {
         let joinYear = moment(joinTime).year();
-        let joinMonth = moment(joinTime).month()+1;
+        let joinMonth = moment(joinTime).month();
 
         let date = {};
         let currentYear = moment().year();
-        let currentMonth = moment().month()+1;
+        let currentMonth = moment().month();
 
         for (var i = joinYear; i <= currentYear; i++) {
             let month = [];
@@ -282,95 +302,65 @@ module.exports = React.createClass({
             date[i+'年'] = month;
         }
 
-        // add two month
-        let tempMonth1 = currentMonth+1;
-        let tempMonth2 = currentMonth+2;
-        let tempYear = currentYear;
-        let isAdd = true;
-        if (tempMonth1 == 13) {
-            tempMonth1 = 1;
-            if (isAdd){
-                isAdd = false;
-                tempYear++;
-            }
-        }
-        // add first month
-        if (tempYear == currentYear) {
-            date[currentYear+'年'].push(tempMonth1+'月');
-        }else {
-            let tempMonthArray = [];
-            tempMonthArray.push(tempMonth1+'月');
-            date[tempYear+'年'] = tempMonthArray;
-        }
-
-        if (tempMonth2 == 13) {
-            tempMonth2 = 1;
-            if (isAdd){
-                isAdd = false;
-                tempYear++;
-            }
-        }
-        if (tempMonth2 == 14) {
-            tempMonth2 = 2;
-            if (isAdd){
-                isAdd = false;
-                tempYear++;
-            }
-        }
-        // add second month
-        if (tempYear == currentYear) {
-            date[currentYear+'年'].push(tempMonth2+'月');
-        }else {
-            if (tempMonth2 == 1) {
-                let tempMonthArray = [];
-                tempMonthArray.push(tempMonth2+'月');
-                date[tempYear+'年'] = tempMonthArray;
-            }
-            if (tempMonth2 == 2) {
-                date[tempYear+'年'].push(tempMonth2+'月');
-            }
-        }
-
         return date;
     },
     onPressShowPicker(type) {
         if (!this.picker.isPickerShow()) {
             let date = moment();
             let currentData = [date.year()+'年', (date.month()+1)+'月'];
-            this.setState({defaultSelectValue: currentData, pickerData: this.createTimeData('2015-06-11')});
+            this.setState({defaultSelectValue: currentData, pickerData: this.createTimeData(app.personal.info.companyInfo.enterDate)});
             this.picker.show();
         } else {
             this.picker.hide();
         }
     },
+    getMonthPlanNoFinishList(month) {
+        let info = app.personal.info;
+        var param = {
+            companyId: info.companyInfo.companyId,
+            date: month,
+            userID: info.userID,
+            type: this.isDayPlan?2:3,
+        };
+        POST(app.route.ROUTE_GET_NO_FINISH_EMPLOYEES, param, this.getMonthPlanNoFinishListSuccess, true);
+    },
+    getMonthPlanNoFinishListSuccess(data) {
+        if (data.success) {
+            // no commit user
+            // this.state.NoCommitUser = data.context.list.slice(0);
+            this.setState({NoCommitUser: data.context.list});
+        }
+    },
     getDayViewData(dayDate){
-        if (this.state.isDayPlan) {
+        if (this.isDayPlan) {
             this.getDayPlanList(dayDate);
-        } else if (this.state.isDaySummary) {
+        } else if (this.isDaySummary) {
             this.getDaySummaryList(dayDate);
         }
     },
     getDayPlanList(dayDate) {
+        let info = app.personal.info;
         var param = {
-            companyId: app.personal.info.userID,
+            companyId: info.companyInfo.companyId,
             date: dayDate,
+            userID: info.userID,
             pageNo: this.pageNo,
         };
-        this.setState({infiniteLoadStatus: this.pageNo===1?STATUS_START_LOAD:STATUS_HAVE_MORE});
         POST(app.route.ROUTE_GET_DAY_PLAN_USER_LIST, param, this.getDayPlanListSuccess, this.getDayPlanListFailed);
     },
     getDayPlanListSuccess(data) {
         if (data.success) {
             // add new pageData to DayPlanAndActual
-            for (var i = 0; i < data.context.planContext.length; i++) {
-                this.DayPlanAndActual.push(data.context.planContext[i]);
+            for (var i = 0; i < data.context.list.length; i++) {
+                var item = _.find(this.state.DayPlanAndActual, (o)=>o.userId==data.context.list[i].userId);
+                if (!item) {
+                    this.state.DayPlanAndActual.push(data.context.list[i]);
+                }
             }
-            var infiniteLoadStatus = data.context.planContext.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
+            var infiniteLoadStatus = data.context.list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
             this.setState({
                 infiniteLoadStatus: infiniteLoadStatus,
             });
-            // no commit user
-            this.NoCommitUser = data.context.noUserList.slice(0);
         } else {
             this.getDayPlanListFailed();
         }
@@ -380,26 +370,28 @@ module.exports = React.createClass({
         this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
     },
     getDaySummaryList(dayDate) {
+        let info = app.personal.info;
         var param = {
-            companyId: app.personal.info.userID,
+            companyId: info.companyInfo.companyId,
             date: dayDate,
+            userID: info.userID,
             pageNo: this.pageNo,
         };
-        this.setState({infiniteLoadStatus: this.pageNo===1?STATUS_START_LOAD:STATUS_HAVE_MORE});
         POST(app.route.ROUTE_GET_DAY_SUMMER_USER_LIST, param, this.getDaySummaryListSuccess, this.getDaySummaryListFailed);
     },
     getDaySummaryListSuccess(data) {
         if (data.success) {
             // add new pageData to DaySummaryAndProblem
-            for (var i = 0; i < data.context.planContext.length; i++) {
-                this.DaySummaryAndProblem.push(data.context.summaryContext[i]);
+            for (var i = 0; i < data.context.list.length; i++) {
+                var item = _.find(this.state.DaySummaryAndProblem, (o)=>o.userId==data.context.list[i].userId);
+                if (!item) {
+                    this.state.DaySummaryAndProblem.push(data.context.list[i]);
+                }
             }
-            var infiniteLoadStatus = data.context.planContext.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
+            var infiniteLoadStatus = data.context.list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
             this.setState({
                 infiniteLoadStatus: infiniteLoadStatus,
             });
-            // no commit user
-            this.NoCommitUser = data.context.noUserList.slice(0);
         } else {
             this.getDaySummaryListFailed();
         }
@@ -409,33 +401,57 @@ module.exports = React.createClass({
         this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
     },
     onEndReached() {
-        console.log('------onEndReached');
-        if (this.state.infiniteLoadStatus === STATUS_ALL_LOADED || this.state.infiniteLoadStatus === STATUS_TEXT_HIDE) {
+        console.log('onEndReached', this.state.infiniteLoadStatus);
+        if (this.state.infiniteLoadStatus == STATUS_ALL_LOADED || this.state.infiniteLoadStatus == STATUS_TEXT_HIDE) {
             return;
         }
-        this.pageNo++;
-        this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
-    },
-    componentDidMount() {
-        this.clearMonthData();
+        if (this.state.infiniteLoadStatus == STATUS_HAVE_MORE) {
+            this.pageNo++;
+            this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
+        }
     },
     changeTab(index, time){
+        if (this.tabIndex == index) {
+            return;
+        }
+        this.clearMonthData();
+
         this.tabIndex = index;
         this.currentTimeStr = this.generateCurrentTimeStr(time);
         this.getDayViewData(time);
+        this.getMonthPlanNoFinishList(time);
     },
     onChangePage(weekIndex){
-        console.log('----week', weekIndex);
-        this.currentIndex = weekIndex;
-        this.currentTimeStr = this.generateCurrentTimeStr(this.monthData[weekIndex][this.tabIndex]);
-        this.getDayViewData(this.monthData[weekIndex][this.tabIndex]);
+        if (this.currentIndex == weekIndex) {
+            return;
+        }
+        this.clearMonthData();
+
+        this.currentIndex = Math.round(weekIndex);
+        this.currentTimeStr = this.generateCurrentTimeStr(this.monthData[this.currentIndex][this.tabIndex]);
+        this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
+        this.getMonthPlanNoFinishList(this.monthData[this.currentIndex][this.tabIndex]);
     },
     setChooseValue(value){
+        this.clearMonthData();
+
         this.currentYear = parseInt(value[0]);
         this.currentMonth = parseInt(value[1])-1;
         this.generateMonthData(this.currentYear, this.currentMonth);
+
+        console.log('year, month , date', this.currentYear, this.currentMonth, this.monthData);
+
+        this.currentIndex = this.getCurrentWeekIndex();
+        this.tabIndex = this.getCurrentDayIndex();
+
         this.currentTimeStr = this.generateCurrentTimeStr(this.monthData[this.currentIndex][this.tabIndex]);
         this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
+        this.getMonthPlanNoFinishList(this.monthData[this.currentIndex][this.tabIndex]);
+
+        this.setState({haveTimeData: false});
+        setTimeout(()=>{
+            this.setState({haveTimeData: true});
+        }, 600);
     },
     renderWeekView(dateArray, index) {
         var menuAdminArray = ['一', '二', '三', '四', '五', '六', '日'];
@@ -448,7 +464,6 @@ module.exports = React.createClass({
                             return (
                                 <View key={i} style={{flexDirection: 'row',flex: 1,alignItems: 'center'}}>
                                     <TouchableOpacity
-                                        key={i}
                                         onPress={this.changeTab.bind(null, i, dateArray[i])}
                                         style={[styles.tabButton, this.tabIndex===i?{borderTopWidth: 4, backgroundColor: '#FF8686', borderColor: '#FF6262'}:null]}>
                                         <Text style={[styles.tabText, this.tabIndex===i?{marginTop: 2, color: '#FFFFFF'}:null]} >
@@ -469,64 +484,34 @@ module.exports = React.createClass({
                 </View>
             )
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRowWeekPlanItem(obj, sectionID, rowID) {
         return (
-                this.state.isDayPlan?
-                <WeekPlanItem planDate={obj}/>
-                :
-                <WeekSummaryItem planDate={obj}/>
+            <WeekPlanItem planData={obj}/>
         )
     },
+    renderRowWeekSummaryItem(obj, sectionID, rowID) {
+        return (
+            <WeekSummaryItem planData={obj}/>
+        )
+    },
+
     renderFooter() {
         return (
             <View style={styles.listFooterContainer}>
-                <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
+                {
+                    this.state.infiniteLoadStatus == STATUS_HAVE_MORE &&
+                    <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
+                }
             </View>
         )
     },
     renderHeader() {
         return (
             <View>
-                <View style={styles.container}>
-                    <TouchableOpacity
-                        onPress={this.onPressShowPicker}>
-                        <View style={styles.dataMonthView}>
-                            <Text style={styles.dataMonthText}>
-                                {this.currentMonth+1}
-                            </Text>
-                            <Text style={styles.dataMonthText}>
-                                月
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                    <View style={styles.vline}/>
-                    {
-                        this.state.haveData &&
-                        <View style={styles.bannerContainer}>
-                            <Swiper
-                                height={sr.ws(56)}
-                                showsPagination={false}
-                                loop={false}
-                                ref = {val=>this.viewSwiper = val }
-                                onChangePage={this.onChangePage}
-                                >
-                                {
-                                    this.monthData.map((item, i)=>{
-                                        return (
-                                            this.renderWeekView(item, i)
-                                        )
-                                    })
-                                }
-                            </Swiper>
-                        </View>
-                    }
-                </View>
-                <View style={styles.currentTimeView}>
-                    <Text style={styles.currentTimeText} >
-                        {this.currentTimeStr}
-                    </Text>
-                </View>
-                <NoCommitUserHead userData={this.NoCommitUser} style={styles.separator}/>
+                {
+                    this.state.NoCommitUser.length > 0 &&
+                    <NoCommitUserHead userData={this.state.NoCommitUser} style={styles.separator}/>
+                }
             </View>
         )
     },
@@ -534,24 +519,65 @@ module.exports = React.createClass({
         return (
             <View style={styles.containerAll}
                   onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
-                <ListView
-                    initialListSize={1}
-                    onEndReachedThreshold={10}
-                    enableEmptySections={true}
-                    style={styles.listStyle}
-                    onEndReached={this.onEndReached}
-                    dataSource={this.state.isDayPlan?this.ds.cloneWithRows(this.DayPlanAndActual):this.ds.cloneWithRows(this.DaySummaryAndProblem)}
-                    renderRow={this.renderRow}
-                    renderHeader={this.renderHeader}
-                    renderFooter={this.renderFooter}
-                    />
+                  <ScrollView>
+                  <View>
+                      <View style={styles.container}>
+                          <TouchableOpacity
+                              onPress={this.onPressShowPicker}>
+                              <View style={styles.dataMonthView}>
+                                  <Text style={styles.dataMonthText}>
+                                      {`${this.currentMonth+1}`}
+                                  </Text>
+                                  <Text style={styles.dataMonthText}>
+                                      月
+                                  </Text>
+                              </View>
+                          </TouchableOpacity>
+                          <View style={styles.vline}/>
+                          {
+                              this.state.haveTimeData &&
+                              <View style={styles.bannerContainer}>
+                                  <Swiper
+                                      height={sr.ws(56)}
+                                      width={sr.ws(sr.w-56)}
+                                      showsPagination={false}
+                                      loop={false}
+                                      onChangePage={this.onChangePage}
+                                      index={this.currentIndex}
+                                      >
+                                      {
+                                          this.monthData.length > 0 &&
+                                          this.monthData.map((item, i)=>{
+                                              return (
+                                                  this.renderWeekView(item, i)
+                                              )
+                                          })
+                                      }
+                                  </Swiper>
+                              </View>
+                          }
+                      </View>
+                      <View style={styles.currentTimeView}>
+                          <Text style={styles.currentTimeText} >
+                              {this.currentTimeStr}
+                          </Text>
+                      </View>
+                  </View>
+                  <ListView
+                      initialListSize={1}
+                      onEndReachedThreshold={10}
+                      enableEmptySections={true}
+                      style={styles.listStyle}
+                      onEndReached={this.onEndReached}
+                      dataSource={this.isDayPlan?this.ds.cloneWithRows(this.state.DayPlanAndActual):this.ds.cloneWithRows(this.state.DaySummaryAndProblem)}
+                      renderRow={this.isDayPlan?this.renderRowWeekPlanItem:this.renderRowWeekSummaryItem}
+                      renderHeader={this.renderHeader}
+                      renderFooter={this.renderFooter}
+                      />
+                    </ScrollView>
                 <Picker
-                    style={{height: sr.th/3}}
+                    style={{height: sr.ws(298)}}
                     ref={picker => this.picker = picker}
-                    showDuration={300}
-                    showMask={false}
-                    hideCancelBtn={true}
-                    pickerBtnText={'完成'}
                     selectedValue={this.state.defaultSelectValue}
                     pickerData={this.state.pickerData}
                     onPickerDone={(value) => this.setChooseValue(value)}
@@ -617,6 +643,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#F4FFFA',
         height: 56,
+        // width: (sr.w-56-6)/7,
     },
     vline: {
         width: 1,
@@ -661,7 +688,7 @@ var styles = StyleSheet.create({
         fontFamily:'STHeitiSC-Medium',
     },
     listFooterContainer: {
-        height: 60,
+        height: 100,
         alignItems: 'center',
     },
     listFooter: {

@@ -130,8 +130,8 @@ var styles = StyleSheet.create({
         paddingVertical: 12,
     },
     icon_item: {
-        width: 90,
-        height: 68,
+        width: 112,
+        height: 77,
         marginLeft:8,
         justifyContent:'flex-end',
     },
@@ -141,7 +141,7 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
     },
     itemNameText: {
-        width: 240,
+        width: 218,
         fontSize: 14,
         color: '#555555'
     },

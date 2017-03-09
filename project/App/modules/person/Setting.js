@@ -10,12 +10,13 @@ var {
 } = ReactNative;
 
 var Feedback = require('./Feedback.js');
-var UpdateFrame = require('./UpdateFrame.js');
 var EditPersonInfo = require('./EditPersonInfo.js');
 var NewPeopleGuide = require('./newPeopleGuide.js');
 var About = require('./About.js');
 var MyCollects = require('./MyCollects.js');
 var MyIntegral = require('./MyIntegral.js');
+var Update = require('@remobile/react-native-update');
+var UpdatePage = require('../update/UpdatePage');
 // var AgentManager = require('./AgentManager.js');
 
 var {Button, WebviewMessageBox} = COMPONENTS;
@@ -28,6 +29,10 @@ var MenuItem = React.createClass({
                     webAddress={this.props.page.webAddress}/>,
                 {title: this.props.page.title}
             );
+            return;
+        }
+        if (this.props.page.method) {
+            this.props.page.method();
             return;
         }
         app.navigator.push({
@@ -65,10 +70,24 @@ module.exports = React.createClass({
         title: '设置',
         leftButton: {image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
     },
+    getInitialState() {
+        return {
+            options: null
+        };
+    },
+    componentWillMount() {
+        Update.checkVersion({
+            versionUrl: app.route.ROUTE_VERSION_INFO_URL,
+            iosAppId: CONSTANTS.IOS_APPID,
+        }).then((options)=>{
+            this.setState({options});
+        })
+    },
     getChildPages() {
         if (!app.personal.info) {
             return;
         }
+        const {options} = this.state;
         let {isAgent, isSpecialSoldier} = app.personal.info;
         var tempTitle = (isAgent == 1) ? '我是代理商': '我的二维码';
         return [
@@ -77,7 +96,13 @@ module.exports = React.createClass({
             // {seprator:false, title: '我的二维码', module: AgentManager, hidden:isAgent==0&&isSpecialSoldier==0},
             {seprator:false, title:'我的收藏', module: MyCollects},
             {seprator:false, title:'意见反馈', module: Feedback},
-            // {seprator:false, title:'在线更新', module: UpdateFrame, info: app.hasNewVersion ? ('有最新'+app.hasNewVersion+'版本') : ''},
+            {seprator:false, title:'在线更新', method: ()=>{
+                app.navigator.push({
+                    title: '在线更新',
+                    component: UpdatePage,
+                    passProps: {options},
+                });
+            }, info: options===null ? '正在获取版本号' : options===undefined ? '获取版本号失败': options.newVersion ? ('有最新'+options.newVersion+'版本') : ''},
             {seprator:false, title:'新手指引', module: NewPeopleGuide},
             {seprator:false, title:'关于', module: About},
         ].map((item, i)=>!item.hidden&&<MenuItem page={item} key={i}/>)
@@ -149,7 +174,6 @@ var styles = StyleSheet.create({
         fontFamily: 'STHeitiSC-Medium',
     },
     itemNoticeText: {
-        width: 93,
         fontSize: 12,
         color: '#888888',
         fontFamily: 'STHeitiSC-Medium',

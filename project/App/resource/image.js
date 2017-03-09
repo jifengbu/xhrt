@@ -302,6 +302,7 @@ module.exports = {
     specops_weekBackImg:require('./image/specops/weekBackImg.png'),
     specops_wetchat:require('./image/specops/wetchat.png'),
     specopsBoss_boss_entrance:require('./image/specopsBoss/boss_entrance.png'),
+    specopsBoss_head_circle:require('./image/specopsBoss/head_circle.png'),
     specopsBoss_lessData:require('./image/specopsBoss/lessData.png'),
     specopsBoss_moreData:require('./image/specopsBoss/moreData.png'),
     specopsBoss_plan:require('./image/specopsBoss/plan.png'),

@@ -15,11 +15,12 @@ var {
 
 var Button = COMPONENTS;
 var dismissKeyboard = require('dismissKeyboard');
+var InputTextMgr = require('../../manager/InputTextMgr.js');
 
 module.exports = React.createClass({
     getInitialState() {
         return {
-            inputText: '',
+            inputText: this.props.inputText,
         };
     },
     doConfirm() {
@@ -28,7 +29,7 @@ module.exports = React.createClass({
             Toast("内容为空");
             return;
         }
-        this.props.doConfirm(context);
+        this.props.doConfirm(context, this.props.textID);
         app.closeModal();
     },
     fomatString(oldStr) {
@@ -79,7 +80,11 @@ module.exports = React.createClass({
                         <TextInput
                           ref={(ref)=>this.contentInput = ref}
                           style={styles.textStyle}
-                          onChangeText={(text) => this.setState({inputText: text})}
+                          onChangeText={(text) => {
+                              InputTextMgr.setTextContent(this.props.textID, text);
+                              this.setState({inputText: text});
+                            }
+                          }
                           multiline={true}
                           placeholder={'输入评论内容'}
                           autoCapitalize={'none'}

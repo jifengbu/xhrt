@@ -12,6 +12,7 @@ var {
 } = ReactNative;
 
 var {DImage} = COMPONENTS;
+var SpecopsPerson = require('./SpecopsPerson.js');
 
 module.exports = React.createClass({
     getInitialState() {
@@ -42,10 +43,17 @@ module.exports = React.createClass({
         }
         this.setState({tabIndex,dataSource,target});
     },
+    toStudyDetail(userId) {
+        app.navigator.push({
+            component: SpecopsPerson,
+            passProps: {userID: userId},
+        });
+    },
     renderRow(obj, sectionID, rowID) {
+        let headUrl = obj.userImg?obj.userImg:obj.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
           return (
               <TouchableHighlight
-                  onPress={null}
+                  onPress={this.toStudyDetail.bind(null,obj.userId)}
                   underlayColor="#EEB422">
                   <View style={styles.listViewItemContain}>
                     {
@@ -54,24 +62,24 @@ module.exports = React.createClass({
                     }
                     <View style={styles.headView}>
                         <DImage
-                            resizeMode='stretch'
+                            resizeMode='cover'
                             defaultSource={app.img.personal_head}
-                            source={{uri: obj.userImg}}
+                            source={obj.userImg?{uri: headUrl}:headUrl}
                             style={styles.headImage} />
                         <View style={styles.nameStyale}>
-                            <Text style={styles.nameText} >{obj.userName}</Text>
-                            <Text style={styles.detailText} >{obj.post}</Text>
+                            <Text numberOfLines={1} style={[styles.nameText,{width: 99}]} >{obj.userName}</Text>
+                            <Text numberOfLines={1} style={styles.detailText} >{obj.post}</Text>
                         </View>
                     </View>
-                    <Text style={styles.nameText} >{'提交率: '+obj.submitRate+'%'}</Text>
-                    <Text style={styles.nameText} >{'未提交 '+obj.notSubmitNum+'次'}</Text>
+                    <Text style={[styles.nameText,{marginLeft: 10}]} >{'提交率: '+obj.submitRate+'%'}</Text>
+                    <Text style={[styles.nameText,{marginLeft: 10}]} >{obj.submitRate == 100?'全部完成':'未提交 '+obj.notSubmitNum+'次'}</Text>
                   </View>
               </TouchableHighlight>
           )
     },
     render() {
         var {tabIndex,target,dataSource} = this.state;
-        let theme = tabIndex === 0?'本月应提交计划  ':tabIndex === 1?'本月应提交目标  ':'本月应提交总结  ';
+        let theme = tabIndex === 0?'每个员工本月应提交计划  ':tabIndex === 1?'每个员工本月应提交目标  ':'每个员工本月应提交总结  ';
         var menuAdminArray = ['计划', '目标', '总结'];
         return (
             <View style={styles.container}>
@@ -180,7 +188,6 @@ var styles = StyleSheet.create({
       height: 61,
       flexDirection: 'row',
       paddingHorizontal: 24,
-      justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: '#FFFFFF',
     },
@@ -194,6 +201,7 @@ var styles = StyleSheet.create({
     },
     headView: {
       flexDirection: 'row',
+      width: 140,
     },
     headImage: {
       width: 36,
@@ -205,6 +213,7 @@ var styles = StyleSheet.create({
     },
     nameText: {
       fontSize: 14,
+      width: 90,
       color: '#333333',
       fontFamily: 'STHeitiSC-Medium',
     },

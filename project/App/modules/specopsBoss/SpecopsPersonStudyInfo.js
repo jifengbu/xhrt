@@ -22,7 +22,7 @@ module.exports = React.createClass({
     },
     getUserStudyInfo() {
         var param = {
-            userID: app.personal.info.userID,
+            userID: this.props.userID,
         };
         POST(app.route.ROUTE_GET_USER_STUDY_INFO, param, this.getUserStudyInfoSuccess);
     },
@@ -34,66 +34,70 @@ module.exports = React.createClass({
         }
     },
     render() {
-        var info = app.personal.info;
-        let headUrl = info.headImg?info.headImg:info.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
         var {studyInfo} = this.state;
+        let headUrl = studyInfo&&studyInfo.headImg?studyInfo.headImg:studyInfo.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
         return (
             <View style={styles.personContainer}>
-                <View style={styles.personalInfoContainer}>
-                    <DImage
-                        resizeMode='cover'
-                        defaultSource={app.img.personal_head}
-                        source={info.headImg?{uri: headUrl}:headUrl}
-                        style={styles.headerIcon}  />
-                    <View style={styles.personalInfoStyle}>
-                        <View style={styles.nameContainer}>
-                            <Text style={[styles.nameText, {fontSize: 18}]} numberOfLines={1}>
-                                {info.name}
-                            </Text>
-                            <View style={styles.verticalLine}>
+                {
+                    studyInfo&&
+                    <View>
+                        <View style={styles.personalInfoContainer}>
+                            <DImage
+                                resizeMode='cover'
+                                defaultSource={app.img.personal_head}
+                                source={studyInfo.headImg?{uri: headUrl}:headUrl}
+                                style={styles.headerIcon}  />
+                            <View style={styles.personalInfoStyle}>
+                                <View style={styles.nameContainer}>
+                                    <Text style={[styles.nameText, {fontSize: 18}]} numberOfLines={1}>
+                                        {studyInfo.userName}
+                                    </Text>
+                                    <View style={styles.verticalLine}>
+                                    </View>
+                                    <Text style={[styles.nameText, {fontSize: 12}]}>
+                                        {studyInfo.alias}
+                                    </Text>
+                                </View>
+                                <Text style={styles.companyText}>
+                                    {(studyInfo.company ==null || studyInfo.company=='')?'您还未设置企业信息':studyInfo.company}
+                                </Text>
                             </View>
-                            <Text style={[styles.nameText, {fontSize: 12}]}>
-                                {info.alias}
-                            </Text>
                         </View>
-                        <Text style={styles.companyText}>
-                            {(info.company ==null || info.company=='')?'您还未设置企业信息':info.company}
-                        </Text>
-                    </View>
-                </View>
-                <View style={styles.divisionLine}>
-                </View>
-                <View style={styles.studyDetailContainer}>
-                    <View style={styles.panelContainer}>
-                        <View style={styles.timeContainer}>
-                            <Text style={[styles.timeStyle, {color: '#60A4F5'}]}>
-                                {studyInfo&&studyInfo.watchVideoLength}
-                            </Text>
-                            <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>分钟</Text>
+                        <View style={styles.divisionLine}>
                         </View>
-                        <Text style={styles.timeText}>总共学习</Text>
-                    </View>
-                    <View style={styles.vline}/>
-                    <View style={styles.panelContainer}>
-                        <View style={styles.timeContainer}>
-                            <Text style={[styles.timeStyle, {color: '#A2D66C'}]}>
-                                {studyInfo&&studyInfo.overVideoStudy}
-                            </Text>
-                            <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>课时</Text>
+                        <View style={styles.studyDetailContainer}>
+                            <View style={styles.panelContainer}>
+                                <View style={styles.timeContainer}>
+                                    <Text style={[styles.timeStyle, {color: '#60A4F5'}]}>
+                                        {studyInfo.watchVideoLength}
+                                    </Text>
+                                    <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>分钟</Text>
+                                </View>
+                                <Text style={styles.timeText}>总共学习</Text>
+                            </View>
+                            <View style={styles.vline}/>
+                            <View style={styles.panelContainer}>
+                                <View style={styles.timeContainer}>
+                                    <Text style={[styles.timeStyle, {color: '#A2D66C'}]}>
+                                        {studyInfo.overVideoStudy}
+                                    </Text>
+                                    <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>课时</Text>
+                                </View>
+                                <Text style={styles.timeText}>完成课程</Text>
+                            </View>
+                            <View style={styles.vline}/>
+                            <View style={styles.panelContainer}>
+                                <View style={styles.timeContainer}>
+                                    <Text style={[styles.timeStyle, {color: '#FED057'}]}>
+                                        {studyInfo.continuousLogin}
+                                    </Text>
+                                    <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>天</Text>
+                                </View>
+                                <Text style={styles.timeText}>累计学习</Text>
+                            </View>
                         </View>
-                        <Text style={styles.timeText}>完成课程</Text>
                     </View>
-                    <View style={styles.vline}/>
-                    <View style={styles.panelContainer}>
-                        <View style={styles.timeContainer}>
-                            <Text style={[styles.timeStyle, {color: '#FED057'}]}>
-                                {studyInfo&&studyInfo.continuousLogin}
-                            </Text>
-                            <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>天</Text>
-                        </View>
-                        <Text style={styles.timeText}>累计学习</Text>
-                    </View>
-                </View>
+                }
             </View>
         );
       }

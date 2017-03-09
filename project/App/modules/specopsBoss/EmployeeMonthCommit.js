@@ -20,9 +20,11 @@ module.exports = React.createClass({
     getInitialState() {
         this.MonthDataStr = [];
         this.MonthDataNum = [];
-        this.createTimeData('2016-06-11');
+        this.createTimeData(app.personal.info.companyInfo.enterDate);
         return {
             tabIndex: 0,
+            taskSubmitRateData: null,
+            haveData: true,
         };
     },
     componentDidMount() {
@@ -55,7 +57,7 @@ module.exports = React.createClass({
             let month = [];
             let monthNUm = [];
             for (var j = 0; j < 12; j++) {
-                if (i == joinYear) {
+                if (i == joinYear && i != currentYear) {
                     if (j >= joinMonth) {
                         monthNUm.push(j);
                     }
@@ -84,13 +86,11 @@ module.exports = React.createClass({
             let addStr = moment(this.MonthDataNum[this.MonthDataNum.length-1]).add(1, 'months').format('YYYY-MM-DD');
             this.MonthDataNum.push(addStr);
         }
-        console.log('11111',this.MonthDataNum);
 
         this.MonthDataStr = [];
         for (var j = 0; j < this.MonthDataNum.length; j++) {
             this.MonthDataStr.push(moment(this.MonthDataNum[j]).month()+1+'月');
         }
-        console.log('00000',this.MonthDataStr);
     },
     getCurrentMonthMonday(){
         // find month first monday
@@ -127,9 +127,42 @@ module.exports = React.createClass({
         }
         return firstMonday;
     },
+    generateMyCurrentYearMonth(){
+        // find month first monday
+        var isFirstMonday = false;
+        var addPos = 0;
+
+        var firstDay = '';
+        firstDay = moment().set('date', 1).format('YYYY-MM-DD');
+
+        var firstMonday = '';
+        while (isFirstMonday === false) {
+            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            if (isMonday === 1) {
+                isFirstMonday = true;
+                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                break;
+            }
+            addPos++;
+        }
+
+        let ret = {};
+        ret.year = moment().year();
+        ret.month = moment().month();
+        if (moment(firstMonday).date() > moment().date()) {
+            ret.month = ret.month - 1;
+            if (ret.month < 0) {
+                ret.month = 11;
+                ret.year = ret.year - 1;
+            }
+        }
+        return ret;
+    },
     getCurrentMonthIndex(){
         let tTime = moment();
         tTime.set('date', 15);
+        tTime.set('year', this.generateMyCurrentYearMonth().year);
+        tTime.set('month', this.generateMyCurrentYearMonth().month);
         let tTimeStr = tTime.format('YYYY-MM-DD');
 
         for (var i = 0; i < this.MonthDataNum.length; i++) {
@@ -147,34 +180,40 @@ module.exports = React.createClass({
             return moment().month()+1;
         }
     },
-    getMonthCommitData(month) {
+    getUserTaskSubmitRate(date) {
+        let info = app.personal.info;
         var param = {
-            companyId: app.personal.info.companyId,
-            userID: app.personal.info.userID,
-            date: month,
+            userID: info.userID,
+            companyId: info.companyInfo.companyId,
+            date:date
         };
-        POST(app.route.ROUTE_GET_USER_TASK_SUBMIT_RATE_DETAILS, param, this.getMonthCommitDataSuccess, this.getMonthCommitDataFailed);
+        POST(app.route.ROUTE_GET_USER_TASK_SUBMIT_RATE, param, this.getUserTaskSubmitRateSuccess, true);
     },
-    getMonthCommitDataSuccess(data) {
+    getUserTaskSubmitRateSuccess(data) {
         if (data.success) {
-            let {submitRateStatistics,submitUserList} = data.context;
-            this.setState({taskSubmitRateData:submitRateStatistics,data:submitUserList});
-
-        } else {
-            Toast(data.mag);
+            this.setState({taskSubmitRateData: data.context});
+            this.setState({haveData: false});
+            setTimeout(()=>{
+                this.setState({haveData: true});
+            },400);
         }
     },
     changeTab(index){
         if (this.state.tabIndex == index) {
             return;
         }
+        let currentMonthIndex = this.getCurrentMonthIndex();
+        if (index > currentMonthIndex) {
+            return;
+        }
+
         this.setState({tabIndex:index});
-        this.getMonthCommitData(this.MonthDataNum[index]);
+        this.getUserTaskSubmitRate(this.MonthDataNum[index]);
         let month = index+1;
         this.currentTimeStr = moment(this.MonthDataNum[index]).format('YYYY年M月');
     },
     render() {
-        let {taskSubmitRateData,data} = this.state;
+        let {taskSubmitRateData} = this.state;
         return (
             <ScrollView>
             <View style={styles.containerAll}
@@ -187,13 +226,22 @@ module.exports = React.createClass({
                       {
                           this.MonthDataStr.length > 0 &&
                           this.MonthDataStr.map((item, i)=>{
+                              let currentMonthIndex = this.getCurrentMonthIndex();
+                              let itemStyle;
+                              if (i === this.state.tabIndex) {
+                                  itemStyle = [styles.tabText, {marginTop: 16, color: '#FFFFFF'}];
+                              } else if (i > currentMonthIndex) {
+                                  itemStyle = [styles.tabText,{color: '#C8C8C8'}];
+                              } else {
+                                  itemStyle = styles.tabText;
+                              }
                               return (
                                   <View key={i} style={styles.itemView}>
                                       <TouchableOpacity
                                           key={i}
                                           onPress={this.changeTab.bind(null, i)}
                                           style={[styles.tabButton, this.state.tabIndex===i?{borderTopWidth: 4, backgroundColor: '#FF8686', borderColor: '#FF6262'}:null]}>
-                                          <Text style={[styles.tabText, this.state.tabIndex===i?{marginTop: 16, color: '#FFFFFF'}:null]} >
+                                          <Text style={itemStyle} >
                                               {item}
                                           </Text>
                                       </TouchableOpacity>
@@ -213,13 +261,13 @@ module.exports = React.createClass({
                   </View>
                   <View style={styles.separator}/>
                   {
-                      taskSubmitRateData&&
+                      taskSubmitRateData&&this.state.haveData&&
                       <LineStackChart taskSubmitRateData={taskSubmitRateData}/>
                   }
                   <View style={styles.separator}/>
                   {
-                      data&&
-                      <EmployeePlanDetail data={data}/>
+                      taskSubmitRateData&&this.state.haveData&&
+                      <EmployeePlanDetail data={taskSubmitRateData}/>
                   }
 
             </View>
@@ -274,9 +322,10 @@ var styles = StyleSheet.create({
     },
     tabText: {
         marginTop: 20,
-        fontSize: 12,
-        color: '#888888',
+        fontSize: 16,
+        color: '#454545',
         textAlign: 'center',
+        fontFamily:'STHeitiSC-Medium',
     },
     listFooterContainer: {
         height: 60,

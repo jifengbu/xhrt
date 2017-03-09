@@ -70,7 +70,7 @@ var MenuItem = React.createClass({
     render() {
         var {title, img, info, seprator} = this.props.page;
         let {companyInfo} = this.props;
-        let headUrl = companyInfo.logo?companyInfo.logo:app.img.common_default;
+        let headUrl = companyInfo&&companyInfo.logo?companyInfo.logo:app.img.common_default;
         return (
             <View>
                 <TouchableOpacity
@@ -89,15 +89,20 @@ var MenuItem = React.createClass({
                     </View>
                 </TouchableOpacity>
                 {
-                    (title==='企业管理' && companyInfo.companyId) &&
+                    (title==='企业管理' && companyInfo) &&
                     <TouchableOpacity onPress={this.showChildPage.bind(null, this.props.page)}>
                         <View style={styles.companyContainer}>
                             <View style={styles.companyInfoContainer}>
                                 <DImage
                                     resizeMode='cover'
-                                    defaultSource={app.img.personal_head}
-                                    source={companyInfo.logo?{uri: headUrl}:headUrl}
-                                    style={styles.headerIcon}  />
+                                    style={styles.headerCircle}
+                                    source={app.img.specopsBoss_head_circle}>
+                                    <DImage
+                                        resizeMode='cover'
+                                        defaultSource={app.img.personal_head}
+                                        source={companyInfo.logo?{uri: headUrl}:headUrl}
+                                        style={styles.headerIcon}  />
+                                </DImage>
                                 <View style={styles.companyInfoStyle}>
                                     <Text style={styles.companyNameText} numberOfLines={2}>
                                         {companyInfo.name}
@@ -161,7 +166,7 @@ module.exports = React.createClass({
         let total = learningRecordBase.total || '';
         const {isAgent, isSpecialSoldier} = app.personal.info;
         return [
-            {seprator:true, title:'企业管理', module: BossIndex, img:app.img.personal_order, info:'',hidden:!companyInfo.companyId},
+            {seprator:true, title:'企业管理', module: BossIndex, img:app.img.personal_order, info:'',hidden:!companyInfo},
             {seprator:true, title:'我的课程', module: CourseRecords, img:app.img.personal_order, info:courseData&&courseData.length+'节课',hidden:(isAgent==0&&isSpecialSoldier==0)},
             {seprator:true, title:'学习记录', module: LearningRecords, img:app.img.personal_order, info:'已经学习'+total+'节课'},
         ].map((item, i)=>!item.hidden&&<MenuItem page={item} key={i} learningRecordBase={learningRecordBase} courseData={courseData} companyInfo={companyInfo}/>)
@@ -170,7 +175,6 @@ module.exports = React.createClass({
         return {
             learningRecordBase:{},
             courseData:[],
-            companyInfo: {},
         };
     },
     componentWillMount() {
@@ -197,7 +201,6 @@ module.exports = React.createClass({
         this.doGetPersonalInfo();
         this.getLearningRecord();
         this.getStudyProgressList();//获取我的课程列表
-        this.getCompanyInfoData();
     },
     getLearningRecord() {
         var param = {
@@ -233,20 +236,6 @@ module.exports = React.createClass({
             if (courseList) {
                 this.setState({courseData:courseList});
             }
-        }
-    },
-    getCompanyInfoData() {
-        var param = {
-            userID: app.personal.info.userID,
-        };
-        POST(app.route.ROUTE_GET_COMPANY_INFO, param, this.getCompanyInfoDataSuccess);
-    },
-    getCompanyInfoDataSuccess(data) {
-        if (data.success) {
-            var context = data.context;
-            app.personal.info.companyId = context.companyId;
-            app.personal.set(app.personal.info);
-            this.setState({companyInfo: context});
         }
     },
     doGetPersonalInfo() {
@@ -310,13 +299,30 @@ module.exports = React.createClass({
     shouldComponentUpdate(nextProps, nextState) {
         return app.personal.info != null;
     },
+    calculateStrLength(oldStr) {
+        let height = 0;
+        let linesWidth = 0;
+        if (oldStr) {
+            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/[\r\n]/g, '|');
+            let StrArr = oldStr.split('|');
+            for (var i = 0; i < StrArr.length; i++) {
+                //计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            }
+            return linesWidth;
+        }
+    },
     render() {
         var info = app.personal.info;
+        var companyInfo = info.companyInfo;
         let name = info.name?info.name:'';
         let post = info.post?info.post:'';
         let company = info.company?info.company:'';
         let headUrl = info.headImg?info.headImg:info.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
-        let {courseData, learningRecordBase, companyInfo} = this.state;
+        let {courseData, learningRecordBase} = this.state;
+        let nameTemWidth = this.calculateStrLength(name);
+        let nameWidth = nameTemWidth*10;
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -334,7 +340,7 @@ module.exports = React.createClass({
                             }
                             <View style={styles.headRightView}>
                                 <View style={styles.nameStyle}>
-                                    <Text style={styles.nameText} numberOfLines={1}>
+                                    <Text style={[styles.nameText, {width: nameWidth>150?sr.ws(150):sr.ws(nameWidth)}]} numberOfLines={1}>
                                         {name}
                                     </Text>
                                     {
@@ -722,11 +728,18 @@ var styles = StyleSheet.create({
         height: 82,
         flexDirection: 'row',
     },
+    headerCircle: {
+        width: 54,
+        height: 54,
+        marginLeft: 27,
+        marginTop: 13,
+        borderRadius: 27,
+        alignItems: 'center',
+    },
     headerIcon: {
         width: 48,
         height: 48,
-        marginLeft: 30,
-        marginTop: 16,
+        marginTop: 1,
         borderRadius: 24,
     },
     companyInfoStyle: {

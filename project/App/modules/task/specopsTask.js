@@ -23,7 +23,7 @@ var Unauthorized = require('../specops/Unauthorized.js');
 
 const TaskItem = React.createClass({
     render() {
-        const {title, flagDate, msg, isOver,videoImage,buttonMsg} = this.props;
+        const {title, flagDate, msg, isOver,videoImage,videoName,buttonMsg} = this.props;
         return (
             <View style={styles.item}>
                 <View style={styles.itemTop}>
@@ -45,6 +45,17 @@ const TaskItem = React.createClass({
                     resizeMode='stretch'
                     source={{uri:videoImage}}
                     style={styles.itemImg}>
+                    {videoName&&
+                        <Image
+                            resizeMode='stretch'
+                            source={app.img.specops_video_overlayer}
+                            style={styles.overlayBackgroundStyle}>
+                            <View
+                                style={styles.videoTextStyle}>
+                                <Text style={styles.videoText}>{videoName}</Text>
+                            </View>
+                        </Image>
+                    }
                 </Image>}
                 <View  style={styles.line} />
                 <View style={styles.button}>
@@ -65,7 +76,9 @@ module.exports = React.createClass({
         };
     },
     componentDidMount() {
-        this.getSpecialTask();
+        if (this.state.authorized) {
+            this.getSpecialTask();
+        }
         this.addListenerOn(PersonalInfoMgr, 'UPDATE_SPECOPS_TASK_EVENT', this.getSpecialTask);
     },
     getSpecialTask() {
@@ -133,6 +146,7 @@ module.exports = React.createClass({
     setAuthorized() {
         app.personal.setSpecialSoldier(true);
         this.setState({authorized: true});
+        this.getSpecialTask();
     },
     render() {
         const {context,authorized} = this.state;
@@ -146,12 +160,13 @@ module.exports = React.createClass({
                         refreshing={false}
                         onRefresh={this.getSpecialTask}
                         title="正在刷新..."/> }>
-                    {context.specialStudyCurriculum&&<TaskItem {...context.specialStudyCurriculum} doStartAction={this.startStudy.bind(null,context.specialStudyCurriculum)} />}
-                    {context.monthPlan&&<TaskItem {...context.monthPlan} doStartAction={this.writeMonthPlan} />}
-                    {context.dayPlan&&<TaskItem {...context.dayPlan} doStartAction={this.writeDayPlan} />}
-                    {context.weekPlan&&<TaskItem {...context.weekPlan} doStartAction={this.writeWeekPlan} />}
-                    {context.daySummary&&<TaskItem {...context.daySummary} doStartAction={this.writeDaySummary} />}
-                    {context.dayProblem&&<TaskItem {...context.dayProblem} doStartAction={this.writeDayProblem} />}
+                        {context.specialStudyCurriculum&&<TaskItem {...context.specialStudyCurriculum} doStartAction={this.startStudy.bind(null,context.specialStudyCurriculum)} />}
+                        {context.monthPlan&&<TaskItem {...context.monthPlan} doStartAction={this.writeMonthPlan} />}
+                        {context.dayPlan&&<TaskItem {...context.dayPlan} doStartAction={this.writeDayPlan} />}
+                        {context.weekPlan&&<TaskItem {...context.weekPlan} doStartAction={this.writeWeekPlan} />}
+                        {context.daySummary&&<TaskItem {...context.daySummary} doStartAction={this.writeDaySummary} />}
+                        {context.dayProblem&&<TaskItem {...context.dayProblem} doStartAction={this.writeDayProblem} />}
+                        {context.unfinished==0&&<Text style={{color: 'gray',fontSize: 14,textAlign:'center',marginTop:20}}>{'暂无数据！'}</Text>}
                 </ScrollView>
             );
         } else {
@@ -220,5 +235,28 @@ var styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'normal',
         color: '#6190C6',
+    },
+    videoTextStyle: {
+        width: sr.w,
+        height: 39,
+        left: 0 ,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+    },
+    videoText: {
+        width: sr.w-50,
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontFamily: 'STHeitiSC-Medium',
+        backgroundColor: 'transparent',
+    },
+    overlayBackgroundStyle: {
+        width: sr.w,
+        height: 166,
+        left: 0 ,
+        bottom: 0,
+        position: 'absolute',
     },
 });

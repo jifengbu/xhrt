@@ -56,31 +56,40 @@ module.exports = React.createClass({
                     {
                         haveImage &&
                         (
-                            this.props.data.isOver === 0?
-                            <Text style={styles.textCompleteStyle}>
-                                完成
-                            </Text>
+                            this.props.data.isOver === 1?
+                            <View style={styles.viewStyle}>
+                                <Text style={styles.textCompleteStyle}>
+                                    完成
+                                </Text>
+                            </View>
                             :
-                            <Text style={styles.textNoCompleteStyle}>
-                                未完成
-                            </Text>
+                            <View style={styles.viewStyle}>
+                                <Text style={styles.textNoCompleteStyle}>
+                                    未完成
+                                </Text>
+                            </View>
                         )
                     }
                 </View>
+                <View style={styles.separatorLine}></View>
             </TouchableOpacity>
         );
     }
 });
 
 var styles = StyleSheet.create({
-    textCompleteStyle: {
+    viewStyle: {
         marginRight: 22,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 48,
+    },
+    textCompleteStyle: {
         fontSize: 14,
         color: '#88CD5C',
         fontFamily:'STHeitiSC-Medium',
     },
     textNoCompleteStyle: {
-        marginRight: 22,
         fontSize: 14,
         color: '#FF6A6A',
         fontFamily:'STHeitiSC-Medium',
@@ -140,5 +149,11 @@ var styles = StyleSheet.create({
         marginHorizontal: 3,
         fontFamily:'STHeitiSC-Medium',
         color: '#565656',
+    },
+    separatorLine: {
+        width: sr.w-44,
+        height: 1,
+        backgroundColor: '#F8F8F8',
+        marginLeft: 34,
     },
 });

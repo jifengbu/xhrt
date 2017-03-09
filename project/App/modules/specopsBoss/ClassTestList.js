@@ -16,7 +16,7 @@ var moment = require('moment');
 var {Button, InputBox, DImage} = COMPONENTS;
 var CopyBox = require('../home/CopyBox.js');
 import Swiper from 'react-native-swiper2';
-import Picker from 'react-native-picker';
+import Picker from './Picker.js';
 
 var ClassTestBossList = require('./ClassTestBossList.js');
 var PieChart = require('./pieChart.js');
@@ -46,31 +46,50 @@ module.exports = React.createClass({
             numbers: [],
         };
     },
+    componentDidMount() {
+        this.clearMonthData();
+    },
     clearMonthData() {
         // generate year data
-        this.currentMonth = moment().month();
-        this.currentYear = moment().year();
+        this.currentYear = this.generateMyCurrentYearMonth().year;
+        this.currentMonth = this.generateMyCurrentYearMonth().month;
+
         this.generateYearData(this.currentYear);
         this.setState({haveData: true});
 
         this.currentIndex = this.getMonthIndex(this.currentMonth);
         this.tabIndex = this.getCurrentWeekIndex(this.currentIndex);
 
-        this.onChangePage(this.currentIndex);
+        if (this.yearData[this.currentIndex].length <= this.tabIndex) {
+            this.tabIndex = this.yearData[this.currentIndex].length - 1;
+        }
+        this.getDayViewData(this.yearData[this.currentIndex][this.tabIndex]);
     },
     generateYearData(year){
         this.yearData = [];
         for (var i = 0; i < 12; i++) {
             this.yearData[i] = [];
         }
-        // 需要判断进驻的时间，从进驻时间开始，到最近的最后两个月。
+        // 需要判断进驻的时间，从进驻时间开始
+        let startPos = 0;
+        // let joinYear = moment(app.personal.info.companyInfo.enterDate).year();
+        // let joinMonth = moment(app.personal.info.companyInfo.enterDate).month();
+        // if ( joinYear < year) {
+        //     startPos = 0;
+        // }
+        // if ( joinYear == year) {
+        //     startPos = joinMonth;
+        // }
+        // if ( joinYear > year) {
+        //     console.log('join year is fail');
+        //     return;
+        // }
         // generateYearData
-        for (var i = 0; i < 12; i++) {
+        for (var i = startPos; i < 12; i++) {
             this.generateMonthData(year, i);
         }
 
         _.remove(this.yearData, (item)=>item.length===0);
-        console.log('-----',this.yearData);
     },
     generateMonthData(year, month){
         // find month first monday
@@ -89,21 +108,6 @@ module.exports = React.createClass({
                 break;
             }
             addPos++;
-        }
-        if (moment().date() < moment(firstMonday).date()) {
-            isFirstMonday = false;
-            addPos = 0;
-            firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
-            firstMonday = '';
-            while (isFirstMonday === false) {
-                var isMonday = moment(firstDay).add(1*addPos, 'd').day();
-                if (isMonday === 1) {
-                    isFirstMonday = true;
-                    firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
-                    break;
-                }
-                addPos++;
-            }
         }
         for (var i = 0; i < 6; i++) {
             if (moment(firstMonday).add(7*i, 'd').month() === moment(firstMonday).month()) {
@@ -192,14 +196,45 @@ module.exports = React.createClass({
             return false;
         }
     },
+    generateMyCurrentYearMonth(){
+        // find month first monday
+        var isFirstMonday = false;
+        var addPos = 0;
+
+        var firstDay = '';
+        firstDay = moment().set('date', 1).format('YYYY-MM-DD');
+
+        var firstMonday = '';
+        while (isFirstMonday === false) {
+            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            if (isMonday === 1) {
+                isFirstMonday = true;
+                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                break;
+            }
+            addPos++;
+        }
+
+        let ret = {};
+        ret.year = moment().year();
+        ret.month = moment().month();
+        if (moment(firstMonday).date() > moment().date()) {
+            ret.month = ret.month - 1;
+            if (ret.month < 0) {
+                ret.month = 11;
+                ret.year = ret.year - 1;
+            }
+        }
+        return ret;
+    },
     // get time data
-    createBirthdayData(joinTime) {
+    createTimeData(joinTime) {
         let joinYear = moment(joinTime).year();
-        let joinMonth = moment(joinTime).month()+1;
+        let joinMonth = moment(joinTime).month();
 
         let date = {};
-        let currentYear = moment().year();
-        let currentMonth = moment().month()+1;
+        let currentYear = this.generateMyCurrentYearMonth().year;
+        let currentMonth = this.generateMyCurrentYearMonth().month;
 
         for (var i = joinYear; i <= currentYear; i++) {
             let month = [];
@@ -219,69 +254,23 @@ module.exports = React.createClass({
             date[i+'年'] = month;
         }
 
-        // add two month
-        let tempMonth1 = currentMonth+1;
-        let tempMonth2 = currentMonth+2;
-        let tempYear = currentYear;
-        let isAdd = true;
-        if (tempMonth1 == 13) {
-            tempMonth1 = 1;
-            if (isAdd){
-                isAdd = false;
-                tempYear++;
-            }
-        }
-        // add first month
-        if (tempYear == currentYear) {
-            date[currentYear+'年'].push(tempMonth1+'月');
-        }else {
-            let tempMonthArray = [];
-            tempMonthArray.push(tempMonth1+'月');
-            date[tempYear+'年'] = tempMonthArray;
-        }
-        if (tempMonth2 == 13) {
-            tempMonth2 = 1;
-            if (isAdd){
-                isAdd = false;
-                tempYear++;
-            }
-        }
-        if (tempMonth2 == 14) {
-            tempMonth2 = 2;
-            if (isAdd){
-                isAdd = false;
-                tempYear++;
-            }
-        }
-        // add second month
-        if (tempYear == currentYear) {
-            date[currentYear+'年'].push(tempMonth2+'月');
-        }else {
-            if (tempMonth2 == 1) {
-                let tempMonthArray = [];
-                tempMonthArray.push(tempMonth2+'月');
-                date[tempYear+'年'] = tempMonthArray;
-            }
-            if (tempMonth2 == 2) {
-                date[tempYear+'年'].push(tempMonth2+'月');
-            }
-        }
-
         return date;
     },
     onPressShowPicker(type) {
         if (!this.picker.isPickerShow()) {
             let date = moment();
             let currentData = [date.year()+'年', (date.month()+1)+'月'];
-            this.setState({defaultSelectValue: currentData, pickerData: this.createBirthdayData('2015-06-11')});
+            this.setState({defaultSelectValue: currentData, pickerData: this.createTimeData(app.personal.info.companyInfo.enterDate)});
             this.picker.show();
         } else {
             this.picker.hide();
         }
     },
     getPersonalQuizzesDetailsData(weekDate) {
+        this.setState({quizzesDetailsData: null});//用于刷新成绩列表
         var param = {
-            companyId: app.personal.info.companyId,
+            companyId: app.personal.info.companyInfo.companyId,
+            userID: app.personal.info.userID,
             date: weekDate,
         };
         POST(app.route.ROUTE_GET_QUIZZES_DETAIL, param, this.getPersonalQuizzesDetailsDataSuccess, true);
@@ -308,27 +297,33 @@ module.exports = React.createClass({
     getDayViewData(weekDate){
         this.getPersonalQuizzesDetailsData(weekDate);
     },
-    componentDidMount() {
-        this.clearMonthData();
-    },
     changeTab(index, time){
         this.tabIndex = index;
         this.getDayViewData(time);
     },
     onChangePage(weekIndex){
+        if (this.currentIndex == weekIndex) {
+            return;
+        }
         console.log('----week', weekIndex);
-        this.currentIndex = weekIndex;
-        this.currentMonth = moment(this.yearData[weekIndex][this.tabIndex]).month();
-        this.getDayViewData(this.yearData[weekIndex][this.tabIndex]);
+        this.currentIndex = Math.round(weekIndex);
+        if (this.yearData[this.currentIndex].length <= this.tabIndex) {
+            this.tabIndex = this.yearData[this.currentIndex].length - 1;
+        }
+        this.currentMonth = moment(this.yearData[this.currentIndex][this.tabIndex]).month();
+        this.getDayViewData(this.yearData[this.currentIndex][this.tabIndex]);
     },
     setChooseValue(value){
         this.currentYear = parseInt(value[0]);
         this.currentMonth = parseInt(value[1])-1;
         this.generateYearData(this.currentYear);
-        this.getDayViewData(this.yearData[this.currentIndex][this.tabIndex]);
 
         this.currentIndex = this.getMonthIndex(this.currentMonth);
         this.tabIndex = this.getCurrentWeekIndex(this.currentIndex);
+
+        console.log('index tabindex data', this.currentIndex, this.tabIndex, this.yearData);
+
+        this.getDayViewData(this.yearData[this.currentIndex][this.tabIndex]);
 
         this.setState({haveData: false});
         setTimeout(()=>{
@@ -389,6 +384,7 @@ module.exports = React.createClass({
         return (
             <View style={styles.containerAll}
                   onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
+                  <View style={styles.separator}/>
                   <ScrollView>
                       <View style={styles.container}>
                           <TouchableOpacity
@@ -408,9 +404,9 @@ module.exports = React.createClass({
                               <View style={styles.bannerContainer}>
                                   <Swiper
                                       height={sr.ws(52)}
+                                      width={sr.ws(sr.w-56)}
                                       showsPagination={false}
                                       loop={false}
-                                      ref = {val=>this.viewSwiper = val }
                                       onChangePage={this.onChangePage}
                                       index={this.currentIndex}
                                       >
@@ -430,28 +426,26 @@ module.exports = React.createClass({
                           }
                       </View>
                       {
-                          quizzesDetailsData&&
+                          quizzesDetailsData?
                           <View>
                               <View style={[styles.lineDivision, {height: sr.ws(7)}]}/>
                               <View style={styles.homeworkContainer}>
                                   <View style={styles.separator}/>
                                   {
-                                      <PieChart sections={sections} radios={radios} numbers={numbers}/>
+                                      <PieChart showUnitText={'人'} sections={sections} radios={radios} numbers={numbers}/>
                                   }
                               </View>
-                              {
-                                  <ClassTestBossList quizzesDetailsData={quizzesDetailsData}/>
-                              }
+                              <ClassTestBossList quizzesDetailsData={quizzesDetailsData}/>
+                          </View>
+                          :
+                          <View style={styles.listFooterContainer}>
+                              <Text style={styles.listFooter}>{'暂无成绩数据'}</Text>
                           </View>
                       }
                 </ScrollView>
                 <Picker
-                    style={{height: sr.th/3}}
+                    style={{height: sr.ws(298)}}
                     ref={picker => this.picker = picker}
-                    showDuration={300}
-                    showMask={false}
-                    hideCancelBtn={true}
-                    pickerBtnText={'完成'}
                     selectedValue={this.state.defaultSelectValue}
                     pickerData={this.state.pickerData}
                     onPickerDone={(value) => this.setChooseValue(value)}
@@ -531,5 +525,14 @@ var styles = StyleSheet.create({
     },
     homeworkContainer: {
         flexDirection: 'column',
+    },
+    listFooterContainer: {
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    listFooter: {
+        color: 'gray',
+        fontSize: 14,
     },
 });

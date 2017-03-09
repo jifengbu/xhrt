@@ -29,7 +29,13 @@ module.exports = React.createClass({
     statics: {
         title: '赢销特种兵'
     },
+    onStartShouldSetResponderCapture(evt){
+        app.touchPosition.x = evt.nativeEvent.pageX;
+        app.touchPosition.y = evt.nativeEvent.pageY;
+        return false;
+    },
     getInitialState() {
+        this.isRefresh = false;
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return {
             tabIndex: 0,
@@ -40,26 +46,30 @@ module.exports = React.createClass({
             isNextMonth: this.props.isNextMonth,
             memWeekTime: [],
             isLookAll: false,
+            isShowBtn: false,
             lineHeight: 0,
             actualWorks: [],
-            dayplan: [],
+            dayPlan: [],
             daySummary: null,
             studyDetailData: null,
+            monthTaskData: null,
+            studyInfo: null,
+            haveData: false,
         };
     },
     componentDidMount() {
         this.monthData = {};
         this.memWeekCount = 0;
         this.clearMonthData();
-        this.currentMonthNum = this.getCurrentMonth();
-        this.currentYearNum = this.getCurrentYear();
-        this.processWeekTime(this.currentMonthNum-1);
+        this.currentMonthNum = this.generateMyCurrentYearMonth().month;
+        this.currentYearNum = this.generateMyCurrentYearMonth().year;
+        this.processWeekTime(this.currentMonthNum);
 
         var tTime = moment();
-        if (this.state.isNextMonth) {
-            tTime.add(1, 'M');
-            tTime.set('date', 15);
-        }
+        tTime.set('date', 15);
+        tTime.set('year', this.currentYearNum);
+        tTime.set('month', this.currentMonthNum);
+
         var param = {
             userID:this.props.userID,
             planDate:tTime.format('YYYY-MM-DD'),
@@ -67,6 +77,9 @@ module.exports = React.createClass({
         POST(app.route.ROUTE_GET_MONTH_PLAN, param, this.getMonthDataSuccess, true);
         this.getDayPlanData(tTime);//获取日计划
         this.getPersonalStudyDetailsData(tTime);//获取日计划
+        this.getPersonalMonthTaskData();//获取个人本月任务提交情况
+        this.getUserStudyInfo();
+        this.setState({tabIndex: this.getCurrentWeekIndex()});
     },
     getMonthDataSuccess(data) {
         if (data.success) {
@@ -90,21 +103,21 @@ module.exports = React.createClass({
     getDayPlanData(tTime) {
         var param = {
             userID:this.props.userID,
-            planDate:tTime.format('YYYY-MM-DD'),
+            planDate:moment().format('YYYY-MM-DD'),
         };
         POST(app.route.ROUTE_GET_DAY_PLAN, param, this.getDayPlanDataSuccess);
     },
     getDayPlanDataSuccess(data) {
         if (data.success) {
-            let {actualWorks, dayplan, daySummary} = data.context;
-            this.setState({actualWorks: actualWorks.contextList, dayplan, daySummary});
+            let {actualWorks, dayPlan, daySummary} = data.context;
+            this.setState({actualWorks: actualWorks.contextList, dayPlan, daySummary});
         } else {
             Toast(data.msg);
         }
     },
     getPersonalStudyDetailsData() {
         var param = {
-            companyId: app.personal.info.companyId,
+            companyId: app.personal.info.companyInfo.companyId,
             userID: this.props.userID,
         };
         POST(app.route.ROUTE_GET_PERSONAL_STUDY_DETAILS, param, this.getPersonalStudyDetailsDataSuccess);
@@ -112,6 +125,36 @@ module.exports = React.createClass({
     getPersonalStudyDetailsDataSuccess(data) {
         if (data.success) {
             this.setState({studyDetailData: data.context});
+            setTimeout(()=>{
+                this.setState({haveData: true});
+            },400);
+        } else {
+            Toast(data.msg);
+        }
+    },
+    getPersonalMonthTaskData() {
+        var param = {
+            userID: this.props.userID,
+            date: moment().format('YYYY-MM-DD'),
+        };
+        POST(app.route.ROUTE_GET_PERSONAL_MONTH_TASK, param, this.getPersonalMonthTaskDataSuccess);
+    },
+    getPersonalMonthTaskDataSuccess(data) {
+        if (data.success) {
+            this.setState({monthTaskData: data.context});
+        } else {
+            Toast(data.msg);
+        }
+    },
+    getUserStudyInfo() {
+        var param = {
+            userID: this.props.userID,
+        };
+        POST(app.route.ROUTE_GET_USER_STUDY_INFO, param, this.getUserStudyInfoSuccess);
+    },
+    getUserStudyInfoSuccess(data) {
+        if (data.success) {
+            this.setState({studyInfo: data.context});
         } else {
             Toast(data.msg);
         }
@@ -216,6 +259,37 @@ module.exports = React.createClass({
         }
         return firstMonday;
     },
+    generateMyCurrentYearMonth(){
+        // find month first monday
+        var isFirstMonday = false;
+        var addPos = 0;
+
+        var firstDay = '';
+        firstDay = moment().set('date', 1).format('YYYY-MM-DD');
+
+        var firstMonday = '';
+        while (isFirstMonday === false) {
+            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            if (isMonday === 1) {
+                isFirstMonday = true;
+                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                break;
+            }
+            addPos++;
+        }
+
+        let ret = {};
+        ret.year = moment().year();
+        ret.month = moment().month();
+        if (moment(firstMonday).date() > moment().date()) {
+            ret.month = ret.month - 1;
+            if (ret.month < 0) {
+                ret.month = 11;
+                ret.year = ret.year - 1;
+            }
+        }
+        return ret;
+    },
     getCurrentMonth(){
         var strFirstMonday = this.getCurrentMonthMonday();
         var monthNum = 0;
@@ -308,24 +382,28 @@ module.exports = React.createClass({
         app.navigator.push({
             title: '工作目标',
             component: MonthList,
+            passProps: {userID: this.props.userID}
         });
     },
     goWeekListPage() {
         app.navigator.push({
             title: '工作计划与总结',
             component: WeekList,
+            passProps: {haveImage:false,userID: this.props.userID},
         });
     },
     goHomeworkPersonalPage() {
         app.navigator.push({
             title: '课后作业',
             component: HomeworkPersonal,
+            passProps: {showAll: true,userID: this.props.userID},
         });
     },
     goClassTestSpecopsListPage() {
         app.navigator.push({
             title: '随堂测试成绩',
             component: ClassTestSpecopsList,
+            passProps: {userID: this.props.userID},
         });
     },
     renderSeparator(sectionID, rowID) {
@@ -335,10 +413,23 @@ module.exports = React.createClass({
     },
     render() {
         return (
-            <View style={styles.container}>
-                <ScrollView>
-                    <View style={[styles.lineDivision, {height: sr.ws(1)}]}/>
-                    <SpecopsPersonStudyInfo />
+            <View style={styles.container}
+                onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
+                <View style={[styles.lineDivision, {height: sr.ws(1)}]}/>
+                {
+                    this.state.studyInfo&&<this.personalStudyInfoTop />
+                }
+                <ScrollView onScroll={(e) => {
+                    if (e.nativeEvent.contentOffset.y >= this.viewSummaryHeight) {
+                        if (!this.isRefresh) {
+                            this.setState({changePage: true});
+                            this.isRefresh = true;
+                        }
+                    }
+                }}>
+                    {
+                        this.state.studyInfo&&<this.personalStudyInfoBottom />
+                    }
                     <View style={[styles.lineDivision, {height: sr.ws(10)}]}/>
                     <this.currentMonthTask />
                     <View style={[styles.lineDivision, {height: sr.ws(10)}]}/>
@@ -390,6 +481,93 @@ module.exports = React.createClass({
                 />
         )
     },
+    calculateStrLength(oldStr) {
+        let height = 0;
+        let linesWidth = 0;
+        if (oldStr) {
+            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/[\r\n]/g, '|');
+            let StrArr = oldStr.split('|');
+            for (var i = 0; i < StrArr.length; i++) {
+                //计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            }
+            return linesWidth;
+        }
+    },
+    //特种兵个人学习时长
+    personalStudyInfoTop() {
+        var {studyInfo} = this.state;
+        let headUrl = studyInfo&&studyInfo.headImg?studyInfo.headImg:studyInfo.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
+        let nameTemWidth = this.calculateStrLength(studyInfo.userName);
+        let nameWidth = nameTemWidth*10;
+        return (
+            <View style={styles.personContainer}>
+                <View style={styles.personalInfoContainer}>
+                    <DImage
+                        resizeMode='cover'
+                        defaultSource={app.img.personal_head}
+                        source={studyInfo.headImg?{uri: headUrl}:headUrl}
+                        style={styles.headerIcon}  />
+                    <View style={styles.personalInfoStyle}>
+                        <View style={styles.nameContainer}>
+                            <Text style={[styles.nameText, {width: nameWidth>155?sr.ws(155):sr.ws(nameWidth)}]} numberOfLines={1}>
+                                {studyInfo.userName}
+                            </Text>
+                            <View style={styles.verticalLine}>
+                            </View>
+                            <Text style={styles.aliasText}>
+                                {studyInfo.alias}
+                            </Text>
+                        </View>
+                        <Text style={styles.companyText}>
+                            {(studyInfo.company ==null || studyInfo.company=='')?'未设置企业信息':studyInfo.company}
+                        </Text>
+                    </View>
+                </View>
+                <View style={styles.divisionLine} />
+            </View>
+        )
+    },
+    //特种兵个人学习时长
+    personalStudyInfoBottom() {
+        var {studyInfo} = this.state;
+        return (
+            <View style={styles.personContainer}>
+                <View style={styles.studyDetailContainer}>
+                    <View style={styles.panelContainer}>
+                        <View style={styles.timeContainer}>
+                            <Text style={[styles.timeStyle, {color: '#60A4F5'}]}>
+                                {studyInfo.watchVideoLength}
+                            </Text>
+                            <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>分钟</Text>
+                        </View>
+                        <Text style={styles.timeText}>总共学习</Text>
+                    </View>
+                    <View style={styles.vline}/>
+                    <View style={styles.panelContainer}>
+                        <View style={styles.timeContainer}>
+                            <Text style={[styles.timeStyle, {color: '#A2D66C'}]}>
+                                {studyInfo.overVideoStudy}
+                            </Text>
+                            <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>课时</Text>
+                        </View>
+                        <Text style={styles.timeText}>完成课程</Text>
+                    </View>
+                    <View style={styles.vline}/>
+                    <View style={styles.panelContainer}>
+                        <View style={styles.timeContainer}>
+                            <Text style={[styles.timeStyle, {color: '#FED057'}]}>
+                                {studyInfo.continuousLogin}
+                            </Text>
+                            <Text style={[styles.timeText, {alignSelf: 'flex-end'}]}>天</Text>
+                        </View>
+                        <Text style={styles.timeText}>累计学习</Text>
+                    </View>
+                </View>
+            </View>
+        )
+    },
     //本月工作计划
     monthPlanPurpose() {
         return (
@@ -407,7 +585,7 @@ module.exports = React.createClass({
                         </Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.separator}></View>
+                <View style={[styles.separator, {marginLeft: 18, width: sr.w-18}]}></View>
                 <ListView
                     style={styles.list}
                     enableEmptySections={true}
@@ -420,7 +598,13 @@ module.exports = React.createClass({
     },
     //学习情况
     currentMonthTask() {
-        var {studyDetailData} = this.state;
+        var {monthTaskData} = this.state;
+        let monthActualSumit = monthTaskData&&monthTaskData.monthPlan.actualSumit;
+        let monthShouldSumit = monthTaskData&&monthTaskData.monthPlan.shouldSumit;
+        let dayActualSumit = monthTaskData&&monthTaskData.dayPlan.actualSumit;
+        let dayShouldSumit = monthTaskData&&monthTaskData.dayPlan.shouldSumit;
+        let summaryActualSumit = monthTaskData&&monthTaskData.daySummary.actualSumit;
+        let summaryShouldSumit = monthTaskData&&monthTaskData.daySummary.shouldSumit;
         return (
             <View style={styles.homeworkContainer}>
                 <View style={styles.titleContainerWeek}>
@@ -436,10 +620,10 @@ module.exports = React.createClass({
                     <View style={styles.panelContainer}>
                         <View style={styles.timeContainer}>
                             <Text style={styles.countStyle}>
-                                {'1'}
+                                {monthActualSumit||'0'}
                             </Text>
                             <Text style={styles.totalStyle}>
-                                {'/1'}
+                                {'/'+(monthShouldSumit||'0')}
                             </Text>
                         </View>
                         <Text style={[styles.countText, , {color: '#60A4F5'}]}>工作目标</Text>
@@ -448,10 +632,10 @@ module.exports = React.createClass({
                     <View style={styles.panelContainer}>
                         <View style={styles.timeContainer}>
                             <Text style={styles.countStyle}>
-                                {'23'}
+                                {dayActualSumit||'0'}
                             </Text>
                             <Text style={styles.totalStyle}>
-                                {'/24'}
+                                {'/'+(dayShouldSumit||'0')}
                             </Text>
                         </View>
                         <Text style={[styles.countText, {color: '#A2D66C'}]}>工作计划</Text>
@@ -460,10 +644,10 @@ module.exports = React.createClass({
                     <View style={styles.panelContainer}>
                         <View style={styles.timeContainer}>
                             <Text style={styles.countStyle}>
-                                {'14'}
+                                {summaryActualSumit||'0'}
                             </Text>
                             <Text style={styles.totalStyle}>
-                                {'/24'}
+                                {'/'+(summaryShouldSumit||'0')}
                             </Text>
                         </View>
                         <Text style={[styles.countText, {color: '#FED057'}]}>工作总结</Text>
@@ -472,11 +656,15 @@ module.exports = React.createClass({
             </View>
         )
     },
+    onLayoutSummary(e){
+        var {height} = e.nativeEvent.layout;
+        this.viewSummaryHeight = e.nativeEvent.layout.y-height;
+    },
     //学习情况
     employeeStudy() {
         var {studyDetailData} = this.state;
         return (
-            <View style={styles.homeworkContainer}>
+            <View onLayout={this.onLayoutSummary} style={styles.homeworkContainer}>
                 <View style={styles.titleContainerWeek}>
                     <View style={styles.titleContainerWeekSub}>
                         <View style={styles.headRedView}/>
@@ -487,8 +675,8 @@ module.exports = React.createClass({
                 </View>
                 <View style={styles.separator}/>
                 {
-                    studyDetailData&&
-                    <EmployeeStudyTable avgCoursesNumber={studyDetailData.avgCoursesNumber} monthAvgCoursesNumber={studyDetailData.monthAvgCoursesNumber} studyWhenLong={studyDetailData.studyWhenLong} monthStudyWhenLong={studyDetailData.monthStudyWhenLong}/>
+                    studyDetailData&&this.state.haveData&&
+                    <EmployeeStudyTable avgCoursesNumber={studyDetailData.avgCoursesNumber} monthAvgCoursesNumber={studyDetailData.monthAvgCoursesNumber} studyWhenLong={studyDetailData.studyWhenLong} monthStudyWhenLong={studyDetailData.monthStudyWhenLong} isPerson={true}/>
                 }
             </View>
         )
@@ -518,7 +706,10 @@ module.exports = React.createClass({
                     </View>
                 </View>
                 <View style={styles.separator}/>
-                <PieChart sections={sections} radios={radios} numbers={numbers}/>
+                {
+                    this.state.haveData &&
+                    <PieChart showUnitText={'次'} sections={sections} radios={radios} numbers={numbers}/>
+                }
                 <View style={styles.separator}/>
                 <TouchableOpacity onPress={this.goClassTestSpecopsListPage} style={styles.seeDetail}>
                     <Text style={styles.detailText}>
@@ -545,7 +736,7 @@ module.exports = React.createClass({
                         </Text>
                     </TouchableOpacity>
                 </View>
-                <HomeworkPersonal />
+                <HomeworkPersonal showAll={false} userID={this.props.userID} />
             </View>
         )
     },
@@ -641,12 +832,15 @@ module.exports = React.createClass({
     _measureLineHeight(e) {
         if (!this.state.lineheight) {
             var {height} = e.nativeEvent.layout;
+            if (height > 90) {
+                this.setState({isShowBtn: true});
+            }
             this.setState({lineHeight: height+26});
         }
     },
     //今日计划
     todayPlanPurpose() {
-        var {isLookAll, actualWorks, dayplan, daySummary} = this.state;
+        var {isLookAll, isShowBtn, lineHeight, actualWorks, dayPlan, daySummary} = this.state;
         return (
             <View style={styles.monthPlanPurposeViewStyle}>
                 <View style={styles.titleContainerWeek}>
@@ -669,11 +863,11 @@ module.exports = React.createClass({
                             计划工作项
                         </Text>
                     </View>
-                    <View style={styles.separator}></View>
+                    <View style={styles.separatorLine}></View>
                     <ListView
                         style={styles.list}
                         enableEmptySections={true}
-                        dataSource={this.ds.cloneWithRows(dayplan)}
+                        dataSource={this.ds.cloneWithRows(dayPlan)}
                         renderRow={this.renderRowDay}
                         renderSeparator={this.renderSeparator}
                         />
@@ -684,7 +878,7 @@ module.exports = React.createClass({
                             实际工作项
                         </Text>
                     </View>
-                    <View style={styles.separator}></View>
+                    <View style={styles.separatorLine}></View>
                         <ListView
                             style={styles.list}
                             enableEmptySections={true}
@@ -699,18 +893,21 @@ module.exports = React.createClass({
                             工作总结
                         </Text>
                     </View>
-                    <View style={styles.separator}></View>
-                    <View style={[styles.synopsisStyle, {height: this.state.lineHeight}]}>
-                        <Text onLayout={this._measureLineHeight} numberOfLines={isLookAll?200:4} style={styles.conclusionText}>
+                    <View style={[styles.separator, {marginLeft: 18, width: sr.w-18}]}></View>
+                    <View style={[styles.synopsisStyle, {height: lineHeight}]}>
+                        <Text onLayout={this._measureLineHeight} numberOfLines={isLookAll?200:isShowBtn?4:10} style={styles.conclusionText}>
                             {daySummary&&daySummary.content}
                         </Text>
                         {
-                            !isLookAll&&
+                            !isLookAll&&isShowBtn&&
                             <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: (this.state.lineHeight)/2}]}/>
                         }
-                        <TouchableOpacity onPress={this.doLookAll} style={styles.lookAllStyle}>
-                            <Text style={styles.lookAllText}>{isLookAll?'点击收起':'点击展开更多'}</Text>
-                        </TouchableOpacity>
+                        {
+                            isShowBtn&&
+                            <TouchableOpacity onPress={this.doLookAll} style={styles.lookAllStyle}>
+                                <Text style={styles.lookAllText}>{isLookAll?'点击收起':'点击展开更多'}</Text>
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
             </View>
@@ -773,6 +970,12 @@ var styles = StyleSheet.create({
         height: 1,
         backgroundColor: '#F1F0F5',
         alignSelf: 'center',
+    },
+    separatorLine: {
+        width: sr.w-44,
+        height: 1,
+        backgroundColor: '#F1F0F5',
+        marginLeft: 34,
     },
     list: {
         alignSelf:'stretch',
@@ -852,9 +1055,10 @@ var styles = StyleSheet.create({
         width: 100,
         height: 20,
         bottom: 0,
-        left: sr.w/2-50,
+        left: (sr.w-30)/2-50,
         position: 'absolute',
         alignItems: 'center',
+        justifyContent: 'center',
         flexDirection: 'row',
     },
     lookAllText: {
@@ -880,12 +1084,6 @@ var styles = StyleSheet.create({
         fontSize: 14,
         color: '#404040',
         fontFamily: 'STHeitiSC-Medium',
-    },
-    studyDetailContainer: {
-        height: 80,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     panelContainer: {
         flex: 1,
@@ -917,5 +1115,75 @@ var styles = StyleSheet.create({
         width: 1,
         height: 34,
         backgroundColor: '#EEEEEE',
+    },
+    personContainer: {
+        width: sr.w-6,
+        alignSelf: 'center',
+        borderRadius: 6,
+        backgroundColor: '#FFFFFF',
+    },
+    personalInfoContainer: {
+        height: 82,
+        flexDirection: 'row',
+    },
+    headerIcon: {
+        width: 54,
+        height: 54,
+        marginLeft: 18,
+        marginTop: 15,
+        borderRadius: 27,
+    },
+    personalInfoStyle: {
+        marginLeft: 31,
+        justifyContent: 'center',
+        flexDirection: 'column',
+    },
+    nameContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        marginBottom: 10,
+    },
+    nameText: {
+        fontSize: 18,
+        color: '#2A2A2A',
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    aliasText: {
+        fontSize: 12,
+        color: '#2A2A2A',
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    verticalLine: {
+        width: 1,
+        height: 12,
+        marginLeft: 21,
+        marginRight: 12,
+        backgroundColor: '#D4D4D4',
+    },
+    companyText: {
+        fontSize: 12,
+        color: '#999999',
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    divisionLine: {
+        width: sr.w-24,
+        height: 1,
+        alignSelf: 'center',
+        backgroundColor: '#F8F8F8',
+    },
+    studyDetailContainer: {
+        height: 62,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    timeStyle: {
+        fontSize: 18,
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    timeText: {
+        color: '#2A2A2A',
+        fontSize: 12,
+        fontFamily: 'STHeitiSC-Medium',
     },
 });

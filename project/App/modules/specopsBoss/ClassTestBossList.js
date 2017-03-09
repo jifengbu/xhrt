@@ -12,6 +12,9 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
+var SpecopsPerson = require('./SpecopsPerson.js');
+var moment = require('moment');
+
 module.exports = React.createClass({
     getInitialState() {
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -28,15 +31,36 @@ module.exports = React.createClass({
         if (this.props.quizzesDetailsData) {
             let {excellent, good, medium, poor} = this.props.quizzesDetailsData;
             var listData = [];
-            excellent&&listData.push(excellent);
-            good&&listData.push(good);
-            medium&&listData.push(medium);
-            poor&&listData.push(poor);
-            this.setState({dataSource: this.ds.cloneWithRows(listData)});
+            (excellent&&JSON.stringify(excellent)!='{}'&&excellent.userList.length)&&listData.push(excellent);
+            (good&&JSON.stringify(good)!='{}'&&good.userList.length)&&listData.push(good);
+            (medium&&JSON.stringify(medium)!='{}'&&medium.userList.length)&&listData.push(medium);
+            (poor&&JSON.stringify(poor)!='{}'&&poor.userList.length)&&listData.push(poor);
+            var infiniteLoadStatus = !listData.length ? '暂无成绩数据' : '没有更多数据';
+            this.setState({dataSource: this.ds.cloneWithRows(listData), infiniteLoadStatus: infiniteLoadStatus});
+        }
+    },
+    goSpecopsPersonPage(userId) {
+        app.navigator.push({
+            component: SpecopsPerson,
+            passProps: {userID: userId},
+        });
+    },
+    calculateStrLength(oldStr) {
+        let height = 0;
+        let linesWidth = 0;
+        if (oldStr) {
+            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/[\r\n]/g, '|');
+            let StrArr = oldStr.split('|');
+            for (var i = 0; i < StrArr.length; i++) {
+                //计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            }
+            return linesWidth;
         }
     },
     renderRow(obj) {
-        let title = obj.sectionMax + '~' + obj.sectionMin + ' (分) ' + obj.number + ' 次';
+        let title = obj.sectionMax + '~' + obj.sectionMin + ' (分) ' + obj.number + ' 人';
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.headerContainer}>
@@ -47,13 +71,17 @@ module.exports = React.createClass({
                 <View>
                     {
                         obj.userList.map((item, i)=>{
-                            let headUrl = item.userImg?item.userImg:app.img.common_default;
+                            let headUrl = item.userImg?item.userImg:item.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
+                            let nameTemWidth = this.calculateStrLength(item.userName);
+                            let postTemWidth = this.calculateStrLength(item.post);
+                            let nameWidth = nameTemWidth*9+3;
+                            let postWidth = postTemWidth*6+3;
                             return (
-                                <View key={i} style={styles.listViewItemContain}>
+                                <TouchableOpacity onPress={this.goSpecopsPersonPage.bind(null, item.userId)} key={i} style={styles.listViewItemContain}>
                                     <View style={styles.listTtemContainer}>
                                         <View style={styles.rowLeft}>
                                             <Image
-                                                resizeMode='stretch'
+                                                resizeMode='cover'
                                                 defaultSource={app.img.common_default}
                                                 source={item.userImg?{uri: headUrl}:headUrl}
                                                 style={styles.headImg} />
@@ -61,14 +89,19 @@ module.exports = React.createClass({
                                         <View style={styles.rowRight}>
                                             <View style={styles.courseContent}>
                                                 <View style={styles.rightTopStyle}>
-                                                    <Text numberOfLines={1} style={styles.nameText} >
-                                                        {item.userName}
-                                                    </Text>
-                                                    <View style={styles.postContainer}>
-                                                        <Text numberOfLines={1} style={styles.positionText} >
-                                                            {item.post}
+                                                    <View style={{width: nameWidth>145?sr.ws(145):sr.ws(nameWidth)}}>
+                                                        <Text numberOfLines={1} style={styles.nameText} >
+                                                            {item.userName}
                                                         </Text>
                                                     </View>
+                                                    {
+                                                        item.post!=''&&
+                                                        <View style={[styles.postContainer,{width: postWidth>56?sr.ws(56):sr.ws(postWidth)}]}>
+                                                            <Text numberOfLines={1} style={styles.positionText} >
+                                                                {item.post}
+                                                            </Text>
+                                                        </View>
+                                                    }
                                                 </View>
                                                 <Text numberOfLines={1} style={styles.courseText} >
                                                     {'课程: '+item.courseTitle}
@@ -84,7 +117,7 @@ module.exports = React.createClass({
                                                     </Text>
                                                 </View>
                                                 <Text numberOfLines={1} style={styles.dateText} >
-                                                    {item.submitTime}
+                                                    {moment(item.submitTime).format('YYYY.MM.DD')}
                                                 </Text>
                                             </View>
                                         </View>
@@ -92,11 +125,19 @@ module.exports = React.createClass({
                                     {
                                         obj.userList.length-1!=i&&<View style={styles.separator} />
                                     }
-                                </View>
+                                </TouchableOpacity>
                             )
                         })
                     }
                 </View>
+            </View>
+        )
+    },
+    renderFooter() {
+        var status = this.state.infiniteLoadStatus;
+        return (
+            <View style={styles.listFooterContainer}>
+                <Text style={styles.listFooter}>{status}</Text>
             </View>
         )
     },
@@ -106,9 +147,9 @@ module.exports = React.createClass({
                 <ListView
                     initialListSize={1}
                     enableEmptySections={true}
-                    dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
-                    />
+                    dataSource={this.state.dataSource}
+                    renderFooter={this.renderFooter}/>
             </View>
         )
     },
@@ -122,6 +163,15 @@ var styles = StyleSheet.create({
     },
     container1: {
         alignItems: 'center',
+    },
+    listFooterContainer: {
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    listFooter: {
+        color: 'gray',
+        fontSize: 14,
     },
     headerContainer: {
         width: sr.w,
@@ -164,6 +214,7 @@ var styles = StyleSheet.create({
     },
     rightTopStyle: {
         flexDirection: 'row',
+        alignItems: 'center',
     },
     nameText: {
         fontSize: 16,
@@ -173,7 +224,7 @@ var styles = StyleSheet.create({
     postContainer: {
         height: 16,
         borderRadius: 2,
-        marginLeft: 20,
+        marginLeft: 12,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#FF7373',
@@ -182,12 +233,13 @@ var styles = StyleSheet.create({
         fontSize: 10,
         color: '#FFFFFF',
         fontFamily: 'STHeitiSC-Medium',
-        paddingHorizontal: 5,
+        marginHorizontal: 3,
     },
     courseText: {
         fontSize: 12,
         color: '#A7A7A7',
         fontWeight: '600',
+        width: 220,
         marginTop: 10,
     },
     courseScore: {

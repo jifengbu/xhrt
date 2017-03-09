@@ -15,6 +15,7 @@ var {
 
 var Button = require('./Button.js');
 var dismissKeyboard = require('dismissKeyboard');
+var InputTextMgr = require('../manager/InputTextMgr.js');
 
 module.exports = React.createClass({
     getInitialState() {
@@ -35,9 +36,9 @@ module.exports = React.createClass({
         }
 
         if (contitle) {
-            this.props.doConfirm(contitle,context);
+            this.props.doConfirm(contitle,context, this.props.textID, this.props.textTitleID);
         } else {
-            this.props.doConfirm(context);
+            this.props.doConfirm(context, this.props.textID);
         }
         app.closeModal();
     },
@@ -112,7 +113,10 @@ module.exports = React.createClass({
                                         <TextInput
                                           editable={true}
                                           style={[styles.topStyle,{height: textHeight-10}]}
-                                          onChangeText={(text) => this.setState({title: text})}
+                                          onChangeText={(text) => {
+                                              this.setState({title: text});
+                                            }
+                                          }
                                           multiline={true}
                                           placeholder={''}
                                           autoCapitalize={'none'}
@@ -125,7 +129,11 @@ module.exports = React.createClass({
                                         <TextInput
                                           editable={this.props.modifyTitle}
                                           style={[styles.topStyle,{height: textHeight-10}]}
-                                          onChangeText={(text) => this.setState({title: text})}
+                                          onChangeText={(text) => {
+                                              InputTextMgr.setTextContent(this.props.textTitleID, text);
+                                              this.setState({title: text});
+                                            }
+                                          }
                                           multiline={true}
                                           placeholder={'请输入标题'}
                                           autoCapitalize={'none'}
@@ -141,7 +149,11 @@ module.exports = React.createClass({
                             <TextInput
                               ref={(ref)=>this.contentInput = ref}
                               style={styles.textStyle}
-                              onChangeText={(text) => this.setState({inputText: text})}
+                              onChangeText={(text) => {
+                                  InputTextMgr.setTextContent(this.props.textID, text);
+                                  this.setState({inputText: text});
+                                }
+                              }
                               multiline={true}
                               placeholder={this.props.haveTitle?'输入备注内容':'轻触开始填写'}
                               autoCapitalize={'none'}

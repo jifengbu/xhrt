@@ -366,9 +366,9 @@ module.exports = React.createClass({
         };
         if (app.isandroid) {
             BackAndroid.addEventListener('hardwareBackPress', ()=>{
-                if (app.GlobalVarMgr.getItem('isFullScreen')) {
-                    return true;
-                }
+                // if (app.GlobalVarMgr.getItem('isFullScreen')) {
+                //     return true;
+                // }
                 if (this.state.is_hud_visible) {
                     this.setState({is_hud_visible: false});
                     return true;

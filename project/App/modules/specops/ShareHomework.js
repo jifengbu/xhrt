@@ -19,6 +19,7 @@ var dismissKeyboard = require('dismissKeyboard');
 var UmengMgr = require('../../manager/UmengMgr.js');
 var Umeng = require('../../native/index.js').Umeng;
 var EditInformationBox = require('../person/EditInformationBox.js');
+var InputTextMgr = require('../../manager/InputTextMgr.js');
 var {MessageBox} = COMPONENTS;
 
 module.exports = React.createClass({
@@ -42,9 +43,13 @@ module.exports = React.createClass({
         };
     },
     componentDidMount() {
+        this.textID = 'specops_shareHomework1';
+        var textContent = InputTextMgr.getTextContent(this.textID);
         let {taskContent,taskID,userTaskID,videoID,taskName} = this.props.data;
-        if (taskContent) {
+        if (taskContent&&taskContent!='') {
             this.setState({inputText: taskContent, isFirstTap: false,userTaskID,isShare:true});
+        } else if(textContent&&textContent!='') {
+            this.setState({inputText: textContent, isFirstTap: false});
         }
         if (taskID) {
             this.setState({taskID,taskName});
@@ -93,8 +98,8 @@ module.exports = React.createClass({
         app.forceUpdateNavbar();
         let {taskContent} = this.props.data;
         if (!taskContent && !this.state.isSummit) {
-            this.setState({isShare: false, isFirstTap: true});
-            this.setState({inputText: ''});
+            this.setState({isShare: false, isFirstTap: true, inputText: ''});
+            InputTextMgr.removeItem(this.textID);
         } else {
             this.setState({isShare: true,isFirstTap: false});
         }
@@ -127,6 +132,7 @@ module.exports = React.createClass({
             app.getCurrentRoute().leftButton = { handler: ()=>{app.scene.doBack()}};
             app.getCurrentRoute().rightButton = { };
             app.forceUpdateNavbar();
+            InputTextMgr.removeItem(this.textID);
             dismissKeyboard();
         }else {
             Toast(data.msg);
@@ -240,7 +246,7 @@ module.exports = React.createClass({
                 isHeight = false;
             }
         }
-
+        console.log('this.state.inputText====', this.state.inputText);
         const titles = ['微信好友','朋友圈','QQ'];
         const images = [app.img.specops_wechat,app.img.specops_friend_circle,app.img.specops_qq];
         return (
@@ -261,7 +267,10 @@ module.exports = React.createClass({
                             <TextInput
                                 ref={(ref)=>this.commentInput = ref}
                                 style={styles.textStyle}
-                                onChangeText={(text) => this.setState({inputText: text})}
+                                onChangeText={(text) => {
+                                    InputTextMgr.setTextContent(this.textID, text);
+                                    this.setState({inputText: text})
+                                }}
                                 onBlur={this.changeTab}
                                 multiline={true}
                                 placeholder={'您学习完课程有什么收获吗？是否有应用到实际场景中去呢？快来总结你的收获吧，不得少于120字。'}

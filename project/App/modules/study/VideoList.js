@@ -93,31 +93,33 @@ module.exports = React.createClass({
                                 </Text>
                             </View>
                         </View>
-                        <View style={styles.bannerTextContainer}>
-                            <View style={styles.leftTextContainer}>
-                                <Image
-                                    resizeMode='stretch'
-                                    source={app.img.study_prize_label}
-                                    style={styles.prize}/>
-                                <Text style={styles.bannerText}>
-                                    {'有奖视频'}
-                                </Text>
-                            </View>
-                            <View style={styles.rightTextContainer}>
-                                {
-                                    obj.label.map((item, i)=>{
-                                        return (
-                                            i<3 &&
-                                            <View style={styles.buttonTextContainer} key={i}>
-                                                <Text style={styles.labelText}>
-                                                    {item.labelName}
-                                                </Text>
-                                            </View>
-                                        )
-                                    })
-                                }
-                            </View>
-                        </View>
+                        {
+                            // <View style={styles.bannerTextContainer}>
+                            //     <View style={styles.leftTextContainer}>
+                            //         <Image
+                            //             resizeMode='stretch'
+                            //             source={app.img.study_prize_label}
+                            //             style={styles.prize}/>
+                            //         <Text style={styles.bannerText}>
+                            //             {'有奖视频'}
+                            //         </Text>
+                            //     </View>
+                            //     <View style={styles.rightTextContainer}>
+                            //         {
+                            //             obj.label.map((item, i)=>{
+                            //                 return (
+                            //                     i<3 &&
+                            //                     <View style={styles.buttonTextContainer} key={i}>
+                            //                         <Text style={styles.labelText}>
+                            //                             {item.labelName}
+                            //                         </Text>
+                            //                     </View>
+                            //                 )
+                            //             })
+                            //         }
+                            //     </View>
+                            // </View>
+                        }
                     </Image>
                 </Image>
             </TouchableOpacity>
@@ -186,7 +188,7 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'red',
     },
     leftTextContainer: {
         height: 40,
