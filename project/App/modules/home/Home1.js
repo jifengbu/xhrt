@@ -53,18 +53,14 @@ module.exports = React.createClass({
         }},
     },
     getInitialState() {
-
-        this.isBig = false;
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return {
             ShowMealBox: false,
             bannerList:[],
             hotActiveityList:[],
-            mergeHotActiveityList:[],
             encourageReadList:[],
             encourageCourseList:[],
             shopInfoList:[],
-            activityIndex: 0,
             studyInfo: null,
             task:null,
             submitLog: this.ds.cloneWithRows([]),
@@ -75,10 +71,8 @@ module.exports = React.createClass({
         this.getHomePageData();
         this.getUserStudyInfo();
         app.personal.info.companyInfo&&this.getWorkSituationAbstract();
-        this.selectedIndex = this.state.activityIndex;
     },
     onWillFocus() {
-        this.isBig = true;
         this.getUserStudyInfo();
         this.getHomePageData();
         app.personal.info.companyInfo&&this.getWorkSituationAbstract();
@@ -106,22 +100,11 @@ module.exports = React.createClass({
             let {banner, hotActiveity, encourageRead, encourageCourse, shopInfo,task} = data.context;
 
             let hotActiveityList = [];
-            let mergeHotActiveityList = [];
             let encourageReadList = [];
             let encourageCourseList = [];
             let shopInfoList = [];
             if (hotActiveity) {
                 hotActiveityList = hotActiveity.slice(0,6);
-                if (hotActiveityList.length > 2) {
-                    mergeHotActiveityList = mergeHotActiveityList.concat(hotActiveityList);
-                    mergeHotActiveityList = mergeHotActiveityList.concat(hotActiveityList);
-                    if (!this.isBig) {
-                        this.setState({activityIndex:1});
-                        this.selectedIndex = 1;
-                    }
-                }else {
-                    mergeHotActiveityList = mergeHotActiveityList.concat(hotActiveityList);
-                }
             }
             if (encourageRead) {
                 encourageReadList = encourageRead.slice(0,4);
@@ -165,7 +148,7 @@ module.exports = React.createClass({
 
                 }
             }
-            this.setState({bannerList, hotActiveityList, mergeHotActiveityList, encourageReadList, encourageCourseList, shopInfoList,task, dataSource: this.ds.cloneWithRows(encourageCourseList)}, ()=>{
+            this.setState({bannerList, hotActiveityList, encourageReadList, encourageCourseList, shopInfoList,task, dataSource: this.ds.cloneWithRows(encourageCourseList)}, ()=>{
                 app.dismissProgressHUD();
             });
         } else {
@@ -266,26 +249,17 @@ module.exports = React.createClass({
             component: RecommendVideo,
         });
     },
-    afterChange(activityIndex) {
-        this.setState({activityIndex});
-
-        // var {mergeHotActiveityList, hotActiveityList} = this.state;
-        // if (activityIndex == mergeHotActiveityList.length - 1) {
-        //     mergeHotActiveityList = mergeHotActiveityList.concat(hotActiveityList);
-        // }
-        // this.setState({mergeHotActiveityList});
-    },
     toActivityPage() {
         app.navigator.push({
             title: '热门活动',
             component: Activity,
         });
     },
-    doSelect(activeityId, title) {
+    doSelect(obj) {
         app.navigator.push({
             title: '活动详情页',
             component: ActivityDetail,
-            passProps: {activeityId},
+            passProps: {activeityId: obj.activeityId},
         });
     },
     goSpecialTask(index) {
@@ -630,8 +604,20 @@ module.exports = React.createClass({
 
         );
     },
+    renderImageSelectRow(obj) {
+        return (
+            <DImage
+                defaultSource={app.img.common_default}
+                source={{uri:obj.rImageUrl==null?'':obj.rImageUrl}}
+                style={styles.selectedScoreContainer}>
+                <View style={styles.bottomStyleMid}>
+                    <Text numberOfLines={1} style={styles.textStyleMid}>{obj.title}</Text>
+                </View>
+            </DImage>
+        )
+    },
     renderHotActiveity() {
-        var {mergeHotActiveityList, hotActiveityList, activityIndex} = this.state;
+        var {hotActiveityList} = this.state;
         return (
             <View>
             {
@@ -652,29 +638,13 @@ module.exports = React.createClass({
                         <View style={styles.titleDivisionLine}></View>
                         <View style={styles.activityStyle}>
                             <ImageSelect
-                                width={sr.ws(254)}
+                                initialIndex={hotActiveityList.length>2 ? 1: 0}
+                                list={hotActiveityList}
+                                width={sr.ws(361)}
                                 height={sr.ws(158)}
-                                afterChange={this.afterChange}
-                                pageCount={hotActiveityList.length}
-                                selectedIndex={this.selectedIndex}
-                                >
-                                {
-                                    hotActiveityList.map((item, i)=>{
-                                        return (
-                                            <TouchableOpacity key={i} onPress={this.doSelect.bind(null,item.activeityId, item.title)} style={styles.itemContainer} >
-                                                <DImage
-                                                    defaultSource={app.img.common_default}
-                                                    source={{uri:item.rImageUrl==null?'':item.rImageUrl}}
-                                                    style={activityIndex==i?styles.selectedScoreContainer:styles.scoreContainer}>
-                                                    <View style={activityIndex==i?styles.bottomStyleMid:styles.bottomStyle}>
-                                                        <Text numberOfLines={1} style={activityIndex==i?styles.textStyleMid:styles.textStyle}>{item.title}</Text>
-                                                    </View>
-                                                </DImage>
-                                            </TouchableOpacity>
-                                        )
-                                    })
-                                }
-                            </ImageSelect>
+                                onPress={this.doSelect}
+                                renderRow={this.renderImageSelectRow}
+                                />
                         </View>
                     </View>
                     <View style={styles.bottomLine}/>
@@ -934,7 +904,7 @@ module.exports = React.createClass({
     render() {
         var {gotoSpecialSoldierTime,PKTime,PKWinTime,newReplay} = app.personal.info;
         var becomeSpecialSoldierDay = Math.floor(moment().diff(moment(gotoSpecialSoldierTime))/(24 * 60 * 60 * 1000))+1||1;
-        var {bannerList, hotActiveityList, encourageReadList, encourageCourseList, shopInfoList, activityIndex, studyInfo} = this.state;
+        var {bannerList, hotActiveityList, encourageReadList, encourageCourseList, shopInfoList, studyInfo} = this.state;
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.pageContainer}>
@@ -1303,20 +1273,8 @@ var styles = StyleSheet.create({
         height: 115,
         borderRadius: 2,
     },
-    itemContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    scoreContainer: {
-        width: 234,
-        height: 138,
-        alignItems: 'center',
-        borderRadius: 4,
-        justifyContent: 'center',
-    },
     selectedScoreContainer: {
-        width: 254,
+        width: 256,
         height: 158,
         alignItems: 'center',
         borderRadius: 4,
@@ -1326,18 +1284,8 @@ var styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         bottom: 0,
-        width: 254,
+        width: 256,
         height: 45,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.3)'
-    },
-    bottomStyle: {
-        position: 'absolute',
-        left: 0,
-        bottom: 0,
-        width: 234,
-        height: 30,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(0,0,0,0.3)'
@@ -1345,10 +1293,6 @@ var styles = StyleSheet.create({
     textStyleMid: {
         fontSize: 16,
         fontFamily:'STHeitiSC-Medium',
-        color: '#FFFFFF',
-    },
-    textStyle: {
-        fontSize: 10,
         color: '#FFFFFF',
     },
     rowContainer: {

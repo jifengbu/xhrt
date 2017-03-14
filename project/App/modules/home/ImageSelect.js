@@ -1,181 +1,199 @@
-import React from 'react';
-import {
+'use strict';
+
+var React = require('react');
+var ReactNative = require('react-native');
+var {
     View,
+    TouchableOpacity,
     ScrollView,
+    Animated,
     InteractionManager,
-    PanResponder,
-} from 'react-native';
+} = ReactNative;
 
-const ViewPager = React.createClass({
-    componentWillMount() {
-        var _scrollView: ScrollView;
-        this.scrollView = _scrollView;
-        this.addIndex = false;
-        this.moveX = 0;
-        this.endX = 0;
+module.exports = React.createClass({
+    getDefaultProps() {
+        return {
+            initialIndex: 0,
+            vertical: false,
+            loop: false,
+            ratio: 0.872
+        };
+    },
+    getInitialState() {
+        const {list, width, height, vertical} = this.props;
+        const size = vertical ? height : width;
+        this.blockSize = size*0.708;
+        this.moveDistance = size*0.733;
+        this.offset = this.moveDistance-((size-this.moveDistance)/2);
 
-        this._panResponder = PanResponder.create({
-          onPanResponderGrant: (evt, gestureState) => {
-                console.log('touch-start');
-                this.addIndex = true;
-          },
-          onPanResponderRelease: (evt, gestureState) => {
-              this.addIndex = false;
+        this.count = list.length;
+        this.list = [list[this.count-2], list[this.count-1], ...list, list[0], list[1]];
 
-              console.log('touch-end-xx----', this.lastSelectedIndex);
+        const scaleArr = [];
+        const translateArr = [];
+        for(let i = 0; i < this.count+4; i++) {
+            scaleArr.push(new Animated.Value(0));
+            translateArr.push(new Animated.Value(0));
+        }
+        return {scaleArr, translateArr};
+    },
+    componentWillReceiveProps(nextProps) {
+        const {list, width, height, vertical} = nextProps;
+        const {list: _list, width: _width, height: _height, vertical: _vertical} = this.props;
+        if (width !== _width || height !== _height || vertical !== _vertical) {
+            const size = vertical ? height : width;
+            this.blockSize = size*0.708;
+            this.moveDistance = size*0.733;
+            this.offset = this.moveDistance-((size-this.moveDistance)/2);
+        }
 
-                 if (this.lastSelectedIndex < 0) this.lastSelectedIndex=0;
-                 if (this.lastSelectedIndex > this.props.pageCount-1) this.lastSelectedIndex=this.props.pageCount-1;
+        if (this.count !== _list.length) {
+            this.count = list.length;
 
-                InteractionManager.runAfterInteractions(() => {
-                    this.scrollView.scrollTo({x: sr.ws(254*this.lastSelectedIndex)});
-                });
-                if (this.props.afterChange) {
-                    this.props.afterChange(this.lastSelectedIndex);
-                }
-          },
-          onPanResponderMove: (evt, gestureState) => {
-                let selectedIndex = Math.ceil(gestureState.dx / this.props.width);
-                // console.log('touch-Move-xx----1', this.lastSelectedIndex, selectedIndex);
+            const scaleArr = [];
+            const translateArr = [];
+            for(let i = 0; i < this.count+4; i++) {
+                scaleArr.push(new Animated.Value(0));
+                translateArr.push(new Animated.Value(0));
+            }
+            this.setState({scaleArr, translateArr});
+        }
 
-                if (selectedIndex > -1 && selectedIndex < 1) {
-                    return;
-                }else {
-                    if (this.addIndex) {
-                        // console.log('touch-Move-xx----2', this.lastSelectedIndex, selectedIndex);
-                        let tempIndex = this.lastSelectedIndex - selectedIndex;
-                        if (tempIndex != this.lastSelectedIndex) {
-                            this.lastSelectedIndex = tempIndex;
-                            this.addIndex = false;
-
-                            if (this.lastSelectedIndex < 0) this.lastSelectedIndex=0;
-                            if (this.lastSelectedIndex > this.props.pageCount-1) this.lastSelectedIndex=this.props.pageCount-1;
-
-                           InteractionManager.runAfterInteractions(() => {
-                               this.scrollView.scrollTo({x: sr.ws(254*this.lastSelectedIndex)});
-                           });
-                           if (this.props.afterChange) {
-                               this.props.afterChange(this.lastSelectedIndex);
-                           }
-                        }
-                    }
-                }
-          },
-        });
+        if (!_.isEqual(list, _list)) {
+            this.list = [list[this.count-2], list[this.count-1], ...list, list[0], list[1]];
+        }
     },
     componentDidMount() {
-        this.stopScroll = false;
-        this.lastSelectedIndex = this.props.selectedIndex;
-        if (this.props.children.length > 2) {
-            InteractionManager.runAfterInteractions(() => {
-                setTimeout(()=>{
-                    this.scrollView.scrollTo({x: sr.ws(254)});
-                }, 200);
-            });
-        }
-    },
-    onWillFocus() {
-        console.log('onWillFocus---');
+        const {vertical, initialIndex} = this.props;
         InteractionManager.runAfterInteractions(() => {
-            this.scrollView.scrollTo({x: sr.ws(254*this.lastSelectedIndex)});
+            this.mainScroll.scrollTo({[vertical?'y':'x']: (this.moveDistance * initialIndex||1) + this.offset, animated: false});
+            this.assistScroll.scrollTo({[vertical?'y':'x']: (this.moveDistance * initialIndex||1), animated: false});
         });
     },
-    onScroll(e) {
-        // android incompatible
-        if (!e.nativeEvent.contentOffset) {
-            e.nativeEvent.contentOffset = {x: e.nativeEvent.position * this.props.width};
+    getShowViews() {
+        const {loop, width, height, vertical} = this.props;
+        return this.list.map((o, i) => {
+            if (!loop && (i < 1 || i >= this.list.length-3)) {
+                return <View key={i} style = {{width: vertical?width:this.moveDistance, height: vertical?this.moveDistance:height}} />
+            }
+            const margin = (this.moveDistance-this.blockSize)/2;
+            return(
+                <View key={i} style = {{flexDirection: vertical?'column':'row'}}>
+                    <View style = {{[vertical?'height':'width']: margin}} />
+                    <Animated.View style = {{width: vertical?width:this.blockSize, height: vertical?this.blockSize:height, transform: [{[vertical?'scaleX':'scaleY']: this.state.scaleArr[i]}, {[vertical?'translateX':'translateY']: this.state.translateArr[i]}]}}>
+                        {this.props.renderRow(this.list[i+(loop?0:1)])}
+                    </Animated.View>
+                    <View style = {{[vertical?'height':'width']: margin}} />
+                </View>
+            )
+        })
+    },
+    getAssistViews() {
+        const {list, loop, width, height, vertical} = this.props;
+        const count = this.count + (loop ? 2 : 0);
+        const margin = (this.moveDistance-this.blockSize)/2;
+        const views = [];
+        for(let i = 0; i < count; i++) {
+            views.push(
+                <View key = {i} style = {{flexDirection: vertical?'column':'row'}}>
+                    <View style = {{[vertical?'height':'width']: margin}} />
+                    <TouchableOpacity onPress = {() => this.props.onPress(list[loop ? (i+2)%this.count : i], loop ? (i+2)%this.count : i)}>
+                        <View style = {{width: vertical?width:this.blockSize, height: vertical?this.blockSize:height}} />
+                    </TouchableOpacity>
+                    <View style = {{[vertical?'height':'width']: margin}} />
+                </View>
+            );
         }
-        this.updateIndex(e.nativeEvent.contentOffset.x);
+        return views;
     },
-    onScrollBegin(e) {
-        // console.log('onScrollBegin');
-        // this.stopScroll = true;
+    scrollTo(index) {
+        const {vertical} = this.props;
+        this.scrollTargetIndex = index;
+        this.mainScroll.scrollTo({[vertical?'y':'x']: this.moveDistance * index + this.offset, animated: true});
+        this.assistScroll.scrollTo({[vertical?'y':'x']: this.moveDistance * index, animated: true});
     },
-    onScrollEnd(e) {
-        console.log('onScrollEnd');
-        if (this.addIndex) {
-            if (this.lastSelectedIndex < 0) this.lastSelectedIndex=0;
-            if (this.lastSelectedIndex > this.props.pageCount-1) this.lastSelectedIndex=this.props.pageCount-1;
-
-            console.log('onScrollEnd---ios', this.lastSelectedIndex);
-           InteractionManager.runAfterInteractions(() => {
-               this.scrollView.scrollTo({x: sr.ws(254*this.lastSelectedIndex)});
-           });
-           if (this.props.afterChange) {
-               this.props.afterChange(this.lastSelectedIndex);
-           }
-       }
-       if (app.isandroid) {
-
-           if (this.moveX < this.endX) {
-               this.lastSelectedIndex = this.lastSelectedIndex - 1;
-           }
-           this.endX = this.moveX;
-
-           if (this.lastSelectedIndex < 0) this.lastSelectedIndex=0;
-           if (this.lastSelectedIndex > this.props.pageCount-1) this.lastSelectedIndex=this.props.pageCount-1;
-
-           console.log('onScrollEnd---android', this.lastSelectedIndex);
-
-          InteractionManager.runAfterInteractions(() => {
-              this.scrollView.scrollTo({x: sr.ws(254*this.lastSelectedIndex)});
-          });
-          if (this.props.afterChange) {
-              this.props.afterChange(this.lastSelectedIndex);
-          }
-       }
+    onScroll(e) {
+        const {loop, vertical} = this.props;
+        if(this.mainScroll && this.assistScroll) {
+            const val = e.nativeEvent.contentOffset[vertical?'y':'x'];
+            if (loop && Math.abs(val - ((this.count + 1) * this.moveDistance)) < 0.5) {
+                this.mainScroll.scrollTo({[vertical?'y':'x']: this.moveDistance + this.offset, animated: false});
+                this.assistScroll.scrollTo({[vertical?'y':'x']: this.moveDistance, animated: false});
+            } else if (loop && Math.abs(val) < 0.1) {
+                this.mainScroll.scrollTo({[vertical?'y':'x']: this.moveDistance * this.count + this.offset, animated: false});
+                this.assistScroll.scrollTo({[vertical?'y':'x']: this.moveDistance * this.count, animated: false});
+            } else {
+                this.mainScroll.scrollTo({[vertical?'y':'x']: val + this.offset, animated: false});
+            }
+            const currentPageFloat = val / this.moveDistance;
+            this.cardAnimated(currentPageFloat);
+        }
     },
-    onTouchEnd(e) {
-        console.log('onTouchEnd');
-        if (app.isandroid) return;
+    cardAnimated(currentPageFloat) {
+        const {loop, list, width, height, vertical, ratio, onChange} = this.props;
+        const index = loop ? (Math.round(currentPageFloat)+2)%this.count : Math.round(currentPageFloat);
+        if (this.lastChangeIndex !== index) {
+            if (this.scrollTargetIndex == null) {
+                onChange && onChange(list[index], index);
+            } else if (this.scrollTargetIndex === index) {
+                this.scrollTargetIndex = null;
+            }
+            this.lastChangeIndex = index;
+        }
 
-        if (this.lastSelectedIndex < 0) this.lastSelectedIndex=0;
-        if (this.lastSelectedIndex > this.props.pageCount-1) this.lastSelectedIndex=this.props.pageCount-1;
-
-       InteractionManager.runAfterInteractions(() => {
-           this.scrollView.scrollTo({x: sr.ws(254*this.lastSelectedIndex)});
-       });
-       if (this.props.afterChange) {
-           this.props.afterChange(this.lastSelectedIndex);
-       }
-    },
-    updateIndex(x) {
-        let {width, afterChange, pageCount} = this.props;
-        let selectedIndex = Math.ceil((x) / width);
-        this.moveX = x;
-
-        // console.log('selectedIndex---', x, selectedIndex);
-        if (this.lastSelectedIndex!==selectedIndex) {
-            this.lastSelectedIndex = selectedIndex;
-
-            // console.log('selectedIndex---updateIndex', this.lastSelectedIndex);
+        for(let i = 0; i < this.count+4; i++) {
+            let r = 0;
+            const currentPageInt = parseInt(currentPageFloat);
+            if (i == 2) {
+                r = Math.abs(currentPageFloat - (this.count + 1)) < 0.1 ? 1 : 0;
+            }
+            if (i == this.count + 1) {
+                r = Math.abs(currentPageFloat) < 0.1 ? 1 : 0;
+            }
+            if (i - 1 == currentPageInt) {
+                r = 1 - currentPageFloat % 1;
+            } else if (i - 1 == currentPageInt + 1) {
+                r = currentPageFloat % 1;
+            }
+            const scale = ratio + ((1 - ratio) * r);
+            const translate = (vertical?width:height) * (1 - scale) / 8;
+            Animated.timing(this.state.scaleArr[i], {
+                toValue: scale,
+                duration: 0
+            }).start();
+            Animated.timing(this.state.translateArr[i], {
+                toValue: translate,
+                duration: 0
+            }).start();
         }
     },
     render() {
-        let {width, height} = this.props;
-        let pages = this.props.children.map((page, i) => {
-            return (<View style={{width, height}} key={i}>{page}</View>);
-        });
+        const {width, height, vertical} = this.props;
         return (
-            <ScrollView ref={(scrollView) => { this.scrollView = scrollView; }}
-                horizontal={true}
-                pagingEnabled={false}
-                removeClippedSubviews={true}
-                automaticallyAdjustContentInsets={false}
-                directionalLockEnabled={true}
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                scrollEventThrottle={1000}
-                onScroll={this.onScroll}
-                onMomentumScrollEnd={this.onScrollEnd}
-                onTouchEnd={this.onTouchEnd}
-                {...this._panResponder.panHandlers}>
-                <View style={{width: sr.ws((sr.w-254-20)/2)}}/>
-                {pages}
-                <View style={{width: sr.ws((sr.w-254-20)/2)}}/>
-            </ScrollView>
-        );
+            <View style={{width, height, overflow: 'hidden'}}>
+                <ScrollView
+                    horizontal = {!vertical}
+                    pointerEvents = 'none'
+                    ref = {ref => this.mainScroll = ref}
+                    showsHorizontalScrollIndicator = {false}
+                    >
+                    {this.getShowViews()}
+                </ScrollView>
+                <View style = {vertical ? {position: 'absolute', height: (height-this.moveDistance)/2, width, top: 0, left: 0} : {width: (width-this.moveDistance)/2, height, position: 'absolute', left: 0, top: 0}} />
+                <View style = {vertical ? {position: 'absolute', height: (height-this.moveDistance)/2, width, bottom: 0, left: 0} : {width: (width-this.moveDistance)/2, height, position: 'absolute', right: 0, top: 0}} />
+                <ScrollView
+                    style = {vertical ? {position: 'absolute', height: this.moveDistance, width, top: (height-this.moveDistance)/2, left: 0} : {position: 'absolute', width: this.moveDistance, height, left: (width-this.moveDistance)/2, top: 0}}
+                    horizontal = {!vertical}
+                    pagingEnabled = {true}
+                    ref = {ref => this.assistScroll = ref}
+                    onScroll = {e => this.onScroll(e)}
+                    scrollEventThrottle = {16}
+                    showsHorizontalScrollIndicator = {false}
+                    showsVerticalScrollIndicator = {false}
+                    >
+                    {this.getAssistViews()}
+                </ScrollView>
+            </View>
+        )
     },
 });
-
-module.exports = ViewPager;
