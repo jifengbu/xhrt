@@ -7,6 +7,7 @@ var {
     View,
     Image,
     Text,
+    Dimensions,
     TouchableOpacity,
 } = ReactNative;
 
@@ -19,18 +20,18 @@ var StudyNum = require('../../data/StudyNum.js');
 
 module.exports = React.createClass({
     mixins: [TimerMixin],
-    getInitialState() {
+    getInitialState () {
         return {
             renderSplashType: 0,
         };
     },
-    doGetPersonalInfo() {
+    doGetPersonalInfo () {
         var param = {
             userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_GET_PERSONAL_INFO, param, this.getPersonalInfoSuccess, this.getInfoError);
     },
-    getPersonalInfoSuccess(data) {
+    getPersonalInfoSuccess (data) {
         if (data.success) {
             var context = data.context;
             context['userID'] = app.personal.info.userID;
@@ -50,128 +51,128 @@ module.exports = React.createClass({
             this.getInfoError();
         }
     },
-    getInfoError() {
+    getInfoError () {
         app.personal.clear();
         this.changeToLoginPage();
     },
-    enterLoginPage() {
-        this.setTimeout(()=>{
-            app.navigator.replace({
-                component: Login,
-            });
-        }, 600);
+    enterLoginPage (needHideSplashScreen) {
+        app.navigator.replace({
+            component: Login,
+        });
+        needHideSplashScreen && SplashScreen.hide();
     },
-    changeToLoginPage() {
+    changeToLoginPage () {
         if (app.updateMgr.needShowSplash) {
-            this.setState({renderSplashType: 1});
+            this.setState({ renderSplashType: 1 }, ()=>{
+                SplashScreen.hide();
+            });
         } else {
-            this.enterLoginPage();
+            this.enterLoginPage(true);
         }
     },
-    enterHomePage() {
-        this.setTimeout(()=>{
-            app.navigator.replace({
-                component: Home,
-            });
-        }, 600);
+    enterHomePage (needHideSplashScreen) {
+        app.navigator.replace({
+            component: Home,
+        });
+        needHideSplashScreen && SplashScreen.hide();
     },
-    changeToHomePage() {
+    changeToHomePage () {
         if (app.updateMgr.needShowSplash) {
-            this.setState({renderSplashType: 2});
+            this.setState({ renderSplashType: 2 }, ()=>{
+                SplashScreen.hide();
+            });
         } else {
-            this.enterHomePage();
+            this.enterHomePage(true);
         }
     },
-    enterNextPage() {
+    enterNextPage () {
         app.updateMgr.setNeedShowSplash(false);
-        if (this.state.renderSplashType===1) {
+        if (this.state.renderSplashType === 1) {
             this.enterLoginPage();
         } else {
             this.enterHomePage();
         }
     },
-    changeToNextPage() {
+    changeToNextPage () {
         if (app.personal.info) {
             this.doGetPersonalInfo();
         } else {
             this.changeToLoginPage();
         }
     },
-    componentDidMount() {
+    componentDidMount () {
         app.utils.until(
-            ()=>app.updateMgr.initialized,
-            (cb)=>setTimeout(cb, 100),
-            ()=>this.changeToNextPage()
+            () => app.updateMgr.initialized && app.navigator,
+            (cb) => setTimeout(cb, 100),
+            () => this.changeToNextPage()
         );
-        this.setTimeout(()=>{
-            SplashScreen.hide();
-        }, 100);
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         app.updateMgr.checkUpdate();
     },
-    renderCommonSplash() {
-        return (
-            <Image
-                resizeMode='stretch'
-                source={app.img.splash_splash}
-                style={styles.splash} />
-        );
+    onLayout(e) {
+        var {height} = e.nativeEvent.layout;
+        if (this.state.height !== height) {
+            this.heightHasChange = !!this.state.height;
+            this.setState({ height });
+        }
     },
-    renderSwiperSplash() {
+    renderSwiperSplash () {
+        const {height} = this.state;
+        const marginBottom = (!this.heightHasChange || Math.floor(height)===Math.floor(sr.th)) ? 0 : 30;
         return (
-            <Swiper
-                paginationStyle={styles.paginationStyle}
-                dot={<View style={{backgroundColor:'#FFFCF4', width: 8, height: 8,borderRadius: 4, marginLeft: 8, marginRight: 8,}} />}
-                activeDot={<View style={{backgroundColor:'#FFCD53', width: 16, height: 8,borderRadius: 4, marginLeft: 8, marginRight: 8,}} />}
-                height={sr.th}
-                loop={false}>
+            <View style={{flex: 1}} onLayout={this.onLayout}>
                 {
-                    [1,2,3,4].map((i)=>{
-                        return (
-                            <Image
-                                key={i}
-                                resizeMode='stretch'
-                                source={app.img["splash_splash"+i]}
-                                style={styles.bannerImage}>
-                                {
-                                    i===4 &&
-                                    <TouchableOpacity
-                                        style={styles.enterButtonContainer}
-                                        onPress={this.enterNextPage}>
-                                        <Image resizeMode='stretch' style={styles.enterButton} source={app.img.splash_start} />
-                                    </TouchableOpacity>
-                                }
-                            </Image>
-                        )
-                    })
+                    height &&
+                    <Swiper
+                        paginationStyle={styles.paginationStyle}
+                        dot={<View style={{ backgroundColor:'#FFFCF4', width: 8, height: 8, borderRadius: 4, marginLeft: 8, marginRight: 8, marginBottom}} />}
+                        activeDot={<View style={{ backgroundColor:'#FFCD53', width: 16, height: 8, borderRadius: 4, marginLeft: 8, marginRight: 8, marginBottom}} />}
+                        height={height}
+                        loop={false}>
+                        {
+                            [1, 2, 3, 4].map((i) => {
+                                return (
+                                    <Image
+                                        key={i}
+                                        resizeMode='stretch'
+                                        source={app.img['splash_splash' + i]}
+                                        style={[styles.bannerImage, {height}]}>
+                                        {
+                                            i === 4 &&
+                                            <TouchableOpacity
+                                                style={styles.enterButtonContainer}
+                                                onPress={this.enterNextPage}>
+                                                <Image resizeMode='stretch' style={styles.enterButton} source={app.img.splash_start} />
+                                            </TouchableOpacity>
+                                        }
+                                    </Image>
+                                );
+                            })
+                        }
+                    </Swiper>
                 }
-            </Swiper>
+            </View>
         );
     },
-    render() {
-        return this.state.renderSplashType===0 ? this.renderCommonSplash() : this.renderSwiperSplash();
+    render () {
+        return this.state.renderSplashType === 0 ? null : this.renderSwiperSplash();
     },
 });
 
 var styles = StyleSheet.create({
-    splash: {
-        width: sr.w,
-        height: sr.h,
-    },
     paginationStyle: {
         bottom: 30,
     },
     bannerImage: {
         width: sr.w,
-        height: sr.h,
     },
     enterButtonContainer: {
         position: 'absolute',
         width: 165,
         height: 40,
-        left: (sr.w-165)/2,
-        bottom: 110,
+        left: (sr.w - 165) / 2,
+        bottom: 80,
         alignItems:'center',
         justifyContent: 'center',
     },

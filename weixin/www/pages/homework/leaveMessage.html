@@ -58,12 +58,27 @@
 	<script src="../../js/utils/regular.js"></script>
 	<script src="../../js/thirdparty/crypto-js.js"></script>
 	<script src="../../js/utils/app.js"></script>
+	<script type="text/javascript" src="http://html2canvas.hertzen.com/build/html2canvas.js"></script>
 	<script>
 		"use strict";
 		 function doCancel() {
 	       $('#feedbackContent').val('');
 	  	}
 	    function doSubmit() {
+			 event.preventDefault();  
+			html2canvas(document.body, {
+			allowTaint: true,
+			taintTest: false,
+			onrendered: function(canvas) {
+				canvas.id = "mycanvas";
+				//document.body.appendChild(canvas);
+				//生成base64图片数据
+				var dataUrl = canvas.toDataURL();
+				var newImg = document.createElement("img");
+				newImg.src =  dataUrl;
+				document.body.appendChild(newImg);
+			}
+		});
 	   	 	if($("#feedbackContent").val() == null || $("#feedbackContent").val() == "") {
 				mui.toast("请填写您需要反馈的内容");
 	        		return;
@@ -80,8 +95,12 @@
 				success: doSubmitSuccess,
 			});
 	    }
+
 	    function doSubmitSuccess(data) {
 	    		mui.toast(data.msg);
+	    		if (data.success) {
+	    			history.go(-1)
+	    		}
 	    }
 		mui.init({
 			swipeBack: true

@@ -90,8 +90,8 @@ android {
         applicationId "com.yxjqd"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 23
-        versionName "2.3"
+        versionCode 24
+        versionName "2.4"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

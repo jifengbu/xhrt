@@ -9,6 +9,10 @@
 #import "UMSocialQQHandler.h"
 #import "UMSocialSinaSSOHandler.h"
 #import "UMSocialAlipayShareHandler.h"
+#import "UMSocial.h"
+#import "UMSocialSnsPlatformManager.h"
+
+extern UIViewController *globalViewController;
 
 @implementation RCTUmeng
 
@@ -199,6 +203,32 @@ RCT_EXPORT_METHOD(shareSingle:(NSString *)platfrom data:(NSDictionary *)data cal
                                                     }
                                                   }];
         });
+}
+
+RCT_EXPORT_METHOD(ThirdPartyLogin:(NSString *)platfrom callback:(RCTResponseSenderBlock) callback) {
+    [self ThirdLogin:platfrom callback:callback];
+}
+
+-(void) ThirdLogin:(NSString *) platfrom callback:(RCTResponseSenderBlock)callback{
+  
+  self.callback = callback;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UMSocialSnsPlatform *snsPlatform = [UMSocialSnsPlatformManager getSocialPlatformWithName:platfrom];
+    snsPlatform.loginClickHandler(globalViewController,[UMSocialControllerService defaultControllerService], true, ^(UMSocialResponseEntity *response){
+      
+      if (response.responseCode == UMSResponseCodeSuccess) {
+      
+        UMSocialAccountEntity *snsAccount = [[UMSocialAccountManager socialAccountDictionary]valueForKey:platfrom];
+        if ([platfrom isEqualToString:UMShareToQQ]) {
+          self.callback(@[@{@"success": @true, @"screen_name":snsAccount.userName,@"uid":snsAccount.usid,@"profile_image_url":snsAccount.iconURL}]);
+        } else if ([platfrom isEqualToString:UMShareToWechatSession]) {
+          self.callback(@[@{@"success": @true, @"screen_name":snsAccount.userName,@"uid":snsAccount.unionId,@"profile_image_url":snsAccount.iconURL}]);
+        }
+      } else {
+        self.callback(@[@{@"success": @false}]);
+      }
+    });
+  });
 }
 
 @end

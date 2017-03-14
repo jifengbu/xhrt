@@ -30,7 +30,11 @@ module.exports = React.createClass({
         const {isAgent, isSpecialSoldier} = app.personal.info;
         var authorized = isAgent||isSpecialSoldier;
         if (authorized) {
-            this.mainPage.onWillFocus(flag);
+            setTimeout(()=>{
+                if (this.mainPage) {
+                    this.mainPage.onWillFocus(flag);
+                }
+            }, 200);
         }
         this.setState({authorized});
     },

@@ -41,6 +41,17 @@ app.sendFile = function(req, res, filename) {
     app.send(req, res, JSON.stringify(JSON.parse(str)));
 };
 
+app.sendObj = function(req, res, obj) {
+    app.send(req, res, JSON.stringify(obj));
+};
+
+app.subPost = function(url, callback) {
+    app.post(url, function(req, res) {
+        var body = des.decode(req.body, deskey);
+        callback(req, res, JSON.parse(body));
+    });
+};
+
 for (var i in modules) {
     require('./modules/'+modules[i]).register(app);
 }

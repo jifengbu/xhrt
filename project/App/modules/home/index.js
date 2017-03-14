@@ -169,21 +169,25 @@ module.exports = React.createClass({
                     initialRouteStack={ROUTE_STACK}
                     renderScene={this.renderScene}
                     onDidFocus={(route)=>{
-                        var ref = this.scene = app.scene = route.ref;
-                        app.showAssistModal(route.component.guideLayer);
-                        ref && ref.onDidFocus && ref.onDidFocus();
+                        if (route) {
+                            var ref = this.scene = app.scene = route.ref;
+                            app.showAssistModal(route.component.guideLayer);
+                            ref && ref.onDidFocus && ref.onDidFocus();
+                        }
                     }}
                     onWillFocus={(route)=>{
-                        if (this._navigator) {
-                            var {routeStack, presentedIndex} = this._navigator.state;
-                            var preRoute = routeStack[presentedIndex];
-                            if (preRoute) {
-                                var preRef = preRoute.ref;
-                                preRef && preRef.onWillHide && preRef.onWillHide();
+                        if (route) {
+                            if (this._navigator) {
+                                var {routeStack, presentedIndex} = this._navigator.state;
+                                var preRoute = routeStack[presentedIndex];
+                                if (preRoute) {
+                                    var preRef = preRoute.ref;
+                                    preRef && preRef.onWillHide && preRef.onWillHide();
+                                }
                             }
+                            var ref = route.ref;
+                            ref && ref.onWillFocus && ref.onWillFocus(true); //注意：因为有initialRouteStack，在mounted的时候所有的页面都会加载，因此只有第一个页面首次不会调用，需要在componentDidMount中调用，其他页面可以调用
                         }
-                        var ref = route.ref;
-                        ref && ref.onWillFocus && ref.onWillFocus(true); //注意：因为有initialRouteStack，在mounted的时候所有的页面都会加载，因此只有第一个页面首次不会调用，需要在componentDidMount中调用，其他页面可以调用
                     }}
                     configureScene={(route) => ({
                         ...app.configureScene(route),

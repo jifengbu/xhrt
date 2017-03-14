@@ -555,7 +555,7 @@ module.exports = React.createClass({
         POST(app.route.ROUTE_ADD_WEEK_PLAN, param, this.submitWeekPlanSuccess.bind(null, textID), true);
 
     },
-    submitWeekPlanSuccess(data) {
+    submitWeekPlanSuccess(textID, data) {
         if (data.success) {
             var weekData = this.getWeekPlan(this.state.tabIndex);
             weekData.push({'id': data.context.id, 'planId':data.context.planId, 'content':data.context.content, isOver: false})

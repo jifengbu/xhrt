@@ -44,7 +44,6 @@ class InputTextMgr extends EventEmitter {
         if (text) {
             text.textContent = textContent;
         } else {
-            console.log(textID+"-----"+textContent);
             this.list.push({textID, textContent});
         }
         this.set(this.list);

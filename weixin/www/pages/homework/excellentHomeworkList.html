@@ -100,12 +100,11 @@
 				margin-top: 50px;
 			}
 			.threeLines {
-			  width:100%
-			  word-break:break-all;
-			  display:-webkit-box;
-			  -webkit-line-clamp:3;
-			  -webkit-box-orient:vertical;
-			  overflow:hidden;
+				word-break:break-all;
+				display:-webkit-box;
+				-webkit-line-clamp:3;
+				-webkit-box-orient:vertical;
+				overflow:hidden;
 			}
 			.mui-radius{
 				border-radius: 6px;
@@ -118,31 +117,48 @@
             .headerTitle{
             	text-align: center;
             	font-size: 17px;
-				font-weight: 500;
+				font-weight: 300;
             	color: black;
             }
-			.homeworkTime {
-				display: inline;
+			.lookedNum {
+				float: right;
+				width: 30%;
 				font-size: 14px;
+			}
+			.authorCompany {
+				float: left;
+				width: 52%;
+				height: 30px
+				font-size: 14px;
+			}
+			.authorCompany img{
+				width: 22px;
+				height: 22px
+				padding:2px;
 			}
 			.number {
 				font-size: 14px;
 			}
 			.homeworkPraise {
 				float: right;
+				width: 15%;
 				margin-right: 10px;
-				margin-top: -2px;
+				margin-top: -8px;
+				text-align: right;
 			}
 			.homeworkAuthor {
 				display: inline;
 				color: black;
 			}
-			.authorCompany {
+			.homeworkTime {
 				float: right;
 				margin-right: 5px;
+				color: #e1e1e1;
+
 			}
-			li {
-				background: white;
+			.authorPosition {
+				font-size: 14px;
+				color: #e1e1e1;
 			}
 			img{
 				width: 14px;
@@ -172,14 +188,17 @@
 				margin-right: -13px;
 			}
 			.div-bottom{
-				margin-top: 5px;
+				margin-top: 15px;
 			}
 			.div-top{
-				margin-top: -8px;
+				/*margin-top: -8px;*/
 			}
 			.arrowIcon{
 				width: 14px;
 				height: 14px;
+			}
+			.mui-active .arrowIcon{
+				display: none;
 			}
 			.empty_list {
 				color: red;
@@ -189,22 +208,77 @@
 				text-align: center;
 				font-size: 25px;
 			}
-
+			select {
+				 width:80px;
+				 height:30px;
+				 padding: 0;
+				 color: #d14b4c;
+				 background: url("../../img/red_down_arrow.png") no-repeat 60px center transparent;
+				 background-size:14px 10px;
+				 background-color: white;
+				 text-indent: 10px;
+				 border: 1px solid #d14b4c !important;
+			}
+			table {
+				 margin-top:10px;
+			}
+			.header {
+				padding-right: 0px;
+				padding-left: 0px;
+			}
+			.mui-active {
+				background-color: transparent !important;
+			}
+			.mui-collapse {
+				background-color: white !important;
+			}
+			.line {
+				width: 80%;
+				margin-left: 10%;
+				display: none;
+			}
+			.mui-active .line{
+				display: block;
+			}
+			.mui-active a {
+				margin-bottom: -23px !important;
+			}
+			.searchButton {
+				margin-left: 10px;
+			    border: 0;
+			    background-color: #d14b4c;
+			    color: white;
+				height: 40px;
+			}
+			li{
+				margin-top: 10px;
+			}
+			.mui-table-view{
+				background-color: #eeeeee;
+			}
+			.mui-table-view-cell:after{
+				height: 0;
+			}
 		</style>
-		<header class="mui-bar mui-bar-nav">
-			<!-- <h1 id="courseName" class="mui-title">未到上课时间</h1> -->
-			<!-- <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a> -->
+		<header class="mui-bar mui-bar-nav header">
 			<div class="mui-table-view-cell mui-collapse">
-				<a class="headerTitle" href="#"><span id="courseName">标题</span><img class="arrowIcon" src="../../img/red_down_arrow.png" /></a>
-				<div class="mui-collapse-content" style="background-color: #efeff4;">
+				<a class="headerTitle" href="#">
+					<div style="text-align: center;">
+						<span id="courseName" style="color:#d14b4c;">
+						</span>
+						<img class="arrowIcon" src="../../img/red_down_arrow.png" />
+						<img class="line" src="../../img/arrow_line.png" />
+					</div>
+				</a>
+				<div class="mui-collapse-content" style="background-color: #EDEEEF;">
 					<table cellpadding="0" cellspacing="0" border="0px">
 						<tbody>
 							<tr>
 								<td width="90%">
-									<input required="" type="text" id="searchContent"/>
+									<input placeholder="请输入关键字进行查询，如姓名，职位等" type="text" id="searchContent" style="background-color: white;"/>
 								</td>
 								<td width="10%">
-									<button style="margin-left:10px" type="button" onclick="getHomeworkListData(query.pageNo)">搜索</button>
+									<button class="searchButton" type="button" onclick="getHomeworkListData(query.pageNo)">搜索</button>
 								</td>
 							</tr>
 						</tbody>
@@ -213,38 +287,23 @@
 						<tbody>
 							<tr>
 								<td width="10%">
-									<div style="background-color: white;height:32px;padding-left:5px">
-										<select id='dayType' style="padding:0;width:auto;height:30px;color:rgb(166,32,69)" onchange="getHomeworkListData(1)">
-											<option value="0">第一天</option>
-											<option value="1">第二天</option>
-											<option value="2">第三天</option>
-										</select>
-										<img class="arrowIcon"  style="margin-top:3px" src="../../img/red_down_arrow.png" />
-									</div>
+									<select id='dayType' onchange="getHomeworkListData(1)">
+										<option value="1">第一天</option>
+										<option value="2">第二天</option>
+										<option value="3">第三天</option>
+									</select>
 								</td>
 								<td width="10%">
-									<div style="background-color: white;height:32px;padding-left:5px;margin-left:40px">
-										<select id='orderType' style="padding:0;width:auto;height:30px;color:rgb(166,32,69)" onchange="getHomeworkListData(1)">
-											<option value="0">时间</option>
-											<option value="1">字数</option>
-										</select>
-										<img class="arrowIcon"  style="margin-top:3px" src="../../img/red_down_arrow.png" />
-									</div>
-									<!-- <button style="margin-left:10px" type="button" onclick="getHomeworkListData()">时间
-										<img class="arrowIcon" src="../../img/red_down_arrow.png" />
-									</button> -->
+									<select id='orderType' onchange="getHomeworkListData(1)">
+										<option value="0">时间</option>
+										<option value="1">字数</option>
+									</select>
 								</td>
 								<td width="10%">
-									<div style="background-color: white;height:32px;padding-left:5px;margin-left:40px">
-										<select id='order' style="padding:0;width:auto;height:30px;color:rgb(166,32,69)" onchange="getHomeworkListData(1)">
-											<option value="0">倒序</option>
-											<option value="1">正序</option>
-										</select>
-										<img class="arrowIcon" style="margin-top:3px" src="../../img/red_down_arrow.png" />
-									</div>
-									<!-- <button style="margin-left:10px" type="button" onclick="getHomeworkListData()">字数
-										<img class="arrowIcon" src="../../img/red_down_arrow.png" />
-									</button> -->
+									<select id='order' onchange="getHomeworkListData(1)">
+										<option value="0">倒序</option>
+										<option value="1">正序</option>
+									</select>
 								</td>
 							</tr>
 						</tbody>
@@ -298,6 +357,7 @@
 			$('.mui-collapse.mui-active').removeClass("mui-active");
 			query.pageNo = page;
 			var url = app.route.ROUTE_GET_EXCELLENT_HOMEWORK_LIST;
+			console.log(url);
 			var data = {
 				courseId: saved.courseId,
 				openid: params.openid,
@@ -377,14 +437,16 @@
 
 			html += '<li class="mui-table-view-cell" style="'+(item.isLooked?"background:#eeeeee":"background:white")+'" data-index="'+index+'">'
 			html +=	'<div class="div-top">'
-			html +=	'<p class="homeworkAuthor">'+item.authorName+'</p>'
-			html +=	'<p class="authorCompany">'+item.authorCompany+'<p>'
-			html +=	'<p>'+item.authorPosition+'<p>'
+			html +=	'<p class="homeworkAuthor">'+'<img src="../../img/name-red.png"/>&nbsp'+item.authorName+'&nbsp</p>'
+			html +=	'<span class="authorPosition"> | '+item.authorPosition+'<span>'
+			html +=	'<p class="homeworkTime">'+'<span>'+'<img src="../../img/time.png" />'+'</span>&nbsp'+item.homeworkSubmitTime+'</p>'
 			html +=	'<p class="threeLines">'+detail+'</p>'
 			html += '</div>'
+			html += '<hr style="border : 1px dashed grey;" />'
 			html +=	'<div class="div-bottom">'
-			html +=	'<p class="homeworkTime">'+'<span class="mui-icon">'+'<img class="mui-icon" src="../../img/clock.png" />'+'</span>&nbsp'+item.homeworkSubmitTime+'</p>'
+			html +=	'<p class="authorCompany">'+'<img src="../../img/companyName.png"/>'+item.authorCompany+'<p>'
 			html +=	'<p class="homeworkPraise"><span class="mui-icon">'+'<img class="mui-icon" src="'+(item.isPraise==1?'../../img/praise-on.png':'../../img/praise-off.png')+'" />'+'</span>&nbsp<span class=number>'+item.praise+'</span></p>'
+			html +=	'<p class="lookedNum">被阅读'+(item.lookedNum+2010)+'次<p>'
 			html += '</div>'
 			html +='</li>'
 			return html;
@@ -400,6 +462,9 @@
 				homeworkId: saved.list[index].homeworkId,
 				openid:params.openid,
 				courseName:params.courseName,
+				isPraise:saved.list[index].isPraise,
+				praise:saved.list[index].praise,
+				index:index,
 			}
 			saved.list[index].isLooked = true;
 			saved.homeworkScrollTop = app.utils.getScrollTop($('.mui-scroll-wrapper .mui-scroll'));
@@ -433,7 +498,7 @@
 		var saved = app.router.getSavedData();
 		if (typeof(saved.courseId) == "undefined") {
 			saved.courseId = params.courseId;
-			saved.courseName = params.courseName;
+			saved.courseName = params.courseName || '贵阳一阶（02.04-02.06）';
 		}
 		var query = saved.query || {
 			pageNo: FIRST_PAGE_NO,
@@ -441,7 +506,11 @@
 			dir: 'none'
 		};
 		$('#courseName').text(saved.courseName);
+		$('.line').css({'width': $('#courseName').width()+'px', 'margin-left': ($('.headerTitle').width()-42-$('#courseName').width())/2+'px'});
 		if(saved.list) {
+			var tmp = app.global.get("params");
+			saved.list[tmp.index].isPraise = tmp.isPraise;
+			saved.list[tmp.index].praise = tmp.praise;
 			showList(saved.list);
 		} else {
 			getHomeworkListData(1);

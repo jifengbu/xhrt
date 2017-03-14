@@ -18,5 +18,6 @@
 
 -(void) shareToSns:(NSDictionary *)params callback:(RCTResponseSenderBlock)callback;
 -(void) postSNSWithTypes:(NSArray *) type params:(NSDictionary *)params callback:(RCTResponseSenderBlock)callback;
+-(void) ThirdLogin:(NSString *) loginType callback:(RCTResponseSenderBlock)callback;
 
 @end

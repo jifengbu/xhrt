@@ -135,6 +135,7 @@ iframe {
     <div id="listContainer">
     </div>
 </body>
+	<script type="text/javascript" src="../../js/thirdparty/jquery-1.11.1.js" ></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
 	<script src="../../js/utils/regular.js"></script>
@@ -162,7 +163,6 @@ iframe {
 	function setTopContainer(data) {
 	    var html = '';
 	    html += '<div class="title">'+data.title+'</div>';
-	    html += '<div class="source">'+data.describe+'</div>';
 	    html += '<div class="info">';
 	    html += '   <span class="text"><img src="../../img/eye.png" class="iconRead" />'+data.reads+'</span>';
 	    html += '   <span class="text"><img src="../../img/praise.png" class="iconLike" />'+data.likes+'</span>';
@@ -235,14 +235,33 @@ iframe {
 	    var context = (data || {}).context || {};
 	    var articleID = getParameter("articleID");
 		var userID = getParameter("userID");
-	    var url = context.type == 1 ?context.linkUrl : 'http://test.gyyxjqd.com/app/api/articleJsp?userID='+userID+'&articleID='+articleID;
-	    $('#iframeContainer').html('<iframe src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
+//	    var share_link = context.type == 1 ?context.linkUrl : 'http://test.gyyxjqd.com/app/api/articleJsp?userID='+userID+'&articleID='+articleID;
+	    var share_link = context.type == 1 ?context.linkUrl : app.route.ROUTE_ARTICLE_Jsp+'?userID='+userID+'&articleID='+articleID;
+	    $('#iframeContainer').html('<iframe src="'+share_link+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
+	    $.ajaxPrefilter( function (options) {
+	  	if (options.crossDomain && jQuery.support.cors) {
+		    var http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
+		    options.url = http + '//cors-anywhere.herokuapp.com/' + options.url;
+	  	}
+		});
+//		$.get(
+//			share_link,
+//			function (response) {
+//			    var html = response;
+//			    html=html.replace(/data-src/g, "src"); 
+//			    var html_src = 'data:text/html;charset=utf-8,' + html;
+//			    $("iframe").attr("src" , html_src);
+////				$('#iframeContainer').html('<iframe src="'+html_src+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
+//			}
+//		);
+	    
+//	    $('#iframeContainer').html('<iframe src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
 	    setTopContainer(context);
 	    setBottomContainer(context);
-		if (context.type == 1) {
-			$('.title').hide();
-			$('.source').hide();
-		}
+//		if (context.type == 1) {
+//			$('.title').hide();
+//			$('.source').hide();
+//		}
 	}
 	function getConmmentArticleList(articleID,userID) {
 		var url = app.route.ROUTE_GET_COMMENT_ARTICLE_LIST;

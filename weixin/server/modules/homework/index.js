@@ -9,6 +9,23 @@ module.exports = (function() {
         app.post('/getHomeworkList', function (req, res) {
             app.sendFile(req, res, __dirname+'/homeworkList.json');
         });
+        app.subPost('/getClassList', function (req, res, data) {
+            app.sendObj(req, res, {
+                success: true,
+                msg: "获取数据成功",
+                context: {
+                    homeworkList: [0,1,2,3,4,5,6,7,8,9].map(function(i){
+                        return {
+                            time: '02.24~02.26',
+                            name: '上海一阶课('+data.dayType+')'+((data.pageNo-1)*10+i),
+                            address: '上海五星级酒店',
+                            isover: !(i&1),
+                            isceo: !!(i&1),
+                        }
+                    }),
+                }
+            });
+        });
         app.post('/getHomeworkById', function (req, res) {
             app.sendFile(req, res, __dirname+'/getHomeworkById.json');
         });

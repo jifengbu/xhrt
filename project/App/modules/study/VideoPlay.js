@@ -33,10 +33,6 @@ var VideoPlay = React.createClass({
         color: '#000000',
         guideLayer: require('../guide/StudyGuide.js'),
         leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
-        rightButton: {
-            image: app.img.common_calendar,
-            handler: ()=>{app.scene.toggleMenuPanel()}
-        },
     },
     componentWillMount() {
         app.updateNavbarColor(CONSTANTS.THEME_COLORS[1]);
@@ -171,9 +167,7 @@ var VideoPlay = React.createClass({
         this.setState({scrollEnabled: !isFullScreen});
         app.toggleNavigationBar(!isFullScreen);
         this.setState({isFullScreen});
-        if (isFullScreen === false) {
-            app.GlobalVarMgr.setItem('isFullScreen', false);
-        }
+        app.GlobalVarMgr.setItem('isFullScreen', isFullScreen);
     },
     getWatchVideoReward() {
         var param = {

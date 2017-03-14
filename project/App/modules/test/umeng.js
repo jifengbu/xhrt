@@ -6,12 +6,16 @@ var {
     View,
 } = ReactNative;
 
+var SplashScreen = require('@remobile/react-native-splashscreen');
 var Button = require('@remobile/react-native-simple-button');
 var Umeng = require('../../native/index.js').Umeng;
 
 
 
 module.exports = React.createClass({
+    componentWillMount() {
+        SplashScreen.hide();
+    },
     doActionSheetShare() {
         Umeng.shareWithActionSheet({
             url: CONSTANTS.SHARE_APPDOWNLOAD_SERVER,
@@ -40,8 +44,14 @@ module.exports = React.createClass({
             console.log("success", result);
         });
     },
-    doShareCallback(){
-
+    doThirdPartyLogin(platform, callback) {
+        Umeng.ThirdPartyLogin(platform, (result)=>{
+            if (result.success) {
+				console.log("success", result);
+			} else {
+				Toast('授权失败，请重试！');
+			}
+        });
     },
     render() {
         return (
@@ -51,6 +61,8 @@ module.exports = React.createClass({
                 <Button onPress={this.doSingleShare.bind(null,Umeng.platforms.UMShareToWechatSession)}>微信分享</Button>
                 <Button onPress={this.doSingleShare.bind(null,Umeng.platforms.UMShareToQQ)}>QQ分享</Button>
                 <Button onPress={this.doSingleShare.bind(null,Umeng.platforms.UMShareToQzone)}>QQ空间分享</Button>
+                <Button onPress={this.doThirdPartyLogin.bind(null,Umeng.platforms.UMShareToQQ)}>QQ登录</Button>
+                <Button onPress={this.doThirdPartyLogin.bind(null,Umeng.platforms.UMShareToWechatSession)}>微信登录</Button>
             </View>
         );
     }

@@ -134,7 +134,8 @@ var CoursePlayer = React.createClass({
         this.setState({playing:false});
     },
     getVideoTimeSeek(){
-        if (!this.props.update) {
+        var {showVideoFinishBox} = this.state;
+        if (!showVideoFinishBox&&!this.props.update) {
             this.setState({playing: true});
         }
         var videoUrl = this.state.pageData?this.state.pageData.urlPlay:null;
@@ -186,11 +187,13 @@ var CoursePlayer = React.createClass({
         }
     },
     doUpdateClicks() {
-        var param = {
-            userID:app.personal.info.userID,
-            videoID:this.state.pageData.videoID
-        };
-        POST(app.route.ROUTE_UPDATECLICKS, param, this.doUpdateClicksSuccess);
+        if (this.state.pageData != null) {
+            var param = {
+                userID:app.personal.info.userID,
+                videoID:this.state.pageData.videoID
+            };
+            POST(app.route.ROUTE_UPDATECLICKS, param, this.doUpdateClicksSuccess);
+        }
     },
     doUpdateClicksSuccess(data) {
         var {showVideoFinishBox, studyProgressDetail} = this.state;

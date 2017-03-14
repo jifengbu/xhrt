@@ -325,6 +325,7 @@
 				isPraise: saved.list[index].isPraise,
 				praise: saved.list[index].praise,
 				courseName:params.courseName,
+				index:index,
 			}
 			saved.list[index].isLooked = true;
 			saved.homeworkScrollTop = app.utils.getScrollTop($('.mui-scroll-wrapper .mui-scroll'));
@@ -365,6 +366,9 @@
 		};
 		// $('#courseName').text(params.courseName);
 		if(saved.list) {
+			var tmp = app.global.get("params");
+			saved.list[tmp.index].isPraise = tmp.isPraise;
+			saved.list[tmp.index].praise = tmp.praise;
 			showList(saved.list);
 		} else {
 			getHomeworkListData(1,query.pageNo);

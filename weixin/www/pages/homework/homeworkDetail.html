@@ -18,7 +18,7 @@
 			padding: 4px 0 0px;
 		}
 		body{
-			background-color: white;
+			background-color: #eeeeee;
 		}
 		p {
 			color: #333333;
@@ -28,7 +28,7 @@
 			letter-spacing: 1px;
 		}
 		.mui-time {
-			color: #999999;
+			color: #c1c1c1;
 			float: left;
 			font-size: 11px;
 			font-weight: 400;
@@ -37,18 +37,18 @@
 		}
 
 		.mui-herder-projection {
-			margin: 9px;
-			height: 65px;
+			margin: 9px 9px -20px 9px;
+			height: 85px;
 			border-radius: 8px;
-			background: #d6d6d6-#ffffff;
 			padding-right: 5px;
 		}
 
 		.mui-header {
-			height: 60px;
+			height: 85px;
 			border-radius: 8px;
 			padding: 10px;
-			background: #eeeeee;
+			color: #8c8c8c;
+			/*background: #eeeeee;*/
 		}
 		.mui-footer {
 			height: 40px;
@@ -64,6 +64,26 @@
 			width: 18px;
 			height: 18px;
 		}
+		#homeworkDetail {
+			word-wrap: break-word;
+		}
+		#feedbackContent{
+			border-width:0;
+			height: 160px;
+		}
+		.mui-badge-danger{
+			margin-left: 20px;
+			margin-right: 10px;
+		}
+		.mui-bar{
+			background-color: white;
+		}
+		.mui-title{
+			color: #d14b4c;
+		}
+		.bg-color {
+			background-color: #eeeeee;
+		}
 	</style>
 
 	<body>
@@ -74,18 +94,23 @@
 		<div class="mui-content bg-color">
 			<div class="mui-herder-projection">
 				<div class="mui-header font-size">
-					<div>姓名:<span id='authorName'></span>
-						<div style="float: right; margin-right: 20px;">
-							职位:<span id='authorPosition'></span>
-						</div>
+					<div><img src="../../img/name.png" style="margin-right:5px"/>姓名:<span id='authorName'></span></div>
+					<div>
+						<img src="../../img/position.png" style="margin-right:5px"/>职位:<span id='authorPosition'></span>
 					</div>
-					<div style="padding-top: 3px;">公司:<span id='authorCompany'></span></div>
+					<div style="padding-top: 3px;"><img src="../../img/companyName.png" style="margin-right:5px"/>公司名称:<span id='authorCompany'></span></div>
 				</div>
 			</div>
 			<div class="mui-content bg-color">
-				<div style="background-color: white;color: #808080;margin: 19px;">
-					<img src="../../img/time.png" />
-					<div id="submitTime" class="mui-time"></div><br />
+				<div style="color: #575757;margin: 19px;">
+					<hr style="border : 1px dashed grey;" />
+					<img style="width:100px;height:30px;margin-left:-20px" src="../../img/homeworkQuestion.png"/>
+					<br/>
+					<p id="homeworkTitle" style="margin-top:20px"></p>
+					<hr style="border : 1px dashed grey;" />
+				</div>
+
+				<div style="color: #575757;margin: 19px;">
 					<p id="homeworkDetail"></p>
 				</div>
 			</div>
@@ -93,10 +118,19 @@
 				<div style="float: left; margin-left: 2px;margin-top:3px">字数:<span id='homeworkLength'></span></div>
 				<div style="float: left; margin-left: 40px;" id='praiseDiv'></div>
 				<div id='leaveMessage' style="float: right; margin-right: 12px;margin-top:2px">
-					<img class="mui-icon" src="../../img/leaveMessage.png" />&nbsp写留言
+					<!--<img class="mui-icon" src="../../img/leaveMessage.png" />&nbsp写留言-->
+					<img src="../../img/time.png" />
+					<div id="submitTime" class="mui-time"></div><br />
 				</div>
 			</div>
 
+		</div>
+		<div class="case hide">
+			<textarea wrap="soft" id="feedbackContent" placeholder="请输入您要留言的内容"></textarea>
+			<div class="footer">
+				<div class="left cancel">取&nbsp;&nbsp;消</div>
+				<div class="right confirm">确&nbsp;&nbsp;定</div>
+			</div>
 		</div>
 	<body>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -152,19 +186,23 @@
 				params.praise++;
 				updatePraise();
 			}
+			app.global.set("params", params);
 			mui.toast(data.msg);
 		}
 		function showPage(data) {
 			var tempHomeworkDetail = data.homeworkDetail;
 			var str = "";
 			var html = "";
+			var titleHtml = "";
 			if (tempHomeworkDetail.indexOf("♖")>0 || tempHomeworkDetail.indexOf("♔")>0) {
 				str =  tempHomeworkDetail.split("♖");
 				for (var i=0; i<str.length; i++ ) {
 					if(i != str.length-1){
-						html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+str[i].split("♔")[1]+"<br/><br/>";
+						titleHtml += '<span class="mui-badge mui-badge-danger">'+(i+1)+'</span>'+str[i].split("♔")[0].slice(2)+"<br/>";
+						html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+str[i].split("♔")[1]+"<br/>";
 					}else{
-						html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+str[i].split("♔")[1];
+						titleHtml += '<span class="mui-badge mui-badge-danger">'+(i+1)+'</span>'+str[i].split("♔")[0].slice(2);
+						html += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+str[i].split("♔")[1]+"<br/>";
 					}
 				}
 			} else {
@@ -175,6 +213,7 @@
 			var detail = tmp2.replace(/♔/g,"<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 			var html = '<span id="homeworkDetail">'+detail+'</span>'*/
 
+			$('#homeworkTitle').html(titleHtml);
 			$('#homeworkDetail').html(html);
 			$('#authortite').text(data.authorName);
 			$('#submitTime').text(data.homeworkSubmitTime);
@@ -184,6 +223,42 @@
 			$('#homeworkLength').text(data.homeworkDetail.length);
 			updatePraise();
 		}
+	   function doSubmit() {
+		   if($("#feedbackContent").val() == null || $("#feedbackContent").val() == "") {
+			   mui.toast("请填写您需要留言的内容");
+				   return;
+		  }
+		   var param = {
+			   openid: params.openid,
+			   courseId: params.courseId,
+			   homeworkId: params.homeworkId,
+			   content: $("#feedbackContent").val(),
+		   };
+		   app.utils.post({
+			   url: app.route.ROUTE_COMMENT_HOMEWORK,
+			   data: param,
+			   success: doSubmitSuccess,
+		   });
+	   }
+	   function doSubmitSuccess(data) {
+		   mui.toast(data.msg);
+		   if (data.success) {
+			   $(".modal-backdrop").remove();
+			   $(".case").hide(300);
+		   }
+	   }
+	   function showMessageBox() {
+			$("body").append('<div class="modal-backdrop"></div>');
+			$(".case").show();
+		}
+		//弹出框事件注册
+		$(".case").on('tap', '.cancel', function() {
+			$('#feedbackContent').val('');
+			$(".modal-backdrop").remove();
+			$(".case").hide(300);
+		}).on('tap', '.confirm', function(e) {
+			doSubmit();
+		});
 		function updatePraise() {
 			var html = "";
 			html =	'<span class="homeworkPraise"><span class="mui-icon">'+'<img class="mui-icon" src="'+(params.isPraise==1?'../../img/praise-on.png':'../../img/praise-off.png')+'" />'+'</span>&nbsp<span class=number>'+params.praise+'</span></span>'
@@ -194,17 +269,19 @@
 			praiseHomework();
 		});
 		mui('.mui-content').on('tap','#leaveMessage', function() {
-			var data = {
-				openid: params.openid,
-				courseId: params.courseId,
-				homeworkId: params.homeworkId,
-			};
-			app.router.showView('./leaveMessage.html', data);
+			// var data = {
+			// 	openid: params.openid,
+			// 	courseId: params.courseId,
+			// 	homeworkId: params.homeworkId,
+			// };
+			// app.router.showView('./leaveMessage.html', data);
+			showMessageBox();
 		});
 		mui.init({
 			swipeBack: true
 		});
 		var params = app.router.getParameter();
+		app.global.set("params", params);
 		getData(params.homeworkId);
 	</script>
 </html>

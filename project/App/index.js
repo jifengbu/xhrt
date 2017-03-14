@@ -366,9 +366,9 @@ module.exports = React.createClass({
         };
         if (app.isandroid) {
             BackAndroid.addEventListener('hardwareBackPress', ()=>{
-                // if (app.GlobalVarMgr.getItem('isFullScreen')) {
-                //     return true;
-                // }
+                if (app.GlobalVarMgr.getItem('isFullScreen')) {
+                    return true;
+                }
                 if (this.state.is_hud_visible) {
                     this.setState({is_hud_visible: false});
                     return true;
@@ -444,36 +444,40 @@ module.exports = React.createClass({
                     configureScene={this.configureScene}
                     renderScene={this.renderScene}
                     onDidFocus={(route)=>{
-                        var ref = route.ref;
-                        var getChildScene = ref && ref.getChildScene;
-                        //注意：app.scene调用的时候一定需要使用封装函数，如：{handler: ()=>{app.scene.toggleEdit()}}，不能直接使用 handler: app.scene.toggleEdit.
-                        //在动画加载完成前 app.scene 还没有被赋值， 需要使用 SceneMixin 来设置 app.scene
-                        var scene = app.scene = getChildScene ? getChildScene() : ref;
-                        if (getChildScene && !scene.hasMouted) {
-                            scene.hasMouted = true;
-                            return;
+                        if (route) {
+                            var ref = route.ref;
+                            var getChildScene = ref && ref.getChildScene;
+                            //注意：app.scene调用的时候一定需要使用封装函数，如：{handler: ()=>{app.scene.toggleEdit()}}，不能直接使用 handler: app.scene.toggleEdit.
+                            //在动画加载完成前 app.scene 还没有被赋值， 需要使用 SceneMixin 来设置 app.scene
+                            var scene = app.scene = getChildScene ? getChildScene() : ref;
+                            if (getChildScene && !scene.hasMouted) {
+                                scene.hasMouted = true;
+                                return;
+                            }
+                            app.showAssistModal&&app.showAssistModal(route.component.guideLayer);
+                            scene && scene.onDidFocus && scene.onDidFocus();
+                            //如果时主页面，需要检测主页面和其子页面的回调
+                            ref && ref!==scene && ref.onDidFocus && ref.onDidFocus();
                         }
-                        app.showAssistModal&&app.showAssistModal(route.component.guideLayer);
-                        scene && scene.onDidFocus && scene.onDidFocus();
-                        //如果时主页面，需要检测主页面和其子页面的回调
-                        ref && ref!==scene && ref.onDidFocus && ref.onDidFocus();
                     }}
                     onWillFocus={(route)=>{
-                        var preRoute = app.navigator && app.getCurrentRoute();
-                        if (preRoute) {
-                            var preRef = preRoute.ref;
-                            var preGetChildScene = preRef && preRef.getChildScene;
-                            var preScene = preGetChildScene ? preGetChildScene() : preRef;
-                            preScene && preScene.onWillHide && preScene.onWillHide();
+                        if (route) {
+                            var preRoute = app.navigator && app.getCurrentRoute();
+                            if (preRoute) {
+                                var preRef = preRoute.ref;
+                                var preGetChildScene = preRef && preRef.getChildScene;
+                                var preScene = preGetChildScene ? preGetChildScene() : preRef;
+                                preScene && preScene.onWillHide && preScene.onWillHide();
+                                //如果时主页面，需要检测主页面和其子页面的回调
+                                preRef && preRef!==preScene && preRef.onWillHide && preRef.onWillHide();
+                            }
+                            var ref = route.ref;
+                            var getChildScene = ref && ref.getChildScene;
+                            var scene = getChildScene ? getChildScene() : ref;
                             //如果时主页面，需要检测主页面和其子页面的回调
-                            preRef && preRef!==preScene && preRef.onWillHide && preRef.onWillHide();
+                            scene && scene.onWillFocus && scene.onWillFocus();//注意：在首次加载的时候页面没有被加载，route.ref为空，不会调用该函数，需要在该页面的componentWillMount里面处理首次逻辑，只有从上页面返回的时候才能被调用
+                            ref && ref!==scene && ref.onWillFocus && ref.onWillFocus();
                         }
-                        var ref = route.ref;
-                        var getChildScene = ref && ref.getChildScene;
-                        var scene = getChildScene ? getChildScene() : ref;
-                        //如果时主页面，需要检测主页面和其子页面的回调
-                        scene && scene.onWillFocus && scene.onWillFocus();//注意：在首次加载的时候页面没有被加载，route.ref为空，不会调用该函数，需要在该页面的componentWillMount里面处理首次逻辑，只有从上页面返回的时候才能被调用
-                        ref && ref!==scene && ref.onWillFocus && ref.onWillFocus();
                     }}
                     navigationBar={this.state.showNavBar ? navigationBar : null}
                     />

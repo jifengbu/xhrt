@@ -88,6 +88,16 @@
 				<string>a2088021939773980</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>tencent</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tencent1105204262</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>40</string>

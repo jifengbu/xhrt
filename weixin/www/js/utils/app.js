@@ -1,20 +1,17 @@
 window.app = {};
-app.serverType=0;
-//var SERVER = 'http://192.168.0.115:8081/api/';
-//var SERVER = 'http://www.cguoyuan.cn/app/api/';
-var SERVER = 'http://www.gyyxjqd.com/app/api/';
+app.serverType=2;
+var httpHead = window.location.href.split(':')[0];
+var SERVER = httpHead+'://www.gyyxjqd.com/app/api/';
+
 var appid = 'wx8e01b4f5c3623d37';
-// var SERVER = 'http://192.168.1.222:8080/app/api/';
-//  var SERVER = 'http://localhost:3000/';
 if (app.serverType==0) {
-	SERVER = 'http://www.gyyxjqd.com/app/api/';
+	SERVER = httpHead+'://www.gyyxjqd.com/app/api/';
 	appid = 'wx8e01b4f5c3623d37';
 }else if(app.serverType==1) {
-	SERVER = 'http://test.gyyxjqd.com/app/api/';
+	SERVER = httpHead+'://test.gyyxjqd.com/app/api/';
 	appid = 'wx6f776c4a6e6d5ce5';
 }else if(app.serverType==2) {
-//	SERVER = 'http://192.168.1.222:8080/app/api/';
-	SERVER = 'http://localhost:3000/';
+	SERVER = httpHead+'://localhost:3000/';
 }
 var logoImgUrl = SERVER.replace('api/','www/img/logo.png');
 app.route = {
@@ -22,6 +19,7 @@ app.route = {
 	ROUTE_ENROLL_DATA: SERVER + 'enroll', //一阶课程报名
 	ROUTE_SIGN_DATA: SERVER + 'sign', //签到
 	ROUTE_GET_HOMEWORK_LIST: SERVER + 'getHomeworkList', //作业列表
+	ROUTE_GET_CLASS_LIST: SERVER + 'getClassList', //获取课程列表
 	ROUTE_GET_HOMEWORK_LIST_BY_OPENID: SERVER + 'getHomeworkListByOpenid', //作业列表
 	ROUTE_GET_EXCELLENT_HOMEWORK_LIST: SERVER + 'getExcellentHomeworkList', //获取优秀作业列表
 	ROUTE_GET_COURSE_LIST: SERVER + 'getCourseList' , //课程列表
@@ -37,6 +35,7 @@ app.route = {
 	ROUTE_GET_COMMENT_ARTICLE_LIST: SERVER + 'getCommentArticleList',//获取评论列表
 	ROUTE_GET_HOT_AVTIVITY_DETAILED: SERVER + 'getHotActivityDetailed',//热门活动详情
 	ROUTE_SHARE_ENROLL: SERVER + 'shareEnroll',//热门活动分享报名
+	ROUTE_ARTICLE_Jsp: SERVER + 'articleJsp',//获取文章的html页面
 };
 
 app.global = (function() {
@@ -240,7 +239,7 @@ app.utils = {
 //		console.log('send encrypt:', opt.url, opt.data);
 		var error = opt.error; //opt的error return true 终止传递
 		opt.error = function(ret, type) {
-			console.log("=============xx", ret, type);
+			console.log("error:", ret, type);
 			if (!error || !error(ret, type)) {
 				self.showNetError(type);
 				self.clearWait();
@@ -248,7 +247,6 @@ app.utils = {
 		}
 		var success = opt.success;
 		opt.success = function(ret, type) {
-			console.log("=============");
 			var keyHex = CryptoJS.enc.Utf8.parse("SV#Y!jAz");
             	var decrypted = CryptoJS.DES.decrypt({
                 ciphertext: CryptoJS.enc.Base64.parse(ret)
@@ -257,8 +255,9 @@ app.utils = {
                 padding: CryptoJS.pad.Pkcs7
             });
 //          console.log('recv:', opt.url, ret);
-			console.log('recv decrypted:', opt.url, decrypted.toString(CryptoJS.enc.Utf8));
-			success(JSON.parse(decrypted.toString(CryptoJS.enc.Utf8)));
+			var result = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+			console.log('recv decrypted:', opt.url, result);
+			success(result);
 		}
 		$.ajax(opt);
 		return true;

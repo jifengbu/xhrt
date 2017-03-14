@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 
 import com.facebook.react.bridge.ActivityEventListener;
@@ -19,6 +20,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -38,7 +40,7 @@ public class UMengSharePlugin extends ReactContextBaseJavaModule  implements Act
         super(reactContext);
         this.activity = activity;
 
-        PlatformConfig.setWeixin("wx18d0597c9febcd0d", "ef5d8db44f1954463b7e4ba86a908784");
+        PlatformConfig.setWeixin("wx18d0597c9febcd0d", "83453a0c858e052a3d73dfbdbc11c874");
        PlatformConfig.setQQZone("1105204262", "fELEobxl728L2MDl");
         // PlatformConfig.setQQZone("100424468", "c7394704798a158208a74ab60104f0ba");
 
@@ -201,6 +203,105 @@ public class UMengSharePlugin extends ReactContextBaseJavaModule  implements Act
             mCallback.invoke(params);
         }
     };
+
+    @ReactMethod
+    public void ThirdPartyLogin(final String platfrom, final Callback callback) {
+        mCallback = callback;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ShareProgressDialog dialog =  new ShareProgressDialog(activity);
+                    Config.dialog = dialog;
+                    UMShareAPI.get(activity).get(activity).doOauthVerify(activity, SHARE_MEDIA.convertToEmun(platfrom), umAuthListener);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private UMAuthListener umAuthListener = new UMAuthListener() {
+        public void onStart(SHARE_MEDIA platform) {
+            WritableMap params = Arguments.createMap();
+            params.putBoolean("success", false);
+            params.putString("state", "授权开始");
+        }
+        @Override
+        public void onComplete(SHARE_MEDIA platform, int i, Map<String, String> map) {
+            //回调成功，即登陆成功后这里返回Map<String, String> map，map里面就是用户的信息，可以拿出来使用了
+            if (map!=null){
+                getUserInfo(platform);
+            }
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, int i, Throwable throwable) {
+            Log.i("zhangtao", "====="+throwable);
+            WritableMap params = Arguments.createMap();
+            params.putBoolean("success", false);
+            params.putString("state", "授权失败");
+            mCallback.invoke(params);
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform, int i) {
+            WritableMap params = Arguments.createMap();
+            params.putBoolean("success", false);
+            params.putString("state", "授权取消");
+            mCallback.invoke(params);
+        }
+    };
+
+
+    /**
+     * 获取用户信息
+     *
+     * @param platform
+     */
+    private void getUserInfo(SHARE_MEDIA platform) {
+        UMShareAPI.get(this.activity).get(this.activity).getPlatformInfo(this.activity, platform,
+                new UMAuthListener() {
+
+                    @Override
+                    public void onComplete(SHARE_MEDIA platform, int i, Map<String, String> map) {
+                        WritableMap params = Arguments.createMap();
+                        if (map!=null){
+                            params.putBoolean("success", true);
+                            if (platform.name().equals(SHARE_MEDIA.QQ.name())) {
+                                params.putString("uid", map.get("uid").toString());
+                            } else if (platform.name().equals(SHARE_MEDIA.WEIXIN.name())) {
+                                params.putString("uid", map.get("unionid").toString());
+                            }
+                            params.putString("screen_name", map.get("screen_name").toString());
+                            params.putString("province", map.get("province").toString());
+                            params.putString("city", map.get("city").toString());
+                            params.putString("gender", map.get("gender").toString());
+                            params.putString("profile_image_url", map.get("profile_image_url").toString());
+                            mCallback.invoke(params);
+                        } else {
+                            params.putBoolean("success", false);
+                        }
+                    }
+
+                    @Override
+                    public void onError(SHARE_MEDIA platform, int i, Throwable throwable) {
+                        WritableMap params = Arguments.createMap();
+                        params.putBoolean("success", false);
+                        params.putString("state", "获取用户信息失败");
+                        mCallback.invoke(params);
+                    }
+
+                    @Override
+                    public void onCancel(SHARE_MEDIA platform, int i) {
+
+                    }
+
+                    public void onStart() {
+
+                    }
+                });
+    }
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {

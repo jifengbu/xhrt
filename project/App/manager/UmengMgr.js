@@ -48,5 +48,15 @@ class Manager extends EventEmitter {
             console.log("success", result);
         });
     }
+    doThirdPartyLogin(platform, callback) {
+        Umeng.ThirdPartyLogin(platform, (result)=>{
+			if (result.success) {
+				callback(result)
+			} else {
+				Toast('授权失败，请重试！');
+			}
+            console.log("success", result);
+        });
+    }
 }
 module.exports = new Manager();

@@ -19,6 +19,9 @@
 #import "MTA.h"
 #import "MTAConfig.h"
 
+// global
+UIViewController *globalViewController;
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -56,6 +59,8 @@
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
+  
+  globalViewController = rootViewController;
   [self.window makeKeyAndVisible];
   //腾讯云分析
   [MTA startWithAppkey:@"￼￼￼￼IDIMHG5X397Q"];
@@ -67,7 +72,10 @@
   return YES;
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            sourceApplication:(NSString *)sourceApplication
+            annotation:(id)annotation {
   if ([@"wx18d0597c9febcd0d" isEqualToString:url.scheme] && [@"pay" isEqualToString:url.host]) {
      return [WXApi handleOpenURL:url delegate:[CDVWxpay getInstance]];
   } else if ([@"a2088021939773980" isEqualToString:url.scheme]) {
@@ -75,8 +83,14 @@
     }];
   } else if ([@"QQ41E01426" isEqualToString:url.scheme] || ([@"wx18d0597c9febcd0d" isEqualToString:url.scheme] && [@"platformId=wechat" isEqualToString:url.host])){
     return [UMSocialSnsService handleOpenURL:url];
+  } else if ([@"QQ41E01426" isEqualToString:url.scheme]
+             || [@"wx18d0597c9febcd0d" isEqualToString:url.scheme]
+             || [@"tencent1105204262" isEqualToString:url.scheme])
+  {
+      return [UMSocialSnsService handleOpenURL:url];
   }
   return YES;
+
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
@@ -93,4 +107,10 @@
   [RCTJPush application:application didReceiveRemoteNotification:notification];
   completionHandler(UIBackgroundFetchResultNewData);
 }
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+  return  [UMSocialSnsService handleOpenURL:url];
+}
+
 @end
