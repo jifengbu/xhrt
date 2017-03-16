@@ -50,6 +50,7 @@ var AudioFileMgr = require('./manager/AudioFileMgr.js');
 var ReplaceBGColorMgr = require('./manager/ReplaceBGColorMgr.js');
 var RefreshComments = require('./manager/RefreshComments.js');
 var GlobalVarMgr = require('./manager/GlobalVarMgr.js');
+var UniqueLoginMgr = require('./manager/UniqueLoginMgr.js');
 var LeftTimes = require('./manager/LeftTimes.js');
 var StudyNum = require('./data/StudyNum.js');
 
@@ -72,6 +73,7 @@ global.app = {
     updateMgr:UpdateMgr,
     audioFileMgr:AudioFileMgr,
     leftTimesMgr:LeftTimes,
+    uniqueLoginMgr:UniqueLoginMgr,
     studyNumMgr:StudyNum,
     replaceBGColorMgr:ReplaceBGColorMgr,
     refreshComments:RefreshComments,

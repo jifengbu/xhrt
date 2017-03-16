@@ -202,6 +202,11 @@ module.exports = React.createClass({
         this.getLearningRecord();
         this.getStudyProgressList();//获取我的课程列表
     },
+    doRefresh() {
+        this.doGetPersonalInfo();
+        this.getLearningRecord();
+        this.getStudyProgressList();//获取我的课程列表
+    },
     getLearningRecord() {
         var param = {
             userID: app.personal.info.userID,
@@ -268,6 +273,7 @@ module.exports = React.createClass({
         app.navigator.push({
             title: '设置',
             component: Setting,
+            passProps:{doRefresh:this.doRefresh},
             sceneConfig: {
                 ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null
             }

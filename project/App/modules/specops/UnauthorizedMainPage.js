@@ -13,18 +13,14 @@ var {
     Keyboard,
 } = ReactNative;
 
-var WeekPlan = require('./WeekPlan.js');
 var moment = require('moment');
-var CoursePlayer = require('./CoursePlayer.js');
+var UnauthorizedCoursePlayer = require('./UnauthorizedCoursePlayer.js');
 var WaitingSpecopsLive = require('../live/WaitingSpecopsLive.js');
 var WatchSpecopsLive = require('../live/WatchSpecopsLive.js');
 var ShareHomework = require('./ShareHomework.js');
-var WorkTask = require('./WorkTask.js');
 var ClassTest = require('./ClassTest.js');
-var Guidance = require('./GuidanceBox.js');
-var GuideSwiper = require('./GuideSwiper.js');
+var OpenSpecops = require('./OpenSpecops.js');
 var Progress = require('react-native-progress');
-var LocalDataMgr = require('../../manager/LocalDataMgr.js');
 
 
 module.exports = React.createClass({
@@ -32,9 +28,6 @@ module.exports = React.createClass({
         this.detailsMap = {};//作业相关内容
         return {
           specialSoldierImgUrl: "",
-          dayPlan:[],
-          weekPlan:[],
-          monthPlan:[],
           lineHeight: 0,
           isLookAll: false,
           lineHeightIntroduce: 0,
@@ -50,22 +43,10 @@ module.exports = React.createClass({
         this.getHomePagePlan();
     },
     onWillFocus(flag) {
-        let firstUse = LocalDataMgr.getValueFromKey('firstUse');
-        if (firstUse == null) {
-            LocalDataMgr.setValueAndKey('firstUse', 1);
-            app.showModal(
-                <Guidance doGuidance={this.doGuidance}/>
-            );
-        }
         if (!flag) {
             this.getSpecialSoldierData();
             this.getHomePagePlan();
         }
-    },
-    doGuidance() {
-        app.showModal(
-            <GuideSwiper />
-        );
     },
     getSpecialSoldierData() {
         var param = {
@@ -74,14 +55,9 @@ module.exports = React.createClass({
         POST(app.route.ROUTE_GET_SPECIAL_SOLDIER_DATA, param, this.getSpecialSoldierDataSuccess,true);
     },
     getSpecialSoldierDataSuccess(data) {
-        var weekArr = [];
-        var monthArr = [];
         if (data.success) {
-            var {dayPlan, weekPlan, monthPlan,  specialSoldierImgUrl,specialSoldierVedioName, specialSoldierVedioID, isWatchVideo, isDayActuallydoing, isDaySummary, isEverydayQuestion, introductionTitle, introductionContent} = data.context;
-            var dayArr = dayPlan||[];
-            var weekArr = weekPlan||[];
-            var monthArr = monthPlan||[];
-            this.setState({dayPlan:dayArr, weekPlan:weekArr, monthPlan:monthArr, specialSoldierImgUrl,specialSoldierVedioName, isDayActuallydoing, isDaySummary, isEverydayQuestion, isWatchVideo, specialSoldierVedioID, introductionTitle, introductionContent});
+            var {specialSoldierImgUrl,specialSoldierVedioName, specialSoldierVedioID, isWatchVideo, isDayActuallydoing, isDaySummary, isEverydayQuestion, introductionTitle, introductionContent} = data.context;
+            this.setState({specialSoldierImgUrl,specialSoldierVedioName, isDayActuallydoing, isDaySummary, isEverydayQuestion, isWatchVideo, specialSoldierVedioID, introductionTitle, introductionContent});
             this.data = data.context;
             this.getStudyProgress(specialSoldierVedioID);
         } else {
@@ -146,7 +122,7 @@ module.exports = React.createClass({
             }
         } else {
             app.navigator.push({
-                component: CoursePlayer,
+                component: UnauthorizedCoursePlayer,
                 passProps: {lastStudyProgress: this.state.studyProgressDetail},
             });
         }
@@ -166,23 +142,13 @@ module.exports = React.createClass({
     doLookAll() {
         this.setState({isLookAll: !this.state.isLookAll});
     },
-    goTaskNextPage(index) {
-        //index 为0,1,2 分别跳转到不同的页面
-        app.navigator.push({
-            component: WeekPlan,
-            passProps: {
-                indexPos: index,
-                doIsOverTask: this.doIsOverTask,
-            }
-        });
-    },
     goProgressNextPage(index) {
         //index 为0,1,2 分别跳转到不同的页面  课程学习 随堂测试 课后作业
         var tempTitle = this.state.studyProgressDetail.isOverTest? '完成测试': '随堂测试';
         switch (index) {
             case 0:
                 app.navigator.push({
-                    component: CoursePlayer,
+                    component: UnauthorizedCoursePlayer,
                     passProps: {lastStudyProgress: this.state.studyProgressDetail},
                 });
                 break;
@@ -208,19 +174,15 @@ module.exports = React.createClass({
 
         }
     },
-    shouldComponentUpdate(nextProps, nextState) {
-        return !!app.personal.info;
+    toOpenSpecops() {
+        app.navigator.push({
+            title: '赢销特种兵',
+            component: OpenSpecops,
+            passProps: {}
+        });
     },
     render() {
-        var {dayPlan, weekPlan, monthPlan, specialSoldierImgUrl, specialSoldierVedioName, isDayActuallydoing, isDaySummary, isEverydayQuestion, isWatchVideo, introductionTitle, introductionContent} = this.state;
-        var strHour = '';
-        if (moment().hour() <= 12) {
-            strHour = '早上好！赢销特种兵';
-        } else if (12 < moment().hour() && moment().hour() < 19) {
-            strHour = '下午好！赢销特种兵';
-        } else {
-            strHour = '晚上好！赢销特种兵';
-        }
+        var {specialSoldierImgUrl, specialSoldierVedioName, isDayActuallydoing, isDaySummary, isEverydayQuestion, isWatchVideo, introductionTitle, introductionContent} = this.state;
         var {studyProgressDetail, isLookAll} = this.state;
         var {specops_study_unfinish, specops_study_finished, specops_test_unfinish, specops_test_finished, specops_homework_unfinish, specops_homework_finished} = app.img;
         var {specops_complete, specops_conclusion, specops_remark} = app.img;
@@ -256,9 +218,13 @@ module.exports = React.createClass({
                     }
 
                     <View style={styles.personIntroductionStyle}>
-                        <View style={[styles.titleContainer, {marginLeft: 8}]}>
-                            <Text style={[styles.nameText, {color: '#404040'}]}>{strHour}</Text>
-                            <Text numberOfLines={1} style={[styles.nameText, {marginLeft: 15, color: '#FF6363', width: sr.ws(150)}]}>{app.personal.info.name}</Text>
+                        <View style={[styles.titleContainer, {justifyContent: 'space-between'}]}>
+                            <Text style={[styles.nameText, {marginLeft: 19, color: '#404040'}]}>{'加入特种兵，体验更优质的服务。'}</Text>
+                            <TouchableOpacity
+                                onPress={this.toOpenSpecops}
+                                style={styles.joinSpecopsTouch}>
+                                <Text numberOfLines={1} style={styles.joinSpecopsText}>{'加入特种兵'}</Text>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.divisionLine}></View>
                         <View style={styles.personStyle}>
@@ -275,37 +241,6 @@ module.exports = React.createClass({
                             <TouchableOpacity onPress={this.doLookAll} style={styles.lookAllStyle}>
                                 <Text style={styles.lookAllText}>{isLookAll?'收起内容':'查看全部'}</Text>
                                 <Image resizeMode='contain' source={isLookAll?app.img.specops_up:app.img.specops_down} style={styles.iconStyle}/>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <View style={styles.todayTaskStyle}>
-                        <View style={[styles.titleContainer, {backgroundColor: '#C8B086'}]}>
-                            <View style={styles.taskView}></View>
-                            <Text style={[styles.nameText, {color: '#FFFFFF'}]}>今日任务</Text>
-                        </View>
-                        <View style={styles.divisionLine}></View>
-                        <View style={styles.menuContainer}>
-                            <TouchableOpacity onPress={this.goTaskNextPage.bind(null, 0)} style={styles.menuStyle}>
-                                <Image resizeMode='contain' source={specops_complete} style={styles.menuImage}></Image>
-                                <Text style={styles.menuText}>{'今日实际'}</Text>
-                                <View style={[styles.menuView, isDayActuallydoing?{backgroundColor: '#C7C7C7'}:{backgroundColor: '#FF6363'}]}>
-                                    <Text style={styles.menuStatusText}>{isDayActuallydoing?'已填写':'未填写'}</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={this.goTaskNextPage.bind(null, 1)} style={styles.menuStyle}>
-                                <Image resizeMode='contain' source={specops_conclusion} style={styles.menuImage}></Image>
-                                <Text style={styles.menuText}>{'今日总结'}</Text>
-                                <View style={[styles.menuView, isDaySummary?{backgroundColor: '#C7C7C7'}:{backgroundColor: '#FF6363'}]}>
-                                    <Text style={styles.menuStatusText}>{isDaySummary?'已填写':'未填写'}</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={this.goTaskNextPage.bind(null, 2)} style={styles.menuStyle}>
-                                <Image resizeMode='contain' source={specops_remark} style={styles.menuImage}></Image>
-                                <Text style={styles.menuText}>{'每日三省'}</Text>
-                                <View style={[styles.menuView, isEverydayQuestion?{backgroundColor: '#C7C7C7'}:{backgroundColor: '#FF6363'}]}>
-                                    <Text style={styles.menuStatusText}>{isEverydayQuestion?'已填写':'未填写'}</Text>
-                                </View>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -375,7 +310,6 @@ module.exports = React.createClass({
                             <Text style={styles.progressText}>{`${studyProgressDetail.studyProgress}%`}</Text>
                         </View>
                     </View>
-                    <WorkTask allPlanDetail={this.state.allPlanDetail} style={styles.workTaskStyle}/>
                 </ScrollView>
             </View>
         );
@@ -447,10 +381,25 @@ var styles = StyleSheet.create({
         backgroundColor: '#99886A',
     },
     nameText: {
-        fontSize: 20,
-        fontWeight: '700',
+        fontSize: 15,
         marginLeft: 11,
         fontFamily: 'STHeitiSC-Medium',
+    },
+    joinSpecopsText: {
+        fontSize: 15,
+        color: '#FFFFFF',
+        fontFamily: 'STHeitiSC-Medium',
+    },
+    joinSpecopsTouch: {
+        width: 100,
+        height: 35,
+        marginRight: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#db3237',
+        borderWidth: 1,
+        borderRadius: 2,
+        borderColor: '#d90000',
     },
     divisionLine: {
         width: sr.w-38,
@@ -614,10 +563,5 @@ var styles = StyleSheet.create({
         marginLeft: 16,
         color: '#404040',
         fontFamily: 'STHeitiSC-Medium',
-    },
-    workTaskStyle: {
-        width: sr.w,
-        marginTop: 10,
-        backgroundColor: '#FFFFFF',
     },
 });

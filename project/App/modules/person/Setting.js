@@ -17,6 +17,7 @@ var MyCollects = require('./MyCollects.js');
 var MyIntegral = require('./MyIntegral.js');
 var Update = require('@remobile/react-native-update');
 var UpdatePage = require('../update/UpdatePage');
+var BindingBox = require('../login/BindingBox.js');
 // var AgentManager = require('./AgentManager.js');
 
 var {Button, WebviewMessageBox} = COMPONENTS;
@@ -70,6 +71,10 @@ module.exports = React.createClass({
         title: '设置',
         leftButton: {image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
     },
+    doRefresh() {
+        this.props.doRefresh();
+        app.navigator.pop();
+    },
     getInitialState() {
         return {
             options: null
@@ -104,6 +109,11 @@ module.exports = React.createClass({
                 });
             }, info: options===null ? '正在获取版本号' : options===undefined ? '获取版本号失败': options.newVersion ? ('有最新'+options.newVersion+'版本') : ''},
             {seprator:false, title:'新手指引', module: NewPeopleGuide},
+            {seprator:false, title:'绑定手机', method: ()=>{
+                app.showModal(
+                    <BindingBox doRefresh={this.doRefresh}/>
+                );
+            }, hidden:app.isBind !== false},
             {seprator:false, title:'关于', module: About},
         ].map((item, i)=>!item.hidden&&<MenuItem page={item} key={i}/>)
     },

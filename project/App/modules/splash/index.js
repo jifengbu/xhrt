@@ -17,6 +17,7 @@ var SplashScreen = require('@remobile/react-native-splashscreen');
 var Login = require('../login/Login.js');
 var Home = require('../home/index.js');
 var StudyNum = require('../../data/StudyNum.js');
+var LocalDataMgr = require('../../manager/LocalDataMgr.js');
 
 module.exports = React.createClass({
     mixins: [TimerMixin],
@@ -28,6 +29,7 @@ module.exports = React.createClass({
     doGetPersonalInfo () {
         var param = {
             userID: app.personal.info.userID,
+            __from__: 'splash',
         };
         POST(app.route.ROUTE_GET_PERSONAL_INFO, param, this.getPersonalInfoSuccess, this.getInfoError);
     },
@@ -94,15 +96,21 @@ module.exports = React.createClass({
         }
     },
     changeToNextPage () {
-        if (app.personal.info) {
-            this.doGetPersonalInfo();
-        } else {
+        let loginMethod = LocalDataMgr.getValueFromKey('loginMethod');
+        if (loginMethod == 1) {
             this.changeToLoginPage();
+        } else {
+            if (app.personal.info) {
+                this.doGetPersonalInfo();
+            } else {
+                this.changeToLoginPage();
+            }
         }
+
     },
     componentDidMount () {
         app.utils.until(
-            () => app.updateMgr.initialized && app.navigator,
+            () => app.updateMgr.initialized && app.navigator && app.uniqueLoginMgr.uuid,
             (cb) => setTimeout(cb, 100),
             () => this.changeToNextPage()
         );

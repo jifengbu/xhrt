@@ -37,6 +37,7 @@ var ShowWebView = require('./ShowWebView.js');
 var specialTask = require('../task/index.js');
 var EmployeeMonthPlan = require('../specopsBoss/EmployeeMonthPlan.js');
 var EmployeePlanAndSummary = require('../specopsBoss/EmployeePlanAndSummary.js');
+var BindingBox = require('../login/BindingBox.js');
 
 var {DImage} = COMPONENTS;
 
@@ -53,6 +54,7 @@ module.exports = React.createClass({
         }},
     },
     getInitialState() {
+        this.isBig = false;
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         return {
             ShowMealBox: false,
@@ -71,6 +73,18 @@ module.exports = React.createClass({
         this.getHomePageData();
         this.getUserStudyInfo();
         app.personal.info.companyInfo&&this.getWorkSituationAbstract();
+        if (app.isBind === false) {
+            app.showModal(
+                <BindingBox doRefresh={this.doRefresh}/>
+            );
+        }
+    },
+    doRefresh() {
+        this.isBig = true;
+        this.getHomePageData();
+        this.getUserStudyInfo();
+        app.personal.info.companyInfo&&this.getWorkSituationAbstract();
+
     },
     onWillFocus() {
         this.getUserStudyInfo();
@@ -402,8 +416,8 @@ module.exports = React.createClass({
     },
     renderUserInfo() {
         var info = app.personal.info;
-        let headUrl = info.headImg?info.headImg:info.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
         var {studyInfo} = this.state;
+        let headUrl = studyInfo&&studyInfo.headImg?studyInfo.headImg:info.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
         let nameTemWidth = this.calculateStrLength(info.name);
         let nameWidth = nameTemWidth*10;
         return (
@@ -413,21 +427,21 @@ module.exports = React.createClass({
                         <DImage
                             resizeMode='cover'
                             defaultSource={app.img.personal_head}
-                            source={info.headImg?{uri: headUrl}:headUrl}
+                            source={studyInfo&&studyInfo.headImg?{uri: headUrl}:headUrl}
                             style={styles.headerIcon}  />
                         <View style={styles.personalInfoStyle}>
                             <View style={styles.nameContainer}>
                                 <Text style={[styles.nameText, {width: nameWidth>160?sr.ws(160):sr.ws(nameWidth)}]} numberOfLines={1}>
-                                    {info.name}
+                                    {studyInfo&&studyInfo.userName}
                                 </Text>
                                 <View style={styles.verticalLine}>
                                 </View>
                                 <Text style={styles.aliasText}>
-                                    {info.alias}
+                                    {studyInfo&&studyInfo.alias}
                                 </Text>
                             </View>
                             <Text style={styles.companyText}>
-                                {(info.company ==null || info.company=='')?'您还未设置企业信息':info.company}
+                                {(studyInfo&&studyInfo.company ==null || studyInfo&&studyInfo.company=='')?'您还未设置企业信息':info.company}
                             </Text>
                         </View>
                     </View>
@@ -638,7 +652,7 @@ module.exports = React.createClass({
                         <View style={styles.titleDivisionLine}></View>
                         <View style={styles.activityStyle}>
                             <ImageSelect
-                                initialIndex={hotActiveityList.length>2 ? 1: 0}
+                                index={hotActiveityList.length>2 ? 1: 0}
                                 list={hotActiveityList}
                                 width={sr.ws(361)}
                                 height={sr.ws(158)}
@@ -900,6 +914,9 @@ module.exports = React.createClass({
                 }
             </View>
         );
+    },
+    shouldComponentUpdate(nextProps, nextState) {
+        return !!app.personal.info;
     },
     render() {
         var {gotoSpecialSoldierTime,PKTime,PKWinTime,newReplay} = app.personal.info;

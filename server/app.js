@@ -40,6 +40,7 @@ app.send = function(req, res, str) {
     // console.log("recv:", des.decode(req.body, deskey));
     setTimeout(function() {
         // console.log("send:", str);
+        res.header("ejected-yx", process.argv[2]);
         res.send(des.encode(str, deskey));
     }, app.TIMEOUT);
 };

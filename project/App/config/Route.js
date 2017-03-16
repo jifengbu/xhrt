@@ -254,4 +254,8 @@ module.exports = {
     ROUTE_GET_NO_FINISH_EMPLOYEES: SERVER+'getNoFinishEmployees', //获取未提交员工列表
     ROUTE_GET_PERSONAL_MONTH_TASK: SERVER+'getPersonalMonthTask', //获取员工任务提交率详情
 
+    //三方登录
+    ROUTE_EXTERNAL_LOGIN: SERVER+'externalLogin', //三方登录
+    ROUTE_USER_INFO_BINDING: SERVER+'userInfoBinding', //登录后绑定手机
+
 };

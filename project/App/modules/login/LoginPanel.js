@@ -15,39 +15,42 @@ var {
 var GetVerification = require('./GetVerification.js');
 var Home = require('../home/index.js');
 var Umeng = require('../../native/index.js').Umeng;
+var UmengMgr = require('../../manager/UmengMgr.js');
+var LocalDataMgr = require('../../manager/LocalDataMgr.js');
 
 var {Button} = COMPONENTS;
 
 var WeixinQQPanel = React.createClass({
+    empty(type) {
+        Toast(type === 1?'未安装微信':'未安装QQ');
+    },
     render() {
         return (
             <View style={styles.thirdpartyContainer}>
-                <View style={styles.sepratorContainer}>
-                    <View style={styles.sepratorLine}></View>
-                    <Text style={styles.sepratorText} >{app.isandroid?'    ':''}或者你也可以</Text>
-                </View>
                 <View style={styles.thirdpartyButtonContainer}>
                     {
-                        !!this.props.weixininstalled &&
-                        <View style={styles.thirdpartyLeftButtonContainer}>
+                        <TouchableOpacity
+                            onPress={!!this.props.weixininstalled ? this.props.doExternalLogin.bind(null,Umeng.platforms.UMShareToWechatSession):this.empty.bind(null,1)}
+                            style={styles.thirdpartyLeftButtonContainer}>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.login_weixin_button}
                                 style={styles.image_button}
                                 />
                             <Text style={styles.image_button_text}>微信登录</Text>
-                        </View>
+                        </TouchableOpacity>
                     }
                     {
-                        !!this.props.qqinstalled &&
-                        <View style={styles.thirdpartyRightButtonContainer}>
+                        <TouchableOpacity
+                            onPress={!!this.props.qqinstalled ?this.props.doExternalLogin.bind(null,Umeng.platforms.UMShareToQQ):this.empty.bind(null,2)}
+                            style={styles.thirdpartyRightButtonContainer}>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.login_qq_button}
                                 style={styles.image_button}
                                 />
                             <Text style={styles.image_button_text}>QQ登录</Text>
-                        </View>
+                        </TouchableOpacity>
                     }
                 </View>
             </View>
@@ -55,17 +58,44 @@ var WeixinQQPanel = React.createClass({
     }
 });
 
-var NoWeixinQQPanel = React.createClass({
-    render() {
-        return (
-            <View style={styles.thirdpartyContainer2}>
-                <Text style={styles.thirdpartyContainer2_text}>赢在路上 现在出发</Text>
-            </View>
-        )
-    }
-});
-
 module.exports = React.createClass({
+    doExternalLogin(type) {
+        UmengMgr.doThirdPartyLogin(type,this.doLoginCallback.bind(null,type));
+    },
+    doLoginCallback(type,detail) {
+        app.uid = detail.uid;
+        this.getData(type,detail);
+    },
+    getData(type,detail) {
+        let longType = 0;
+        if (type === Umeng.platforms.UMShareToWechatSession) {
+            longType = 1;
+        } else if (type === Umeng.platforms.UMShareToQQ) {
+            longType = 2;
+        }
+        var param = {
+            uid: detail.uid,
+            screen_name: detail.screen_name,//昵称
+            iconurl: detail.profile_image_url,//头像
+            longType: longType  //1 表示微信登录  2 表示QQ登录
+        };
+        app.showProgressHUD();
+        POST(app.route.ROUTE_EXTERNAL_LOGIN, param, this.getDataSuccess, this.getDataError);
+    },
+    getDataSuccess(data) {
+        if (data.success) {
+            this.userID = data.context.userID;
+            app.isBind = data.context.isBind;
+            LocalDataMgr.setValueAndKey('loginMethod', 1);
+            this.doGetPersonalInfo();
+        } else {
+            Toast(data.msg);
+            app.dismissProgressHUD();
+        }
+    },
+    getDataError(error) {
+        app.dismissProgressHUD();
+    },
     doLogin() {
         if (!app.utils.checkPhone(this.state.phone)) {
             Toast('手机号码不是有效的手机号码');
@@ -87,6 +117,8 @@ module.exports = React.createClass({
         if (data.success) {
             this.userID = data.context.userID;
             app.login.savePhone(this.state.phone);
+            app.isBind = true;
+            LocalDataMgr.setValueAndKey('loginMethod', 2);
             this.doGetPersonalInfo();
         } else {
             Toast(data.msg);
@@ -104,6 +136,7 @@ module.exports = React.createClass({
     doGetPersonalInfo() {
         var param = {
             userID: this.userID,
+            __from__: 'login',
         };
         POST(app.route.ROUTE_GET_PERSONAL_INFO, param, this.getPersonalInfoSuccess, this.getPersonalInfoError);
     },
@@ -141,8 +174,8 @@ module.exports = React.createClass({
             dataSource: ds.cloneWithRows(app.login.list),
             showList: false,
             showListBorder: false,
-            weixininstalled: false,//Umeng.isWeixinInstalled,
-            qqinstalled: false,//Umeng.isQQInstalled,
+            weixininstalled: Umeng.isWeixinInstalled,
+            qqinstalled: Umeng.isQQInstalled,
         };
     },
     onPhoneTextInputLayout(e) {
@@ -228,6 +261,9 @@ module.exports = React.createClass({
                     <Button onPress={this.doLogin} style={styles.btnLogin} textStyle={styles.btnLoginText}>登  录</Button>
                 </View>
                 {
+                    <WeixinQQPanel qqinstalled={this.state.qqinstalled} weixininstalled={this.state.weixininstalled} doExternalLogin={this.doExternalLogin}/>
+                }
+                {
                     this.state.showList &&
                     <ListView
                         enableEmptySections={true}
@@ -310,28 +346,10 @@ var styles = StyleSheet.create({
         fontWeight: '600',
     },
     thirdpartyContainer: {
-        flex:1,
-    },
-    sepratorContainer: {
-        height: 30,
-        alignItems:'center',
-        justifyContent: 'center',
-        marginTop: 50,
-    },
-    sepratorLine: {
-        top: 10,
-        height: 2,
-        width: sr.w-20,
-        backgroundColor: '#858687',
-    },
-    sepratorText: {
-        backgroundColor:'#EEEEEE',
-        color: '#A3A3A4',
-        paddingHorizontal: 10,
     },
     thirdpartyButtonContainer: {
-        marginTop: 30,
-        height: 120,
+        height: 100,
+        marginHorizontal: 30,
         flexDirection: 'row',
     },
     thirdpartyLeftButtonContainer: {
@@ -343,13 +361,14 @@ var styles = StyleSheet.create({
         alignItems:'center',
     },
     image_button: {
-        width: 80,
-        height: 80,
+        width: 50,
+        height: 50,
         margin: 10,
     },
     image_button_text: {
         color: '#4C4D4E',
-        fontSize: 16,
+        fontSize: 13,
+        backgroundColor: 'transparent'
     },
     thirdpartyContainer2: {
         marginTop: 30,

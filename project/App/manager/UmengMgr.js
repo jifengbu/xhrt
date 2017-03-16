@@ -55,7 +55,7 @@ class Manager extends EventEmitter {
 			} else {
 				Toast('授权失败，请重试！');
 			}
-            console.log("success", result);
+            // console.log("success", result);
         });
     }
 }

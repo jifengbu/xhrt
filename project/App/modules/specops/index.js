@@ -5,7 +5,7 @@ var ReactNative = require('react-native');
 var {
     StyleSheet,
 } = ReactNative;
-var Unauthorized = require('./Unauthorized.js');
+var Unauthorized = require('./UnauthorizedMainPage.js');
 var MainPage = require('./MainPage.js');
 var PersonInfo = require('../person/PersonInfo.js');
 // var Search = require('../search/index.js');
