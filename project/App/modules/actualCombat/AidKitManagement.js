@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -9,30 +9,30 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var MyAidKitDetails = require('./MyAidKitDetails.js');
-var MyCaseList = require('./MyCaseList.js');
-var {PageList} = COMPONENTS;
+const MyAidKitDetails = require('./MyAidKitDetails.js');
+const MyCaseList = require('./MyCaseList.js');
+const { PageList } = COMPONENTS;
 
 module.exports = React.createClass({
-    _onPressRow(obj) {
+    _onPressRow (obj) {
         app.navigator.push({
-            title:this.props.tabIndex===0?'':'打赏记录',
-            component: this.props.tabIndex===0?MyCaseList:MyAidKitDetails,
-            passProps: this.props.tabIndex===0?{isPlayer:this.isPlayer}:{info:obj, firstAidPacketId:obj.id},
+            title:this.props.tabIndex === 0 ? '' : '打赏记录',
+            component: this.props.tabIndex === 0 ? MyCaseList : MyAidKitDetails,
+            passProps: this.props.tabIndex === 0 ? { isPlayer:this.isPlayer } : { info:obj, firstAidPacketId:obj.id },
         });
     },
-    isPlayer() {
+    isPlayer () {
 
     },
-    renderRow(obj){
-        return(
+    renderRow (obj) {
+        return (
             <TouchableHighlight
-                underlayColor="#f0f8ff"
-                onPress={this._onPressRow.bind(null,obj)}>
+                underlayColor='#f0f8ff'
+                onPress={this._onPressRow.bind(null, obj)}>
                 <View style={styles.dataContainer}>
                     <View style={styles.topStyle}>
                         <Text numberOfLines={1} style={styles.textTitle2}>
-                            {'主题：'+obj.title}
+                            {'主题：' + obj.title}
                         </Text>
                         <View style={styles.rightTitle}>
                             <Image
@@ -40,17 +40,16 @@ module.exports = React.createClass({
                                 source={app.img.train_integral}
                                 style={styles.iconCount}
                                 />
-                                <Text numberOfLines={1} style={{fontSize:12,color:'#555555'}}>
+                            <Text numberOfLines={1} style={{ fontSize:12, color:'#555555' }}>
                                     打赏
                                 </Text>
-                                <Text numberOfLines={1} style={{fontSize:16}}>
-                                    {'￥'+obj.price+'元'}
-                                </Text>
+                            <Text numberOfLines={1} style={{ fontSize:16 }}>
+                                {'￥' + obj.price + '元'}
+                            </Text>
                         </View>
                     </View>
-                    <View style={styles.pictureStyle}>
-                    </View>
-                    <View style={{backgroundColor: '#FFFFFF',marginVertical: 5}}>
+                    <View style={styles.pictureStyle} />
+                    <View style={{ backgroundColor: '#FFFFFF', marginVertical: 5 }}>
                         <Text
                             style={styles.textTitle3}
                             numberOfLines={3}>
@@ -59,34 +58,34 @@ module.exports = React.createClass({
                     </View>
                     <View style={styles.bottomStyle}>
                         <Text numberOfLines={1} style={styles.textTitle}>
-                            {'发布时间: '+ obj.releaseTime}
+                            {'发布时间: ' + obj.releaseTime}
                         </Text>
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
-        //0表示求救包管理 1表示急救包管理
+    render () {
+        // 0表示求救包管理 1表示急救包管理
         return (
-            <View style={this.props.tabIndex===0?styles.container:this.props.style}>
+            <View style={this.props.tabIndex === 0 ? styles.container : this.props.style}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     disable={this.props.disable}
                     style={styles.list}
                     renderRow={this.renderRow}
-                    renderSeparator={()=>null}
-                    listParam={{userID: app.personal.info.userID}}
-                    listName={"aidManageList"}
+                    renderSeparator={() => null}
+                    listParam={{ userID: app.personal.info.userID }}
+                    listName={'aidManageList'}
                     listUrl={app.route.ROUTE_GET_AID_MANAGE_LIST}
-                    refreshEnable={true}
+                    refreshEnable
                     />
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#EEEEEE',
@@ -107,7 +106,7 @@ var styles = StyleSheet.create({
         height: 38,
         alignItems: 'flex-end',
         justifyContent: 'center',
-        backgroundColor: '#F5F5F5'
+        backgroundColor: '#F5F5F5',
     },
     rightTitle: {
         flexDirection: 'row',

@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -10,80 +10,80 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var Details = require('./MyNewsDetails.js');
-var {Button, MessageBox, PageList} = COMPONENTS;
+const Details = require('./MyNewsDetails.js');
+const { Button, MessageBox, PageList } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
         title: '消息中心',
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
-        rightButton: { title: '管理', delayTime:1, handler: ()=>{app.scene.toggleMenuPanel()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
+        rightButton: { title: '管理', delayTime:1, handler: () => { app.scene.toggleMenuPanel(); } },
     },
-    toggleMenuPanel() {
-        //改变状态 批量删除数据
+    toggleMenuPanel () {
+        // 改变状态 批量删除数据
         if (this.state.showDeletePanel) {
             this.doConfirmDelete();
         } else {
-            this.setState({showDeletePanel: true});
-            this.listView.updateList(list=>list);
-            app.getCurrentRoute().rightButton = { title: '删除', delayTime:1, handler: ()=>{app.scene.toggleMenuPanel()}};
-            app.getCurrentRoute().leftButton = { title: '取消', delayTime:1, handler: ()=>{app.scene.toggleImageMenuPanel()}};
+            this.setState({ showDeletePanel: true });
+            this.listView.updateList(list => list);
+            app.getCurrentRoute().rightButton = { title: '删除', delayTime:1, handler: () => { app.scene.toggleMenuPanel(); } };
+            app.getCurrentRoute().leftButton = { title: '取消', delayTime:1, handler: () => { app.scene.toggleImageMenuPanel(); } };
             app.forceUpdateNavbar();
         }
     },
-    toggleImageMenuPanel() {
-        //取消删除时恢复不选中状态
+    toggleImageMenuPanel () {
+        // 取消删除时恢复不选中状态
         this.selects = _.fill(this.selects, false);
-        app.getCurrentRoute().rightButton = { title: '管理', delayTime:1, handler: ()=>{app.scene.toggleMenuPanel()}};
+        app.getCurrentRoute().rightButton = { title: '管理', delayTime:1, handler: () => { app.scene.toggleMenuPanel(); } };
         if (app.getCurrentRoute().leftButton.title) {
-            this.setState({showDeletePanel: false});
-            app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}};
+            this.setState({ showDeletePanel: false });
+            app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: () => { app.navigator.pop(); } };
             app.forceUpdateNavbar();
         }
     },
-    selectDelete(sectionID, rowID) {
+    selectDelete (sectionID, rowID) {
         this.selects[rowID] = !this.selects[rowID];
-        this.listView.updateList(list=>list);
+        this.listView.updateList(list => list);
     },
-    getInitialState() {
+    getInitialState () {
         this.selects = [false];
         return {
             showDeletePanel: false,
         };
     },
-    doConfirmDelete() {
-        var flag = _.every(this.selects, (i)=>!i);
+    doConfirmDelete () {
+        const flag = _.every(this.selects, (i) => !i);
         if (flag) {
             Toast('请选择需要删除的记录');
             return;
         }
-        var deleteList = _.map(_.filter(this.listView.list, (o, i)=>this.selects[i]), (item)=>item.messageID);
-        //过滤出被删除的数组，用于更改个人中心的消息数量参数
-        var deleteListDetail = _.map(_.filter(this.listView.list, (o, i)=>this.selects[i]), (item)=>item);
-        var param = {
+        const deleteList = _.map(_.filter(this.listView.list, (o, i) => this.selects[i]), (item) => item.messageID);
+        // 过滤出被删除的数组，用于更改个人中心的消息数量参数
+        const deleteListDetail = _.map(_.filter(this.listView.list, (o, i) => this.selects[i]), (item) => item);
+        const param = {
             userID: app.personal.info.userID,
             messageIDList: deleteList,
         };
         POST(app.route.ROUTE_SUBMIT_DELNEWS, param, this.deleteSuccess.bind(null, deleteListDetail), this.deleteFailed, true);
     },
-    deleteSuccess(deleteListDetail, data) {
+    deleteSuccess (deleteListDetail, data) {
         if (data.success) {
-            this.listView.updateList((list)=>{
-                list = _.reject(list, (o, i)=>this.selects[i]);
+            this.listView.updateList((list) => {
+                list = _.reject(list, (o, i) => this.selects[i]);
                 this.selects = [false];
                 return list;
             });
-            //更改个人中心 消息数量
-            _.map(deleteListDetail, (item)=>{
+            // 更改个人中心 消息数量
+            _.map(deleteListDetail, (item) => {
                 if (!item.state) {
                     app.personal.info.newMsgCount -= 1;
                     app.personal.set(app.personal.info);
                 }
             });
             if (!this.listView.list.length) {
-                this.setState({showDeletePanel: false});
-                app.getCurrentRoute().rightButton = { title: '管理', delayTime:1, handler: ()=>{app.scene.toggleMenuPanel()}};
-                app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}};
+                this.setState({ showDeletePanel: false });
+                app.getCurrentRoute().rightButton = { title: '管理', delayTime:1, handler: () => { app.scene.toggleMenuPanel(); } };
+                app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: () => { app.navigator.pop(); } };
                 app.forceUpdateNavbar();
             }
             Toast('删除成功');
@@ -92,21 +92,21 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    deleteFailed() {
-        //删除失败
+    deleteFailed () {
+        // 删除失败
         Toast('删除失败');
     },
-    goDetails(obj, sectionID, rowID) {
+    goDetails (obj, sectionID, rowID) {
         if (this.state.showDeletePanel) {
             this.selects[rowID] = !this.selects[rowID];
-            this.listView.updateList(list=>list);
+            this.listView.updateList(list => list);
         } else {
             if (obj.state == 0) {
-                this.listView.updateList((list)=>{
-                    _.find(list, (item)=>item.messageID==obj.messageID).state = 1;
+                this.listView.updateList((list) => {
+                    _.find(list, (item) => item.messageID == obj.messageID).state = 1;
                     return list;
                 });
-                var param = {
+                const param = {
                     userID: app.personal.info.userID,
                     messageID: obj.messageID,
                 };
@@ -116,73 +116,73 @@ module.exports = React.createClass({
             }
             app.navigator.push({
                 component: Details,
-                passProps: { contentText: obj.content, time: obj.time},
+                passProps: { contentText: obj.content, time: obj.time },
             });
         }
     },
-    renderRow(obj, sectionID, rowID, onRowHighlighted) {
+    renderRow (obj, sectionID, rowID, onRowHighlighted) {
         return (
-                <TouchableHighlight
-                    onPress={this.goDetails.bind(null, obj, sectionID, rowID)}
-                    underlayColor="#b4b4b4">
-                    <View style={styles.itemContainer}>
-                        {this.state.showDeletePanel&&
-                            <TouchableOpacity
-                                style={styles.btnTouchStyle}
-                                onPress={this.selectDelete.bind(null, sectionID, rowID)}>
-                                <View style={styles.deleteStyle}>
-                                    {
-                                        this.selects[rowID]&&
-                                        <View style={styles.seletedStyle}/>
+            <TouchableHighlight
+                onPress={this.goDetails.bind(null, obj, sectionID, rowID)}
+                underlayColor='#b4b4b4'>
+                <View style={styles.itemContainer}>
+                    {this.state.showDeletePanel &&
+                    <TouchableOpacity
+                        style={styles.btnTouchStyle}
+                        onPress={this.selectDelete.bind(null, sectionID, rowID)}>
+                        <View style={styles.deleteStyle}>
+                            {
+                                        this.selects[rowID] &&
+                                        <View style={styles.seletedStyle} />
                                     }
-                                </View>
-                            </TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
                         }
-                        <View style={styles.rightView}>
-                            <View style={styles.titleStyle}>
-                                <View style={styles.typeView}>
-                                    <Text style={obj.state==1 ? styles.itemNameText2 : styles.itemNameText}>系统通知</Text>
-                                </View>
-                                <View style={styles.timeView}>
-                                    <Text style={obj.state==1 ? styles.itemTimeText2 : styles.itemTimeText}>
-                                        {obj.time}
-                                    </Text>
-                                </View>
+                    <View style={styles.rightView}>
+                        <View style={styles.titleStyle}>
+                            <View style={styles.typeView}>
+                                <Text style={obj.state == 1 ? styles.itemNameText2 : styles.itemNameText}>系统通知</Text>
                             </View>
-                            <View style={styles.infoStyle}>
-                                <Text
-                                    numberOfLines={1}
-                                    style={obj.state==1 ? styles.itemContentText2 : styles.itemContentText}>
-                                    {obj.content}
+                            <View style={styles.timeView}>
+                                <Text style={obj.state == 1 ? styles.itemTimeText2 : styles.itemTimeText}>
+                                    {obj.time}
                                 </Text>
                             </View>
                         </View>
+                        <View style={styles.infoStyle}>
+                            <Text
+                                numberOfLines={1}
+                                style={obj.state == 1 ? styles.itemContentText2 : styles.itemContentText}>
+                                {obj.content}
+                            </Text>
+                        </View>
                     </View>
-                </TouchableHighlight>
-        )
-    },
-    renderSeparator(sectionID, rowID) {
-        return (
-            <View style={styles.separator} key={sectionID+'_'+rowID}/>
+                </View>
+            </TouchableHighlight>
         );
     },
-    render() {
+    renderSeparator (sectionID, rowID) {
+        return (
+            <View style={styles.separator} key={sectionID + '_' + rowID} />
+        );
+    },
+    render () {
         return (
             <View style={styles.container}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
                     renderSeparator={this.renderSeparator}
-                    listParam={{userID: app.personal.info.userID}}
-                    listName="newsList"
+                    listParam={{ userID: app.personal.info.userID }}
+                    listName='newsList'
                     listUrl={app.route.ROUTE_SUBMIT_GETMYNEWS}
                     />
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F0EFF5',
@@ -212,7 +212,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'center',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     seletedStyle: {
         height: 12,

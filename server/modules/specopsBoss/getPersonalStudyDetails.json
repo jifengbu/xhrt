@@ -1,0 +1,142 @@
+{
+    "msg": "获取数据成功!",
+    "success": true,
+    "context": {
+        "studyWhenLong": {
+            "avgWhenLong": "4.5",
+            "rose": "1.5",
+            "whenLongList": [
+                {
+                    "date": "2017-1-13",
+                    "dayAvgWhenLong": "1.3"
+                },
+                {
+                    "date": "2017-1-14",
+                    "dayAvgWhenLong": "1.7"
+                },
+                {
+                    "dayAvgWhenLong": "1.8"
+                },
+                {
+                    "date": "2017-1-13",
+                    "dayAvgWhenLong": "1.3"
+                },
+                {
+                    "date": "2017-1-14",
+                    "dayAvgWhenLong": "1.7"
+                },
+                {
+                    "dayAvgWhenLong": "2"
+                },
+                {
+                    "dayAvgWhenLong": "2.2"
+                }
+            ]
+        },
+        "monthWhenLong":
+            [
+              {
+                  "month": "1",
+                  "count": "3"
+              },
+              {
+                  "month": "1",
+                  "count": "3"
+              },
+              {
+                  "month": "1",
+                  "count": "3"
+              }
+            ],
+        "avgCoursesNumber": {
+            "avgNumber": "4.5",
+            "rose": "1.5",
+            "coursesNumber": [
+                {
+                    "date": "2017-1-13",
+                    "dayAvgCoursesNumber": "1.3"
+                },
+                {
+                    "date": "2017-1-14",
+                    "dayAvgCoursesNumber": "1.7"
+                },
+                {
+                    "date": "2017-1-15",
+                    "dayAvgCoursesNumber": "1.8"
+                },
+                {
+                    "date": "2017-1-13",
+                    "dayAvgCoursesNumber": "2.3"
+                },
+                {
+                    "date": "2017-1-14",
+                    "dayAvgCoursesNumber": "1.7"
+                },
+                {
+                    "date": "2017-1-15",
+                    "dayAvgCoursesNumber": "1.8"
+                },
+                {
+                    "date": "2017-1-15",
+                    "dayAvgCoursesNumber": "2.8"
+                }
+            ]
+        },
+        "monthAvgCoursesNumber": [
+              {
+                  "month":"1",
+                  "count":"2"
+              },
+              {
+                  "month":"2",
+                  "count":"4"
+              },
+              {
+                  "month":"3",
+                  "count":"6"
+              },
+              {
+                  "month":"4",
+                  "count":"3"
+              },
+              {
+                  "month":"5",
+                  "count":"8"
+              },
+              {
+                  "month":"6",
+                  "count":"1"
+              }
+          ] ,
+        "quizzesSuccess": [
+            {
+                "title": "优",
+                "sectionMin": "90",
+                "sectionMax": "100",
+                "proportion": "50",
+                "number": "3"
+            },
+            {
+                "title": "良",
+                "sectionMin": "75",
+                "sectionMax": "89",
+                "proportion": "30",
+                "number": "3"
+            }
+        ],
+        "specopsUserTask": [
+            {
+                "courseTitle": "课程名称",
+                "taskTitle": "课后作业问题",
+                "taskAnswer": "课程答案",
+                "submitTime": "2017-01-01"
+            },
+            {
+                "courseTitle": "课程名称",
+                "taskTitle": "课后作业问题",
+                "taskAnswer": "课程答案",
+                "submitTime": "2017-01-02"
+            }
+        ]
+    }
+}

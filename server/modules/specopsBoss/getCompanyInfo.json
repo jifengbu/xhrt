@@ -1,0 +1,12 @@
+{
+    "msg":"获取数据成功!",
+    "success":true,
+    "context":{
+        "companyId":"jkfdsa654fdsa",
+        "logo":"http://facebook.github.io/react/img/logo_og.png",
+        "name":"宇宙吊炸天公司",
+        "operatorCount":"1024",
+        "enterDays":"300",
+        "todaySignInCount":"90"
+    }
+}

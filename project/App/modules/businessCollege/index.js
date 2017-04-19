@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -11,31 +11,30 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var {PageList,RText} = COMPONENTS;
-var BusinessDetail = require('./BusinessDetail.js');
+const { PageList, RText } = COMPONENTS;
+const BusinessDetail = require('./BusinessDetail.js');
 
 module.exports = React.createClass({
-    _onPressRow(obj) {
+    _onPressRow (obj) {
         app.navigator.push({
             title: obj.schoolName,
             component: BusinessDetail,
-            passProps: {schoolID: obj.schoolID},
+            passProps: { schoolID: obj.schoolID },
         });
     },
-    renderRow(obj) {
+    renderRow (obj) {
         return (
             <TouchableHighlight
                 style={styles.itemContainer}
                 onPress={this._onPressRow.bind(null, obj)}
-                underlayColor="rgba(0, 0, 0, 0)">
+                underlayColor='rgba(0, 0, 0, 0)'>
                 <View style={styles.container}>
                     <View style={styles.containerTheme}>
                         <Text numberOfLines={1} style={styles.titleText}>
                             {obj.schoolName}
                         </Text>
                     </View>
-                    <View style={styles.lineStyle}>
-                    </View>
+                    <View style={styles.lineStyle} />
                     <View style={styles.bottomPanelStyle}>
                         <RText numberOfLines={3} style={styles.contextText}>
                             {obj.schoolIntroduction}
@@ -43,27 +42,27 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     style={styles.list}
                     renderRow={this.renderRow}
-                    listName="businessSchoolList"
-                    renderSeparator={()=>null}
+                    listName='businessSchoolList'
+                    renderSeparator={() => null}
                     listUrl={app.route.ROUTE_BUSINESS_SCHOOL_LIST}
-                    refreshEnable={true}
+                    refreshEnable
                     />
             </View>
-        )
-    }
+        );
+    },
 
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -71,15 +70,15 @@ var styles = StyleSheet.create({
         flex: 1,
         height: 36,
         justifyContent: 'center',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     lineStyle: {
         width: sr.w,
         height: 0.5,
-        backgroundColor: 'lightgray'
+        backgroundColor: 'lightgray',
     },
     bottomPanelStyle: {
-        width:sr.w-20,
+        width:sr.w - 20,
         height: 63,
         marginHorizontal: 10,
         marginTop: 10,
@@ -97,7 +96,7 @@ var styles = StyleSheet.create({
     itemContainer: {
         marginTop: 25,
         width:sr.w,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
 
 });

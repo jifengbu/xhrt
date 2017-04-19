@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -11,81 +11,81 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var VideoPlay = require('../specops/CoursePlayer.js');
-var Progress = require('react-native-progress');
-var moment = require('moment');
+const VideoPlay = require('../specops/CoursePlayer.js');
+const Progress = require('react-native-progress');
+const moment = require('moment');
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '我的课程',
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             dataSource: this.ds.cloneWithRows([]),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getStudyProgressList();
     },
-    getStudyProgressList() {
-        var param = {
+    getStudyProgressList () {
+        const param = {
             userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_STUDY_PROGRESS_LIST, param, this.getStudyProgressListSuccess);
     },
-    getStudyProgressListSuccess(data) {
+    getStudyProgressListSuccess (data) {
         if (data.success) {
-            let {courseList} = data.context;
+            const { courseList } = data.context;
             if (courseList) {
-                let videoList = this.props.showCount&&courseList.length>=3?(courseList.slice(0,3)||[]):courseList;
-                this.setState({dataSource:this.ds.cloneWithRows(videoList)});
+                const videoList = this.props.showCount && courseList.length >= 3 ? (courseList.slice(0, 3) || []) : courseList;
+                this.setState({ dataSource:this.ds.cloneWithRows(videoList) });
             }
         }
     },
-    playVideo(obj) {
+    playVideo (obj) {
         app.updateNavbarColor(CONSTANTS.THEME_COLORS[1]);
         app.navigator.push({
             component: VideoPlay,
-            passProps: {otherVideoID:obj.videoID,isCourseRecord:true, refreshProgress:this.refreshProgress},
+            passProps: { otherVideoID:obj.videoID, isCourseRecord:true, refreshProgress:this.refreshProgress },
         });
     },
-    refreshProgress() {
+    refreshProgress () {
         this.refStudyProgressList();
     },
-    refStudyProgressList() {
-        var param = {
+    refStudyProgressList () {
+        const param = {
             userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_STUDY_PROGRESS_LIST, param, this.refStudyProgressListSuccess);
     },
-    refStudyProgressListSuccess(data) {
+    refStudyProgressListSuccess (data) {
         if (data.success) {
-            let {courseList} = data.context;
+            const { courseList } = data.context;
             if (courseList) {
-                let videoList = this.props.showCount&&courseList.length>=3?(courseList.slice(0,3)||[]):courseList;
-                this.setState({dataSource:this.ds.cloneWithRows(videoList)});
+                const videoList = this.props.showCount && courseList.length >= 3 ? (courseList.slice(0, 3) || []) : courseList;
+                this.setState({ dataSource:this.ds.cloneWithRows(videoList) });
             }
         }
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <TouchableHighlight
                 onPress={this.playVideo.bind(null, obj)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.listViewItemContain}>
                     <View style={styles.itemContentTitle}>
-                        <View style={styles.titleRed}/>
+                        <View style={styles.titleRed} />
                         <Text numberOfLines={1} style={styles.titleText}>
                             {obj.videoName}
                         </Text>
                     </View>
                     <View style={styles.itemContentProgress}>
                         <View style={styles.numView}>
-                            <Text style={[styles.numText,{marginLeft: sr.ws(254*obj.studyProgress/100)}]}>
-                                {obj.studyProgress+'%'}
+                            <Text style={[styles.numText, { marginLeft: sr.ws(254 * obj.studyProgress / 100) }]}>
+                                {obj.studyProgress + '%'}
                             </Text>
                         </View>
                         <Text style={styles.progressText}>
@@ -93,14 +93,14 @@ module.exports = React.createClass({
                         </Text>
                         <View style={styles.progressViewStyle}>
                             <Progress.Bar
-                                progress={obj.studyProgress/100}
+                                progress={obj.studyProgress / 100}
                                 width={sr.ws(254)}
                                 height={sr.ws(5)}
                                 borderRadius={sr.ws(3)}
-                                animated={true}
+                                animated
                                 borderWidth={1}
                                 borderColor='#FFFFFF'
-                                color='#FF6363'/>
+                                color='#FF6363' />
                         </View>
                     </View>
                     <View style={styles.itemContentTime}>
@@ -111,46 +111,45 @@ module.exports = React.createClass({
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.personal_praise}
-                                style={styles.icon_likes}  />
+                                style={styles.icon_likes} />
                             <Text style={styles.commentText}>
                                 {obj.likes}
                             </Text>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.personal_eye}
-                                style={styles.icon_wicth}  />
+                                style={styles.icon_wicth} />
                             <Text style={styles.commentText}>
                                 {obj.clicks}
                             </Text>
                         </View>
                     </View>
                     {
-                        rowID != 0&&
-                        <View style={styles.separator}/>
+                        rowID != 0 &&
+                        <View style={styles.separator} />
                     }
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 {
-                    !this.props.showCount&&
-                    <View style={styles.line}/>
+                    !this.props.showCount &&
+                    <View style={styles.line} />
                 }
                 <ListView
-                    enableEmptySections={true}                    style={styles.listStyle}
+                    enableEmptySections                    style={styles.listStyle}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
                     />
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -159,7 +158,7 @@ var styles = StyleSheet.create({
     },
     separator: {
         position: 'absolute',
-        width: sr.w-48,
+        width: sr.w - 48,
         height: 1,
         left: 24,
         top: 0,
@@ -229,7 +228,7 @@ var styles = StyleSheet.create({
         fontSize: 10,
         fontFamily: 'STHeitiSC-Medium',
         color: '#989898',
-        marginRight: 12
+        marginRight: 12,
     },
     itemContentTime: {
         flexDirection: 'row',

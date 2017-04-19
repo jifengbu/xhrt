@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -11,21 +11,21 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {Button, MessageBox} = COMPONENTS;
+const { Button, MessageBox } = COMPONENTS;
 
-var Label = React.createClass({
-    render() {
-        const {multi} = this.props;
+const Label = React.createClass({
+    render () {
+        const { multi } = this.props;
         const source = multi ? app.img.specopsNew_check_label : app.img.specopsNew_radio_label;
         return (
             <Image resizeMode='stretch' source={source} style={styles.label} />
-        )
-    }
+        );
+    },
 });
 
-var Option = React.createClass({
-    render() {
-        const {onPress, index, multi, checked, children, answer, showResult} = this.props;
+const Option = React.createClass({
+    render () {
+        const { onPress, index, multi, checked, children, answer, showResult } = this.props;
         const source = multi ?
         (checked ? app.img.specopsNew_checked : app.img.specopsNew_unchecked)
         :
@@ -34,45 +34,45 @@ var Option = React.createClass({
         if (!showResult) {
             return (
                 <TouchableOpacity onPress={onPress}>
-                    <View style={[styles.optionContianer, {backgroundColor: checked ? '#464748' : '#EDEEEF'}]}>
+                    <View style={[styles.optionContianer, { backgroundColor: checked ? '#464748' : '#EDEEEF' }]}>
                         <Image resizeMode='stretch' source={source} style={styles.itemImage} />
-                        <Text style={[styles.optionText, {width: sr.ws(sr.w-90), color: checked ? '#FFFFFF': '#2D2E30'}]}>{children}</Text>
+                        <Text style={[styles.optionText, { width: sr.ws(sr.w - 90), color: checked ? '#FFFFFF' : '#2D2E30' }]}>{children}</Text>
                     </View>
                 </TouchableOpacity>
-            )
+            );
         }
-        const right = multi ? _.includes(answer, index) : answer===index;
+        const right = multi ? _.includes(answer, index) : answer === index;
         const mark = right ? app.img.specopsNew_right : checked ? app.img.specopsNew_wrong : null;
         return (
             <View style={styles.row}>
                 {
-                    !!mark ?
-                    <Image resizeMode='stretch' source={mark} style={right ? styles.markWrong : styles.markRight} />
+                    mark ?
+                        <Image resizeMode='stretch' source={mark} style={right ? styles.markWrong : styles.markRight} />
                     :
-                    <View style={styles.markWrong}/>
+                        <View style={styles.markWrong} />
                 }
-                <View style={[styles.optionMarkContianer, {backgroundColor: checked ? '#464748' : '#EDEEEF'}]}>
+                <View style={[styles.optionMarkContianer, { backgroundColor: checked ? '#464748' : '#EDEEEF' }]}>
                     <Image resizeMode='stretch' source={source} style={styles.itemImage} />
-                    <Text style={[styles.optionText, {width: sr.ws(sr.w-110), color: checked ? '#FFFFFF': '#2D2E30'}]}>{children}</Text>
+                    <Text style={[styles.optionText, { width: sr.ws(sr.w - 110), color: checked ? '#FFFFFF' : '#2D2E30' }]}>{children}</Text>
                 </View>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var RadioItem = React.createClass({
-    getInitialState: function() {
+const RadioItem = React.createClass({
+    getInitialState: function () {
         return {
             checked: -1,
         };
     },
-    onPress(i) {
+    onPress (i) {
         this.props.onChange(i);
-        this.setState({checked: i});
+        this.setState({ checked: i });
     },
-    render() {
-        const {index, options, answer, myanswer, showResult, title} = this.props;
-        const {checked} = this.state;
+    render () {
+        const { index, options, answer, myanswer, showResult, title } = this.props;
+        const { checked } = this.state;
         return (
             <View style={styles.itemContianer}>
                 <View style={styles.itemTitleContianer}>
@@ -81,31 +81,31 @@ var RadioItem = React.createClass({
                     <Text style={styles.itemTitleText}>{title}</Text>
                 </View>
                 {
-                    options.map((item, i)=>(
+                    options.map((item, i) => (
                         <Option
                             key={i}
                             index={i}
                             answer={answer}
                             showResult={showResult}
-                            checked={showResult ? i===myanswer: i===checked}
+                            checked={showResult ? i === myanswer : i === checked}
                             onPress={this.onPress.bind(null, i)}>
                             {item}
                         </Option>
                     ))
                 }
             </View>
-        )
-    }
-})
+        );
+    },
+});
 
-var CheckItem = React.createClass({
-    getInitialState: function() {
+const CheckItem = React.createClass({
+    getInitialState: function () {
         return {
             checked: [],
         };
     },
-    onPress(i) {
-        let {checked} = this.state;
+    onPress (i) {
+        const { checked } = this.state;
         let newChecked;
         if (_.includes(checked, i)) {
             newChecked = _.without(checked, i);
@@ -113,66 +113,66 @@ var CheckItem = React.createClass({
             newChecked = checked.concat(i);
         }
         this.props.onChange(newChecked);
-        this.setState({checked: newChecked});
+        this.setState({ checked: newChecked });
     },
-    render() {
-        const {index, options, answer, myanswer, showResult, title} = this.props;
-        const {checked} = this.state;
+    render () {
+        const { index, options, answer, myanswer, showResult, title } = this.props;
+        const { checked } = this.state;
         return (
             <View style={styles.itemContianer}>
                 <View style={styles.itemTitleContianer}>
                     <Text>{index}</Text>
-                    <Label multi/>
+                    <Label multi />
                     <Text style={styles.itemTitleText}>{title}</Text>
                 </View>
                 {
-                    options.map((item, i)=>(
+                    options.map((item, i) => (
                         <Option
                             multi
                             key={i}
                             index={i}
                             answer={answer}
                             showResult={showResult}
-                            checked={showResult ? _.includes(myanswer, i): _.includes(checked, i)}
+                            checked={showResult ? _.includes(myanswer, i) : _.includes(checked, i)}
                             onPress={this.onPress.bind(null, i)}>
                             {item}
                         </Option>
                     ))
                 }
             </View>
-        )
-    }
-})
+        );
+    },
+});
 
-var SubjectItem = React.createClass({
-    render() {
+const SubjectItem = React.createClass({
+    render () {
         const props = this.props;
         return props.multi ? <CheckItem {...props} /> : <RadioItem {...props} />;
-    }
-})
+    },
+});
 
-var ClassTest = React.createClass({
+const ClassTest = React.createClass({
     mixins: [SceneMixin],
     statics: {
-        leftButton: {handler: ()=>app.scene.goBack()},
+        leftButton: { handler: () => app.scene.goBack() },
     },
-    goBack() {
-        var routes = app.navigator.getCurrentRoutes();
-        const {routeIndex} = this.props;
+    goBack () {
+        const routes = app.navigator.getCurrentRoutes();
+        const { routeIndex } = this.props;
         if (routeIndex === undefined) {
             app.navigator.pop();
         } else {
-            app.navigator.popToRoute(routes[routeIndex-1]);
+            app.navigator.popToRoute(routes[routeIndex - 1]);
         }
     },
-    getDefaultProps: function() {
+    getDefaultProps: function () {
         return {
             showResult: false,
-            myanswers: {}
+            myanswers: {},
         };
     },
-    getInitialState() {
-        const {showResult, myanswers} = this.props;
+    getInitialState () {
+        const { showResult, myanswers } = this.props;
         return {
             list: [],
             showResult,
@@ -182,54 +182,54 @@ var ClassTest = React.createClass({
             lastStudyProgress: this.props.lastStudyProgress,
         };
     },
-    componentWillMount() {
+    componentWillMount () {
         this.answers = {};
     },
-    componentDidMount() {
+    componentDidMount () {
         if (!this.props.list) {
-            var param = {
+            const param = {
                 userID: app.personal.info.userID,
                 videoID: this.props.videoId,
             };
             POST(app.route.ROUTE_GET_SUBJECT_ALL, param, this.getDataSuccess, true);
         } else {
-            this.setState({list: this.props.list});
+            this.setState({ list: this.props.list });
         }
     },
-    getDataSuccess(data) {
+    getDataSuccess (data) {
         if (data.success) {
-            var subjects = data.context.answer||[];
-            var message = data.context.message||[];
-            var showResult = false, myanswers = {};
-            var list = subjects.map((item, k)=>{
-                var newItem = {}, options = [];
-                var {isOver, userOption, id, subject: { content, multi, option, answer} } =  item;
+            const subjects = data.context.answer || [];
+            const message = data.context.message || [];
+            let showResult = false, myanswers = {};
+            const list = subjects.map((item, k) => {
+                const newItem = {}, options = [];
+                const { isOver, userOption, id, subject: { content, multi, option, answer } } = item;
                 newItem.multi = multi;
-                for (var i in answer) {
+                for (let i in answer) {
                     options.push(answer[i]);
                 }
                 newItem.options = options;
                 newItem.title = content;
-                newItem.answer = multi ? option.map((o)=>o-1) : option[0]-1;
+                newItem.answer = multi ? option.map((o) => o - 1) : option[0] - 1;
                 newItem.answerId = id;
-                showResult = showResult||isOver;
-                myanswers[k] =  multi ? userOption.map((o)=>o-1) : userOption[0]-1; //为了适应服务器端从1起始
+                showResult = showResult || isOver;
+                myanswers[k] = multi ? userOption.map((o) => o - 1) : userOption[0] - 1; // 为了适应服务器端从1起始
                 return newItem;
-            })
-            this.setState({list, showResult, myanswers, message});
+            });
+            this.setState({ list, showResult, myanswers, message });
         } else {
-            this.setState({showMessageBox: true});
+            this.setState({ showMessageBox: true });
         }
     },
-    doSubmit(showResult) {
+    doSubmit (showResult) {
         if (showResult) {
             this.doTestAgain();
         } else {
             this.doSubmitScore();
         }
     },
-    doTestAgain() {
-        // let {routeIndex, videoId} = this.props;
+    doTestAgain () {
+        // const {routeIndex, videoId} = this.props;
         // routeIndex = (routeIndex === undefined) ? app.navigator.getCurrentRoutes().length-1 : routeIndex;
         // app.navigator.replace({
         //     component: ClassTest,
@@ -250,33 +250,33 @@ var ClassTest = React.createClass({
             this.goBack();
         }
     },
-    doSubmitScore() {
+    doSubmitScore () {
         const answers = this.answers;
-        const {list} = this.state;
-        for (var i = 0, len = list.length; i < len; i++) {
+        const { list } = this.state;
+        for (let i = 0, len = list.length; i < len; i++) {
             if (answers[i] === undefined) {
-                Toast('题目 '+(i+1)+' 还没有完成, 不能提交');
+                Toast('题目 ' + (i + 1) + ' 还没有完成, 不能提交');
                 return;
             }
         }
-        var answer = [];
-        for (var i in answers) {
-            var o = answers[i], k = list[i];
+        const answer = [];
+        for (let i in answers) {
+            const o = answers[i], k = list[i];
             answer.push({
                 userID: app.personal.info.userID,
                 answerId: k.answerId,
-                userOption: o.length ? _.sortBy(o.map((m)=>m+1)) : [o+1],
+                userOption: o.length ? _.sortBy(o.map((m) => m + 1)) : [o + 1],
                 isOver: true,
-            })
+            });
         }
-        var param = {
-            answer
+        const param = {
+            answer,
         };
         POST(app.route.ROUTE_SUBMIT_ANSWER, param, this.doSubmitScoreSuccess, true);
     },
-    doSubmitScoreSuccess(data) {
-        let {routeIndex, videoId, lastStudyProgress} = this.props;
-        routeIndex = (routeIndex === undefined) ? app.navigator.getCurrentRoutes().length-1 : routeIndex;
+    doSubmitScoreSuccess (data) {
+        let { routeIndex, videoId, lastStudyProgress } = this.props;
+        routeIndex = (routeIndex === undefined) ? app.navigator.getCurrentRoutes().length - 1 : routeIndex;
         app.navigator.push({
             component: ClassTest,
             title: '完成测试',
@@ -287,51 +287,51 @@ var ClassTest = React.createClass({
                 routeIndex,
                 videoId,
                 lastStudyProgress,
-                isFromMainPage: this.props.isFromMainPage||false,
+                isFromMainPage: this.props.isFromMainPage || false,
             },
-        })
+        });
     },
-    onChange(index, checked) {
+    onChange (index, checked) {
         this.answers[index] = checked;
     },
-    render() {
-        const {showResult, myanswers, message} = this.state;
-        const {list} = this.state;
-        const {name} = this.props;
+    render () {
+        const { showResult, myanswers, message } = this.state;
+        const { list } = this.state;
+        const { name } = this.props;
         return (
             <View style={styles.container}>
-                <View style={styles.lineView}/>
+                <View style={styles.lineView} />
                 {
                     !!list.length &&
                     <ScrollView>
                         {
                             showResult ?
-                            <View style={styles.resultContainer}>
-                                <Image resizeMode='stretch' source={app.img.specopsNew_wangyu} style={styles.wangyu} />
-                                <Image resizeMode='stretch' source={app.img.specopsNew_test_background} style={styles.test_background}>
-                                    <Text style={styles.result_text1}>RESULTS</Text>
-                                    {message[0] != null && <Text style={styles.result_text2}>{message[0]}</Text>}
-                                    {message[1] != null && <Text style={styles.result_text3}>{message[1]}</Text>}
-                                    {message[2] != null && <Text style={styles.result_text4}>{message[2]}</Text>}
-                                    {message[3] != null && <Text style={styles.result_text5}>{message[3]}</Text>}
-                                </Image>
-                                <Image resizeMode='stretch' source={app.img.specopsNew_result_arrow} style={styles.result_arrow} />
-                                <Text style={styles.result_text}>测试结果</Text>
-                            </View>
+                                <View style={styles.resultContainer}>
+                                    <Image resizeMode='stretch' source={app.img.specopsNew_wangyu} style={styles.wangyu} />
+                                    <Image resizeMode='stretch' source={app.img.specopsNew_test_background} style={styles.test_background}>
+                                        <Text style={styles.result_text1}>RESULTS</Text>
+                                        {message[0] != null && <Text style={styles.result_text2}>{message[0]}</Text>}
+                                        {message[1] != null && <Text style={styles.result_text3}>{message[1]}</Text>}
+                                        {message[2] != null && <Text style={styles.result_text4}>{message[2]}</Text>}
+                                        {message[3] != null && <Text style={styles.result_text5}>{message[3]}</Text>}
+                                    </Image>
+                                    <Image resizeMode='stretch' source={app.img.specopsNew_result_arrow} style={styles.result_arrow} />
+                                    <Text style={styles.result_text}>测试结果</Text>
+                                </View>
                             :
-                            <View style={styles.titleContainer}>
-                                <View style={styles.titleText}>
-                                    <Text style={styles.title}>{name}</Text>
+                                <View style={styles.titleContainer}>
+                                    <View style={styles.titleText}>
+                                        <Text style={styles.title}>{name}</Text>
+                                    </View>
+                                    <View style={styles.infoContainer}>
+                                        <Text style={styles.infoText}>题数:{list.length}</Text>
+                                        <Text style={styles.infoText}>总分数:{100}</Text>
+                                        <Text style={styles.infoText}>及格:{60}</Text>
+                                    </View>
                                 </View>
-                                <View style={styles.infoContainer}>
-                                    <Text style={styles.infoText}>题数:{list.length}</Text>
-                                    <Text style={styles.infoText}>总分数:{100}</Text>
-                                    <Text style={styles.infoText}>及格:{60}</Text>
-                                </View>
-                            </View>
                         }
                         {
-                            list.map((item, i)=><SubjectItem {...item} myanswer={myanswers[i]} showResult={showResult} index={i+1} onChange={this.onChange.bind(null, i)} key={i} />)
+                            list.map((item, i) => <SubjectItem {...item} myanswer={myanswers[i]} showResult={showResult} index={i + 1} onChange={this.onChange.bind(null, i)} key={i} />)
                         }
                         <View style={styles.buttonContainer}>
                             <Button onPress={this.doSubmit.bind(null, showResult)} style={styles.button} textStyle={styles.buttonText}>{showResult ? '继续学习' : '提         交'}</Button>
@@ -341,25 +341,25 @@ var ClassTest = React.createClass({
                 {
                     this.state.showMessageBox &&
                     <MessageBox
-                        content="该视频没有随堂测试!"
-                        doConfirm={()=>{this.goBack()}}
+                        content='该视频没有随堂测试!'
+                        doConfirm={() => { this.goBack(); }}
                         />
                 }
             </View>
-        )
-    }
+        );
+    },
 });
 
 module.exports = ClassTest;
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F0F0F7',
     },
     titleContainer: {
         height: 90,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     titleText: {
         flex: 1,
@@ -377,7 +377,7 @@ var styles = StyleSheet.create({
     lineView: {
         height: 1,
         width: sr.w,
-        backgroundColor: '#EFEFEF'
+        backgroundColor: '#EFEFEF',
     },
     wangyu: {
         width: 100,
@@ -444,15 +444,15 @@ var styles = StyleSheet.create({
     itemTitleContianer: {
         flexDirection: 'row',
         alignItems: 'center',
-        height: 50,
         paddingLeft: 12,
         borderBottomWidth: 1,
         borderBottomColor: '#F4F5F6',
         marginBottom: 4,
     },
     itemTitleText: {
-        width: sr.w-85,
+        width: sr.w - 85,
         fontSize: 14,
+        marginVertical: 10,
     },
     label: {
         width: 22,
@@ -503,16 +503,16 @@ var styles = StyleSheet.create({
         fontSize: 14,
     },
     buttonContainer: {
-         height: 80,
-         justifyContent: 'center',
-         alignItems: 'center',
-         backgroundColor: '#FFFFFF',
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
     },
     button: {
-      height: 40,
-      width: (sr.w-30),
-      borderRadius: 2,
-      backgroundColor: '#FB6567',
+        height: 40,
+        width: (sr.w - 30),
+        borderRadius: 2,
+        backgroundColor: '#FB6567',
     },
     buttonText: {
         fontSize: 16,

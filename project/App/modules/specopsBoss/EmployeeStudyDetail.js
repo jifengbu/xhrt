@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -13,27 +13,27 @@ var {
 } = ReactNative;
 
 import Swiper from 'react-native-swiper2';
-var HomeworkList = require('./HomeworkList.js');
-var ClassTestList = require('./ClassTestList.js');
-var EmployeeStudyTable = require('./EmployeeStudyTable.js');
-var PieChart = require('./pieChart.js');
-var moment = require('moment');
-var CoursePlayer = require('../specops/CoursePlayer.js');
-var {DImage, MessageBox} = COMPONENTS;
+const HomeworkList = require('./HomeworkList.js');
+const ClassTestList = require('./ClassTestList.js');
+const EmployeeStudyTable = require('./EmployeeStudyTable.js');
+const PieChart = require('./pieChart.js');
+const moment = require('moment');
+const CoursePlayer = require('../specops/CoursePlayer.js');
+const { DImage, MessageBox } = COMPONENTS;
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
-        leftButton: { handler: ()=>{app.navigator.pop()}},
+        leftButton: { handler: () => { app.navigator.pop(); } },
     },
-    getInitialState() {
+    getInitialState () {
         this.isRefreshScroll = false;
         this.sections = [];
         this.radios = [];
         this.numbers = [];
         this.startTimes = [];
         this.endTimes = [];
-        for (var i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++) {
             this.sections[i] = [];
             this.radios[i] = [];
             this.numbers[i] = [];
@@ -49,81 +49,81 @@ module.exports = React.createClass({
             haveData: false,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getList();
     },
-    getList() {
-        var param = {
+    getList () {
+        const param = {
             userID: app.personal.info.userID,
             companyId: app.personal.info.companyInfo.companyId,
         };
         POST(app.route.ROUTE_GET_STUDY_SITUATION_DETAILS, param, this.getListSuccess, true);
     },
-    getListSuccess(data) {
+    getListSuccess (data) {
         if (data.success) {
             if (data.context) {
                 this.sections = [];
                 this.radios = [];
                 this.numbers = [];
-                for (var i = 0; i < 5; i++) {
+                for (let i = 0; i < 5; i++) {
                     this.sections[i] = [];
                     this.radios[i] = [];
                     this.numbers[i] = [];
                 }
-                let {avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess,specopsUserTask, studyWhenLong, welcomeCourses,monthStudyWhenLong} = data.context;
-                this.setState({avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess,specopsUserTask, studyWhenLong, welcomeCourses,monthStudyWhenLong});
+                const { avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess, specopsUserTask, studyWhenLong, welcomeCourses, monthStudyWhenLong } = data.context;
+                this.setState({ avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess, specopsUserTask, studyWhenLong, welcomeCourses, monthStudyWhenLong });
                 if (quizzesSuccess != null) {
-                    for (var i in quizzesSuccess) {
+                    for (let i in quizzesSuccess) {
                         this.startTimes.push(quizzesSuccess[i].startData);
                         this.endTimes.push(quizzesSuccess[i].endData);
-                        for (var j in quizzesSuccess[i].content) {
-                            this.sections[i].push(quizzesSuccess[i].content[j].title+'('+quizzesSuccess[i].content[j].sectionMax+'~'+quizzesSuccess[i].content[j].sectionMin+')');
-                            this.radios[i].push(quizzesSuccess[i].content[j].proportion+'%');
+                        for (let j in quizzesSuccess[i].content) {
+                            this.sections[i].push(quizzesSuccess[i].content[j].title + '(' + quizzesSuccess[i].content[j].sectionMax + '~' + quizzesSuccess[i].content[j].sectionMin + ')');
+                            this.radios[i].push(quizzesSuccess[i].content[j].proportion + '%');
                             this.numbers[i].push(quizzesSuccess[i].content[j].number);
                         }
                     }
                 }
-                _.remove(this.sections, (item)=>item.length===0);
-                _.remove(this.radios, (item)=>item.length===0);
-                _.remove(this.numbers, (item)=>item.length===0);
+                _.remove(this.sections, (item) => item.length === 0);
+                _.remove(this.radios, (item) => item.length === 0);
+                _.remove(this.numbers, (item) => item.length === 0);
             }
-            this.setState({haveData: false});
-            setTimeout(()=>{
-                this.setState({haveData: true});
-            },600);
+            this.setState({ haveData: false });
+            setTimeout(() => {
+                this.setState({ haveData: true });
+            }, 600);
         } else {
             Toast(data.msg);
         }
     },
-    toHomeworkList() {
+    toHomeworkList () {
         app.navigator.push({
             title: '课后作业',
             component: HomeworkList,
-            passProps: {showAll: true},
+            passProps: { showAll: true },
         });
     },
-    toTestList() {
+    toTestList () {
         app.navigator.push({
             component: ClassTestList,
         });
     },
-    toPlayVideo(obj) {
-        //跳转到特种兵视频播放页
-        var param = {
+    toPlayVideo (obj) {
+        // 跳转到特种兵视频播放页
+        const param = {
             userID:app.personal.info.userID,
             videoID: obj.videoID,
         };
-        POST(app.route.ROUTE_STUDY_PROGRESS, param, (data)=>{
+        POST(app.route.ROUTE_STUDY_PROGRESS, param, (data) => {
             if (data.success) {
                 if (!obj.isOver) {
                     app.navigator.push({
                         component: CoursePlayer,
-                        passProps: {otherVideoID:obj.videoID,newSee:0,lastSee:1,update:true},
+                        passProps: { otherVideoID:obj.videoID, newSee:0, lastSee:1, update:true },
                     });
                 } else {
                     app.navigator.push({
                         component: CoursePlayer,
-                        passProps: {isCourseRecord:true, lastStudyProgress: data.context, otherVideoID: obj.videoID},
+                        passProps: { isCourseRecord:true, lastStudyProgress: data.context, otherVideoID: obj.videoID },
                     });
                 }
             } else {
@@ -131,64 +131,64 @@ module.exports = React.createClass({
             }
         });
     },
-    onChangePage(){
+    onChangePage () {
         this.setState({});
     },
-    onLayoutSwiper(e) {
-        var {height} = e.nativeEvent.layout;
-        this.viewSwiperHeight = e.nativeEvent.layout.y-height;
+    onLayoutSwiper (e) {
+        const { height } = e.nativeEvent.layout;
+        this.viewSwiperHeight = e.nativeEvent.layout.y - height;
     },
-    render() {
-        let {avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess,specopsUserTask, studyWhenLong, welcomeCourses,monthStudyWhenLong} = this.state;
+    render () {
+        const { avgCoursesNumber, monthAvgCoursesNumber, quizzesSuccess, specopsUserTask, studyWhenLong, welcomeCourses, monthStudyWhenLong } = this.state;
         return (
             <View style={styles.container}>
                 <ScrollView onScroll={(e) => {
                     if (e.nativeEvent.contentOffset.y >= this.viewSwiperHeight) {
                         if (!this.isRefreshScroll) {
-                            setTimeout(()=>{
-                                this.setState({changePage: true});
+                            setTimeout(() => {
+                                this.setState({ changePage: true });
                                 this.isRefreshScroll = true;
-                            },100);
+                            }, 100);
                         }
                     }
                 }}>
-                    <View style={styles.line}/>
+                    <View style={styles.line} />
                     {
                         this.state.haveData &&
-                        <EmployeeStudyTable avgCoursesNumber={avgCoursesNumber} monthAvgCoursesNumber={monthAvgCoursesNumber} studyWhenLong={studyWhenLong} monthStudyWhenLong={monthStudyWhenLong}/>
+                        <EmployeeStudyTable avgCoursesNumber={avgCoursesNumber} monthAvgCoursesNumber={monthAvgCoursesNumber} studyWhenLong={studyWhenLong} monthStudyWhenLong={monthStudyWhenLong} />
                     }
                     <View style={styles.classStyle}>
-                        <View style={styles.line}/>
+                        <View style={styles.line} />
                         <View style={styles.topStyle}>
                             <Text style={styles.themeStyles}>
                                 {'本周最受欢迎课程'}
                             </Text>
                         </View>
                         {
-                            welcomeCourses.length?
-                            welcomeCourses.map((item, i)=>{
+                            welcomeCourses.length ?
+                            welcomeCourses.map((item, i) => {
                                 return (
                                     <TouchableHighlight
                                         key={i}
-                                        underlayColor="rgba(0, 0, 0, 0)"
-                                        onPress={this.toPlayVideo.bind(null,item)}
+                                        underlayColor='rgba(0, 0, 0, 0)'
+                                        onPress={this.toPlayVideo.bind(null, item)}
                                         style={styles.rowStyle}>
                                         <View style={styles.listViewItemContain}>
                                             {
-                                                i == 0?
-                                                <View style={styles.rowLineOne}/>
+                                                i == 0 ?
+                                                    <View style={styles.rowLineOne} />
                                                 :
-                                                <View style={styles.rowLine}/>
+                                                    <View style={styles.rowLine} />
                                             }
                                             <View style={styles.ItemContentContain}>
                                                 <Text
                                                     style={styles.numStyles}>
-                                                    {i+1}
+                                                    {i + 1}
                                                 </Text>
                                                 <DImage
                                                     resizeMode='stretch'
                                                     defaultSource={app.img.common_default}
-                                                    source={{uri:item.urlImg}}
+                                                    source={{ uri:item.urlImg }}
                                                     style={styles.LeftImage} />
                                                 <View style={styles.flexConten}>
                                                     <View style={styles.rowViewStyle}>
@@ -202,50 +202,50 @@ module.exports = React.createClass({
                                                         <Text
                                                             numberOfLines={1}
                                                             style={styles.lastTimeText}>
-                                                            { item.userClicks+'位员工已学习'}
+                                                            { item.userClicks + '位员工已学习'}
                                                         </Text>
                                                     </View>
                                                 </View>
                                             </View>
                                         </View>
                                     </TouchableHighlight>
-                                )
+                                );
                             })
-                            :<View style={styles.listFooterContainer}>
-                                <View style={styles.rowLineOne}/>
+                            : <View style={styles.listFooterContainer}>
+                                <View style={styles.rowLineOne} />
                                 <Text style={styles.listFooter}>{'您的员工还没有开始学习'}</Text>
                             </View>
                         }
-                        <View style={styles.line}/>
+                        <View style={styles.line} />
                     </View>
                     <View style={styles.testStyle}>
-                        <View style={styles.line}/>
+                        <View style={styles.line} />
                         <View style={styles.topStyle}>
                             <Text style={styles.themeStyles}>
                                 {'随堂测试成绩'}
                             </Text>
                         </View>
-                        <View style={styles.line}/>
+                        <View style={styles.line} />
                         {
                             this.state.haveData &&
                             <Swiper
                                 paginationStyle={styles.paginationStyle}
-                                dot={<View style={{backgroundColor:'#E0E0E0', width: 6, height: 6,borderRadius: 3, marginLeft: 6, marginRight: 6,}} />}
-                                activeDot={<View style={{backgroundColor:'#FA4C50', width: 12, height: 6,borderRadius: 3, marginLeft: 6, marginRight: 6,}} />}
+                                dot={<View style={{ backgroundColor:'#E0E0E0', width: 6, height: 6, borderRadius: 3, marginLeft: 6, marginRight: 6 }} />}
+                                activeDot={<View style={{ backgroundColor:'#FA4C50', width: 12, height: 6, borderRadius: 3, marginLeft: 6, marginRight: 6 }} />}
                                 height={sr.ws(169)}
                                 onChangePage={this.onChangePage}
                                 loop={false}>
                                 {
-                                    this.sections.map((item, i)=>{
+                                    this.sections.map((item, i) => {
                                         let timeText = '';
-                                        let startMoment = moment(this.startTimes[i]),  nowMoment = moment(), endMoment = moment(this.endTimes[i]);
+                                        const startMoment = moment(this.startTimes[i]), nowMoment = moment(), endMoment = moment(this.endTimes[i]);
                                         if (!nowMoment.isBefore(startMoment) && nowMoment.isBefore(endMoment)) {
                                             timeText = '本周随堂测试成绩';
                                         } else {
-                                            timeText = moment(this.startTimes[i]).format('M月D日')+' ~ '+moment(this.endTimes[i]).format('M月D日')+' 随堂测试成绩';
+                                            timeText = moment(this.startTimes[i]).format('M月D日') + ' ~ ' + moment(this.endTimes[i]).format('M月D日') + ' 随堂测试成绩';
                                         }
                                         return (
-                                            <View  key={i} onLayout={this.onLayoutSwiper} style={styles.bannerImage}>
+                                            <View key={i} onLayout={this.onLayoutSwiper} style={styles.bannerImage}>
                                                 <View style={styles.tableTop}>
                                                     <Text style={styles.tableTopText}>
                                                         {timeText}
@@ -253,15 +253,15 @@ module.exports = React.createClass({
                                                 </View>
                                                 {
                                                     this.state.haveData &&
-                                                    <PieChart showUnitText={'人'}  sections={this.sections[i]} radios={this.radios[i]} numbers={this.numbers[i]} />
+                                                    <PieChart showUnitText={'人'} sections={this.sections[i]} radios={this.radios[i]} numbers={this.numbers[i]} />
                                                 }
                                             </View>
-                                        )
+                                        );
                                     })
                                 }
                             </Swiper>
                         }
-                        <View style={styles.line}/>
+                        <View style={styles.line} />
                         <TouchableOpacity
                             onPress={this.toTestList}
                             style={styles.btnStyle}>
@@ -271,27 +271,26 @@ module.exports = React.createClass({
                         </TouchableOpacity>
                     </View>
                     <View style={styles.testStyle}>
-                        <View style={styles.line}/>
+                        <View style={styles.line} />
                         <TouchableOpacity
                             onPress={this.toHomeworkList}
                             style={styles.topStyle}>
                             <Text style={styles.themeStyles}>
                                 {'课后作业'}
                             </Text>
-                            <Text style={[styles.themeStyles,{marginRight: 10,color:'#7E7E7E'}]}>
+                            <Text style={[styles.themeStyles, { marginRight: 10, color:'#7E7E7E' }]}>
                                 {'查看更多'}
                             </Text>
                         </TouchableOpacity>
-                        <HomeworkList showAll={false}/>
+                        <HomeworkList showAll={false} />
                     </View>
                 </ScrollView>
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F0F1F2',
@@ -322,7 +321,7 @@ var styles = StyleSheet.create({
     btnStyle: {
         height: 45,
         marginLeft: 80,
-        width: sr.w-160,
+        width: sr.w - 160,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -331,7 +330,7 @@ var styles = StyleSheet.create({
         height: 1,
         left: 20,
         top: 0,
-        width: sr.w-40,
+        width: sr.w - 40,
         backgroundColor: '#E0E0E0',
     },
     rowLineOne: {
@@ -350,7 +349,7 @@ var styles = StyleSheet.create({
     },
     ItemContentContain: {
         flexDirection: 'row',
-        width: sr.w-20,
+        width: sr.w - 20,
         margin: 10,
     },
     numStyles: {

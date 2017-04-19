@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     View,
@@ -10,13 +10,13 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    finishGuide() {
+    finishGuide () {
         this.props.doGuidance();
     },
-    render() {
+    render () {
         return (
             <View style={styles.overlayContainer}>
                 <Image
@@ -28,21 +28,19 @@ module.exports = React.createClass({
                             <Text style={styles.nameText}>
                                 {'世界500强的管控系统'}
                             </Text>
-                            <Text style={styles.nameText}>
+                            <Text style={[styles.nameText, { marginTop:3 }]}>
                                 {'系统化的赢销人才成长体系'}
                             </Text>
-                            <Text style={styles.nameText}>
+                            <Text style={[styles.nameText, { marginTop:3 }]}>
                                 {'可便捷记录工作报表，轻松管理每日工作'}
                             </Text>
                         </View>
-                        <View style={styles.midContainer}>
-                            <Text style={styles.themeText}>
-                                {'已为您免费开通'}
-                            </Text>
-                            <Text style={styles.titleText}>
-                                {'3集王雩老师课程'}
-                            </Text>
-                        </View>
+                        <Text style={styles.promptText}>
+                            {'点击立即体验'}
+                        </Text>
+                        <Text style={styles.detailText}>
+                            {'即可免费观看3集特种兵视频'}
+                        </Text>
                         <View style={styles.bottomContainer}>
                             <TouchableOpacity
                                 onPress={this.finishGuide}
@@ -56,15 +54,15 @@ module.exports = React.createClass({
                 </Image>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        width:sr.w-60,
-        height: 260,
-        marginTop: 140,
-        backgroundColor:'#FFFFFF',
+        width:sr.w - 60,
+        height: 250,
+        marginTop: 130,
+        alignItems: 'center',
     },
     overlayContainer: {
         position:'absolute',
@@ -73,7 +71,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0,0,0,0.3)'
+        backgroundColor: 'rgba(0,0,0,0.3)',
     },
     overlayBackgroundStyle: {
         width:sr.w,
@@ -84,40 +82,34 @@ var styles = StyleSheet.create({
     nameText: {
         color: '#666666',
         fontSize: 14,
-        fontFamily: 'STHeitiSC-Medium'
+        fontFamily: 'STHeitiSC-Medium',
     },
-    themeText: {
-        color: 'black',
-        fontSize: 15,
-        fontFamily: 'STHeitiSC-Medium'
+    promptText: {
+        color: '#000000',
+        fontSize: 16,
+        marginTop: 20,
+        fontFamily: 'STHeitiSC-Medium',
     },
-    titleText: {
+    detailText: {
         color: '#DE3031',
-        fontSize: 17,
-        fontWeight: '500',
-        marginTop: 5,
-        fontFamily: 'STHeitiSC-Medium'
+        fontSize: 16,
+        marginTop: 10,
+        fontFamily: 'STHeitiSC-Medium',
     },
     btnText: {
         color: '#FFFFFF',
         fontSize: 20,
-        fontFamily: 'STHeitiSC-Medium'
     },
     topContainer: {
-        width: sr.w-60,
-        height: 90,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    midContainer: {
-        width: sr.w-60,
+        width: sr.w - 60,
         height: 90,
         alignItems: 'center',
         justifyContent: 'center',
     },
     bottomContainer: {
-        width: sr.w-60,
-        height: 80,
+        width: sr.w - 60,
+        height: 60,
+        marginTop: 20,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -127,6 +119,6 @@ var styles = StyleSheet.create({
         borderRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#DE3031'
+        backgroundColor: '#DE3031',
     },
 });

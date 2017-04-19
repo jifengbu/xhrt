@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     TouchableOpacity,
@@ -13,48 +13,48 @@ var {
     NativeModules,
 } = ReactNative;
 
-var TimerMixin = require('react-timer-mixin');
+const TimerMixin = require('react-timer-mixin');
 import Video from '@remobile/react-native-video';
 
-var UtilsModule = NativeModules.UtilsModule;
-var {Slider} = COMPONENTS;
-var videoEnable = true;
-var hasPause = false;
+const UtilsModule = NativeModules.UtilsModule;
+const { Slider } = COMPONENTS;
+let videoEnable = true;
+let hasPause = false;
 
-var ControlPanel = React.createClass({
-    getShowTime(sec) {
+const ControlPanel = React.createClass({
+    getShowTime (sec) {
         sec = Math.floor(sec);
-        var min = Math.floor(sec/60);
-        sec -= min*60;
+        const min = Math.floor(sec / 60);
+        sec -= min * 60;
         return app.utils.timeFormat(min, sec);
     },
-    measureSliderValue(sec) {
-        var {playTime, totalTime} = this.props;
-        if (totalTime<=0) {
+    measureSliderValue (sec) {
+        const { playTime, totalTime } = this.props;
+        if (totalTime <= 0) {
             return 0;
         }
-        return playTime/totalTime;
+        return playTime / totalTime;
     },
-    measureTime(progress) {
-        var {totalTime} = this.props;
-        return totalTime*progress;
+    measureTime (progress) {
+        const { totalTime } = this.props;
+        return totalTime * progress;
     },
-    onSlidingStart() {
+    onSlidingStart () {
         this.props.stopPlayVideo();
         this.props.clearControlPanelTimeout();
         this.progress = this.refs.slider.props.value;
     },
-    onSlidingComplete() {
+    onSlidingComplete () {
         this.props.startControlPanelTimeout();
         this.props.seekVideo(this.measureTime(this.progress));
     },
-    onValueChange(value) {
+    onValueChange (value) {
         this.progress = value;
     },
-    shouldComponentUpdate(nextProps, nextState){
+    shouldComponentUpdate (nextProps, nextState) {
         return videoEnable && !hasPause;
     },
-    render() {
+    render () {
         return (
             <TouchableOpacity
                 style={styles.controlFullPanel}
@@ -62,15 +62,14 @@ var ControlPanel = React.createClass({
                 <TouchableOpacity onPress={this.props.togglePlayVideo}>
                     <Image
                         resizeMode='stretch'
-                        source={this.props.paused?app.img.play_play:app.img.play_stop}
-                        style={[styles.video_icon, {marginLeft:10, marginRight:16,}]}>
-                    </Image>
+                        source={this.props.paused ? app.img.play_play : app.img.play_stop}
+                        style={[styles.video_icon, { marginLeft:10, marginRight:16 }]} />
                 </TouchableOpacity>
                 <View style={styles.video_progress_container}>
                     <Slider
-                        ref="slider"
-                        vertical={true}
-                        thumbTouchSize={{width:40, height:80}}
+                        ref='slider'
+                        vertical
+                        thumbTouchSize={{ width:40, height:80 }}
                         style={styles.video_progress}
                         minimumTrackTintColor='#54C1E8'
                         thumbStyle={styles.video_progress_button}
@@ -89,13 +88,13 @@ var ControlPanel = React.createClass({
                     </Text>
                 </View>
             </TouchableOpacity>
-        )
-    }
+        );
+    },
 });
 
 module.exports = React.createClass({
     mixins: [TimerMixin, HideStatusMixin],
-    getInitialState() {
+    getInitialState () {
         this.lock(false);
         return {
             isControlShow: true,
@@ -107,7 +106,7 @@ module.exports = React.createClass({
             indicator: true,
         };
     },
-    lock(paused) {
+    lock (paused) {
         if (app.isandroid) {
             if (paused) {
                 UtilsModule.unlockScreen();
@@ -116,75 +115,75 @@ module.exports = React.createClass({
             }
         }
     },
-    _handleAppStateChange(currentAppState) {
+    _handleAppStateChange (currentAppState) {
         if (currentAppState === 'background') {
             this.oldpaused = this.state.paused;
-            this.setState({paused: true});
+            this.setState({ paused: true });
             this.lock(this.state.paused);
         } else if (currentAppState === 'active') {
-            this.setState({paused: true});
+            this.setState({ paused: true });
             if (!this.oldpaused) {
-                this.setState({paused: false});
-                this.lock(this.state.paused);;
+                this.setState({ paused: false });
+                this.lock(this.state.paused); ;
             }
         }
     },
-    componentDidMount() {
+    componentDidMount () {
         AppState.addEventListener('change', this._handleAppStateChange);
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         AppState.removeEventListener('change', this._handleAppStateChange);
     },
-    componentWillMount() {
+    componentWillMount () {
         app.phoneMgr.phone.speakerOn();
         this.lastPlayTime = 0;
     },
-    startControlPanelTimeout() {
+    startControlPanelTimeout () {
         if (this.state.isControlShow) {
-            this.timeoutID = this.setTimeout(()=>{
+            this.timeoutID = this.setTimeout(() => {
                 this.timeoutID = null;
-                this.setState({isControlShow: !this.state.isControlShow});
+                this.setState({ isControlShow: !this.state.isControlShow });
             }, 5000);
         }
     },
-    clearControlPanelTimeout() {
+    clearControlPanelTimeout () {
         if (this.timeoutID != null) {
             this.clearTimeout(this.timeoutID);
             this.timeoutID = null;
         }
     },
-    toggleControlPanel() {
+    toggleControlPanel () {
         this.clearControlPanelTimeout();
-        this.setState({isControlShow: !this.state.isControlShow});
+        this.setState({ isControlShow: !this.state.isControlShow });
         this.startControlPanelTimeout();
     },
-    togglePlayVideo() {
-        this.setState({paused: !this.state.paused});
+    togglePlayVideo () {
+        this.setState({ paused: !this.state.paused });
         videoEnable = true;
         this.lock(this.state.paused);
     },
-    stopPlayVideo() {
+    stopPlayVideo () {
         videoEnable = false;
-        this.setState({paused: true});
+        this.setState({ paused: true });
         this.lock(this.state.paused);
     },
-    seekVideo(time) {
-        this.setState({indicator: true});
+    seekVideo (time) {
+        this.setState({ indicator: true });
         this.video.seek(time);
-        this.setTimeout(()=>{
+        this.setTimeout(() => {
             this.onVideoSeek();
         }, 500);
     },
-    onVideoSeek() {
-        this.setState({paused: false, indicator: false});
+    onVideoSeek () {
+        this.setState({ paused: false, indicator: false });
         this.lock(this.state.paused);
-        videoEnable = true
+        videoEnable = true;
     },
-    setDuration(e) {
+    setDuration (e) {
         if (app.isandroid && hasPause) {
-            this.setState({paused:true, indicator: true});
-            this.video.seek(this.lastPlayTimeSave||0);
-            this.setTimeout(()=>{
+            this.setState({ paused:true, indicator: true });
+            this.video.seek(this.lastPlayTimeSave || 0);
+            this.setTimeout(() => {
                 hasPause = false;
             }, 1000);
         } else {
@@ -194,8 +193,8 @@ module.exports = React.createClass({
             });
         }
     },
-    onProgress(e) {
-        var deltaTime = (e.currentTime-this.lastPlayTime)/this.state.totalTime*200;
+    onProgress (e) {
+        const deltaTime = (e.currentTime - this.lastPlayTime) / this.state.totalTime * 200;
         if (deltaTime >= 1 || deltaTime < 0) {
             this.setState({
                 playTime: e.currentTime,
@@ -206,27 +205,27 @@ module.exports = React.createClass({
             showPlayTime: e.currentTime,
         });
     },
-    onEnd() {
+    onEnd () {
     },
-    onPause() {
+    onPause () {
         hasPause = true;
         this.lastPlayTimeSave = this.lastPlayTime;
     },
-    onResume() {
+    onResume () {
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <Video
-                    ref={(video)=>{this.video=video}}
-                    source={{uri: this.props.uri}}
+                    ref={(video) => { this.video = video; }}
+                    source={{ uri: this.props.uri }}
                     rate={1.0}
                     volume={1.0}
                     muted={false}
                     seek={this.state.seek}
                     paused={this.state.paused}
-                    resizeMode="stretch"
-                    repeat={true}
+                    resizeMode='stretch'
+                    repeat
                     onLoadStart={this.loadStart}
                     onLoad={this.setDuration}
                     onProgress={this.onProgress}
@@ -243,8 +242,8 @@ module.exports = React.createClass({
                     style={styles.controlFullFrame}
                     >
                     {
-                        this.state.isControlShow&&
-                        <View style={{flex:1}}>
+                        this.state.isControlShow &&
+                        <View style={{ flex:1 }}>
                             <ControlPanel
                                 playTime={this.state.playTime}
                                 showPlayTime={this.state.showPlayTime}
@@ -262,31 +261,31 @@ module.exports = React.createClass({
                                 <Image
                                     resizeMode='stretch'
                                     style={styles.closeButton}
-                                    source={app.img.live_exit}/>
+                                    source={app.img.live_exit} />
                             </TouchableOpacity>
                         </View>
                     }
                 </TouchableOpacity>
                 {this.state.indicator &&
                     <View style={[styles.controlFullFrame, {
-                            alignItems:'center',
-                            justifyContent: 'center',
-                        }]}>
-                        <ActivityIndicator size="large"/>
+                        alignItems:'center',
+                        justifyContent: 'center',
+                    }]}>
+                        <ActivityIndicator size='large' />
                     </View>
                 }
             </View>
         );
-    }
+    },
 });
 
-var NORMAL_WIDTH = sr.w;
-var NORMAL_HEIGHT = NORMAL_WIDTH*2/3;
-var FULL_WIDTH = sr.h;
-var FULL_HEIGHT = sr.w;
+const NORMAL_WIDTH = sr.w;
+const NORMAL_HEIGHT = NORMAL_WIDTH * 2 / 3;
+const FULL_WIDTH = sr.h;
+const FULL_HEIGHT = sr.w;
 
-var isPhone4S = (!app.isandroid && sr.th===480)?1:0;
-var isPhone5 = (!app.isandroid && sr.th===568)?1:0;
+const isPhone4S = (!app.isandroid && sr.th === 480) ? 1 : 0;
+const isPhone5 = (!app.isandroid && sr.th === 568) ? 1 : 0;
 
 const styles = StyleSheet.create({
     container: {
@@ -299,11 +298,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     videoFullFrame: {
-        top: (FULL_WIDTH-FULL_HEIGHT)/2,
-        left: (FULL_HEIGHT-FULL_WIDTH)/2+isPhone4S*15+isPhone5*20,
+        top: (FULL_WIDTH - FULL_HEIGHT) / 2,
+        left: (FULL_HEIGHT - FULL_WIDTH) / 2 + isPhone4S * 15 + isPhone5 * 20,
         width: FULL_WIDTH,
         height: FULL_HEIGHT,
-        transform:[{rotate:'90deg'}],
+        transform:[{ rotate:'90deg' }],
     },
     controlFullFrame: {
         position: 'absolute',
@@ -315,12 +314,12 @@ const styles = StyleSheet.create({
     controlFullPanel: {
         height: 40,
         width: FULL_WIDTH,
-        top: (FULL_WIDTH-40)/2,
-        left: ((app.isandroid?50:40)-FULL_WIDTH)/2+isPhone4S*38+isPhone5*40,
+        top: (FULL_WIDTH - 40) / 2,
+        left: ((app.isandroid ? 50 : 40) - FULL_WIDTH) / 2 + isPhone4S * 38 + isPhone5 * 40,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         flexDirection: 'row',
         alignItems:'center',
-        transform:[{rotate: '90deg'}],
+        transform:[{ rotate: '90deg' }],
     },
     video_icon: {
         height: 20,
@@ -339,7 +338,7 @@ const styles = StyleSheet.create({
         height: 20,
         width: 20,
         borderRadius: 10,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     video_progress_back: {
         height: 3,
@@ -367,7 +366,7 @@ const styles = StyleSheet.create({
         right: 10,
         top: 20,
         position: 'absolute',
-        transform:[{rotate: '90deg'}],
+        transform:[{ rotate: '90deg' }],
     },
     closeButton: {
         width: 40,

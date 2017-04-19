@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Image,
@@ -13,32 +13,31 @@ var {
     AsyncStorage,
 } = ReactNative;
 
-var AidBigImage = require('./AidBigImage.js');
-var FileTransfer = require('@remobile/react-native-file-transfer');
-var ImagePicker = require('@remobile/react-native-image-picker');
-import Picker from 'react-native-picker';
-var moment = require('moment');
-var AudioRecorder = require('../../native/index.js').AudioRecorder;
-var RecordVoiceMessageBox = require('./RecordVoiceMessageBox.js');
-var PayMessageBox = require('./PayMessageBox.js');
-var VoiceLongPressMessageBox = require('./VoiceLongPressMessageBox.js');
-var ImageLongPressMessageBox = require('./ImageLongPressMessageBox.js');
-var AidKitManagement = require('./AidKitManagement.js');
-var PublishRuleMessageBox = require('./PublishRuleMessageBox.js');
-var fs = require('react-native-fs');
-var {Button, DImage, ActionSheet,DelayTouchableOpacity} = COMPONENTS;
+const AidBigImage = require('./AidBigImage.js');
+const FileTransfer = require('@remobile/react-native-file-transfer');
+const ImagePicker = require('@remobile/react-native-image-picker');
+const moment = require('moment');
+const AudioRecorder = require('../../native/index.js').AudioRecorder;
+const RecordVoiceMessageBox = require('./RecordVoiceMessageBox.js');
+const PayMessageBox = require('./PayMessageBox.js');
+const VoiceLongPressMessageBox = require('./VoiceLongPressMessageBox.js');
+const ImageLongPressMessageBox = require('./ImageLongPressMessageBox.js');
+const AidKitManagement = require('./AidKitManagement.js');
+const PublishRuleMessageBox = require('./PublishRuleMessageBox.js');
+const fs = require('react-native-fs');
+const { Button, DImage, ActionSheet, DelayTouchableOpacity, Picker} = COMPONENTS;
 
-const ITEM_NAME = "PublishRuleMessageBox";
+const ITEM_NAME = 'PublishRuleMessageBox';
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '发布求救包',
-        leftButton: {handler: ()=>app.scene.goBack()},
+        leftButton: { handler: () => app.scene.goBack() },
     },
-    getInitialState() {
+    getInitialState () {
         this.isPlaying = [];
-        this.timeArray=[];
+        this.timeArray = [];
         return {
             title: '',
             desc: '',
@@ -66,60 +65,59 @@ module.exports = React.createClass({
             payType: 4,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         app.phoneMgr.toggleSpeaker(true);
     },
-    showBigImage(localUrlImages, index) {
+    showBigImage (localUrlImages, index) {
         app.showModal(
             <AidBigImage
                 doImageClose={app.closeModal}
                 defaultIndex={index}
-                defaultImageArray={localUrlImages}>
-            </AidBigImage>
+                defaultImageArray={localUrlImages} />
         );
     },
-    uploadFiles(filePaths) {
-        let {localUrlImages} = this.state;
+    uploadFiles (filePaths) {
+        let { localUrlImages } = this.state;
         this.tempLocalUrlImages = [];
-        filePaths.map((item, i)=>{
+        filePaths.map((item, i) => {
             localUrlImages = localUrlImages.concat(item.filepath);
             this.tempLocalUrlImages.push(item.filepath);
-        })
-        this.setState({localUrlImages: localUrlImages});
-        var param = {
-            userID:app.personal.info.userID
+        });
+        this.setState({ localUrlImages: localUrlImages });
+        const param = {
+            userID:app.personal.info.userID,
         };
         this.uploadOn = true;
         MULTIUPLOAD(filePaths, app.route.ROUTE_UPDATE_MULTI_FILES, param, (progress) => console.log(progress),
         this.uploadSuccessCallback, this.uploadErrorCallback, true);
     },
-    uploadSuccessCallback(data) {
+    uploadSuccessCallback (data) {
         if (data.success) {
-            var {netUrlImages} = this.state;
+            let { netUrlImages } = this.state;
             netUrlImages = netUrlImages.concat(data.context.url);
-            this.setState({netUrlImages});
+            this.setState({ netUrlImages });
         } else {
             // 删除该数组
-            let {localUrlImages} = this.state;
+            let { localUrlImages } = this.state;
             localUrlImages = _.difference(localUrlImages, this.tempLocalUrlImages);
-            this.setState({localUrlImages: localUrlImages});
-            Toast("上传失败");
+            this.setState({ localUrlImages: localUrlImages });
+            Toast('上传失败');
         }
         this.uploadOn = false;
     },
-    uploadErrorCallback() {
+    uploadErrorCallback () {
         this.uploadOn = false;
     },
-    showPohotoImg() {
-        var options = {maximumImagesCount: 3, width: 400};
-        var filePaths=[];
+    showPohotoImg () {
+        const options = { maximumImagesCount: 3, width: 400 };
+        const filePaths = [];
         ImagePicker.getPictures(options, (results) => {
-            if (results.length>0) {
-                for (var i = 0; i < results.length; i++) {
-                    var filePath = results[i];
-                    var item = {
+            if (results.length > 0) {
+                for (let i = 0; i < results.length; i++) {
+                    const filePath = results[i];
+                    const item = {
                         name: 'file',
-                        filename: filePath.substr(filePath.lastIndexOf('/')+1),
+                        filename: filePath.substr(filePath.lastIndexOf('/') + 1),
                         filepath: filePath,
                         filetype: 'image/png',
                     };
@@ -130,95 +128,95 @@ module.exports = React.createClass({
         }, (error) => {
         });
     },
-    goBack() {
+    goBack () {
         if (this.uploadOn) {
             Toast('正在上传文件，请稍后再退出');
             return;
         }
         app.navigator.pop();
     },
-    showMessageBox() {
-        this.setState({overlayShowMessageBox: true});
+    showMessageBox () {
+        this.setState({ overlayShowMessageBox: true });
     },
-    showLongPressMessageBox(filepath, index) {
+    showLongPressMessageBox (filepath, index) {
         this.clickVoiceFilePath = filepath;
         this.clickVoiceIndex = index;
-        this.setState({overlayShowLongPressMessageBox: true});
+        this.setState({ overlayShowLongPressMessageBox: true });
     },
-    showImageLongPressMessageBox(netPah, index) {
+    showImageLongPressMessageBox (netPah, index) {
         this.clickImageNetPath = netPah;
         this.tempImageIndex = index;
-        this.setState({overlayShowImageLongPressMessageBox: true});
+        this.setState({ overlayShowImageLongPressMessageBox: true });
     },
-    doDeleteVoice() {
+    doDeleteVoice () {
         if (this.isPlaying[this.clickVoiceIndex]) {
             AudioRecorder.playStop();
             this.isPlaying[this.tempIndex] = false;
-            this.setState({isPlaying: this.isPlaying});
+            this.setState({ isPlaying: this.isPlaying });
         }
-        this.setState({overlayShowLongPressMessageBox: false});
+        this.setState({ overlayShowLongPressMessageBox: false });
         fs.unlink(this.clickVoiceFilePath);
-        var LocalArray = this.state.uploadLocalVoices;
-        var netArray = this.state.uploadVoices;
-        _.remove(netArray, (item)=>netArray[this.clickVoiceIndex]==item);
-        _.remove(LocalArray, (item)=>this.clickVoiceFilePath==item);
-        this.timeArray.splice(this.clickVoiceIndex,1);
+        const LocalArray = this.state.uploadLocalVoices;
+        const netArray = this.state.uploadVoices;
+        _.remove(netArray, (item) => netArray[this.clickVoiceIndex] == item);
+        _.remove(LocalArray, (item) => this.clickVoiceFilePath == item);
+        this.timeArray.splice(this.clickVoiceIndex, 1);
         this.setState({
             uploadLocalVoices:LocalArray,
             uploadVoices:netArray,
         });
     },
-    doDeleteImage() {
-        var {netUrlImages, localUrlImages} = this.state;
-        _.remove(netUrlImages, (item)=>netUrlImages[this.tempImageIndex]==item);
-        _.remove(localUrlImages, (item)=>this.clickImageNetPath==item);
-        this.setState({overlayShowImageLongPressMessageBox: false, netUrlImages,localUrlImages});
+    doDeleteImage () {
+        const { netUrlImages, localUrlImages } = this.state;
+        _.remove(netUrlImages, (item) => netUrlImages[this.tempImageIndex] == item);
+        _.remove(localUrlImages, (item) => this.clickImageNetPath == item);
+        this.setState({ overlayShowImageLongPressMessageBox: false, netUrlImages, localUrlImages });
     },
-    doBack() {
-        this.setState({overlayShowLongPressMessageBox: false});
+    doBack () {
+        this.setState({ overlayShowLongPressMessageBox: false });
     },
-    doImageBack() {
-        this.setState({overlayShowImageLongPressMessageBox: false});
+    doImageBack () {
+        this.setState({ overlayShowImageLongPressMessageBox: false });
     },
-    recordVoice() {
+    recordVoice () {
         AudioRecorder.playStop();
-        for (var i=0;i< this.isPlaying.length;i++) {
-            this.isPlaying[i]=false;
+        for (let i = 0; i < this.isPlaying.length; i++) {
+            this.isPlaying[i] = false;
         }
-        this.setState({isPlaying: this.isPlaying});
-        var time = Date.now();
-        var name = app.audioFileMgr.getFileNameFromTime(time);
-        var filepath = app.audioFileMgr.getFilePathFromName(name);
+        this.setState({ isPlaying: this.isPlaying });
+        const time = Date.now();
+        const name = app.audioFileMgr.getFileNameFromTime(time);
+        const filepath = app.audioFileMgr.getFilePathFromName(name);
         this.fileInfo = {
             time: time,
             name: name,
-            filepath: filepath
+            filepath: filepath,
         };
-        AudioRecorder.record((result)=>{
+        AudioRecorder.record((result) => {
 
-        }, (error)=>{
+        }, (error) => {
             Toast('录制音频文件失败，请稍后再试');
         }, filepath);
     },
-    stopRecordVoice(voiceTime) {
+    stopRecordVoice (voiceTime) {
         this.timeArray.push(voiceTime);
-        this.setState({voiceTime:voiceTime});
-        AudioRecorder.stop((result)=>{
-            this.uploadVoice(this.fileInfo.filepath,voiceTime);
-        }, (error)=>{
+        this.setState({ voiceTime:voiceTime });
+        AudioRecorder.stop((result) => {
+            this.uploadVoice(this.fileInfo.filepath, voiceTime);
+        }, (error) => {
             Toast('录制音频文件失败，请稍后再试');
         });
-        this.setState({overlayShowMessageBox: false});
+        this.setState({ overlayShowMessageBox: false });
     },
-    doGiveup() {
-        AudioRecorder.stop((result)=>{
+    doGiveup () {
+        AudioRecorder.stop((result) => {
             fs.unlink(this.fileInfo.filepath);
-        }, (error)=>{
+        }, (error) => {
             Toast('放弃录音失败，请稍后再试');
         });
-        this.setState({overlayShowMessageBox: false});
+        this.setState({ overlayShowMessageBox: false });
     },
-    playVoice(filepath,index){
+    playVoice (filepath, index) {
         if (!filepath) {
             Toast('音频地址为空');
             return;
@@ -227,87 +225,86 @@ module.exports = React.createClass({
         if (this.isPlaying[index]) {
             AudioRecorder.playStop();
             this.isPlaying[index] = false;
-            this.setState({isPlaying: this.isPlaying});
+            this.setState({ isPlaying: this.isPlaying });
         } else {
-            var tempIsPlaying = _.find(this.isPlaying, (item)=>item==true);
+            const tempIsPlaying = _.find(this.isPlaying, (item) => item == true);
             this.clickVoiceIndex = index;
             if (tempIsPlaying && tempIsPlaying != null) {
                 this.isPlaying[this.tempIndex] = false;
                 this.isPlaying[index] = true;
-                this.setState({isPlaying: this.isPlaying});
+                this.setState({ isPlaying: this.isPlaying });
                 this.tempIndex = index;
-                AudioRecorder.play(filepath, (result)=>{
+                AudioRecorder.play(filepath, (result) => {
                     this.isPlaying[index] = false;
-                    this.setState({isPlaying: this.isPlaying});
-                }, (error)=>{
+                    this.setState({ isPlaying: this.isPlaying });
+                }, (error) => {
                     Toast('无效音频');
                     this.isPlaying[index] = false;
-                    this.setState({isPlaying: this.isPlaying});
+                    this.setState({ isPlaying: this.isPlaying });
                 });
             } else {
                 this.isPlaying[index] = true;
-                this.setState({isPlaying: this.isPlaying});
+                this.setState({ isPlaying: this.isPlaying });
                 this.tempIndex = index;
-                AudioRecorder.play(filepath, (result)=>{
+                AudioRecorder.play(filepath, (result) => {
                     this.isPlaying[index] = false;
-                    this.setState({isPlaying: this.isPlaying});
-                }, (error)=>{
+                    this.setState({ isPlaying: this.isPlaying });
+                }, (error) => {
                     Toast('无效音频');
                     this.isPlaying[index] = false;
-                    this.setState({isPlaying: this.isPlaying});
+                    this.setState({ isPlaying: this.isPlaying });
                 });
             }
         }
     },
-    uploadVoice(filePath,voiceTime) {
-        var options = {};
+    uploadVoice (filePath, voiceTime) {
+        const options = {};
         options.fileKey = 'file';
-        options.fileName = filePath.substr(filePath.lastIndexOf('/')+1);
+        options.fileName = filePath.substr(filePath.lastIndexOf('/') + 1);
         options.mimeType = 'm4a';
         options.params = {
-            userID:app.personal.info.userID
+            userID:app.personal.info.userID,
         };
         this.uploadOn = true;
         this.curUploadFile = filePath;
         UPLOAD(filePath, app.route.ROUTE_UPDATE_FILE, options, (progress) => console.log(progress),
-        this.uploadVoiceSuccessCallback.bind(null,voiceTime, filePath), this.uploadVoiceErrorCallback.bind(null,filePath), true);
+        this.uploadVoiceSuccessCallback.bind(null, voiceTime, filePath), this.uploadVoiceErrorCallback.bind(null, filePath), true);
     },
-    uploadVoiceSuccessCallback(voiceTime,filePath,data) {
+    uploadVoiceSuccessCallback (voiceTime, filePath, data) {
         if (data.success) {
-            var array = this.state.uploadVoices;
-            array = array.concat(data.context.url+'#'+voiceTime);
-            this.setState({uploadVoices: array});
-            var LocalArray = this.state.uploadLocalVoices;
+            let array = this.state.uploadVoices;
+            array = array.concat(data.context.url + '#' + voiceTime);
+            this.setState({ uploadVoices: array });
+            let LocalArray = this.state.uploadLocalVoices;
             LocalArray = LocalArray.concat(this.curUploadFile);
             this.isPlaying = _.fill(Array(LocalArray.length), false);
-            this.setState({uploadLocalVoices: LocalArray, isPlaying: this.isPlaying});
-
+            this.setState({ uploadLocalVoices: LocalArray, isPlaying: this.isPlaying });
         } else {
-            Toast("上传失败");
-            var LocalArray = this.state.uploadLocalVoices;
-            _.remove(LocalArray, (item)=>filePath==item);
-            this.timeArray.splice(this.timeArray.length-1,1);
+            Toast('上传失败');
+            const LocalArray = this.state.uploadLocalVoices;
+            _.remove(LocalArray, (item) => filePath == item);
+            this.timeArray.splice(this.timeArray.length - 1, 1);
             this.setState({
                 uploadLocalVoices:LocalArray,
             });
         }
         this.uploadOn = false;
     },
-    uploadVoiceErrorCallback(filePath) {
-        var LocalArray = this.state.uploadLocalVoices;
-        _.remove(LocalArray, (item)=>filePath==item);
-        this.timeArray.splice(this.timeArray.length-1,1);
+    uploadVoiceErrorCallback (filePath) {
+        const LocalArray = this.state.uploadLocalVoices;
+        _.remove(LocalArray, (item) => filePath == item);
+        this.timeArray.splice(this.timeArray.length - 1, 1);
         this.setState({
             uploadLocalVoices:LocalArray,
         });
         this.uploadOn = false;
     },
-    doPublisherKid() {
-        //点击提交按钮时停止播放音频
+    doPublisherKid () {
+        // 点击提交按钮时停止播放音频
         if (this.isPlaying[this.clickVoiceIndex]) {
             AudioRecorder.playStop();
             this.isPlaying[this.tempIndex] = false;
-            this.setState({isPlaying: this.isPlaying});
+            this.setState({ isPlaying: this.isPlaying });
         }
         if (!this.state.title) {
             Toast('请输入一个主题');
@@ -321,7 +318,7 @@ module.exports = React.createClass({
             Toast('请输入有效的价格');
             return;
         }
-        var param = {
+        const param = {
             Kid:{
                 type: '2',
                 userID: app.personal.info.userID,
@@ -330,112 +327,104 @@ module.exports = React.createClass({
                 endTime: this.getDateText(this.state.endTime),
                 desc: this.state.desc,
                 price: this.state.priceStr,
-                imageArray: this.state.netUrlImages?this.state.netUrlImages:[],
-                audioArray: this.state.uploadVoices?this.state.uploadVoices:[],
+                imageArray: this.state.netUrlImages ? this.state.netUrlImages : [],
+                audioArray: this.state.uploadVoices ? this.state.uploadVoices : [],
             },
         };
         POST(app.route.ROUTE_PUBLISHER_KID, param, this.doPublisherKidSuccess, true);
     },
-    doPublisherKidSuccess(data) {
+    doPublisherKidSuccess (data) {
         if (data.success) {
             this.setState({
-                    price:Number(this.state.priceStr).toFixed(2),
-                    kitID:data.context.id,
-                    overlayShowPayMessageBox: true
-                });
-        }else {
+                price:Number(this.state.priceStr).toFixed(2),
+                kitID:data.context.id,
+                overlayShowPayMessageBox: true,
+            });
+        } else {
             Toast(data.msg);
         }
     },
-    showDataPicker(index) {
-        var date = index===0?this.state.startTime:this.state.endTime;
-        var now = moment();
+    showDataPicker (index) {
+        let date = index === 0 ? this.state.startTime : this.state.endTime;
+        const now = moment();
         if (date.isBefore(now)) {
             date = now;
         }
-        if (!this.picker.isPickerShow()) {
-            this.pickerType = index===0?'startDate':'endDate';
-            this.setState({
-                defaultSelectValue: [date.year()+'年', (date.month()+1)+'月', date.date()+'日'],
-                pickerData: app.utils.createDateData(now),
-            });
-            this.picker.show();
-        } else {
-            this.picker.hide();
-        }
+        this.pickerType = index === 0 ? 'startDate' : 'endDate';
+        let pickerData = app.utils.createDateData(now);
+        let defaultSelectValue = [date.year() + '年', (date.month() + 1) + '月', date.date() + '日'];
+        Picker(pickerData, defaultSelectValue, '').then((value)=>{
+            this.setChooseValue(value);
+        });
     },
-    getDateText(date) {
+    getDateText (date) {
         return moment(date).format('YYYY-MM-DD');
     },
-    setChooseValue(value) {
-        var type = this.pickerType;
+    setChooseValue (value) {
+        const type = this.pickerType;
         if (type === 'startDate') {
-            var date = moment(value, 'YYYY年MM月DD日');
-            var endTime = this.state.endTime;
+            const date = moment(value, 'YYYY年MM月DD日');
+            let endTime = this.state.endTime;
             if (endTime.isBefore(date)) {
                 endTime = date;
             }
-            this.setState({startTime: date, endTime:endTime});
+            this.setState({ startTime: date, endTime:endTime });
         } else if (type === 'endDate') {
-            var date = moment(value, 'YYYY年MM月DD日');
-            var startTime = this.state.startTime;
+            const date = moment(value, 'YYYY年MM月DD日');
+            let startTime = this.state.startTime;
             if (startTime.isAfter(date)) {
                 startTime = date;
             }
-            this.setState({startTime: startTime, endTime:date});
+            this.setState({ startTime: startTime, endTime:date });
         }
     },
-    doClosePayMessageBox() {
-        this.setState({overlayShowPayMessageBox: false});
+    doClosePayMessageBox () {
+        this.setState({ overlayShowPayMessageBox: false });
         this.props.updateAidList();
         app.navigator.pop();
     },
-    doPayByWechat() {
-        this.setState({overlayShowPayMessageBox: false});
+    doPayByWechat () {
+        this.setState({ overlayShowPayMessageBox: false });
         this.props.updateAidList();
         app.navigator.pop();
     },
-    doPayByAlipay() {
-        this.setState({overlayShowPayMessageBox: false});
+    doPayByAlipay () {
+        this.setState({ overlayShowPayMessageBox: false });
         this.props.updateAidList();
         app.navigator.pop();
     },
-    doPayByApplePay() {
-        this.setState({overlayShowPayMessageBox: false});
+    doPayByApplePay () {
+        this.setState({ overlayShowPayMessageBox: false });
         this.props.updateAidList();
         app.navigator.pop();
     },
-    doRuleConfirm() {
-        this.setState({overlayShowPublishRuleMessageBox: false});
+    doRuleConfirm () {
+        this.setState({ overlayShowPublishRuleMessageBox: false });
     },
-    doRuleNoPrompt() {
-        this.setState({overlayShowPublishRuleMessageBox: false});
+    doRuleNoPrompt () {
+        this.setState({ overlayShowPublishRuleMessageBox: false });
         CONSTANTS.IS_RULES_SHOW = false;
-
-        new Promise(async(resolve, reject)=>{
-            await AsyncStorage.setItem(ITEM_NAME, "no");
-            resolve();
-        });
+        AsyncStorage.setItem(ITEM_NAME, 'no');
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.scrollUpside}>
                     <View style={styles.infoContainer}>
                         <TextInput
                             style={styles.themeStyle}
-                            onChangeText={(text) => this.setState({title: text})}
+                            onChangeText={(text) => this.setState({ title: text })}
                             defaultValue={this.state.title}
                             maxLength={15}
                             placeholder={'请输入您所要发布的求救包主题(15字以内)'}
                             />
-                        <View style={styles.separator}></View>
+                        <View style={styles.separator} />
                         <View style={styles.upsidedesc}>
                             <TextInput
                                 style={styles.detailStyle}
-                                onChangeText={(text) => this.setState({desc: text})}
+                                onChangeText={(text) => this.setState({ desc: text })}
                                 defaultValue={this.state.desc}
-                                multiline={true}
+                                multiline
                                 placeholder={'请输入您求救包的主题简介'}
                                 />
                         </View>
@@ -447,7 +436,7 @@ module.exports = React.createClass({
                                 <Text style={styles.textupcenter}>{this.getDateText(this.state.startTime)}</Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.separator}></View>
+                        <View style={styles.separator} />
                         <TouchableOpacity onPress={this.showDataPicker.bind(null, 1)} style={styles.timeContainer}>
                             <Text style={styles.texttile}>结束日期</Text>
                             <View style={styles.updownlside}>
@@ -460,29 +449,29 @@ module.exports = React.createClass({
                             <DelayTouchableOpacity
                                 activeOpacity={0.6}
                                 onPress={this.showPohotoImg}>
-                                <View  style={styles.imageButtonView}>
+                                <View style={styles.imageButtonView}>
                                     <Image source={app.img.actualCombat_logo_alone} style={styles.imagelogostyle} />
                                     <Text style={styles.textlogotile} >点击添加图片</Text>
                                 </View>
                             </DelayTouchableOpacity>
-                            <ScrollView horizontal={true} style={styles.imageContainer}>
+                            <ScrollView horizontal style={styles.imageContainer}>
                                 {
-                                    this.state.localUrlImages&&this.state.localUrlImages.map((item, i)=>{
+                                    this.state.localUrlImages && this.state.localUrlImages.map((item, i) => {
                                         return (
                                             <TouchableHighlight
                                                 key={i}
-                                                underlayColor="rgba(0, 0, 0, 0)"
+                                                underlayColor='rgba(0, 0, 0, 0)'
                                                 onPress={this.showBigImage.bind(null, this.state.localUrlImages, i)}
-                                                onLongPress={this.showImageLongPressMessageBox.bind(null,item, i)}
+                                                onLongPress={this.showImageLongPressMessageBox.bind(null, item, i)}
                                                 style={styles.bigImageTouch}>
                                                 <Image
                                                     key={i}
                                                     resizeMode='stretch'
-                                                    source={{uri: item}}
+                                                    source={{ uri: item }}
                                                     style={styles.imageStyletu}
                                                     />
                                             </TouchableHighlight>
-                                        )
+                                        );
                                     })
                                 }
                             </ScrollView>
@@ -494,23 +483,23 @@ module.exports = React.createClass({
                                 <Image source={app.img.actualCombat_voice_icon2} style={styles.voiceStyle} />
                             </TouchableOpacity>
                         </View>
-                        <ScrollView horizontal={true}  style={[styles.imageContainer, {marginLeft:10}]}>
+                        <ScrollView horizontal style={[styles.imageContainer, { marginLeft:10 }]}>
                             {
-                                this.state.uploadLocalVoices&&this.state.uploadLocalVoices.map((item, i)=>{
+                                this.state.uploadLocalVoices && this.state.uploadLocalVoices.map((item, i) => {
                                     return (
                                         <View key={i} style={[styles.audioContainer]}>
                                             <TouchableOpacity
                                                 key={i}
                                                 activeOpacity={0.6}
-                                                onPress={this.playVoice.bind(null,item,i)}
+                                                onPress={this.playVoice.bind(null, item, i)}
                                                 delayLongPress={1500}
-                                                onLongPress={this.showLongPressMessageBox.bind(null,item,i)}
+                                                onLongPress={this.showLongPressMessageBox.bind(null, item, i)}
                                                 style={styles.audioPlay}>
-                                                <Image source={this.state.isPlaying[i]?app.img.actualCombat_voice_say_play:app.img.actualCombat_voice_say} style={styles.imagevoice} />
-                                                <Text style={styles.textTime} >{this.timeArray[i]+"''"}</Text>
+                                                <Image source={this.state.isPlaying[i] ? app.img.actualCombat_voice_say_play : app.img.actualCombat_voice_say} style={styles.imagevoice} />
+                                                <Text style={styles.textTime} >{this.timeArray[i] + "''"}</Text>
                                             </TouchableOpacity>
                                         </View>
-                                    )
+                                    );
                                 })
                             }
                         </ScrollView>
@@ -518,7 +507,7 @@ module.exports = React.createClass({
                     <View style={styles.priceStyle}>
                         <TextInput
                             style={styles.themeStyle}
-                            onChangeText={(text) => this.setState({priceStr: text})}
+                            onChangeText={(text) => this.setState({ priceStr: text })}
                             defaultValue={this.state.priceStr}
                             placeholder={'请输入你要悬赏金额，并转入赢销截拳道暂时保管'}
                             />
@@ -526,33 +515,19 @@ module.exports = React.createClass({
                     <View style={styles.themeupstyle}>
                         <TouchableOpacity
                             onPress={this.doPublisherKid}
-                            style={[styles.tabButton, {backgroundColor: CONSTANTS.THEME_COLOR}]}>
+                            style={[styles.tabButton, { backgroundColor: CONSTANTS.THEME_COLOR }]}>
                             <Text style={styles.textcenter} >提    交</Text>
-                            <View style={[styles.makeup, {right:0,backgroundColor:'#4FC1E9'}]}></View>
+                            <View style={[styles.makeup, { right:0, backgroundColor:'#4FC1E9' }]} />
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
-                <View style={{position:'absolute', bottom: 0, left: 0,}}>
-                    <Picker
-                        style={{height: sr.th/3,}}
-                        ref={picker => this.picker = picker}
-                        showDuration={500}
-                        showMask={false}
-                        pickerBtnText={'确  定'}
-                        pickerCancelBtnText={'取  消'}
-                        selectedValue={this.state.defaultSelectValue}
-                        pickerData={this.state.pickerData}
-                        onPickerDone={(value) => this.setChooseValue(value)}
-                        />
-                </View>
                 {
                     this.state.overlayShowMessageBox &&
                     <RecordVoiceMessageBox
                         showType={0}
                         doStartRecord={this.recordVoice}
                         doGiveup={this.doGiveup}
-                        doConfirm={this.stopRecordVoice}>
-                    </RecordVoiceMessageBox>
+                        doConfirm={this.stopRecordVoice} />
                 }
                 {
                     this.state.overlayShowPayMessageBox &&
@@ -562,35 +537,31 @@ module.exports = React.createClass({
                         doPayByWechat={this.doPayByWechat}
                         doPayByAlipay={this.doPayByAlipay}
                         doClose={this.doClosePayMessageBox}
-                        doPayByApplePay={this.doPayByApplePay}>
-                    </PayMessageBox>
+                        doPayByApplePay={this.doPayByApplePay} />
                 }
                 {
                     this.state.overlayShowLongPressMessageBox &&
                     <VoiceLongPressMessageBox
                         doDelete={this.doDeleteVoice}
-                        doBack={this.doBack}>
-                    </VoiceLongPressMessageBox>
+                        doBack={this.doBack} />
                 }
                 {
                     this.state.overlayShowPublishRuleMessageBox &&
                     <PublishRuleMessageBox
                         doRuleConfirm={this.doRuleConfirm}
-                        doRuleNoPrompt={this.doRuleNoPrompt}>
-                    </PublishRuleMessageBox>
+                        doRuleNoPrompt={this.doRuleNoPrompt} />
                 }
                 {
                     this.state.overlayShowImageLongPressMessageBox &&
                     <ImageLongPressMessageBox
                         doDelete={this.doDeleteImage}
-                        doBack={this.doImageBack}>
-                    </ImageLongPressMessageBox >
+                        doBack={this.doImageBack} />
                 }
             </View>
         );
-    }
+    },
 });
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',
@@ -646,7 +617,7 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
     },
     separator: {
-        width: sr.w-20,
+        width: sr.w - 20,
         alignSelf: 'center',
         backgroundColor: '#EEEEEE',
         height: 1,

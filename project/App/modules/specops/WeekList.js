@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -11,67 +11,65 @@ var {
     TouchableOpacity,
     TouchableHighlight,
 } = ReactNative;
-var moment = require('moment');
+const moment = require('moment');
 require('moment-range');
-var WeekRecord = require('./WeekRecord.js');
+const WeekRecord = require('./WeekRecord.js');
 
-const weekNumArray = ['一','二','三','四','五'];
-const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
-var WeekListRow = React.createClass({
-    getInitialState() {
+const weekNumArray = ['一', '二', '三', '四', '五'];
+const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+const WeekListRow = React.createClass({
+    getInitialState () {
         return {
             showFirstDetail:true,
             showDetail:false,
         };
     },
-    _onPressRow(obj,rowID) {
-        rowID==0?this.setState({showFirstDetail: !this.state.showFirstDetail}):this.setState({showDetail: !this.state.showDetail});
-        this.setState({firstInto: false});
+    _onPressRow (obj, rowID) {
+        rowID == 0 ? this.setState({ showFirstDetail: !this.state.showFirstDetail }) : this.setState({ showDetail: !this.state.showDetail });
+        this.setState({ firstInto: false });
     },
-    render() {
-        var obj = this.props.obj.time;
-        var weekNum = this.props.obj.weekNum;
-        var rowID = this.props.rowID;
-        var haveImage = this.props.haveImage;
+    render () {
+        const obj = this.props.obj.time;
+        const weekNum = this.props.obj.weekNum;
+        const rowID = this.props.rowID;
+        const haveImage = this.props.haveImage;
         return (
             <View
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <TouchableHighlight
-                    onPress={this._onPressRow.bind(null, obj,rowID)}
-                    underlayColor="#E6EBEC">
+                    onPress={this._onPressRow.bind(null, obj, rowID)}
+                    underlayColor='#E6EBEC'>
                     <View style={styles.rowContain}>
-                        <View style={styles.rowLeft}/>
-                        <Text style={styles.rowMiddle}>{'第'+weekNumArray[weekNum] +'周'+'('+obj.format('YYYY.MM.DD')+'-'+moment(obj).add(6, 'd').format('YYYY.MM.DD')+')'}</Text>
-                        <View  style={styles.rowRight}>
+                        <View style={styles.rowLeft} />
+                        <Text style={styles.rowMiddle}>{'第' + weekNumArray[weekNum] + '周' + '(' + obj.format('YYYY.MM.DD') + '-' + moment(obj).add(6, 'd').format('YYYY.MM.DD') + ')'}</Text>
+                        <View style={styles.rowRight}>
                             {
-                                rowID==0?(
+                                rowID == 0 ? (
                                     <Image
                                         resizeMode='contain'
-                                        source={this.state.showFirstDetail?app.img.specops_up_white:app.img.specops_down_white}
-                                        style={styles.iconArrowStyle}>
-                                    </Image>
-                                ):(
+                                        source={this.state.showFirstDetail ? app.img.specops_up_white : app.img.specops_down_white}
+                                        style={styles.iconArrowStyle} />
+                                ) : (
                                     <Image
                                         resizeMode='contain'
-                                        source={this.state.showDetail?app.img.specops_up_white:app.img.specops_down_white}
-                                        style={styles.iconArrowStyle}>
-                                    </Image>
+                                        source={this.state.showDetail ? app.img.specops_up_white : app.img.specops_down_white}
+                                        style={styles.iconArrowStyle} />
                                 )
                             }
                         </View>
                     </View>
                 </TouchableHighlight>
                 {
-                    this.state.showDetail&&
-                    <View style={styles.greyLine}/>
+                    this.state.showDetail &&
+                    <View style={styles.greyLine} />
                 }
                 {
-                    rowID==0?(
+                    rowID == 0 ? (
                         this.state.showFirstDetail &&
-                        <WeekRecord time = {obj} haveImage={haveImage} userID={this.props.userID}/>
-                    ):(
+                        <WeekRecord time={obj} haveImage={haveImage} userID={this.props.userID} />
+                    ) : (
                         this.state.showDetail &&
-                        <WeekRecord time = {obj} haveImage={haveImage} userID={this.props.userID}/>
+                        <WeekRecord time={obj} haveImage={haveImage} userID={this.props.userID} />
                     )
                 }
             </View>
@@ -80,95 +78,95 @@ var WeekListRow = React.createClass({
 });
 module.exports = React.createClass({
     mixins: [SceneMixin],
-    getWeekArray(start,end){
-        var firstDay = moment(start).date(1)
-        var firstMonday = moment(firstDay).day(1);
+    getWeekArray (start, end) {
+        const firstDay = moment(start).date(1);
+        let firstMonday = moment(firstDay).day(1);
         if (moment(firstMonday).month() != moment(start).month()) {
             firstMonday = moment(firstDay).day(8);
         }
-        var range = moment.range(firstMonday, end);
-        var array = range.toArray('weeks');
-        var backArray = []
-        var j=0;
-        for (var i = 0; i < array.length; i++) {
-            var tmp = {};
-            if(moment(array[i]).subtract(28, 'days').month() == moment(array[i]).month()){
+        const range = moment.range(firstMonday, end);
+        const array = range.toArray('weeks');
+        const backArray = [];
+        let j = 0;
+        for (let i = 0; i < array.length; i++) {
+            let tmp = {};
+            if (moment(array[i]).subtract(28, 'days').month() == moment(array[i]).month()) {
                 tmp = {
                     weekNum:4,
-                    time:array[i]
-                }
+                    time:array[i],
+                };
             } else {
                 tmp = {
                     weekNum:j,
-                    time:array[i]
-                }
-                j==3?j=0:j++;
+                    time:array[i],
+                };
+                j == 3 ? j = 0 : j++;
             }
             backArray.push(tmp);
         }
         return backArray.reverse();
     },
-    getMonthArray(start,end){
-        var range = moment.range(start, end);
+    getMonthArray (start, end) {
+        const range = moment.range(start, end);
         return range.toArray('months');
     },
-    getInitialState() {
+    getInitialState () {
         this.list = {};
         this.personRecord = {};
         this.pageNo = 1;
         this.ds = new ListView.DataSource({
             rowHasChanged: (r1, r2) => r1 !== r2,
-            sectionHeaderHasChanged : (s1, s2) => s1 !== s2
+            sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
         });
 
-        this.list[0] = this.props.briefDisplay&&this.props.learningRecordBase!=undefined&&this.props.learningRecordBase.videoList!=undefined?this.props.learningRecordBase.videoList:{};
+        this.list[0] = this.props.briefDisplay && this.props.learningRecordBase != undefined && this.props.learningRecordBase.videoList != undefined ? this.props.learningRecordBase.videoList : {};
         return {
-            dataSource: this.ds.cloneWithRows(this.getWeekArray(moment(app.personal.info.gotoSpecialSoldierTime,"YYYY.MM.DD"),moment())),
+            dataSource: this.ds.cloneWithRows(this.getWeekArray(moment(app.personal.info.gotoSpecialSoldierTime, 'YYYY.MM.DD'), moment())),
             selects: {},
             infiniteLoadStatus: STATUS_TEXT_HIDE,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
 
     },
-    componentWillReceiveProps: function(nextProps) {
-        const {learningRecordBase} = nextProps;
+    componentWillReceiveProps: function (nextProps) {
+        const { learningRecordBase } = nextProps;
         const oldLearningRecordBase = this.props.learningRecordBase;
         if (!_.isEqual(learningRecordBase, oldLearningRecordBase)) {
-            this.list[0] = this.props.briefDisplay&&learningRecordBase!=undefined&&learningRecordBase.videoList!=undefined?learningRecordBase.videoList:{};
-            this.setState({dataSource: this.ds.cloneWithRowsAndSections(this.list)});
+            this.list[0] = this.props.briefDisplay && learningRecordBase != undefined && learningRecordBase.videoList != undefined ? learningRecordBase.videoList : {};
+            this.setState({ dataSource: this.ds.cloneWithRowsAndSections(this.list) });
         }
     },
-    playVideo(obj) {
+    playVideo (obj) {
 
     },
-    renderRow(obj, sectionID, rowID, onRowHighlighted) {
+    renderRow (obj, sectionID, rowID, onRowHighlighted) {
         return (
-            <WeekListRow obj = {obj} rowID = {rowID} haveImage={this.props.haveImage} userID={this.props.userID}/>
-        )
+            <WeekListRow obj={obj} rowID={rowID} haveImage={this.props.haveImage} userID={this.props.userID} />
+        );
     },
-    renderFooter() {
+    renderFooter () {
         return (
             <View style={styles.listFooterContainer}>
                 <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
             </View>
-        )
+        );
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
             <View
                 style={styles.separator}
-                key={rowID}/>
+                key={rowID} />
         );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <ListView
                     initialListSize={1}
                     onEndReachedThreshold={10}
-                    enableEmptySections={true}
-                    onEndReached={this.props.briefDisplay?null:this.onEndReached}
+                    enableEmptySections
+                    onEndReached={this.props.briefDisplay ? null : this.onEndReached}
                     style={styles.listStyle}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
@@ -176,12 +174,11 @@ module.exports = React.createClass({
                     renderSeparator={this.renderSeparator}
                     />
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -223,7 +220,7 @@ var styles = StyleSheet.create({
         borderTopWidth: 1,
     },
     rowMiddle: {
-        width: sr.w-22,
+        width: sr.w - 22,
         fontFamily:'STHeitiSC-Medium',
         fontSize:20,
         color: '#FFFFFF',

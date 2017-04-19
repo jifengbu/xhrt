@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Navigator,
@@ -9,12 +9,12 @@ var {
     Image,
     TouchableOpacity,
 } = ReactNative;
-var {Button} = COMPONENTS;
-var PropAnimateLayer = require('./PropAnimateLayer.js');
+const { Button } = COMPONENTS;
+const PropAnimateLayer = require('./PropAnimateLayer.js');
 
 module.exports = React.createClass({
-    render() {
-        var hearerList = _.reject(this.props.competitors, (item)=>app.personal.info.userID==item.userID);
+    render () {
+        const hearerList = _.reject(this.props.competitors, (item) => app.personal.info.userID == item.userID);
         return (
             <View style={styles.container}>
                 <Image
@@ -23,16 +23,15 @@ module.exports = React.createClass({
                     style={styles.backgroundlightImage}>
                     <View style={styles.imageContainer}>
                         {
-                            hearerList.map((item, i)=>{
-                                var source = item.userInfo.sex==0?app.img.train_girl_sit:app.img.train_boy_sit;
+                            hearerList.map((item, i) => {
+                                const source = item.userInfo.sex == 0 ? app.img.train_girl_sit : app.img.train_boy_sit;
                                 return (
                                     <Image
                                         key={i}
                                         resizeMode='stretch'
                                         source={source}
-                                        style={styles.icon}>
-                                    </Image>
-                                )
+                                        style={styles.icon} />
+                                );
                             })
                         }
                     </View>
@@ -41,38 +40,37 @@ module.exports = React.createClass({
                         source={app.img.train_table}
                         style={styles.tableIcon} />
 
-                      <Image
-                          resizeMode='stretch'
-                          source={app.img.train_microphone}
-                          style={styles.microphoneIcon} />
-                    <PropAnimateLayer propItem={this.props.propItem}/>
-                      <View style={styles.microphoneIconView}>
+                    <Image
+                        resizeMode='stretch'
+                        source={app.img.train_microphone}
+                        style={styles.microphoneIcon} />
+                    <PropAnimateLayer propItem={this.props.propItem} />
+                    <View style={styles.microphoneIconView}>
                         {
                             this.props.showStartBtn &&
                                 <TouchableOpacity onPress={this.props.doStartSpeach}>
                                     <Image
                                         resizeMode='stretch'
                                         source={app.img.train_begin}
-                                        style={styles.trainStartNowButton}>
-                                    </Image>
+                                        style={styles.trainStartNowButton} />
                                 </TouchableOpacity>
                         }
-                     </View>
+                    </View>
 
                     {
                         this.props.showStopBtn &&
-                          <Button
+                        <Button
                             onPress={this.props.doStopSpeach}
                             style={styles.trainStopNowButton}>结束演讲</Button>
                     }
 
                 </Image>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         alignItems:'center',
         justifyContent:'center',
@@ -94,21 +92,21 @@ var styles = StyleSheet.create({
         marginHorizontal: 6,
     },
     tableIcon: {
-        width:sr.w*7/8,
+        width:sr.w * 7 / 8,
         height:155,
         marginTop: -30,
     },
     microphoneIconView: {
         position:'absolute',
-        top: sr.h*2/8,
-        left: sr.w/2-47,
+        top: sr.h * 2 / 8,
+        left: sr.w / 2 - 47,
         width:95,
         height:222,
     },
     microphoneIcon: {
         position:'absolute',
-        top: sr.h*2/8 + 100,
-        left: sr.w/2-47,
+        top: sr.h * 2 / 8 + 100,
+        left: sr.w / 2 - 47,
         width:94,
         height:222,
     },
@@ -119,7 +117,7 @@ var styles = StyleSheet.create({
     trainStopNowButton: {
         position:'absolute',
         bottom: 210,
-        left: sr.w/2+65,
+        left: sr.w / 2 + 65,
         width:100,
         height:30,
         borderRadius:15,

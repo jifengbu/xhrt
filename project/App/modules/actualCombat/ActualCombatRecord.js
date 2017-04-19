@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     TouchableOpacity,
@@ -10,55 +10,55 @@ var {
     Image,
 } = ReactNative;
 
-var AidKitManagement = require('./AidKitManagement.js');
-var PacketClassificationForHelp = require('./PacketClassificationForHelp.js');
+const AidKitManagement = require('./AidKitManagement.js');
+const PacketClassificationForHelp = require('./PacketClassificationForHelp.js');
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
-        title: '实战记录'
+        title: '实战记录',
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            tabIndex: 0
+            tabIndex: 0,
         };
     },
-    changeTab(tabIndex) {
-        this.setState({tabIndex});
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
     },
-    render() {
-        var isFirstTap = this.state.tabIndex===0;
+    render () {
+        const isFirstTap = this.state.tabIndex === 0;
         return (
             <View style={styles.container}>
                 <View style={styles.tabContainer}>
                     <TouchableOpacity
                         onPress={this.changeTab.bind(null, 0)}
-                        style={[styles.tabButton, isFirstTap?{backgroundColor: CONSTANTS.THEME_COLOR}:null]}>
-                        <Text style={[styles.tabText, {color:isFirstTap?'#FFFFFF':CONSTANTS.THEME_COLOR}]} >求救包管理</Text>
-                        {isFirstTap&&<View style={[styles.makeup, {right:0}]}></View>}
+                        style={[styles.tabButton, isFirstTap ? { backgroundColor: CONSTANTS.THEME_COLOR } : null]}>
+                        <Text style={[styles.tabText, { color:isFirstTap ? '#FFFFFF' : CONSTANTS.THEME_COLOR }]} >求救包管理</Text>
+                        {isFirstTap && <View style={[styles.makeup, { right:0 }]} />}
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={this.changeTab.bind(null, 1)}
-                        style={[styles.tabButton, !isFirstTap?{backgroundColor:CONSTANTS.THEME_COLOR}:null]}>
-                        <Text style={[styles.tabText, {color:!isFirstTap?'#FFFFFF':CONSTANTS.THEME_COLOR}]} >急救包管理</Text>
-                        {!isFirstTap&&<View style={[styles.makeup, {left:0}]}></View>}
+                        style={[styles.tabButton, !isFirstTap ? { backgroundColor:CONSTANTS.THEME_COLOR } : null]}>
+                        <Text style={[styles.tabText, { color:!isFirstTap ? '#FFFFFF' : CONSTANTS.THEME_COLOR }]} >急救包管理</Text>
+                        {!isFirstTap && <View style={[styles.makeup, { left:0 }]} />}
                     </TouchableOpacity>
                 </View>
                 <PacketClassificationForHelp
                     tabIndex={0}
-                    disable={this.state.tabIndex!==0}
-                    style={isFirstTap?{flex:1}:{left:-sr.tw, top:0, position:'absolute'}}/>
+                    disable={this.state.tabIndex !== 0}
+                    style={isFirstTap ? { flex:1 } : { left:-sr.tw, top:0, position:'absolute' }} />
                 <AidKitManagement
                     tabIndex={1}
-                    disable={this.state.tabIndex!==1}
-                    style={isFirstTap?{left:-sr.tw, top:0, position:'absolute'}:{flex:1}}/>
+                    disable={this.state.tabIndex !== 1}
+                    style={isFirstTap ? { left:-sr.tw, top:0, position:'absolute' } : { flex:1 }} />
             </View>
         );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -86,6 +86,6 @@ var styles = StyleSheet.create({
         top: 0,
         width: 10,
         height: 50,
-        position: 'absolute'
+        position: 'absolute',
     },
 });

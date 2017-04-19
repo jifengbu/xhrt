@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     Image,
     StyleSheet,
     Text,
@@ -10,85 +10,85 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {Button, PageList} = COMPONENTS;
+const { Button, PageList } = COMPONENTS;
 
-var CommodityDetail = require('../commodityDetail/index.js');
+const CommodityDetail = require('../commodityDetail/index.js');
 
-var searchText = '';
-var Title = React.createClass({
-    render() {
+let searchText = '';
+const Title = React.createClass({
+    render () {
         return (
             <TextInput
-                placeholder="输入商品关键字"
-                onChangeText={(text) => {searchText=text}}
+                placeholder='输入商品关键字'
+                onChangeText={(text) => { searchText = text; }}
                 style={styles.txtInputSearch}
                 />
-        )
-    }
+        );
+    },
 });
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: <Title />,
-        rightButton: { image: app.img.home_search, handler: ()=>{app.scene.doSearchGoods()}},
+        rightButton: { image: app.img.home_search, handler: () => { app.scene.doSearchGoods(); } },
     },
-    getInitialState() {
+    getInitialState () {
         return {
             lineWidth: 0,
             lineHeight: 0,
             searchTextContext: searchText,
         };
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         app.dismissProgressHUD();
     },
-    doSearchGoods() {
+    doSearchGoods () {
         if (this.listView.isRefreshing()) {
-            Toast("请求太频繁，请稍后再试");
+            Toast('请求太频繁，请稍后再试');
             return;
         }
         if (searchText === '') {
             Toast('请输入搜索关键字');
             return;
         }
-        this.setState({searchTextContext:searchText});
+        this.setState({ searchTextContext:searchText });
         this.listView.refresh();
     },
     doBuyGoods (obj, type) {
         app.navigator.push({
             component: CommodityDetail,
-            passProps: {goodsID: obj.goodsID, buyType: type},
+            passProps: { goodsID: obj.goodsID, buyType: type },
         });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
-                    listParam={{keyword: this.state.searchTextContext}}
-                    listName="goodsList"
+                    listParam={{ keyword: this.state.searchTextContext }}
+                    listName='goodsList'
                     listUrl={app.route.ROUTE_SEARCH_GOODS}
                     autoLoad={false}
                     />
             </View>
         );
     },
-    _measureLineWidth(e) {
+    _measureLineWidth (e) {
         if (!this.state.lineWidth) {
-            var {width, height} = e.nativeEvent.layout;
-            this.setState({lineWidth: width, lineHeight: height});
+            const { width, height } = e.nativeEvent.layout;
+            this.setState({ lineWidth: width, lineHeight: height });
         }
     },
-    renderRow(obj) {
-        var lineHeight = this.state.lineHeight/2;
-        return(
+    renderRow (obj) {
+        const lineHeight = this.state.lineHeight / 2;
+        return (
             <View style={styles.rowViewStyle}>
                 <TouchableOpacity onPress={this.doBuyGoods.bind(null, obj, 0)}>
                     <Image
                         resizeMode='stretch'
-                        source={{uri:obj.goodsImg}}
+                        source={{ uri:obj.goodsImg }}
                         style={styles.commodityStyle} />
                 </TouchableOpacity>
                 <Image
@@ -102,35 +102,34 @@ module.exports = React.createClass({
                             </Text>
                         </View>
                         <View style={styles.detailContainer}>
-                            <View style={{flexDirection: 'row', marginTop: 5}}>
+                            <View style={{ flexDirection: 'row', marginTop: 5 }}>
                                 <Text numberOfLines={2} style={styles.commodityTitleText}>
                                     {obj.goodsDec}
                                 </Text>
                                 <Text style={styles.soldText}>
-                                    {'已售:'+obj.sales+'件'}
+                                    {'已售:' + obj.sales + '件'}
                                 </Text>
                             </View>
                             <View style={styles.priceContainer}>
-                                <View style={{width: (sr.w-165), flexDirection: 'row'}}>
-                                    <Text style={{color: '#333333', fontSize: 14}}>
+                                <View style={{ width: (sr.w - 165), flexDirection: 'row' }}>
+                                    <Text style={{ color: '#333333', fontSize: 14 }}>
                                         {'专享价:'}
                                     </Text>
-                                    <Text style={{color: '#ff3c30', fontSize: 14}}>
-                                        {'￥'+obj.goodsPrice}
+                                    <Text style={{ color: '#ff3c30', fontSize: 14 }}>
+                                        {'￥' + obj.goodsPrice}
                                     </Text>
-                                    <View style={{marginLeft: 10, alignSelf: 'center'}}>
+                                    <View style={{ marginLeft: 10, alignSelf: 'center' }}>
                                         <View style={styles.container}>
                                             <Text
                                                 onLayout={this._measureLineWidth}
-                                                style={{color: '#666666', fontSize: 9,marginRight:2}}>
-                                                {'原价:￥'+ obj.goodsSale}
+                                                style={{ color: '#666666', fontSize: 9, marginRight:2 }}>
+                                                {'原价:￥' + obj.goodsSale}
                                             </Text>
-                                            <View style={{height: 1, width: this.state.lineWidth, backgroundColor: '#666666', position: 'absolute', bottom: lineHeight}}>
-                                            </View>
+                                            <View style={{ height: 1, width: this.state.lineWidth, backgroundColor: '#666666', position: 'absolute', bottom: lineHeight }} />
                                         </View>
                                     </View>
                                 </View>
-                                <View style={{flex: 1}}>
+                                <View style={{ flex: 1 }}>
                                     <Button
                                         onPress={this.doBuyGoods.bind(null, obj, 1)}
                                         style={styles.goPayBtn}
@@ -143,16 +142,15 @@ module.exports = React.createClass({
                     </View>
                 </Image>
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     txtInputSearch: {
         height: 34,
@@ -171,11 +169,11 @@ var styles = StyleSheet.create({
     },
     separator: {
         height: 1,
-        backgroundColor: '#EEEEEE'
+        backgroundColor: '#EEEEEE',
     },
     commodityStyle: {
         width: sr.w,
-        height: sr.w*2/5,
+        height: sr.w * 2 / 5,
     },
     commodityDetailStyle: {
         width: sr.w,
@@ -184,7 +182,7 @@ var styles = StyleSheet.create({
     },
     rowViewStyle: {
         flex: 1,
-        height:sr.w*2/3,
+        height:sr.w * 2 / 3,
         marginTop:2,
         borderRadius:15,
     },
@@ -227,7 +225,7 @@ var styles = StyleSheet.create({
         color: '#333333',
     },
     specificationsTitleText: {
-        width: (sr.w-75)/2,
+        width: (sr.w - 75) / 2,
         marginLeft: 8,
         fontSize: 18,
         color: '#333333',

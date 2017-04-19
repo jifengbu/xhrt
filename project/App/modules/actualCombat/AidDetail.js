@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Image,
     View,
@@ -11,30 +11,30 @@ var {
     Text,
 } = ReactNative;
 
-var dismissKeyboard = require('dismissKeyboard');
-var Subscribable = require('Subscribable');
-var TimerMixin = require('react-timer-mixin');
-var AidComment = require('./AidComment.js');
-var MyCaseList = require('./MyCaseList.js');
-var SignUp = require('./SignUp.js');
-var AidBigImage = require('./AidBigImage.js');
-var ShowPayAidMessageBox = require('./ShowPayAidMessageBox.js');
-var ShowThankVoiceMessageBox = require('./ShowThankVoiceMessageBox.js');
-var BuyWinCoinMessageBox = require('../train/BuyWinCoinMessageBox.js');
-var Audio = require('@remobile/react-native-audio');
-var AlipayMgr = require('../../manager/AlipayMgr.js');
-var WXpayMgr = require('../../manager/WXpayMgr.js');
-var CardBox = require('../shared/CardBox.js');
+const dismissKeyboard = require('dismissKeyboard');
+const Subscribable = require('Subscribable');
+const TimerMixin = require('react-timer-mixin');
+const AidComment = require('./AidComment.js');
+const MyCaseList = require('./MyCaseList.js');
+const SignUp = require('./SignUp.js');
+const AidBigImage = require('./AidBigImage.js');
+const ShowPayAidMessageBox = require('./ShowPayAidMessageBox.js');
+const ShowThankVoiceMessageBox = require('./ShowThankVoiceMessageBox.js');
+const BuyWinCoinMessageBox = require('../train/BuyWinCoinMessageBox.js');
+const Audio = require('@remobile/react-native-audio');
+const AlipayMgr = require('../../manager/AlipayMgr.js');
+const WXpayMgr = require('../../manager/WXpayMgr.js');
+const CardBox = require('../shared/CardBox.js');
 
-var PayMessageBox = require('./PayMessageBox.js');
+const PayMessageBox = require('./PayMessageBox.js');
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
-var defaultNum = 1; //未付款时默认只能看一张图片
-// var isPay = false;  //是否支付 默认为false
+let defaultNum = 1; // 未付款时默认只能看一张图片
+// let isPay = false;  //是否支付 默认为false
 module.exports = React.createClass({
     mixins: [Subscribable.Mixin, TimerMixin],
-    getInitialState() {
+    getInitialState () {
         this.isPlaying = [];
         return {
             kitDetail : {},
@@ -55,13 +55,13 @@ module.exports = React.createClass({
             overlayShowCardBox: false,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         app.phoneMgr.toggleSpeaker(true);
-        this.setState({isSpeakerOn:app.phoneMgr.isSpeakerOn});
+        this.setState({ isSpeakerOn:app.phoneMgr.isSpeakerOn });
         this.getItemKit();
     },
-    getItemKit() {
-        var param = {
+    getItemKit () {
+        const param = {
             kitID: this.props.kitInfo.id,
             userID: app.personal.info.userID,
             type: this.props.tabIndex,
@@ -69,72 +69,72 @@ module.exports = React.createClass({
         };
         POST(app.route.ROUTE_GET_ITEM_KIT, param, this.getItemKitSuccess, true);
     },
-    getItemKitSuccess(data) {
+    getItemKitSuccess (data) {
         if (data.success) {
-            let {audioArray, isPay, startTime, endTime} = data.context;
+            const { audioArray, isPay, startTime, endTime } = data.context;
             this.isPlaying = _.fill(Array(audioArray.length), false);
-            if (app.personal.info.userID===this.props.kitInfo.releaseId) {
+            if (app.personal.info.userID === this.props.kitInfo.releaseId) {
                 this.setState({
                     kitDetail:data.context,
                     isPlaying: this.isPlaying,
                     isPay: true,
                     startDate: startTime,
-                    endDate: endTime
+                    endDate: endTime,
                 });
             } else {
-                var tempIsPay = isPay?true:false;
+                const tempIsPay = !!isPay;
                 this.setState({
                     kitDetail:data.context,
                     isPlaying: this.isPlaying,
                     isPay: tempIsPay,
                     startDate: startTime,
-                    endDate: endTime
+                    endDate: endTime,
                 });
             }
         } else {
             Toast(data.msg);
         }
     },
-    doPayConfirm() {
-        this.setState({overlayShowPayAidMessageBox: false, overlayShowPayMessageBox:true});
+    doPayConfirm () {
+        this.setState({ overlayShowPayAidMessageBox: false, overlayShowPayMessageBox:true });
     },
-    doCancle() {
-        this.setState({overlayShowPayAidMessageBox: false});
+    doCancle () {
+        this.setState({ overlayShowPayAidMessageBox: false });
     },
-    doThankConfirm() {
-        this.setState({overlayShowThankVoiceMessageBox: false});
+    doThankConfirm () {
+        this.setState({ overlayShowThankVoiceMessageBox: false });
     },
-    doThankCancle() {
-        this.setState({overlayShowThankVoiceMessageBox: false});
+    doThankCancle () {
+        this.setState({ overlayShowThankVoiceMessageBox: false });
     },
-    onPaySuccess() {
-        let {thankAudio} = this.state.kitDetail;
+    onPaySuccess () {
+        const { thankAudio } = this.state.kitDetail;
         this.props.updateAidList(this.props.kitInfo.id, this.props.tabIndex);
-        if (thankAudio ==='' || thankAudio == null) {
-          this.setState({overlayShowPayMessageBox:false, isPay: true});
+        if (thankAudio === '' || thankAudio == null) {
+            this.setState({ overlayShowPayMessageBox:false, isPay: true });
         } else {
-          this.setState({overlayShowPayMessageBox:false, overlayShowThankVoiceMessageBox: true, isPay: true});
+            this.setState({ overlayShowPayMessageBox:false, overlayShowThankVoiceMessageBox: true, isPay: true });
         }
     },
-    doClosePayMessageBox() {
-        this.setState({overlayShowPayMessageBox:false});
+    doClosePayMessageBox () {
+        this.setState({ overlayShowPayMessageBox:false });
     },
-    doPayByApplePay() {
+    doPayByApplePay () {
 
     },
-    doSubmitComment() {
+    doSubmitComment () {
         dismissKeyboard();
         if (this.state.commentContent === '') {
             Toast('请提交评论信息');
             return;
         }
-        let {userID} = app.personal.info;
+        const { userID } = app.personal.info;
         if (!this.state.isSendding) {
             Toast('正在发送评论...');
-            this.setState({isSendding: true});
-            //为true子评论，为false评论
+            this.setState({ isSendding: true });
+            // 为true子评论，为false评论
             if (this.state.isChildComment) {
-                var param = {
+                const param = {
                     userID: userID,
                     kitID:this.props.kitInfo.id,
                     commentID:this.state.tempCommentID,
@@ -143,7 +143,7 @@ module.exports = React.createClass({
                 };
                 POST(app.route.ROUTE_SUBMIT_SONKIDS_COMMENT, param, this.doSubmitSonCommentSuccess);
             } else {
-                var param = {
+                const param = {
                     userID: userID,
                     kitID:this.props.kitInfo.id,
                     type: this.props.tabIndex,
@@ -153,34 +153,34 @@ module.exports = React.createClass({
             }
         }
     },
-    submitCommentSuccess(data) {
+    submitCommentSuccess (data) {
         if (data.success) {
-            var info = app.personal.info;
-            var curComment = {
+            const info = app.personal.info;
+            const curComment = {
                 commentID: 0,
                 publisherImg: info.headImg,
                 publisherName: info.name,
                 publisherTime: app.utils.getCurrentTimeString(),
                 publisherAlias: info.alias,
                 comment: this.state.commentContent,
-            }
-            this.setState({commentContent: '', isSendding: false, isChildComment: false});
+            };
+            this.setState({ commentContent: '', isSendding: false, isChildComment: false });
             Toast('发表评论成功');
             this.commentList.doRefresh(curComment);
         } else {
             Toast(data.msg);
         }
     },
-    doSubmitSonCommentSuccess(data) {
+    doSubmitSonCommentSuccess (data) {
         if (data.success) {
             Toast('回复成功');
             app.refreshComments.doRefreshComments();
-            this.setState({commentContent: '', isSendding: false, isChildComment: false});
+            this.setState({ commentContent: '', isSendding: false, isChildComment: false });
         } else {
             Toast(data.msg);
         }
     },
-    popupInputbox(commentID, publisherName) {
+    popupInputbox (commentID, publisherName) {
         this.setState({
             tempCommentID: commentID,
             tempPublisherName: publisherName,
@@ -188,7 +188,7 @@ module.exports = React.createClass({
         });
         this.commentInput.focus();
     },
-    onBlur() {
+    onBlur () {
         if (this.state.commentContent === '') {
             this.setState({
                 tempCommentID: 0,
@@ -197,41 +197,41 @@ module.exports = React.createClass({
             });
         }
     },
-    hideCard() {
-        this.setState({overlayShowCardBox: false});
+    hideCard () {
+        this.setState({ overlayShowCardBox: false });
     },
-    isShowCard(userCardId) {
-        this.setState({userCardId, overlayShowCardBox: true});
+    isShowCard (userCardId) {
+        this.setState({ userCardId, overlayShowCardBox: true });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.container}>
-                    <this.DetailView/>
-                    <AidComment ref={(ref)=>this.commentList = ref} popupInputbox={this.popupInputbox} isPlayer={this.isPlayer} kitID={this.props.kitInfo.id} tabIndex={this.props.tabIndex}/>
+                    <this.DetailView />
+                    <AidComment ref={(ref) => { this.commentList = ref; }} popupInputbox={this.popupInputbox} isPlayer={this.isPlayer} kitID={this.props.kitInfo.id} tabIndex={this.props.tabIndex} />
                     {
-                        this.props.tabIndex===0?
-                        <View style={styles.caseContainer}>
-                            <View style={styles.caseTitleContainer}>
-                                <Text style={[styles.titleText, {fontSize: 18}]}>
-                                    {'网友方案'}
-                                </Text>
+                        this.props.tabIndex === 0 ?
+                            <View style={styles.caseContainer}>
+                                <View style={styles.caseTitleContainer}>
+                                    <Text style={[styles.titleText, { fontSize: 18 }]}>
+                                        {'网友方案'}
+                                    </Text>
+                                </View>
+                                <MyCaseList isPlayer={this.isPlayer} isShowCard={this.isShowCard} kitDetail={this.state.kitDetail} kitID={this.props.kitInfo.id} ref={(ref) => { this.caseList = ref; }} tabIndex={this.props.tabIndex} showCardType={2} />
                             </View>
-                            <MyCaseList isPlayer={this.isPlayer} isShowCard={this.isShowCard} kitDetail={this.state.kitDetail} kitID={this.props.kitInfo.id} ref={(ref)=>this.caseList = ref} tabIndex={this.props.tabIndex} showCardType={2}/>
-                        </View>
-                        :<View style={{height: 20}}></View>
+                        : <View style={{ height: 20 }} />
                     }
                 </ScrollView>
                 <View style={styles.inputContainer}>
                     <View style={styles.bottomInput}>
                         <View style={styles.inputView}>
                             <TextInput
-                                ref={(ref)=>this.commentInput = ref}
+                                ref={(ref) => { this.commentInput = ref; }}
                                 onBlur={this.onBlur}
-                                onChangeText={(text) => this.setState({commentContent: text})}
+                                onChangeText={(text) => this.setState({ commentContent: text })}
                                 defaultValue={this.state.commentContent}
-                                placeholder={this.state.isChildComment?("回复"+this.state.tempPublisherName+"："):"有什么感想快来说说吧"}
-                                style={styles.textInput}/>
+                                placeholder={this.state.isChildComment ? ('回复' + this.state.tempPublisherName + '：') : '有什么感想快来说说吧'}
+                                style={styles.textInput} />
                         </View>
                         <Button
                             onPress={this.doSubmitComment}
@@ -246,8 +246,7 @@ module.exports = React.createClass({
                     <ShowPayAidMessageBox
                         winCoinNum={this.state.kitDetail.price}
                         doConfirm={this.doPayConfirm}
-                        doCancle={this.doCancle}>
-                    </ShowPayAidMessageBox>
+                        doCancle={this.doCancle} />
                 }
                 {
                     this.state.overlayShowThankVoiceMessageBox &&
@@ -255,8 +254,7 @@ module.exports = React.createClass({
                         thankLong={this.state.kitDetail.thankLong}
                         thankAudio={this.state.kitDetail.thankAudio}
                         doConfirm={this.doThankConfirm}
-                        doCancle={this.doThankCancle}>
-                    </ShowThankVoiceMessageBox>
+                        doCancle={this.doThankCancle} />
                 }
                 {
                     this.state.overlayShowPayMessageBox &&
@@ -267,44 +265,41 @@ module.exports = React.createClass({
                         doPayByWechat={this.onPaySuccess}
                         doPayByAlipay={this.onPaySuccess}
                         doClose={this.doClosePayMessageBox}
-                        doPayByApplePay={this.doPayByApplePay}>
-                    </PayMessageBox>
+                        doPayByApplePay={this.doPayByApplePay} />
                 }
                 {
                     this.state.overlayShowCardBox &&
                     <CardBox
                         userID={this.state.userCardId}
-                        hideCard={this.hideCard}>
-                    </CardBox>
+                        hideCard={this.hideCard} />
                 }
             </View>
-        )
+        );
     },
-    updateCaseList(id) {
-        this.props.updateAidList({id: id, type: this.props.tabIndex});
+    updateCaseList (id) {
+        this.props.updateAidList({ id: id, type: this.props.tabIndex });
         this.caseList.doRefresh();
     },
-    goConfirm() {
+    goConfirm () {
         this.isPlayer();
         app.navigator.push({
             component: SignUp,
             passProps: {
                 toKitDetail:this.state.kitDetail,
                 kitID:this.props.kitInfo.id,
-                updateCaseList:this.updateCaseList
-            }
+                updateCaseList:this.updateCaseList,
+            },
         });
     },
-    showBigImage(imageArray, index) {
+    showBigImage (imageArray, index) {
         app.showModal(
             <AidBigImage
                 doImageClose={app.closeModal}
                 defaultIndex={index}
-                defaultImageArray={imageArray}>
-            </AidBigImage>
+                defaultImageArray={imageArray} />
         );
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         app.phoneMgr.toggleSpeaker(false);
         clearInterval(this.intervalID);
         this.intervalID = null;
@@ -312,32 +307,32 @@ module.exports = React.createClass({
             this.voiceStop();
         }
     },
-    voiceStop() {
+    voiceStop () {
         this.player.stop();
         this.player.release();
         this.player = null;
     },
-    isPlayer() {
+    isPlayer () {
         if (this.player) {
             this.voiceStop();
             this.isPlaying[this.isPlayingIndex] = false;
-            this.setState({isPlaying: this.isPlaying});
+            this.setState({ isPlaying: this.isPlaying });
         }
     },
-    playVoice(url, index){
-        if (!url || url==='null') {
+    playVoice (url, index) {
+        if (!url || url === 'null') {
             Toast('音频地址为空');
             return;
         }
-        if (!this.state.isPay && this.props.tabIndex===1) {
+        if (!this.state.isPay && this.props.tabIndex === 1) {
             index = 0;
-            var tempDuration = parseInt(this.state.kitDetail.audioArray[index].whenLong*0.2);
-            this.setState({second: tempDuration});
+            const tempDuration = parseInt(this.state.kitDetail.audioArray[index].whenLong * 0.2);
+            this.setState({ second: tempDuration });
             url = this.state.kitDetail.audioArray[index].recordPath;
             if (this.player && this.isPlaying[0]) {
                 this.voiceStop();
                 this.isPlaying[0] = false;
-                this.setState({isPlaying: this.isPlaying});
+                this.setState({ isPlaying: this.isPlaying });
                 clearInterval(this.intervalID);
                 this.intervalID = null;
                 return;
@@ -345,25 +340,25 @@ module.exports = React.createClass({
                 this.player = new Audio(url, (error) => {
                     if (!error) {
                         this.isPlaying[0] = true;
-                        this.setState({isPlaying: this.isPlaying});
-                        this.player!=null&&this.player.play(()=>{
+                        this.setState({ isPlaying: this.isPlaying });
+                        this.player != null && this.player.play(() => {
                         });
-                    } else{
+                    } else {
                         Toast('播放失败');
                     }
                 });
                 clearInterval(this.intervalID);
                 this.intervalID = null;
             }
-            this.intervalID = setInterval(()=>{
-                var {second}  = this.state;
+            this.intervalID = setInterval(() => {
+                let { second } = this.state;
                 second--;
-                this.setState({second});
+                this.setState({ second });
                 if (second < 0) {
                     if (this.player && this.isPlaying[0]) {
                         this.voiceStop();
                         this.isPlaying[0] = false;
-                        this.setState({isPlaying: this.isPlaying});
+                        this.setState({ isPlaying: this.isPlaying });
                     }
                     this.showPayMessageBox();
                     clearInterval(this.intervalID);
@@ -375,29 +370,29 @@ module.exports = React.createClass({
         if (this.player && this.isPlaying[index]) {
             this.voiceStop();
             this.isPlaying[index] = false;
-            this.setState({isPlaying: this.isPlaying});
+            this.setState({ isPlaying: this.isPlaying });
         } else {
-            var tempIsPlaying = _.find(this.isPlaying, (item)=>item==true);
+            const tempIsPlaying = _.find(this.isPlaying, (item) => item == true);
             if (tempIsPlaying && tempIsPlaying != null) {
-                if (this.player!=null) {
+                if (this.player != null) {
                     this.player.stop();
                     this.player.release();
                 }
                 this.player = null;
                 this.isPlaying[this.tempIndex] = false;
-                this.setState({isPlaying: this.isPlaying});
+                this.setState({ isPlaying: this.isPlaying });
                 this.player = new Audio(url, (error) => {
                     if (!error) {
                         this.isPlaying[index] = true;
-                        this.setState({isPlaying: this.isPlaying});
+                        this.setState({ isPlaying: this.isPlaying });
                         this.tempIndex = index;
-                        this.player!=null&&this.player.play(()=>{
+                        this.player != null && this.player.play(() => {
                             this.player.release();
                             this.player = null;
                             this.isPlaying[index] = false;
-                            this.setState({isPlaying: this.isPlaying});
+                            this.setState({ isPlaying: this.isPlaying });
                         });
-                    } else{
+                    } else {
                         Toast('播放失败');
                     }
                 });
@@ -405,15 +400,15 @@ module.exports = React.createClass({
                 this.player = new Audio(url, (error) => {
                     if (!error) {
                         this.isPlaying[index] = true;
-                        this.setState({isPlaying: this.isPlaying});
+                        this.setState({ isPlaying: this.isPlaying });
                         this.tempIndex = index;
-                        this.player!=null&&this.player.play(()=>{
+                        this.player != null && this.player.play(() => {
                             this.player.release();
                             this.player = null;
                             this.isPlaying[index] = false;
-                            this.setState({isPlaying: this.isPlaying});
+                            this.setState({ isPlaying: this.isPlaying });
                         });
-                    } else{
+                    } else {
                         Toast('播放失败');
                     }
                 });
@@ -421,32 +416,32 @@ module.exports = React.createClass({
         }
         this.isPlayingIndex = index;
     },
-    toggleSpeaker() {
+    toggleSpeaker () {
         app.phoneMgr.toggleSpeaker();
-        this.setState({isSpeakerOn:app.phoneMgr.isSpeakerOn});
+        this.setState({ isSpeakerOn:app.phoneMgr.isSpeakerOn });
         if (this.state.isSpeakerOn) {
             Toast('已经为你切换到扬声器');
         } else {
             Toast('已经为你切换到听筒');
         }
     },
-    showPayMessageBox() {
-        this.setState({overlayShowPayAidMessageBox: true});
+    showPayMessageBox () {
+        this.setState({ overlayShowPayAidMessageBox: true });
     },
-    //征集话术详情
-    DetailView() {
-        var tempPrice = 0;
-        let {imageArray, title, price, titleDec, audioArray} = this.state.kitDetail;
+    // 征集话术详情
+    DetailView () {
+        let tempPrice = 0;
+        const { imageArray, title, price, titleDec, audioArray } = this.state.kitDetail;
         if (price != undefined) {
             tempPrice = price.toFixed(2);
         }
-        var TempImageArray = [];
-        var surplusNum = 0;
+        let TempImageArray = [];
+        let surplusNum = 0;
         if (imageArray != undefined) {
-            if (!this.state.isPay && this.props.tabIndex===1) {
+            if (!this.state.isPay && this.props.tabIndex === 1) {
                 if (imageArray.length == defaultNum) {
                     TempImageArray = _.slice(imageArray, 0, defaultNum);
-                    surplusNum =  defaultNum - 1 ;
+                    surplusNum = defaultNum - 1;
                 }
                 if (imageArray.length > defaultNum) {
                     TempImageArray = _.slice(imageArray, 0, defaultNum);
@@ -463,16 +458,16 @@ module.exports = React.createClass({
                 <View style={styles.titleContainer}>
                     <Text
                         numberOfLines={1}
-                        style={[styles.titleText,{marginHorizontal:20}]}>
-                        {title&&title}
+                        style={[styles.titleText, { marginHorizontal:20 }]}>
+                        {title && title}
                     </Text>
                 </View>
                 <View style={styles.detailContainer}>
                     <Text style={styles.contextTextTime}>
-                        {this.props.tabIndex===0?(this.state.startDate+'至'+this.state.endDate):this.state.startDate}
+                        {this.props.tabIndex === 0 ? (this.state.startDate + '至' + this.state.endDate) : this.state.startDate}
                     </Text>
                     <View style={styles.deteContainer}>
-                        <Text style={[styles.contextText, {fontSize: 13, fontWeight: '500', color: '#bf9f62'}]}>
+                        <Text style={[styles.contextText, { fontSize: 13, fontWeight: '500', color: '#bf9f62' }]}>
                             {'主题介绍 '}
                         </Text>
                         <View style={styles.rightTitle}>
@@ -482,91 +477,91 @@ module.exports = React.createClass({
                                 style={styles.iconCount}
                                 />
                             <Text style={styles.rewardText}>
-                                {this.props.type===0?'悬赏 ':'打赏 '}
+                                {this.props.type === 0 ? '悬赏 ' : '打赏 '}
                             </Text>
-                            <Text style={[styles.describeText,{fontSize: 16}]}>
-                                {'¥ '+tempPrice+'元'}
+                            <Text style={[styles.describeText, { fontSize: 16 }]}>
+                                {'¥ ' + tempPrice + '元'}
                             </Text>
                         </View>
                     </View>
                     <View style={styles.deteContainer1}>
                         <Text style={styles.contextText}>
-                            {titleDec&&titleDec}
+                            {titleDec && titleDec}
                         </Text>
                     </View>
                     {
-                        TempImageArray.length!=0&&
-                        <ScrollView horizontal={true} style={styles.imageContainer}>
+                        TempImageArray.length != 0 &&
+                        <ScrollView horizontal style={styles.imageContainer}>
                             {
-                                TempImageArray.map((item, i)=>{
+                                TempImageArray.map((item, i) => {
                                     return (
-                                        <TouchableHighlight key={i} underlayColor="rgba(0, 0, 0, 0)" onPress={this.showBigImage.bind(null, TempImageArray, i)} style={styles.bigImageTouch}>
+                                        <TouchableHighlight key={i} underlayColor='rgba(0, 0, 0, 0)' onPress={this.showBigImage.bind(null, TempImageArray, i)} style={styles.bigImageTouch}>
                                             <Image
                                                 resizeMode='stretch'
                                                 defaultSource={app.img.common_default}
-                                                source={{uri: item}}
+                                                source={{ uri: item }}
                                                 style={styles.imageStyle}
                                                 />
                                         </TouchableHighlight>
-                                    )
+                                    );
                                 })
                             }
                             {
-                                !this.state.isPay && this.props.tabIndex===1 && surplusNum >= defaultNum?
-                                <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={this.showPayMessageBox}>
-                                    <View style={styles.showPayImage}>
-                                        <Image
-                                            resizeMode='stretch'
-                                            defaultSource={app.img.actualCombat_empty}
-                                            style={styles.imageIcon}
+                                !this.state.isPay && this.props.tabIndex === 1 && surplusNum >= defaultNum ?
+                                    <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.showPayMessageBox}>
+                                        <View style={styles.showPayImage}>
+                                            <Image
+                                                resizeMode='stretch'
+                                                defaultSource={app.img.actualCombat_empty}
+                                                style={styles.imageIcon}
                                             />
-                                        <Text style={styles.showPayText}>
-                                            {'打赏后查看剩余 '+surplusNum+' 张相片'}
-                                        </Text>
-                                    </View>
-                                </TouchableHighlight> : null
+                                            <Text style={styles.showPayText}>
+                                                {'打赏后查看剩余 ' + surplusNum + ' 张相片'}
+                                            </Text>
+                                        </View>
+                                    </TouchableHighlight> : null
                             }
                         </ScrollView>
                     }
                     <View style={styles.audioContainer}>
                         {
-                            audioArray&&audioArray.map((item, i)=>{
+                            audioArray && audioArray.map((item, i) => {
                                 return (
                                     <View key={i} style={styles.audioView}>
-                                        <Text style={styles.audioTextContainer}>{item.whenLong+"''"}</Text>
+                                        <Text style={styles.audioTextContainer}>{item.whenLong + "''"}</Text>
                                         <TouchableHighlight
-                                            onLongPress= {this.toggleSpeaker}
-                                            onPress={this.playVoice.bind(null,item.recordPath, i, item.whenLong)}
+                                            onLongPress={this.toggleSpeaker}
+                                            onPress={this.playVoice.bind(null, item.recordPath, i, item.whenLong)}
                                             style={styles.audioClick}>
                                             <View
-                                                style={[styles.audioPlay, {backgroundColor: CONSTANTS.THEME_COLOR}]}>
-                                                <Image resizeMode='stretch' source={this.state.isPlaying[i]?app.img.actualCombat_voice_playing:app.img.actualCombat_voice_play} style={styles.imageVoice} />
+                                                style={[styles.audioPlay, { backgroundColor: CONSTANTS.THEME_COLOR }]}>
+                                                <Image resizeMode='stretch' source={this.state.isPlaying[i] ? app.img.actualCombat_voice_playing : app.img.actualCombat_voice_play} style={styles.imageVoice} />
                                             </View>
                                         </TouchableHighlight>
                                     </View>
-                                )
+                                );
                             })
                         }
                     </View>
                     {
-                        this.props.tabIndex===0?
-                        <View style={styles.btnContainer}>
-                            <Button
-                                onPress={this.goConfirm}
-                                textStyle={styles.btnText}
-                                style={styles.btnGo}>
-                                {'报名参加'}
-                            </Button>
-                        </View>
-                        :null
+                        this.props.tabIndex === 0 ?
+                            <View style={styles.btnContainer}>
+                                <Button
+                                    onPress={this.goConfirm}
+                                    textStyle={styles.btnText}
+                                    style={styles.btnGo}>
+                                    {'报名参加'}
+                                </Button>
+                            </View>
+                        : null
                     }
                 </View>
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex:1,
         backgroundColor: '#EEEEEE',
@@ -610,7 +605,7 @@ var styles = StyleSheet.create({
         marginHorizontal: 20,
         marginTop:  3,
         flexDirection: 'row',
-        width: sr.w-20,
+        width: sr.w - 20,
         alignSelf: 'center',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
@@ -627,7 +622,7 @@ var styles = StyleSheet.create({
     rewardText: {
         fontSize: 12,
         fontWeight: '400',
-        color: 'grey'
+        color: 'grey',
     },
     describeText: {
         fontWeight: '500',
@@ -635,7 +630,7 @@ var styles = StyleSheet.create({
     },
     deteContainer1: {
         marginHorizontal: 10,
-        width: sr.w-20,
+        width: sr.w - 20,
         justifyContent: 'center',
         marginTop: 8,
     },
@@ -722,7 +717,7 @@ var styles = StyleSheet.create({
     lineView:{
         width: sr.w,
         height: 30,
-        backgroundColor: 'red'
+        backgroundColor: 'red',
     },
     btnText: {
         fontSize: 14,
@@ -734,7 +729,7 @@ var styles = StyleSheet.create({
         borderRadius: 4,
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor: '#c1974b'
+        backgroundColor: '#c1974b',
     },
     btnContainer: {
         height: 35,
@@ -750,7 +745,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#cbcccd',
     },
     textInput: {
-        width: sr.w-96,
+        width: sr.w - 96,
         height:30,
         fontSize: 16,
         paddingVertical: -3,
@@ -765,7 +760,7 @@ var styles = StyleSheet.create({
     },
     inputView: {
         marginLeft: 15,
-        width: sr.w-90,
+        width: sr.w - 90,
         borderRadius: 4,
         backgroundColor: '#FFFFFF',
     },

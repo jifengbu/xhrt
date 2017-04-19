@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -10,85 +10,85 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var VideoPlay = require('../study/VideoPlay.js');
-var ShowMealBox = require('../package/ShowMealBox.js');
-var PackageList = require('../package/PackageList.js');
-var CoursePlayer = require('../specops/CoursePlayer.js');
-var {Button,PageList} = COMPONENTS;
+const VideoPlay = require('../study/VideoPlay.js');
+const ShowMealBox = require('../package/ShowMealBox.js');
+const PackageList = require('../package/PackageList.js');
+const CoursePlayer = require('../specops/CoursePlayer.js');
+const { Button, PageList } = COMPONENTS;
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '我的收藏',
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
-        rightButton: { title: '管理', delayTime:1, handler: ()=>{app.scene.toggleMenuPanel()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
+        rightButton: { title: '管理', delayTime:1, handler: () => { app.scene.toggleMenuPanel(); } },
     },
-    getInitialState() {
+    getInitialState () {
         this.selects = [false];
         return {
             showDeletePanel: false,
             ShowMealBox: false,
         };
     },
-    doCancle() {
-        this.setState({ShowMealBox: false});
+    doCancle () {
+        this.setState({ ShowMealBox: false });
     },
-    doPayConfirm() {
+    doPayConfirm () {
         app.navigator.push({
             title: '套餐',
             component: PackageList,
         });
-        this.setState({ShowMealBox: false});
+        this.setState({ ShowMealBox: false });
     },
-    toggleMenuPanel() {
+    toggleMenuPanel () {
         if (this.state.showDeletePanel) {
             this.doConfirmDelete();
         } else {
-            this.setState({showDeletePanel: true});
-            this.listView.updateList(list=>list);
-            app.getCurrentRoute().rightButton = { title: '删除', delayTime:1, handler: ()=>{app.scene.toggleMenuPanel()}};
-            app.getCurrentRoute().leftButton = { title: '取消', delayTime:1, handler: ()=>{app.scene.toggleImageMenuPanel()}};
+            this.setState({ showDeletePanel: true });
+            this.listView.updateList(list => list);
+            app.getCurrentRoute().rightButton = { title: '删除', delayTime:1, handler: () => { app.scene.toggleMenuPanel(); } };
+            app.getCurrentRoute().leftButton = { title: '取消', delayTime:1, handler: () => { app.scene.toggleImageMenuPanel(); } };
             app.forceUpdateNavbar();
         }
     },
-    toggleImageMenuPanel() {
-        //取消删除时恢复不选中状态
+    toggleImageMenuPanel () {
+        // 取消删除时恢复不选中状态
         this.selects = _.fill(this.selects, false);
-        app.getCurrentRoute().rightButton = { title: '管理', delayTime:1, handler: ()=>{app.scene.toggleMenuPanel()}};
+        app.getCurrentRoute().rightButton = { title: '管理', delayTime:1, handler: () => { app.scene.toggleMenuPanel(); } };
         if (app.getCurrentRoute().leftButton.title) {
-            this.setState({showDeletePanel: false});
-            app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}};
+            this.setState({ showDeletePanel: false });
+            app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: () => { app.navigator.pop(); } };
             app.forceUpdateNavbar();
         }
     },
-    selectDelete(sectionID, rowID) {
+    selectDelete (sectionID, rowID) {
         this.selects[rowID] = !this.selects[rowID];
-        this.listView.updateList(list=>list);
+        this.listView.updateList(list => list);
     },
-    doConfirmDelete() {
-        var flag = _.every(this.selects, (i)=>!i);
+    doConfirmDelete () {
+        const flag = _.every(this.selects, (i) => !i);
         if (flag) {
             Toast('请选择需要删除的记录');
             return;
         }
-        var deleteList = _.map(_.filter(this.listView.list, (o, i)=>this.selects[i]), (item)=>item.videoID);
-        var param = {
+        const deleteList = _.map(_.filter(this.listView.list, (o, i) => this.selects[i]), (item) => item.videoID);
+        const param = {
             userID: app.personal.info.userID,
             vedioIDList: deleteList,
         };
         POST(app.route.ROUTE_SUBMIT_DELETEMYCOLLECTION, param, this.deleteSuccess, this.deleteFailed, true);
     },
-    deleteSuccess(data) {
+    deleteSuccess (data) {
         if (data.success) {
-            this.listView.updateList((list)=>{
-                list = _.reject(list, (o, i)=>this.selects[i]);
+            this.listView.updateList((list) => {
+                list = _.reject(list, (o, i) => this.selects[i]);
                 this.selects = [false];
                 return list;
             });
             if (!this.listView.list.length) {
-                this.setState({showDeletePanel: false});
-                app.getCurrentRoute().rightButton = { title: '管理', delayTime:1, handler: ()=>{app.scene.toggleMenuPanel()}};
-                app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}};
+                this.setState({ showDeletePanel: false });
+                app.getCurrentRoute().rightButton = { title: '管理', delayTime:1, handler: () => { app.scene.toggleMenuPanel(); } };
+                app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: () => { app.navigator.pop(); } };
                 app.forceUpdateNavbar();
             }
         } else {
@@ -96,12 +96,12 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    deleteFailed() {
+    deleteFailed () {
     },
-    //更新视频的播放和点赞数量
-    updateClickOrLikeNum(clickNum) {
-        this.listView.updateList((list)=>{
-            var video = _.find(list, (item)=>item.videoID==clickNum.videoID);
+    // 更新视频的播放和点赞数量
+    updateClickOrLikeNum (clickNum) {
+        this.listView.updateList((list) => {
+            const video = _.find(list, (item) => item.videoID == clickNum.videoID);
             if (video) {
                 if (clickNum.type === 'click') {
                     video.clicks += 1;
@@ -112,29 +112,29 @@ module.exports = React.createClass({
             return list;
         });
     },
-    playVideo(obj, sectionID, rowID) {
+    playVideo (obj, sectionID, rowID) {
         if (this.state.showDeletePanel) {
             this.selects[rowID] = !this.selects[rowID];
-            this.listView.updateList(list=>list);
+            this.listView.updateList(list => list);
         } else {
-            const {isAgent, isSpecialSoldier} = app.personal.info;
-            let authorized = isAgent||isSpecialSoldier; //是否是特种兵1—是  0—不是
-            if (obj.videoType==6) {
+            const { isAgent, isSpecialSoldier } = app.personal.info;
+            const authorized = isAgent || isSpecialSoldier; // 是否是特种兵1—是  0—不是
+            if (obj.videoType == 6) {
                 if (!authorized) {
-                    //跳转到购买特种兵页
+                    // 跳转到购买特种兵页
                     app.navigator.popToTop();
                     app.showMainScene(1);
                 } else {
-                    //跳转到特种兵视频播放页
-                    var param = {
+                    // 跳转到特种兵视频播放页
+                    const param = {
                         userID:app.personal.info.userID,
                         videoID: obj.videoID,
                     };
-                    POST(app.route.ROUTE_STUDY_PROGRESS, param, (data)=>{
+                    POST(app.route.ROUTE_STUDY_PROGRESS, param, (data) => {
                         if (data.success) {
                             app.navigator.push({
                                 component: CoursePlayer,
-                                passProps: {isCourseRecord:true, lastStudyProgress: data.context, updateClickOrLikeNum: this.updateClickOrLikeNum, otherVideoID: obj.videoID},
+                                passProps: { isCourseRecord:true, lastStudyProgress: data.context, updateClickOrLikeNum: this.updateClickOrLikeNum, otherVideoID: obj.videoID },
                             });
                         } else {
                             Toast('该特种兵课程学习进度获取失败，请重试！');
@@ -142,38 +142,38 @@ module.exports = React.createClass({
                     });
                 }
             } else {
-                //跳转到普通视频播放页
+                // 跳转到普通视频播放页
                 app.navigator.push({
                     component: VideoPlay,
-                    passProps: {videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum, isFromRecords: false},
+                    passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum, isFromRecords: false },
                 });
             }
         }
     },
-    formatTime(time) {
+    formatTime (time) {
         let timeArr = [];
         let timeStr = '';
         if (time) {
             timeArr = time.split(' ');
-            timeStr = timeArr[0].replace(/-/g,".");
+            timeStr = timeArr[0].replace(/-/g, '.');
         }
         return timeStr;
     },
-    renderRow(obj, sectionID, rowID, onRowHighlighted) {
+    renderRow (obj, sectionID, rowID, onRowHighlighted) {
         return (
             <TouchableHighlight
                 onPress={this.playVideo.bind(null, obj, sectionID, rowID)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.rowItem}>
-                    <View style={styles.separator}/>
-                    {this.state.showDeletePanel&&
+                    <View style={styles.separator} />
+                    {this.state.showDeletePanel &&
                         <TouchableOpacity
                             style={styles.btnTouchStyle}
                             onPress={this.selectDelete.bind(null, sectionID, rowID)}>
                             <View style={styles.deleteStyle}>
                                 {
-                                    this.selects[rowID]&&
-                                    <View style={styles.seletedStyle}/>
+                                    this.selects[rowID] &&
+                                    <View style={styles.seletedStyle} />
                                 }
                             </View>
                         </TouchableOpacity>
@@ -182,10 +182,10 @@ module.exports = React.createClass({
                         <Image
                             resizeMode='stretch'
                             defaultSource={app.img.common_default}
-                            source={{uri:obj.videoListImg||obj.urlImg}}
+                            source={{ uri:obj.videoListImg || obj.urlImg }}
                             style={styles.icon} />
                     </View>
-                    <View style={this.state.showDeletePanel?styles.rowRightPanel:styles.rowRight}>
+                    <View style={this.state.showDeletePanel ? styles.rowRightPanel : styles.rowRight}>
                         <Text numberOfLines={2} style={styles.title} >
                             {obj.name}
                         </Text>
@@ -196,7 +196,7 @@ module.exports = React.createClass({
                                     source={app.img.personal_eye}
                                     style={styles.iconPlay} />
                                 <Text style={styles.content} >
-                                    {obj.clicks*3+50}
+                                    {obj.clicks * 3 + 50}
                                 </Text>
                             </View>
                             <Text style={styles.content} >
@@ -206,32 +206,31 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID}}
-                    listName="vedioList"
-                    renderSeparator={()=> null}
+                    listParam={{ userID: app.personal.info.userID }}
+                    listName='vedioList'
+                    renderSeparator={() => null}
                     listUrl={app.route.ROUTE_SUBMIT_GETMYCOLLECTION}
                     />
                 {
                     this.state.ShowMealBox &&
                     <ShowMealBox
                         doConfirm={this.doPayConfirm}
-                        doCancle={this.doCancle}>
-                    </ShowMealBox>
+                        doCancle={this.doCancle} />
                 }
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -274,7 +273,7 @@ var styles = StyleSheet.create({
     },
     praise: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     iconPlay: {
         height: 12,

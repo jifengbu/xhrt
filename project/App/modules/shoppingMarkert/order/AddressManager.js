@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -13,50 +13,50 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 const addressDisplayArray = [
-    {title:'家庭地址',img:app.img.mall_home_address_icon},
-    {title:'公司地址',img:app.img.mall_company_address_icon},
-    {title:'常用地址',img:app.img.mall_common_address_icon},
-    {title:'其他地址',img:app.img.mall_other_address_icon},
+    { title:'家庭地址', img:app.img.mall_home_address_icon },
+    { title:'公司地址', img:app.img.mall_company_address_icon },
+    { title:'常用地址', img:app.img.mall_common_address_icon },
+    { title:'其他地址', img:app.img.mall_other_address_icon },
 ];
-var addressSubArray = [];
+let addressSubArray = [];
 module.exports = React.createClass({
     statics: {
         title: '地址管理',
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             addressList:addressSubArray,
             selectAddNo:null,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getMyAddress();
     },
-    getMyAddress() {
-        var param = {
+    getMyAddress () {
+        const param = {
             userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_GET_MY_ADDR, param, this.getMyAddressSuccess, true);
     },
-    getMyAddressSuccess(data) {
+    getMyAddressSuccess (data) {
         if (data.success) {
-            let addressList = data.context.addressList||[];
+            const addressList = data.context.addressList || [];
             addressSubArray = addressList.concat();
-            for (var item in addressSubArray) {
+            for (let item in addressSubArray) {
                 if (addressSubArray[item].isSelectAddr == 1) {
-                    this.setState({addressList: addressList, selectAddNo:item});
+                    this.setState({ addressList: addressList, selectAddNo:item });
                 }
             }
-            this.setState({addressList});
+            this.setState({ addressList });
         } else {
             Toast(data.msg);
         }
     },
-    submitMyAddress() {
+    submitMyAddress () {
         if (this.state.selectAddNo == null) {
             Toast('请选择一个收货地址');
             return;
@@ -71,13 +71,13 @@ module.exports = React.createClass({
             Toast('手机号码不是有效的手机号码');
             return;
         }
-        var param = {
+        const param = {
             userID: app.personal.info.userID,
             selectAddNo:this.state.selectAddNo,
             addrInfo:addressSubArray,
         };
-        var orderData = null;
-        for (var item in addressSubArray) {
+        let orderData = null;
+        for (let item in addressSubArray) {
             if (addressSubArray[item].addNo == this.state.selectAddNo) {
                 orderData = {
                     addNo: addressSubArray[item].addNo,
@@ -89,90 +89,90 @@ module.exports = React.createClass({
         }
         POST(app.route.ROUTE_SUBMIT_MY_ADDR, param, this.submitMyAddressSuccess.bind(null, orderData), true);
     },
-    submitMyAddressSuccess(orderData, data) {
+    submitMyAddressSuccess (orderData, data) {
         if (data.success) {
-            this.props.updateAddr({orderData:orderData});
+            this.props.updateAddr({ orderData:orderData });
             app.navigator.pop();
         } else {
             Toast(data.msg);
         }
     },
-    changeSelectAddNo(value) {
-        for (var item in addressSubArray) {
+    changeSelectAddNo (value) {
+        for (let item in addressSubArray) {
             if (addressSubArray[item].addNo == value) {
                 addressSubArray[item].isSelectAddr = 1;
             } else {
                 addressSubArray[item].isSelectAddr = 0;
             }
         }
-        this.setState({selectAddNo:value});
+        this.setState({ selectAddNo:value });
     },
-    renderSeparator() {
+    renderSeparator () {
         return (
-            <View style={styles.separator}/>
+            <View style={styles.separator} />
         );
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
-         <View style={styles.itemContainer}>
-             <View style={styles.itemLeftContainer}>
-             <Image
-                 resizeMode='cover'
-                 source={addressDisplayArray[obj.addNo].img}
-                 style={styles.itemTopImage}
+            <View style={styles.itemContainer}>
+                <View style={styles.itemLeftContainer}>
+                    <Image
+                        resizeMode='cover'
+                        source={addressDisplayArray[obj.addNo].img}
+                        style={styles.itemTopImage}
                  />
-             <Text style={styles.leftItemContent}>{addressDisplayArray[obj.addNo].title}</Text>
-                 <TouchableOpacity onPress={this.changeSelectAddNo.bind(this,obj.addNo)}>
-                     <Image
-                         resizeMode='cover'
-                         source={this.state.selectAddNo==obj.addNo?app.img.common_check:app.img.common_no_check}
-                         style={styles.itemCheckBox}
+                    <Text style={styles.leftItemContent}>{addressDisplayArray[obj.addNo].title}</Text>
+                    <TouchableOpacity onPress={this.changeSelectAddNo.bind(this, obj.addNo)}>
+                        <Image
+                            resizeMode='cover'
+                            source={this.state.selectAddNo == obj.addNo ? app.img.common_check : app.img.common_no_check}
+                            style={styles.itemCheckBox}
                          />
-                 </TouchableOpacity>
-             </View>
-             <View style={styles.Vline}></View>
-             <View style={styles.itemRightContainer}>
-                 <TextInput
-                     placeholder='暂无数据，请输入联系人姓名'
-                     onChangeText={(text) => {addressSubArray[obj.addNo].name= text}}
-                     defaultValue={addressSubArray[obj.addNo].name}
-                     style={styles.rightItemContent}
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.Vline} />
+                <View style={styles.itemRightContainer}>
+                    <TextInput
+                        placeholder='暂无数据，请输入联系人姓名'
+                        onChangeText={(text) => { addressSubArray[obj.addNo].name = text; }}
+                        defaultValue={addressSubArray[obj.addNo].name}
+                        style={styles.rightItemContent}
                      />
-                 <View style={styles.Hline}></View>
-                 <TextInput
-                     placeholder='暂无数据，请输入联系电话'
-                     onChangeText={(text) => {addressSubArray[obj.addNo].phone= text}}
-                     defaultValue={addressSubArray[obj.addNo].phone}
-                     style={styles.rightItemContent}
+                    <View style={styles.Hline} />
+                    <TextInput
+                        placeholder='暂无数据，请输入联系电话'
+                        onChangeText={(text) => { addressSubArray[obj.addNo].phone = text; }}
+                        defaultValue={addressSubArray[obj.addNo].phone}
+                        style={styles.rightItemContent}
                      />
-                 <View style={styles.Hline}></View>
-                 <TextInput
-                     placeholder='暂无数据，请输入联系地址'
-                     multiline={true}
-                     numberOfLines={2}
-                     onChangeText={(text) => {addressSubArray[obj.addNo].addr= text}}
-                     defaultValue={addressSubArray[obj.addNo].addr}
-                     style={styles.rightItemContent2}
+                    <View style={styles.Hline} />
+                    <TextInput
+                        placeholder='暂无数据，请输入联系地址'
+                        multiline
+                        numberOfLines={2}
+                        onChangeText={(text) => { addressSubArray[obj.addNo].addr = text; }}
+                        defaultValue={addressSubArray[obj.addNo].addr}
+                        style={styles.rightItemContent2}
                      />
-             </View>
-         </View>
-        )
+                </View>
+            </View>
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <ListView                    initialListSize={1}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={this.ds.cloneWithRows(this.state.addressList)}
                     renderRow={this.renderRow}
                     renderSeparator={this.renderSeparator}
                     />
                 <Button onPress={this.submitMyAddress} style={styles.contentButton}>确{'  '}定</Button>
             </View>
-        )
+        );
     },
 });
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: sr.w,
@@ -247,6 +247,6 @@ var styles = StyleSheet.create({
     },
     separator: {
         height:5,
-        backgroundColor: '#CCC'
+        backgroundColor: '#CCC',
     },
 });

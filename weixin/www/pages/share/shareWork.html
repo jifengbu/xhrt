@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+	<title>赢销截拳道</title>
+</head>
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: #EEEEEE;
+	}
+	.header {
+		width: 100%;
+		height: 42px;
+		background-color: white;
+	}
+	.header .name {
+		padding-top: 10px;
+		text-align: center;
+		font-size: 16px;
+		color: black;
+		font-weight: 600;
+	}
+    h3.title {
+        color: #F2AE11;
+        font-size: 1em;
+        margin-bottom: 1em;
+        text-align: center;
+        font-weight: 500;
+        line-height: 1.1;
+        margin-top: 20px;
+    }
+    h3.title span {
+        display: block;     /*设置为块级元素会独占一行形成上下居中的效果*/
+        color: #212121;
+        position: relative;   /*定位横线（当横线的父元素）*/
+    }
+    h3.title span:before, h3.title span:after {
+        content: '';                 /*CSS伪类用法*/
+        position: absolute;         /*定位背景横线的位置*/
+        top: 52%;
+        background: grey;       /*宽和高做出来的背景横线*/
+        width: 30%;
+        height: 1px;
+    }
+    h3.title span:before{
+        left: 2%;        /*调整背景横线的左右距离*/
+    }
+    h3.title span:after {
+        right: 2%;
+    }
+	.threeThinks .mui-table-view-cell:after {
+		height: 0px !important;
+	}
+	.actualWorkList .mui-table-view-cell{
+		display: flex;
+		align-items: center;
+	}
+	.listHeadView {
+		float: left;
+		width: 10px;
+		height: 44px;
+		background-color: #99886A;
+	}
+	.listHeadView1 {
+		float: left;
+		width: 10px;
+		height: 44px;
+		background-color: #60987D;
+	}
+	.listHeadTextView {
+		font-size: 18px;
+		color: '#FFFFF';
+		font-weight: 600;
+		height: 44px;
+		padding-top: 12px;
+		background-color:  #C8B086;
+		font-family: 'STHeitiSC-Medium';
+	}
+	.listHeadTextView1 {
+		font-size: 18px;
+		color: '#FFFFF';
+		font-weight: 600;
+		height: 44px;
+		padding-top: 12px;
+		background-color:  #8DC9AC;
+		font-family: 'STHeitiSC-Medium';
+	}
+	.summaryView {
+		height: 140px;
+		margin-top: 10px;
+		text-align: center;
+	},
+	.EmptySummaryText {
+		font-size: 18px;
+		color: #B3B3B3;
+		font-weight: '600';
+		font-family:'STHeitiSC-Medium';
+	}
+	.actualWorkList p {
+		width:100%;
+	  	word-break:break-all;
+	  	display:-webkit-box;
+	  	-webkit-line-clamp:2;
+	  	-webkit-box-orient:vertical;
+	  	vertical-align: bottom;
+	  	overflow:hidden;
+	}
+	.cell-img {
+		margin-left: 10px;
+	}
+	.threeThinksTitle {
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	.threeThinksAnswer {
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	.workSummary{
+		background-color: white;
+	}
+	.summaryText{
+		padding: 20px;
+		margin-bottom: 0px;
+	}
+	.noteText{
+		font-size: 14px;
+		color: #999999;
+		padding: 22px 15px 22px 15px;
+		background-color: white;
+		font-weight: 600;
+		font-family: 'STHeitiSC-Medium';
+	}
+	.mui-table-view:after {
+	    height: 0;
+	}
+	#topView {
+		margin-top: 90px;
+	}
+</style>
+<body>
+	<div class="header" id="topView">
+		<div class="name">某某的工作分享</div>
+	</div>
+	<div class="centent">
+		<div class="monthList">
+			<div class="listHeadView"></div>
+			<div class="listHeadTextView">月工作目标</div>
+			<ul class="mui-table-view" id="monthList"></ul>
+		</div>
+
+		<div class="weekList">
+			<div class="listHeadView"></div>
+			<div class="listHeadTextView">周工作目标</div>
+			<ul class="mui-table-view" id="weekList"></ul>
+		</div>
+
+		<div class="dayPlanList">
+			<h3 class="title"><span>某月某日工作项</span></h3>
+			<div class="listHeadView1"></div>
+			<div class="listHeadTextView1">计划工作项</div>
+			<ul class="mui-table-view" id="dayPlanList"></ul>
+		</div>
+
+		<div class="actualWorkList">
+			<div class="listHeadView1"></div>
+			<div class="listHeadTextView1">实际工作项</div>
+			<ul class="mui-table-view" id="actualWorkList"></ul>
+		</div>
+
+		<div class="workSummary">
+			<div class="listHeadView1"></div>
+			<div class="listHeadTextView1">工作总结</div>
+		</div>
+
+		<div class="threeThinks">
+			<div class="listHeadView1"></div>
+			<div class="listHeadTextView1">每日三省</div>
+			<ul class="mui-table-view" id="threeThinks">
+			</ul>
+		</div>
+		<div class="noteText">注：“吾日三省吾身”源自《论语》。是历代贤人通过每天反省、思考，提升自身能力的方式，是优秀人才必备掌握的成长方式。</div>
+	</div>
+	<div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+		<button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button>
+		<div class="installTipCell">
+			<img src="../../img/logo.png"></img>
+			<div class="cellRight">
+				<div class="cellTitle">赢销截拳道</div>
+				<div class="cellContent">赢销截拳道人人都需要</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="../../js/thirdparty/mui.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script src="../../js/utils/regular.js"></script>
+<script src="../../js/thirdparty/crypto-js.js"></script>
+<script src="../../js/utils/app.js"></script>
+<script>
+	$(function(){
+		var userID = getParameter("userID");
+		var date = getParameter("date");
+		var userName = getParameter("userName");
+		$('.name').text(userName+'的工作分享');
+		$('.dayPlanList span').text((date.split('-')[1]-0)*1+'月'+(date.split('-')[2]-0)*1+'日'+'工作项');
+		mui.os.ios?$('.installTipCell').append('<button class="downloadApp"><a href="https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8">下载APP</a></button>'):$('.installTipCell').append('<button class="downloadApp"><a href="market://details?id=com.yxjqd">下载APP</a></button>');
+		getData(userID,date);
+	});
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+	function getData(userID,date) {
+		var url = app.route.ROUTE_GET_PLAN_SUMMARY;
+		var data = {
+			userID:userID,
+			date : date,
+		};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: getDataSuccess,
+		});
+	}
+	function getDataSuccess(data) {
+		if (data.success) {
+			showList(data.context.monthPlan,'#monthList');
+			showList(data.context.weekPlan,'#weekList');
+			showList(data.context.dayPlan,'#dayPlanList');
+			showActualWorkList(data.context.actualWorks);
+			showWorkSummary(data.context.daySummary);
+			var list = data.context.fixedProblem;
+			for (var i = 0; i < data.context.myQuestionList.length; i++) {
+				var item = {
+					problemContent:data.context.myQuestionList[i].content,
+					problemId:data.context.myQuestionList[i].myQuestinoId,
+					problemTitle:data.context.myQuestionList[i].title,
+				}
+				list.push(item);
+			}
+			showThreeThinksList(list);
+			// $(".centent .assignment .detail").html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+data.context.answer);
+		}
+	}
+	function showList(list,ulID) {
+		var html = '';
+		for (var i in list) {
+			html += getListItem(list[i], i);
+		}
+		$(ulID).html(html);
+	}
+	function getListItem(item,index) {
+		var html = '';
+		html += '<li class="mui-table-view-cell" data-index="'+index+'">'
+		html += '<p>'+item.content+'</p>'
+		html +='</li>'
+		return html;
+	}
+	function showThreeThinksList(list) {
+		var html = '';
+		for (var i in list) {
+			html += getThreeThinksListItem(list[i]);
+		}
+		$('#threeThinks').html(html);
+	}
+	function getThreeThinksListItem(item) {
+		var html = '';
+		html += '<li class="mui-table-view-cell" id="threeThinks">'
+		html += 	'<div class="threeThinksTitle">'
+		html += 		item.problemTitle
+		html += 	'</div>'
+		html += 	'<p class="threeThinksAnswer">'+(typeof(item.problemContent)=='undefined'?'未填写！':item.problemContent)+'</p>'
+		html += '</li>'
+		return html;
+	}
+	function showActualWorkList(list) {
+		var html = '';
+		for (var i in list) {
+			html += getActualWorkListItem(list[i]);
+		}
+		$('#actualWorkList').html(html);
+	}
+	function getActualWorkListItem(item) {
+		var html = '';
+		html += '<li class="mui-table-view-cell">'
+		html += 	'<p>'+item.content+'</p>'
+		html += 	'<img class="cell-img" src="../../img/'+(item.isOver==1?'cicleTick':'cicle')+'.png" width="20px" height="20px">'
+		html += '</li>'
+		return html;
+	}
+	function showWorkSummary(daySummary) {
+		var html = '';
+		if (daySummary==null) {
+			html += '<div class="summaryView">'
+			html += 	'<img width="80px" height="100px" src="../../img/bossImage.png"></img>'
+			html += 	'<p class="EmptySummaryText">您还没有填写工作总结</p>'
+			html += '</div>'
+		} else {
+			html += '<p class="summaryText">'+daySummary.content+'</p>'
+		}
+		$('.workSummary').append(html);
+	}
+	function closeWarning () {
+		document.getElementById('warning').style.display='none';
+		document.getElementById('topView').style.margin='0';
+	}
+</script>
+</html>

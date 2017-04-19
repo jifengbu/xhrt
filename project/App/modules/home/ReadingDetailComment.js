@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     Image,
     TextInput,
     Text,
@@ -13,19 +13,19 @@ var {
     ListView,
 } = ReactNative;
 
-var moment = require('moment');
-var {Button, DImage, PageList} = COMPONENTS;
-var isShowReplyList = true;
+const moment = require('moment');
+const { Button, DImage, PageList } = COMPONENTS;
+let isShowReplyList = true;
 
-var CommentList = React.createClass({
-    doPraiseComment(commentID, isPraise) {
-        var param = {
+const CommentList = React.createClass({
+    doPraiseComment (commentID, isPraise) {
+        const param = {
             userID:app.personal.info.userID,
-            praiseType: 1, //0：推荐阅读点赞，1：阅读评论点赞
+            praiseType: 1, // 0：推荐阅读点赞，1：阅读评论点赞
             objID: commentID,
         };
-        if (isPraise==0) {
-            POST(app.route.ROUTE_PRAISE_LOG, param, (data)=>{
+        if (isPraise == 0) {
+            POST(app.route.ROUTE_PRAISE_LOG, param, (data) => {
                 if (data.success) {
                     this.props.addPraise(commentID);
                 } else {
@@ -33,7 +33,7 @@ var CommentList = React.createClass({
                 }
             });
         } else {
-            POST(app.route.ROUTE_CANCEL_PRAISE_LOG, param, (data)=>{
+            POST(app.route.ROUTE_CANCEL_PRAISE_LOG, param, (data) => {
                 if (data.success) {
                     this.props.subPraise(commentID);
                 } else {
@@ -41,33 +41,32 @@ var CommentList = React.createClass({
                 }
             });
         }
-
     },
-    render() {
-        let obj = this.props.obj;
-        let img = app.personal.info.sex==1?app.img.personal_sex_male:app.img.personal_sex_female;
+    render () {
+        const obj = this.props.obj;
+        const img = app.personal.info.sex == 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
         return (
             <View style={styles.itemContainer}>
                 <Image
                     resizeMode='cover'
-                    defaultSource={app.personal.info.sex==1?app.img.personal_sex_male:app.img.personal_sex_female}
-                    source={obj.userLogo?{uri:obj.userLogo}:img}
-                    style={[styles.headerIcon, {marginLeft: 25}]} />
+                    defaultSource={app.personal.info.sex == 1 ? app.img.personal_sex_male : app.img.personal_sex_female}
+                    source={obj.userLogo ? { uri:obj.userLogo } : img}
+                    style={[styles.headerIcon, { marginLeft: 25 }]} />
                 <View style={styles.nameStyle}>
                     <View style={styles.topRow}>
                         <Text
                             style={styles.nameText}>
-                            {obj.userName||''}
+                            {obj.userName || ''}
                         </Text>
-                        <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={this.doPraiseComment.bind(null, obj.commentID, obj.isPraise)}>
-                            <View style={[styles.praiseContainer, {marginLeft: 21, marginRight: 10}]}>
+                        <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.doPraiseComment.bind(null, obj.commentID, obj.isPraise)}>
+                            <View style={[styles.praiseContainer, { marginLeft: 21, marginRight: 10 }]}>
                                 <DImage
                                     resizeMode='contain'
-                                    source={obj.isPraise==0?app.img.personal_praise:app.img.personal_praise_pressed}
-                                    style={styles.iconStyle}/>
-                                    <Text style={[styles.textStyle, {marginLeft: 10}]}>
-                                       {obj.praises}
-                                    </Text>
+                                    source={obj.isPraise == 0 ? app.img.personal_praise : app.img.personal_praise_pressed}
+                                    style={styles.iconStyle} />
+                                <Text style={[styles.textStyle, { marginLeft: 10 }]}>
+                                    {obj.praises}
+                                </Text>
                             </View>
                         </TouchableHighlight>
                     </View>
@@ -84,80 +83,80 @@ var CommentList = React.createClass({
 });
 
 module.exports = React.createClass({
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             isSendding: false,
             comList: [],
         };
     },
-    componentDidMount() {
-        var param = {
+    componentDidMount () {
+        const param = {
             userID: app.personal.info.userID,
             articleID: this.props.articleId,
         };
-        POST(app.route.ROUTE_GET_COMMENT_ARTICLE_LIST, param, (data)=>{
+        POST(app.route.ROUTE_GET_COMMENT_ARTICLE_LIST, param, (data) => {
             if (data.success) {
                 this.setState({
-                    comList: data.context.CommentArticleList
+                    comList: data.context.CommentArticleList,
                 });
             } else {
                 Toast(data.msg);
             }
         });
     },
-    addPraise(commentID) {
-        var commentInfo = _.find(this.state.comList, (item)=>item.commentID==commentID);
-        commentInfo.isPraise=1;
-        commentInfo.praises +=1;
-        this.setState({dataSource: this.ds.cloneWithRows(this.state.comList)})
+    addPraise (commentID) {
+        const commentInfo = _.find(this.state.comList, (item) => item.commentID == commentID);
+        commentInfo.isPraise = 1;
+        commentInfo.praises += 1;
+        this.setState({ dataSource: this.ds.cloneWithRows(this.state.comList) });
     },
-    subPraise(commentID) {
-        var commentInfo = _.find(this.state.comList, (item)=>item.commentID==commentID);
-        commentInfo.isPraise=0;
-        commentInfo.praises -=1;
-        this.setState({dataSource: this.ds.cloneWithRows(this.state.comList)})
+    subPraise (commentID) {
+        const commentInfo = _.find(this.state.comList, (item) => item.commentID == commentID);
+        commentInfo.isPraise = 0;
+        commentInfo.praises -= 1;
+        this.setState({ dataSource: this.ds.cloneWithRows(this.state.comList) });
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <View>
                 {
-                    rowID != 0 && <View style={styles.lineView}/>
+                    rowID != 0 && <View style={styles.lineView} />
                 }
                 <CommentList
-                    obj = {obj} addPraise={this.addPraise} subPraise={this.subPraise}/>
+                    obj={obj} addPraise={this.addPraise} subPraise={this.subPraise} />
             </View>
-        )
+        );
     },
-    doRefresh(curComment) {
-        let tList = this.state.comList.slice();
+    doRefresh (curComment) {
+        const tList = this.state.comList.slice();
         tList.unshift(curComment);
-        this.setState({comList: tList});
+        this.setState({ comList: tList });
     },
-    render() {
-        let {comList} = this.state;
+    render () {
+        const { comList } = this.state;
         return (
             <View style={styles.listContainer}>
                 {
-                    this.state.comList != 0&&
+                    this.state.comList != 0 &&
                     <View style={styles.commentTitleContainer}>
-                        <Text style={styles.titleTypeText}>{`${'评论  '+'('+comList.length+'条)'}`}</Text>
+                        <Text style={styles.titleTypeText}>{`${'评论  ' + '(' + comList.length + '条)'}`}</Text>
                     </View>
                 }
                 <ListView
-                    ref={listView=>this.listView=listView}
-                    enableEmptySections={true}
-                    style={[styles.container, {marginBottom: 30}]}
+                    ref={listView => { this.listView = listView; }}
+                    enableEmptySections
+                    style={[styles.container, { marginBottom: 30 }]}
                     renderRow={this.renderRow}
                     dataSource={this.ds.cloneWithRows(this.state.comList)}
                     />
-                <View style={styles.blankView}/>
+                <View style={styles.blankView} />
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -228,7 +227,7 @@ var styles = StyleSheet.create({
     },
     itemNameText: {
         fontSize: 14,
-        width: sr.w-85,
+        width: sr.w - 85,
         color: '#2F2F2F',
         fontFamily: 'STHeitiSC-Medium',
     },

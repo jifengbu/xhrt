@@ -1,26 +1,20 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
     View,
-    Picker,
 } = ReactNative;
 
-
-var TimerMixin = require('react-timer-mixin');
-import PickerAndroid from 'react-native-picker-android';
-if (app.isandroid) {
-    Picker = PickerAndroid;
-}
-var {Button} = COMPONENTS;
-var {ScoreSelect} = COMPONENTS;
+const TimerMixin = require('react-timer-mixin');
+const { Button } = COMPONENTS;
+const { ScoreSelect } = COMPONENTS;
 
 module.exports = React.createClass({
     mixins: [TimerMixin],
-    doConfirm() {
+    doConfirm () {
         if (this.timeoutID != null) {
             this.clearTimeout(this.timeoutID);
             this.timeoutID = null;
@@ -28,56 +22,56 @@ module.exports = React.createClass({
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
-            var garde = this.state.gradeScore + 6;
+        }).start(() => {
+            const garde = this.state.gradeScore + 6;
             this.props.doConfirm(garde.toString());
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
             opacity: new Animated.Value(0),
             gradeScore: 0,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
-        this.timeoutID = this.setTimeout(()=>{
+        this.timeoutID = this.setTimeout(() => {
             this.doConfirm();
         }, 10000);
     },
-    afterChange(gradeScore) {
-        this.setState({gradeScore});
+    afterChange (gradeScore) {
+        this.setState({ gradeScore });
     },
-    render() {
-        var competitor = this.props.competitor;
-        const {gradeScore} = this.state;
+    render () {
+        const competitor = this.props.competitor;
+        const { gradeScore } = this.state;
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <View style={styles.drawHeaderImage}>
                         <Text style={styles.title}>本次演讲结束</Text>
                         <Text style={styles.drawContent}>
-                            {'请给 '+competitor.userInfo.userName+' 本次的演讲打个分吧～'}
+                            {'请给 ' + competitor.userInfo.userName + ' 本次的演讲打个分吧～'}
                         </Text>
                     </View>
                     <View style={styles.drawButtonView}>
                         <ScoreSelect
-                            width={sr.tw/3}
+                            width={sr.tw / 3}
                             height={sr.ws(100)}
                             afterChange={this.afterChange}
                             >
                             {
-                                [6, 7, 8, 9, 10].map((n, i)=>{
+                                [6, 7, 8, 9, 10].map((n, i) => {
                                     return (
                                         <View style={styles.itemContainer} key={i}>
-                                            <View style={gradeScore==i?styles.selectedScoreContainer:styles.scoreContainer}>
-                                                <Text style={gradeScore==i?styles.selectedScore:styles.score}>{n}</Text>
+                                            <View style={gradeScore == i ? styles.selectedScoreContainer : styles.scoreContainer}>
+                                                <Text style={gradeScore == i ? styles.selectedScore : styles.score}>{n}</Text>
                                             </View>
                                         </View>
-                                    )
+                                    );
                                 })
                             }
                         </ScoreSelect>
@@ -88,33 +82,33 @@ module.exports = React.createClass({
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         alignItems:'center',
         justifyContent:'center',
         backgroundColor: 'white',
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
     },
     drawHeaderImage: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         backgroundColor:'white',
         alignItems:'center',
         justifyContent:'center',
     },
     drawButtonView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height: 110,
         marginVertical: 50,
         backgroundColor: 'white',
     },
     drawButton: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:50,
         borderRadius: 0,
-        marginHorizontal:4
+        marginHorizontal:4,
     },
     title: {
         marginTop:30,
@@ -147,7 +141,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     itemContainer: {
         flex: 1,

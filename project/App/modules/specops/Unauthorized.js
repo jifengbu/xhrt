@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -12,27 +12,27 @@ var {
     NativeModules,
 } = ReactNative;
 
-var PaySpecopsMessageBox = require('./PaySpecopsMessageBox.js');
-var ScanQRCode = require('./ScanQRCode.js');
+const PaySpecopsMessageBox = require('./PaySpecopsMessageBox.js');
+const ScanQRCode = require('./ScanQRCode.js');
+const OpenSpecops = require('./OpenSpecops.js');
+const UtilsModule = NativeModules.UtilsModule;
 
-var UtilsModule = NativeModules.UtilsModule;
-
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    specialSoldierVerification(code) {
-        var param = {
+    specialSoldierVerification (code) {
+        const param = {
             userID: app.personal.info.userID,
             verificationCode: code,
         };
         POST(app.route.ROUTE_SPECIAL_SOLDIER_VERIFICATION, param, this.specialSoldierVerificationSuccess, true);
     },
-    specialSoldierVerificationSuccess(data) {
+    specialSoldierVerificationSuccess (data) {
         if (data.success) {
-            var {context} = data;
+            const { context } = data;
             if (context.isFree === 0) {
                 this.props.setAuthorized();
-                Toast("验证成功");
+                Toast('验证成功');
             } else {
                 this.doShowPaySpecops();
             }
@@ -40,47 +40,32 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    onBuySuccess() {
-        app.closeModal();
-        this.props.setAuthorized();
-        Toast("恭喜你成为特种兵");
-    },
-    onCode(code) {
+    onCode (code) {
         app.pop();
         this.specialSoldierVerification(code);
     },
-    doScanQRCode() {
-        UtilsModule.checkCameraPermission((hasPermission)=>{
+    doScanQRCode () {
+        UtilsModule.checkCameraPermission((hasPermission) => {
             if (hasPermission) {
                 app.navigator.push({
                     component: ScanQRCode,
                     passProps: {
                         onCode: this.onCode,
-                    }
+                    },
                 });
-            }else {
+            } else {
                 Toast('需要开启相机权限');
             }
         });
     },
-    doShowPaySpecops() {
-        app.showModal(
-            <PaySpecopsMessageBox
-                doPayByWechat={this.doPayByWechat}
-                doPayByAlipay={this.doPayByAlipay}
-                doClose={this.doClose}
-            />
-        );
+    doShowPaySpecops () {
+        app.navigator.push({
+            title: '开通赢销特种兵',
+            component: OpenSpecops,
+            passProps: { setAuthorized:this.props.setAuthorized },
+        });
     },
-    doClose() {
-    },
-    doPayByWechat() {
-        this.onBuySuccess();
-    },
-    doPayByAlipay() {
-        this.onBuySuccess();
-    },
-    render() {
+    render () {
         return (
             <Image resizeMode='stretch'
                 source={app.img.specops_background_3}
@@ -89,24 +74,23 @@ module.exports = React.createClass({
                     source={app.img.specops_chat}
                     style={styles.promptImage}>
                     <Text style={styles.promptText}>亲，需要进行如下其中一种操</Text>
-                    <Text style={[styles.promptText, {marginTop: 8}]}>作才能成为我们的特种兵哦~~~!</Text>
+                    <Text style={[styles.promptText, { marginTop: 8 }]}>作才能成为我们的特种兵哦~~~!</Text>
                 </Image>
                 <Image resizeMode='stretch'
                     source={app.img.guide_cartoon_image}
-                    style={styles.cartoonImage}>
-                </Image>
+                    style={styles.cartoonImage} />
                 <View style={styles.btnStyle}>
                     <TouchableOpacity
                         onPress={this.doScanQRCode}
                         style={styles.tabButton}>
-                        <Text style={[styles.textcenter,{color :'#FFFFFF'}]} >扫码试用</Text>
+                        <Text style={[styles.textcenter, { color :'#FFFFFF' }]} >扫码试用</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.btnStyleBottom}>
                     <TouchableOpacity
                         onPress={this.doShowPaySpecops}
                         style={styles.tabButtonBottom}>
-                        <Text style={[styles.textcenter,{color :'#FF6363'}]} >直接购买</Text>
+                        <Text style={[styles.textcenter, { color :'#FF6363' }]} >直接购买</Text>
                     </TouchableOpacity>
                 </View>
             </Image>
@@ -114,7 +98,7 @@ module.exports = React.createClass({
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -135,11 +119,11 @@ var styles = StyleSheet.create({
         marginTop: 10,
         fontFamily: 'STHeitiSC-Medium',
         color: '#FFFFFF',
-        backgroundColor:'transparent'
+        backgroundColor:'transparent',
     },
     cartoonImage: {
-        width: sr.w/4+15,
-        height: sr.h/3+10,
+        width: sr.w / 4 + 15,
+        height: sr.h / 3 + 10,
         right: 15,
         top: 100,
         position: 'absolute',
@@ -147,7 +131,7 @@ var styles = StyleSheet.create({
     btnStyle:{
         height:46,
         width: 330,
-        marginTop: sr.h/4,
+        marginTop: sr.h / 4,
         marginBottom: 20,
         marginHorizontal:10,
         borderRadius:2,
@@ -165,7 +149,7 @@ var styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         borderRadius: 2,
-        backgroundColor: '#FF6363'
+        backgroundColor: '#FF6363',
     },
     tabButtonBottom: {
         flex: 1,

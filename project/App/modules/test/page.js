@@ -1,16 +1,15 @@
 'use strict';
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
 } = ReactNative;
 
-
 module.exports = React.createClass({
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <Text style={styles.contextContainer}>
@@ -18,10 +17,10 @@ module.exports = React.createClass({
                 </Text>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },

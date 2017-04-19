@@ -61,9 +61,8 @@
 				margin-top: 7px;
 			}
 			.mui-icon{
-				width: 18px;
-				height: 18px;
-				margin-top: 3px;
+				width: 15px;
+				height: 15px;
 			}
 			.mui-pull-top-wrapper .mui-icon.mui-reverse {
 				/*-webkit-transform: rotate(180deg) translateZ(0);*/
@@ -122,7 +121,7 @@
             }
 			.lookedNum {
 				float: right;
-				width: 30%;
+				width: 26%;
 				font-size: 14px;
 			}
 			.authorCompany {
@@ -130,11 +129,13 @@
 				width: 52%;
 				height: 30px
 				font-size: 14px;
+				margin-top: -6px;
 			}
 			.authorCompany img{
+				position: relative;
+				top:6px;
 				width: 22px;
 				height: 22px
-				padding:2px;
 			}
 			.number {
 				font-size: 14px;
@@ -143,7 +144,7 @@
 				float: right;
 				width: 15%;
 				margin-right: 10px;
-				margin-top: -8px;
+				margin-top: -4px;
 				text-align: right;
 			}
 			.homeworkAuthor {
@@ -153,12 +154,12 @@
 			.homeworkTime {
 				float: right;
 				margin-right: 5px;
-				color: #e1e1e1;
-
+				color: #939393;
 			}
 			.authorPosition {
 				font-size: 14px;
-				color: #e1e1e1;
+				color: #939393;
+
 			}
 			img{
 				width: 14px;
@@ -259,12 +260,17 @@
 			.mui-table-view-cell:after{
 				height: 0;
 			}
+			.mui-action-back {
+				margin-top: -2px;
+			}
 		</style>
 		<header class="mui-bar mui-bar-nav header">
-			<div class="mui-table-view-cell mui-collapse">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="courseName" class="mui-title" style="color:#d14b4c;">未到上课时间</h1>
+			<div id="courseSelect" class="mui-table-view-cell mui-collapse">
 				<a class="headerTitle" href="#">
 					<div style="text-align: center;">
-						<span id="courseName" style="color:#d14b4c;">
+						<span id="selectCourseName" style="color:#d14b4c;">
 						</span>
 						<img class="arrowIcon" src="../../img/red_down_arrow.png" />
 						<img class="line" src="../../img/arrow_line.png" />
@@ -288,6 +294,7 @@
 							<tr>
 								<td width="10%">
 									<select id='dayType' onchange="getHomeworkListData(1)">
+										<option value="0">所有</option>
 										<option value="1">第一天</option>
 										<option value="2">第二天</option>
 										<option value="3">第三天</option>
@@ -361,10 +368,12 @@
 			var data = {
 				courseId: saved.courseId,
 				openid: params.openid,
+				userID: params.userID,
 				keyword:$("#searchContent").val(),
 				orderType:$("#orderType").val(),
-				dayType:$("#dayType").val(),
+				dayType:saved.tabIndex==0?$("#dayType").val():0,
 				order:$("#order").val(),
+				isSelf:saved.tabIndex,
 				pageNo: page,
 			};
 			app.utils.post({
@@ -439,14 +448,14 @@
 			html +=	'<div class="div-top">'
 			html +=	'<p class="homeworkAuthor">'+'<img src="../../img/name-red.png"/>&nbsp'+item.authorName+'&nbsp</p>'
 			html +=	'<span class="authorPosition"> | '+item.authorPosition+'<span>'
-			html +=	'<p class="homeworkTime">'+'<span>'+'<img src="../../img/time.png" />'+'</span>&nbsp'+item.homeworkSubmitTime+'</p>'
+			html +=	'<p class="homeworkTime">'+'<span>'+'<img class="mui-icon" src="../../img/clock.png" />'+'</span>&nbsp'+item.homeworkSubmitTime.slice(0,16)+'</p>'
 			html +=	'<p class="threeLines">'+detail+'</p>'
 			html += '</div>'
-			html += '<hr style="border : 1px dashed grey;" />'
+			html += '<hr style="border : 1px dashed #e0e0e0;" />'
 			html +=	'<div class="div-bottom">'
 			html +=	'<p class="authorCompany">'+'<img src="../../img/companyName.png"/>'+item.authorCompany+'<p>'
-			html +=	'<p class="homeworkPraise"><span class="mui-icon">'+'<img class="mui-icon" src="'+(item.isPraise==1?'../../img/praise-on.png':'../../img/praise-off.png')+'" />'+'</span>&nbsp<span class=number>'+item.praise+'</span></p>'
-			html +=	'<p class="lookedNum">被阅读'+(item.lookedNum+2010)+'次<p>'
+			html +=	'<p class="homeworkPraise"><span class="mui-icon">'+'<img class="mui-icon" src="'+(item.isPraise==1?'../../img/praise-on.png':'../../img/praise-off.png')+'" />'+'</span>&nbsp<span class=number>('+item.praise+')</span></p>'
+			html +=	'<p class="lookedNum">被阅读'+(item.lookedNum)+'次<p>'
 			html += '</div>'
 			html +='</li>'
 			return html;
@@ -505,15 +514,24 @@
 			type: params.typeID,
 			dir: 'none'
 		};
+
 		$('#courseName').text(saved.courseName);
-		$('.line').css({'width': $('#courseName').width()+'px', 'margin-left': ($('.headerTitle').width()-42-$('#courseName').width())/2+'px'});
+		$('#selectCourseName').text(saved.courseName);
+		$('.line').css({'width': $('#selectCourseName').width()+'px', 'margin-left': ($('.headerTitle').width()-32-$('#selectCourseName').width())/2+'px'});
 		if(saved.list) {
 			var tmp = app.global.get("params");
 			saved.list[tmp.index].isPraise = tmp.isPraise;
 			saved.list[tmp.index].praise = tmp.praise;
 			showList(saved.list);
 		} else {
+			saved.tabIndex = params.tabIndex;
+			saved.currentDay = params.currentDay;
+			if (typeof(saved.currentDay)!="undefined") {
+				$('#dayType')[0][saved.currentDay].selected=true;
+			}
 			getHomeworkListData(1);
 		}
+		saved.tabIndex==1?$('#courseSelect').hide():$('#courseName').hide();
+
 	</script>
 </html>

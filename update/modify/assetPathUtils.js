@@ -27,13 +27,15 @@ function getAndroidDrawableFolderName(asset, scale) {
       JSON.stringify(asset)
     );
   }
-  const androidFolder = (asset.type==='gif'||asset.type==='png'||asset.type==='jpg')?'drawable-' + suffix:'raw';
+  const isImage = ['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'psd', 'svg', 'tiff'].indexOf(asset.type) !== -1;
+  const isCocos2dxResource =  asset.httpServerLocation.split('/').indexOf('remobile-cocos2dx-resource') !== -1;
+  const androidFolder = isImage && !isCocos2dxResource ? 'drawable-' + suffix : 'raw';
   return androidFolder;
 }
 
 function getAndroidResourceIdentifier(asset) {
   var folderPath = getBasePath(asset);
-  return (folderPath + '/' + asset.name)
+  return (folderPath + '/' + asset.name + '_' + asset.type)
     .toLowerCase()
     .replace(/\//g, '_')           // Encode folder structure in file name
     .replace(/([^a-z0-9_])/g, '')  // Remove illegal chars

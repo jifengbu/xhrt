@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     TouchableOpacity,
@@ -12,20 +12,20 @@ var {
     ActivityIndicator,
 } = ReactNative;
 
-var TimerMixin = require('react-timer-mixin');
+const TimerMixin = require('react-timer-mixin');
 import Video from '@remobile/react-native-video';
-var UtilsModule = require('NativeModules').UtilsModule;
+const UtilsModule = require('NativeModules').UtilsModule;
 
 module.exports = React.createClass({
     mixins: [TimerMixin],
-    getInitialState() {
+    getInitialState () {
         this.lock(false);
         return {
             paused: false,
             indicator: true,
         };
     },
-    lock(paused) {
+    lock (paused) {
         if (app.isandroid) {
             if (paused) {
                 UtilsModule.unlockScreen();
@@ -34,46 +34,46 @@ module.exports = React.createClass({
             }
         }
     },
-    _handleAppStateChange(currentAppState) {
+    _handleAppStateChange (currentAppState) {
         if (currentAppState === 'background') {
             this.oldpaused = this.state.paused;
-            this.setState({paused: true});
+            this.setState({ paused: true });
             this.lock(this.state.paused);
         } else if (currentAppState === 'active') {
-            this.setState({paused: true});
+            this.setState({ paused: true });
             if (!this.oldpaused) {
-                this.setState({paused: false});
-                this.lock(this.state.paused);;
+                this.setState({ paused: false });
+                this.lock(this.state.paused); ;
             }
         }
     },
-    componentDidMount() {
+    componentDidMount () {
         AppState.addEventListener('change', this._handleAppStateChange);
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         AppState.removeEventListener('change', this._handleAppStateChange);
         this.lock(true);
     },
-    onVideoLoad(e) {
-        this.setState({ indicator: false});
+    onVideoLoad (e) {
+        this.setState({ indicator: false });
     },
-    togglePlayVideo() {
-        this.setState({paused: !this.state.paused});
+    togglePlayVideo () {
+        this.setState({ paused: !this.state.paused });
         this.lock(this.state.paused);
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
-                <View style={styles.videoNormalFrameLayer}/>
+                <View style={styles.videoNormalFrameLayer} />
                 <Video
                     ref='video'
-                    source={{uri: this.props.uri}}
+                    source={{ uri: this.props.uri }}
                     rate={1.0}
                     volume={1.0}
                     muted={false}
                     paused={this.state.paused}
-                    resizeMode="stretch"
-                    repeat={true}
+                    resizeMode='stretch'
+                    repeat
                     onLoad={this.onVideoLoad}
                     onError={this.videoError}
                     style={styles.videoNormalFrame}
@@ -90,27 +90,24 @@ module.exports = React.createClass({
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.live_play}
-                                style={styles.video_icon}>
-                            </Image>
+                                style={styles.video_icon} />
                         </TouchableOpacity>
                     }
                 </TouchableOpacity>
                 {this.state.indicator &&
                     <View style={styles.controlNormalFrame}>
-                        <ActivityIndicator size="large"/>
+                        <ActivityIndicator size='large' />
                     </View>
                 }
             </View>
         );
-    }
+    },
 });
 
-
-
-var NORMAL_WIDTH = sr.w;
-var NORMAL_HEIGHT = NORMAL_WIDTH*2/3;
-var FULL_WIDTH = sr.h;
-var FULL_HEIGHT = sr.w;
+const NORMAL_WIDTH = sr.w;
+const NORMAL_HEIGHT = NORMAL_WIDTH * 2 / 3;
+const FULL_WIDTH = sr.h;
+const FULL_HEIGHT = sr.w;
 
 const styles = StyleSheet.create({
     container: {
@@ -118,22 +115,22 @@ const styles = StyleSheet.create({
     },
     videoNormalFrameLayer: {
         width: NORMAL_WIDTH,
-        height: (193/330*NORMAL_WIDTH)-39,
+        height: (193 / 330 * NORMAL_WIDTH) - 39,
     },
     videoNormalFrame: {
         position: 'absolute',
         top:0,
         left: 12,
-        width: NORMAL_WIDTH-40,
-        height: 193/330*(NORMAL_WIDTH-40),
-        transform:[{rotate:'0deg'}],
+        width: NORMAL_WIDTH - 40,
+        height: 193 / 330 * (NORMAL_WIDTH - 40),
+        transform:[{ rotate:'0deg' }],
     },
     controlNormalFrame: {
         position: 'absolute',
         top: 0,
         left: 26,
-        width: NORMAL_WIDTH-52,
-        height: 193/330*(NORMAL_WIDTH-52),
+        width: NORMAL_WIDTH - 52,
+        height: 193 / 330 * (NORMAL_WIDTH - 52),
         alignItems:'center',
         justifyContent: 'center',
     },

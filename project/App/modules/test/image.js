@@ -1,87 +1,84 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Image,
 } = ReactNative;
 
-var Button = require('@remobile/react-native-simple-button');
-var SplashScreen = require('@remobile/react-native-splashscreen');
+const Button = require('@remobile/react-native-simple-button');
+const SplashScreen = require('@remobile/react-native-splashscreen');
 
-
-var DImage =  React.createClass({
-    getInitialState() {
-        return {showDefault: true}
+const DImage = React.createClass({
+    getInitialState () {
+        return { showDefault: true };
     },
-    onLoad() {
-        this.setState({showDefault: false});
+    onLoad () {
+        this.setState({ showDefault: false });
     },
-    componentWillReceiveProps(nextProps) {
-        var pre = this.props.source, post = nextProps.source;
-        var preuri = pre.uri, posturi = post.uri;
-        var preT = typeof posturi === 'string', postT = typeof posturi === 'string';
-        if ((!(preT^postT)) && preuri !== posturi) {
-            this.setState({showDefault: true});
+    componentWillReceiveProps (nextProps) {
+        const pre = this.props.source, post = nextProps.source;
+        const preuri = pre.uri, posturi = post.uri;
+        const preT = typeof posturi === 'string', postT = typeof posturi === 'string';
+        if ((!(preT ^ postT)) && preuri !== posturi) {
+            this.setState({ showDefault: true });
         }
     },
-    render() {
-        var {source, defaultSource, ...other} = this.props;
-        var {showDefault} = this.state;
+    render () {
+        const { source, defaultSource, ...other } = this.props;
+        const { showDefault } = this.state;
         return (
             showDefault ?
-            <Image source={defaultSource} {...other}>
-                <Image
-                    source={source}
-                    onLoad={this.onLoad}
-                    style={{width:1,height:1}}/>
-            </Image>
+                <Image source={defaultSource} {...other}>
+                    <Image
+                        source={source}
+                        onLoad={this.onLoad}
+                        style={{ width:1, height:1 }} />
+                </Image>
             :
-            <Image source={source} {...other} />
-        )
-    }
+                <Image source={source} {...other} />
+        );
+    },
 });
 
-
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    getInitialState() {
-        return {index: 1}
+    getInitialState () {
+        return { index: 1 };
     },
-    play() {
-        var index = this.state.index+1;
+    play () {
+        let index = this.state.index + 1;
         if (index > 8) index = 1;
-        this.setState({index});
+        this.setState({ index });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <Button onPress={this.play}>播放</Button>
                 <DImage
                     resizeMode='stretch'
                     defaultSource={app.img.personal_head}
-                    source={{uri:'http://192.168.1.119:3000/images/'+this.state.index+'.png'}}
-                    style={{width:100, height: 100}} />
+                    source={{ uri:'http://192.168.1.119:3000/images/' + this.state.index + '.png' }}
+                    style={{ width:100, height: 100 }} />
                 <DImage
                     resizeMode='stretch'
                     defaultSource={app.img.personal_head}
                     source={app.img.common_delete}
-                    style={{width:100, height: 100}} />
+                    style={{ width:100, height: 100 }} />
                 <DImage
                     resizeMode='stretch'
                     defaultSource={app.img.personal_head}
-                    source={{uri:'http://facebook.github.io/react/img/logo_og.png'}}
-                    style={{width:100, height: 100}} />
+                    source={{ uri:'http://facebook.github.io/react/img/logo_og.png' }}
+                    style={{ width:100, height: 100 }} />
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',

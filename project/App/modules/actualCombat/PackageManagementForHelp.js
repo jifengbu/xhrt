@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -11,94 +11,94 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var MyCaseList = require('./MyCaseList.js');
-var {Button, PageList} = COMPONENTS;
-var SplashScreen = require('@remobile/react-native-splashscreen');
+const MyCaseList = require('./MyCaseList.js');
+const { Button, PageList } = COMPONENTS;
+const SplashScreen = require('@remobile/react-native-splashscreen');
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    _onPressRow(obj) {
+    _onPressRow (obj) {
         app.navigator.push({
             title: '我的求救包方案',
             component: MyCaseList,
-            passProps: {isPlayer:this.isPlayer,tabIndex: this.props.tabIndex,kitID:obj.id,theme:obj.title,showCardType: 1},
+            passProps: { isPlayer:this.isPlayer, tabIndex: this.props.tabIndex, kitID:obj.id, theme:obj.title, showCardType: 1 },
         });
     },
-    isPlayer() {
+    isPlayer () {
 
     },
-    goSendMadKit() {
+    goSendMadKit () {
         app.navigator.pop();
     },
-    renderRow(obj){
-        return(
-            <TouchableHighlight
-                  underlayColor="#f0f8ff"
-                  style={styles.container}
-                  onPress={this._onPressRow.bind(null, obj)}>
-                  <View style={styles.dataContainer}>
-                      <View style={styles.leftStyle}>
-                          <Text style={styles.textTime} numberOfLines={1}>
-                              {obj.title}
-                          </Text>
-                          <Text style={styles.textTitle}>
-                              {obj.releaseTime+' 至 '+obj.endTime}
-                          </Text>
-                      </View>
-                      <View style={styles.rightStyle}>
-                          <Image
-                              resizeMode='stretch'
-                              source={app.img.train_integral}
-                              style={styles.iconCount}
-                              />
-                          <Text
-                              numberOfLines={1}
-                              style={styles.textPrice}>
-                              {'¥ '+obj.price+'元'}
-                          </Text>
-                          <Image
-                              source={app.img.common_go}
-                              style={styles.common_go} />
-                      </View>
-                  </View>
-              </TouchableHighlight>
-        )
-    },
-    changeTab(tabIndex) {
-        this.setState({tabIndex});
-    },
-    getInitialState() {
-        return {
-            tabIndex: 0
-        };
-    },
-    renderSeparator(sectionID, rowID) {
+    renderRow (obj) {
         return (
-            <View style={styles.separator} key={rowID}/>
+            <TouchableHighlight
+                underlayColor='#f0f8ff'
+                style={styles.container}
+                onPress={this._onPressRow.bind(null, obj)}>
+                <View style={styles.dataContainer}>
+                    <View style={styles.leftStyle}>
+                        <Text style={styles.textTime} numberOfLines={1}>
+                            {obj.title}
+                        </Text>
+                        <Text style={styles.textTitle}>
+                            {obj.releaseTime + ' 至 ' + obj.endTime}
+                        </Text>
+                    </View>
+                    <View style={styles.rightStyle}>
+                        <Image
+                            resizeMode='stretch'
+                            source={app.img.train_integral}
+                            style={styles.iconCount}
+                              />
+                        <Text
+                            numberOfLines={1}
+                            style={styles.textPrice}>
+                            {'¥ ' + obj.price + '元'}
+                        </Text>
+                        <Image
+                            source={app.img.common_go}
+                            style={styles.common_go} />
+                    </View>
+                </View>
+            </TouchableHighlight>
         );
     },
-    render() {
-        var isFirstTap = this.state.tabIndex===0;
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
+    },
+    getInitialState () {
+        return {
+            tabIndex: 0,
+        };
+    },
+    renderSeparator (sectionID, rowID) {
+        return (
+            <View style={styles.separator} key={rowID} />
+        );
+    },
+    render () {
+        const isFirstTap = this.state.tabIndex === 0;
         return (
             <View style={this.props.style}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     disable={this.props.disable}
                     renderRow={this.renderRow}
                     renderSeparator={this.renderSeparator}
-                    listParam={{userID: app.personal.info.userID,type:0}}
-                    listName={"kidsList"}
+                    listParam={{ userID: app.personal.info.userID, type:0 }}
+                    listName={'kidsList'}
                     listUrl={app.route.ROUTE_MY_KID}
-                    refreshEnable={true}
+                    refreshEnable
                     />
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         backgroundColor: '#EEEEEE',
     },
@@ -111,7 +111,7 @@ var styles = StyleSheet.create({
     },
     leftStyle: {
         height: 40,
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     rightStyle: {
         marginRight:10,

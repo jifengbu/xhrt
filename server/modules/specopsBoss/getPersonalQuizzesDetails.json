@@ -1,0 +1,74 @@
+{
+    "msg": "获取数据成功!",
+    "success": true,
+    "context": {
+        "excellent": {
+            "sectionMin": "90",
+            "sectionMax": "100",
+            "number": "3",
+            "contentList": [
+                {
+                    "courseTitle": "课程名称",
+                    "submitTime": "2017-01-01",
+                    "mark": "95"
+                },
+                {
+                    "courseTitle": "课程名称",
+                    "submitTime": "2017-01-02",
+                    "mark": "99"
+                }
+            ]
+        },
+        "good": {
+            "sectionMin": "75",
+            "sectionMax": "89",
+            "number": "3",
+            "contentList": [
+                {
+                    "courseTitle": "课程名称",
+                    "submitTime": "2017-01-01",
+                    "mark": "81"
+                },
+                {
+                    "courseTitle": "课程名称",
+                    "submitTime": "2017-01-02",
+                    "mark": "80"
+                }
+            ]
+        },
+        "medium": {
+            "sectionMin": "60",
+            "sectionMax": "74",
+            "number": "3",
+            "contentList": [
+                {
+                    "courseTitle": "课程名称",
+                    "submitTime": "2017-01-01",
+                    "mark": "74"
+                },
+                {
+                    "courseTitle": "课程名称",
+                    "submitTime": "2017-01-02",
+                    "mark": "73"
+                }
+            ]
+        },
+        "poor": {
+            "sectionMin": "0",
+            "sectionMax": "59",
+            "number": "3",
+            "contentList": [
+                {
+                    "courseTitle": "课程名称",
+                    "submitTime": "2017-01-01",
+                    "mark": "5"
+                },
+                {
+                    "courseTitle": "课程名称",
+                    "submitTime": "2017-01-02",
+                    "mark": "55"
+                }
+            ]
+        }
+    }
+}

@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     Image,
     StyleSheet,
     Text,
@@ -10,69 +10,71 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var UmengMgr = require('../../manager/UmengMgr.js');
-var moment = require('moment');
+const UmengMgr = require('../../manager/UmengMgr.js');
+const moment = require('moment');
 
-var {Button, DImage} = COMPONENTS;
+const { Button, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
+        this.isCollectSel = false;
         return {
             personinfo: app.personal.info,
         };
-        this.isCollectSel = false;
     },
-    deleteCollect() {
+    deleteCollect () {
         if (this.isCollectSel) {
             return;
         }
         this.isCollectSel = true;
-        var param = {
+        const param = {
             userID:app.personal.info.userID,
             vedioIDList:[this.props.data.videoID],
         };
         POST(app.route.ROUTE_SUBMIT_DELETEMYCOLLECTION, param, this.deleteCollectSuccess);
     },
-    deleteCollectSuccess(data) {
+    deleteCollectSuccess (data) {
         this.isCollectSel = false;
         if (data.success) {
             this.noticeShow(this.props.data.videoID, 'subCollection');
         }
     },
-    _onPressRow(i) {
+    _onPressRow (i) {
         switch (i) {
-            case 0:
-            var param = {
-                userID:this.state.personinfo.userID,
-                videoID:this.props.data.videoID,
-            };
-            POST(app.route.ROUTE_DO_LIKE, param, this.doSuccess.bind(null, 0));
-            break;
-            case 1:
-            if (this.isCollectSel) {
-                return;
+            case 0: {
+                const param = {
+                    userID:this.state.personinfo.userID,
+                    videoID:this.props.data.videoID,
+                };
+                POST(app.route.ROUTE_DO_LIKE, param, this.doSuccess.bind(null, 0));
+                break;
             }
-            this.isCollectSel = true;
-            var param = {
-                userID:this.state.personinfo.userID,
-                videoID:this.props.data.videoID,
-            };
-            POST(app.route.ROUTE_DO_COLLECTION, param, this.doSuccess.bind(null, 1));
-            break;
+            case 1: {
+                if (this.isCollectSel) {
+                    return;
+                }
+                this.isCollectSel = true;
+                const param = {
+                    userID:this.state.personinfo.userID,
+                    videoID:this.props.data.videoID,
+                };
+                POST(app.route.ROUTE_DO_COLLECTION, param, this.doSuccess.bind(null, 1));
+                break;
+            }
             default:
         }
     },
-    doSuccess(index, data) {
+    doSuccess (index, data) {
         this.isCollectSel = false;
         if (data.success) {
             switch (index) {
                 case 0:
-                this.noticeShow(this.props.data.videoID, 'isPraise');
+                    this.noticeShow(this.props.data.videoID, 'isPraise');
                 // Toast(data.msg);
-                break;
+                    break;
                 case 1:
-                this.noticeShow(this.props.data.videoID, 'isCollection');
-                break;
+                    this.noticeShow(this.props.data.videoID, 'isCollection');
+                    break;
                 default:
 
             }
@@ -80,30 +82,30 @@ module.exports = React.createClass({
             // Toast(data.msg);
         }
     },
-    noticeShow(videoID, praiseOrCollection) {
-        this.show(()=>{
+    noticeShow (videoID, praiseOrCollection) {
+        this.show(() => {
             this.props.noticeShow(videoID, praiseOrCollection);
         });
     },
-    noticeShowBox(title,point) {
-        this.show(()=>{
-            this.props.noticeShowBox(title,point);
+    noticeShowBox (title, point) {
+        this.show(() => {
+            this.props.noticeShowBox(title, point);
         });
     },
-    show(callback) {
+    show (callback) {
         return callback();
     },
-    doShareCallback() {
-        var param = {
+    doShareCallback () {
+        const param = {
             userID:this.state.personinfo.userID,
-            shareType:0, //0-分享视频 1-分享抽奖
+            shareType:0, // 0-分享视频 1-分享抽奖
             keyword:this.props.data.name,
         };
         POST(app.route.ROUTE_DO_SHARE, param, this.doSuccess.bind(null, 2));
     },
-    render() {
-        var tempIsPraise = 1;
-        var tempIsCollection = 1;
+    render () {
+        let tempIsPraise = 1;
+        let tempIsCollection = 1;
         if (this.props.data) {
             if (this.props.data.isPraise == 0) {
                 tempIsPraise = 0;
@@ -116,50 +118,50 @@ module.exports = React.createClass({
             <View style={styles.panleMenuContainer}>
                 <View style={styles.panleMenuTopContainer}>
                     <Text style={styles.videoTitleText}>
-                        {this.props.data&&this.props.data.name}
+                        {this.props.data && this.props.data.name}
                     </Text>
                     <View style={styles.playTimesContainer}>
                         <DImage
                             resizeMode='contain'
                             source={app.img.personal_eye}
-                            style={styles.playTimesImage}/>
+                            style={styles.playTimesImage} />
                         <Text style={styles.playTimesText}>
-                            {this.props.data&&(this.props.data.clicks*3+50)}
+                            {this.props.data && (this.props.data.clicks * 3 + 50)}
                         </Text>
                     </View>
                 </View>
-                <View style={styles.separator}></View>
+                <View style={styles.separator} />
                 <View style={styles.panleMenuDownContainer}>
                     <TouchableOpacity
-                        onPress={tempIsPraise == 0?null:this._onPressRow.bind(null, 0)}
+                        onPress={tempIsPraise == 0 ? null : this._onPressRow.bind(null, 0)}
                         style={styles.menuBtnContainer}>
                         <DImage
                             resizeMode='contain'
                             source={tempIsPraise == 0 ? app.img.personal_praise_pressed : app.img.personal_praise}
-                            style={styles.iconStyle}/>
+                            style={styles.iconStyle} />
                         <Text style={styles.panleMenuBtnText}>
-                            {tempIsPraise == 0 ?'已赞':'点赞'}{'  ('+(this.props.data?this.props.data.likes:0)+')'}
+                            {tempIsPraise == 0 ? '已赞' : '点赞'}{'  (' + (this.props.data ? this.props.data.likes : 0) + ')'}
                         </Text>
                     </TouchableOpacity>
-                    <View style={styles.divisionLine}></View>
+                    <View style={styles.divisionLine} />
                     <TouchableOpacity
-                        onPress={tempIsCollection == 0?this.deleteCollect:this._onPressRow.bind(null, 1)}
+                        onPress={tempIsCollection == 0 ? this.deleteCollect : this._onPressRow.bind(null, 1)}
                         style={styles.menuBtnContainer}>
                         <DImage
                             resizeMode='contain'
                             source={tempIsCollection == 0 ? app.img.personal_collect_pressed : app.img.personal_collect}
-                            style={styles.iconStyle}/>
+                            style={styles.iconStyle} />
                         <Text style={styles.panleMenuBtnText}>
-                            {tempIsCollection == 0 ?'已收藏':'收藏'}{'  ('+(this.props.data?this.props.data.collections:0)+')'}
+                            {tempIsCollection == 0 ? '已收藏' : '收藏'}{'  (' + (this.props.data ? this.props.data.collections : 0) + ')'}
                         </Text>
                     </TouchableOpacity>
                 </View>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     panleMenuContainer: {
         width:sr.w,
     },
@@ -170,7 +172,7 @@ var styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     videoTitleText: {
-        width: sr.w-100,
+        width: sr.w - 100,
         marginLeft: 25,
         fontSize: 16,
         fontFamily: 'STHeitiSC-Medium',
@@ -207,7 +209,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
     },
     menuBtnContainer: {
-        width: sr.w/2-0.5,
+        width: sr.w / 2 - 0.5,
         justifyContent: 'center',
         flexDirection: 'row',
         alignItems: 'center',

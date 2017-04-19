@@ -1,47 +1,47 @@
 'use strict';
-var ReactNative = require('react-native');
-var {
+const ReactNative = require('react-native');
+const {
     AsyncStorage,
 } = ReactNative;
-var EventEmitter = require('EventEmitter');
+const EventEmitter = require('EventEmitter');
 
-const ITEM_NAME = "APP_SETTING_MANAGER";
+const ITEM_NAME = 'APP_SETTING_MANAGER';
 
 class Manager extends EventEmitter {
-	constructor() {
+    constructor () {
         super();
         this.data = {};
         this.get();
-	}
-    get() {
-        return new Promise(async(resolve, reject)=>{
-            var data = [];
+    }
+    get () {
+        return new Promise(async(resolve, reject) => {
+            let data = [];
             try {
-                var infoStr = await AsyncStorage.getItem(ITEM_NAME);
+                const infoStr = await AsyncStorage.getItem(ITEM_NAME);
                 data = JSON.parse(infoStr);
-            } catch(e) {
+            } catch (e) {
             }
-            this.data = data||{};
+            this.data = data || {};
         });
     }
-    set(data) {
-        return new Promise(async(resolve, reject)=>{
+    set (data) {
+        return new Promise(async(resolve, reject) => {
             this.data = data;
             await AsyncStorage.setItem(ITEM_NAME, JSON.stringify(data));
             resolve();
         });
     }
-    setOnlyWifiUpload(flag) {
-        var data = this.data;
+    setOnlyWifiUpload (flag) {
+        const data = this.data;
         data.onlyWifiUpload = flag;
         this.set(data);
     }
-    setLiveAppointment(obj) {
-        var data = this.data;
+    setLiveAppointment (obj) {
+        const data = this.data;
         data.liveAppointment = obj;
         this.set(data);
     }
-    clear() {
+    clear () {
         this.data = {};
         AsyncStorage.removeItem(ITEM_NAME);
     }

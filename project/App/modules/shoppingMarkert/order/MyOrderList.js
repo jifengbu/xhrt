@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -12,59 +12,59 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {Button, MessageBox, PageList} = COMPONENTS;
-var OrderDetails = require('./OrderDetails.js');
-var OrderComment = require('./OrderComment');
+const { Button, MessageBox, PageList } = COMPONENTS;
+const OrderDetails = require('./OrderDetails.js');
+const OrderComment = require('./OrderComment');
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '我的订单',
-        rightButton: {image: app.img.common_title_delete, handler: ()=>{app.scene.toggleMenuPanel()} },
+        rightButton: { image: app.img.common_title_delete, handler: () => { app.scene.toggleMenuPanel(); } },
     },
-    getInitialState() {
+    getInitialState () {
         this.selects = [false];
         return {
             showDeleteMessageBox: false,
             showDeletePanel: false,
         };
     },
-    toggleMenuPanel() {
-        this.setState({showDeletePanel: !this.state.showDeletePanel});
-        this.listView.updateList(list=>list);
+    toggleMenuPanel () {
+        this.setState({ showDeletePanel: !this.state.showDeletePanel });
+        this.listView.updateList(list => list);
     },
-    selectDelete(sectionID, rowID) {
+    selectDelete (sectionID, rowID) {
         this.selects[rowID] = !this.selects[rowID];
-        this.listView.updateList(list=>list);
+        this.listView.updateList(list => list);
     },
-    selectAll() {
-        var flag = _.every(this.selects, (i)=>!!i);
-        this.selects = this.listView.list.map(()=>!flag),
-        this.listView.updateList(list=>list);
+    selectAll () {
+        const flag = _.every(this.selects, (i) => !!i);
+        this.selects = this.listView.list.map(() => !flag);
+        this.listView.updateList(list => list);
     },
-    doDelete() {
-        var flag = _.every(this.selects, (i)=>!i);
+    doDelete () {
+        const flag = _.every(this.selects, (i) => !i);
         if (flag) {
             Toast('请选择需要删除的记录');
         } else {
-            this.setState({showDeleteMessageBox: true});
+            this.setState({ showDeleteMessageBox: true });
         }
     },
-    doCancel() {
-        this.setState({showDeleteMessageBox: false});
+    doCancel () {
+        this.setState({ showDeleteMessageBox: false });
     },
-    doConfirmDelete() {
-        var deleteList = _.map(_.filter(this.listView.list, (o, i)=>this.selects[i]), (item)=>item.orderNo);
-        var param = {
+    doConfirmDelete () {
+        const deleteList = _.map(_.filter(this.listView.list, (o, i) => this.selects[i]), (item) => item.orderNo);
+        const param = {
             userID: app.personal.info.userID,
             orderNoArray: deleteList,
         };
         POST(app.route.ROUTE_DEL_ORDER, param, this.deleteSuccess, this.deleteFailed, true);
     },
-    deleteSuccess(data) {
+    deleteSuccess (data) {
         if (data.success) {
-            this.listView.updateList((list)=>{
-                list = _.reject(list, (o, i)=>this.selects[i]);
+            this.listView.updateList((list) => {
+                list = _.reject(list, (o, i) => this.selects[i]);
                 this.selects = [false];
                 this.setState({
                     showDeleteMessageBox: false,
@@ -76,57 +76,57 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    deleteFailed() {
-        this.setState({showDeleteMessageBox: false,});
+    deleteFailed () {
+        this.setState({ showDeleteMessageBox: false });
     },
-    updateIsComment(isComment) {
-        this.listView.updateList((list)=>{
-            var item = _.find(list, (o)=>o.orderNo==isComment.orderNo);
+    updateIsComment (isComment) {
+        this.listView.updateList((list) => {
+            const item = _.find(list, (o) => o.orderNo == isComment.orderNo);
             if (item) {
                 item.isComment = isComment.isComment;
             }
             return list;
         });
     },
-    goComment(obj) {
+    goComment (obj) {
         app.navigator.push({
             component: OrderComment,
-            passProps: {data:obj, updateIsComment: this.updateIsComment},
+            passProps: { data:obj, updateIsComment: this.updateIsComment },
         });
     },
-    updateIsFinish(isFinish) {
-        this.listView.updateList((list)=>{
-            var item = _.find(list, (o)=>o.orderNo==isFinish.orderNo);
+    updateIsFinish (isFinish) {
+        this.listView.updateList((list) => {
+            const item = _.find(list, (o) => o.orderNo == isFinish.orderNo);
             if (item) {
                 item.isOver = isFinish.isOver;
             }
             return list;
         });
     },
-    goOrderDetails(obj) {
+    goOrderDetails (obj) {
         app.navigator.push({
             component: OrderDetails,
-            passProps: {data:obj, updateIsFinish: this.updateIsFinish},
+            passProps: { data:obj, updateIsFinish: this.updateIsFinish },
         });
     },
-    renderRow(obj, sectionID, rowID, onRowHighlighted) {
+    renderRow (obj, sectionID, rowID, onRowHighlighted) {
         return (
             <TouchableHighlight
-                onPress={this.state.showDeletePanel?this.selectDelete.bind(null, sectionID, rowID):null}
-                underlayColor="#EEB422">
+                onPress={this.state.showDeletePanel ? this.selectDelete.bind(null, sectionID, rowID) : null}
+                underlayColor='#EEB422'>
                 <View style={styles.row}>
-                    {this.state.showDeletePanel&&
+                    {this.state.showDeletePanel &&
                         <TouchableOpacity
                             onPress={this.selectDelete.bind(null, sectionID, rowID)}>
                             <Image
                                 resizeMode='stretch'
-                                source={this.selects[rowID]?app.img.common_delete:app.img.common_no_delete}
+                                source={this.selects[rowID] ? app.img.common_delete : app.img.common_no_delete}
                                 style={styles.deleteStyle} />
                         </TouchableOpacity>
                     }
-                    <View style={{flexDirection: 'column'}}>
+                    <View style={{ flexDirection: 'column' }}>
                         <View style={styles.profitTitle}>
-                            <View style={[styles.shopNameViewStyle, this.state.showDeletePanel?styles.fullWithWithDelete:null]}>
+                            <View style={[styles.shopNameViewStyle, this.state.showDeletePanel ? styles.fullWithWithDelete : null]}>
                                 <View style={styles.profitTitle_Name}>
                                     <Image
                                         resizeMode='stretch'
@@ -145,11 +145,11 @@ module.exports = React.createClass({
                             </View>
                         </View>
 
-                        <View style={[styles.goodsInfoViewStyle, this.state.showDeletePanel?styles.fullWithWithDelete:null]}>
+                        <View style={[styles.goodsInfoViewStyle, this.state.showDeletePanel ? styles.fullWithWithDelete : null]}>
                             <View style={styles.goodsImgStyle}>
                                 <Image
                                     resizeMode='stretch'
-                                    source={{uri:obj.goodsImg}}
+                                    source={{ uri:obj.goodsImg }}
                                     style={styles.shopImgStyle} />
                             </View>
                             <View style={styles.payPriceView}>
@@ -160,8 +160,8 @@ module.exports = React.createClass({
                         </View>
                         {
                             !this.state.showDeletePanel &&
-                            <View style={{marginTop: 1}}>
-                                <View style={[styles.shopNameViewStyle, this.state.showDeletePanel?styles.fullWithWithDelete:null]}>
+                            <View style={{ marginTop: 1 }}>
+                                <View style={[styles.shopNameViewStyle, this.state.showDeletePanel ? styles.fullWithWithDelete : null]}>
                                     <View style={styles.profitTitle_Name}>
                                         <Text style={styles.payText}>
                                             实付款: {obj.totalPrice}
@@ -170,17 +170,17 @@ module.exports = React.createClass({
                                     <View style={styles.profitTitle_Code}>
                                         {
                                             obj.isComment === 1 ?
-                                            <TouchableOpacity
-                                                activeOpacity={0.7}
-                                                onPress={this.goComment.bind(null,obj)}
-                                                style={styles.onTouchStyle} >
-                                                <Text style={styles.orderDetailButton}>评价晒单</Text>
-                                            </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    activeOpacity={0.7}
+                                                    onPress={this.goComment.bind(null, obj)}
+                                                    style={styles.onTouchStyle} >
+                                                    <Text style={styles.orderDetailButton}>评价晒单</Text>
+                                                </TouchableOpacity>
                                             : null
                                         }
                                         <TouchableOpacity
                                             activeOpacity={0.7}
-                                            onPress={this.goOrderDetails.bind(null,obj)}
+                                            onPress={this.goOrderDetails.bind(null, obj)}
                                             style={styles.onTouchStyle} >
                                             <Text style={styles.orderDetailButton}>订单详情</Text>
                                         </TouchableOpacity>
@@ -190,44 +190,43 @@ module.exports = React.createClass({
                         }
                         {
                             obj.isOver === 2 ?
-                            <View style={styles.orderCompletion}>
-                                <Image
-                                    resizeMode='stretch'
-                                    source={app.img.mall_order_completion}
-                                    style={[styles.orderCompletionStyle, this.state.showDeletePanel?{left:-35}:null]} />
-                            </View>
+                                <View style={styles.orderCompletion}>
+                                    <Image
+                                        resizeMode='stretch'
+                                        source={app.img.mall_order_completion}
+                                        style={[styles.orderCompletionStyle, this.state.showDeletePanel ? { left:-35 } : null]} />
+                                </View>
                             : null
                         }
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.mainContian}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     style={this.state.showDeletePanel ? styles.listWithMarginBottom : null}
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID}}
-                    listName="orderList"
+                    listParam={{ userID: app.personal.info.userID }}
+                    listName='orderList'
                     listUrl={app.route.ROUTE_GET_MY_ORDER}
                     />
                 <View style={this.state.showDeletePanel ? styles.bottomStyle : styles.bottomStyle2}>
-                    <Text style={styles.bottomLine}>
-                    </Text>
+                    <Text style={styles.bottomLine} />
                     <View style={styles.bottomChildStyle}>
                         <TouchableHighlight
                             onPress={this.selectAll}
-                            underlayColor="#a0d468"
+                            underlayColor='#a0d468'
                             style={styles.bottomSelectAllStyle}>
                             <Text style={styles.bottomSelectAllText}>全选</Text>
                         </TouchableHighlight>
                         <TouchableHighlight
                             onPress={this.doDelete}
                             style={styles.bottomDeleteStyle}
-                            underlayColor="#b4b4b4">
+                            underlayColor='#b4b4b4'>
                             <Text style={styles.bottomDeleteText}>删除</Text>
                         </TouchableHighlight>
                     </View>
@@ -235,17 +234,17 @@ module.exports = React.createClass({
                 {
                     this.state.showDeleteMessageBox &&
                     <MessageBox
-                        content="是否删除已选中项?"
+                        content='是否删除已选中项?'
                         doCancel={this.doCancel}
                         doConfirm={this.doConfirmDelete}
                         />
                 }
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     orderCompletion: {
         flex: 1,
         top: 20,
@@ -266,7 +265,7 @@ var styles = StyleSheet.create({
     mainContian: {
         flex: 1,
         height: sr.h,
-        width: sr.w
+        width: sr.w,
     },
     listWithMarginBottom: {
         marginBottom: 60,
@@ -369,11 +368,11 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection:'row',
         width: sr.w,
-        height: 40
+        height: 40,
     },
     shopNameStyle: {
         alignSelf: 'center',
-        color:'#000000'
+        color:'#000000',
     },
     goodsInfoViewStyle: {
         marginTop: 1,
@@ -381,13 +380,13 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
     },
     fullWithWithDelete: {
-        width: sr.w-35,
+        width: sr.w - 35,
     },
     goodsImgStyle: {
         flex: 1,
         alignItems: 'center',
         marginTop: 10,
-        marginBottom: 10
+        marginBottom: 10,
     },
     goodsContentStyle: {
         flex: 3,
@@ -402,7 +401,7 @@ var styles = StyleSheet.create({
     payPriceViewStyle: {
         marginLeft: 10,
         marginRight: 10,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     onTouchStyle: {
         borderRadius: 4,
@@ -411,7 +410,7 @@ var styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
         backgroundColor: '#239fdb',
-        height: 30
+        height: 30,
     },
     payText: {
         color: '#000000',
@@ -421,6 +420,6 @@ var styles = StyleSheet.create({
         marginRight: 10,
         marginLeft: 10,
         alignSelf: 'center',
-        color: '#FFFFFF'
+        color: '#FFFFFF',
     },
 });

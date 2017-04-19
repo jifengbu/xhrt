@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     AppState,
@@ -10,44 +10,85 @@ var {
     ScrollView,
     Image,
     TouchableOpacity,
-    InteractionManager
+    InteractionManager,
 } = ReactNative;
 
-var Player = require('./Player.js');
-var WebView = require('react-native-webview-bridge');
+const Player = require('./Player.js');
+const WebView = require('react-native-webview-bridge');
+const UmengMgr = require('../../manager/UmengMgr.js');
+const Umeng = require('../../native/index.js').Umeng;
 
-var {DImage} = COMPONENTS;
+const { DImage, ShareSheet } = COMPONENTS;
 
-var CompanyDetail = React.createClass({
+const CompanyDetail = React.createClass({
     statics: {
         title: '明星企业',
-        leftButton: { handler: ()=>{app.navigator.pop()}},
+        leftButton: { handler: () => { app.navigator.pop(); } },
+        rightButton: { image: app.img.home_share, handler: () => { app.scene.doShowActionSheet(); } },
     },
-    getInitialState() {
+    getInitialState () {
         this.posHeight = 0;
-        var _scrollView: ScrollView;
-        this.scrollView = _scrollView;
         return {
             webHeight: 0,
             playing: false,
             isFullScreen: false,
             dataDetail: {},
             scrollEnabled: true,
+            actionSheetVisible: false,
         };
     },
-    componentDidMount: function() {
+    componentDidMount: function () {
         this.getDetail();
         AppState.addEventListener('change', this._handleAppStateChange);
     },
-    getDetail() {
+    doShowActionSheet () {
+        this.setState({ actionSheetVisible:true });
+    },
+    doCloseActionSheet () {
+        this.setState({ actionSheetVisible:false });
+    },
+    doShareWeChat () {
+        this.doShare(0);
+    },
+    doShareTimeline () {
+        this.doShare(1);
+    },
+    doShareQQ () {
+        this.doShare(2);
+    },
+    doShare (index) {
+        const { dataDetail } = this.state;
+        const webUrl = app.route.ROUTE_STAR_COMPANY_PAGE + '?userID=' + app.personal.info.userID + '%26starCompanyID=' + this.props.starCompanyID;
+        var title = encodeURI(dataDetail.title);
+        let platform;
+        switch (index) {
+            case 0:
+                platform = Umeng.platforms.UMShareToWechatSession;
+                break;
+            case 1:
+                platform = Umeng.platforms.UMShareToWechatTimeline;
+                break;
+            case 2:
+                platform = Umeng.platforms.UMShareToQQ;
+                break;
+            default:
+                Toast('未知分享');
+                return;
+        }
+        UmengMgr.doSingleShare(platform, CONSTANTS.SHARE_SHAREDIR_SERVER + 'shareCompany.html?title=' + title + '&logoUrl=' + dataDetail.logo + '&webUrl=' + webUrl + '&videoUrl=' + dataDetail.videoDesc + '&videoImgUrl=' + dataDetail.videoDescImg, dataDetail.title, dataDetail.introduction || '明星企业', 'web', dataDetail.logo, this.doShareCallback);
+    },
+    doShareCallback () {
+        this.doCloseActionSheet();
+    },
+    getDetail () {
         app.showProgressHUD();
-        var param = {
+        const param = {
             userID: app.personal.info.userID,
             starCompanyID: this.props.starCompanyID,
         };
         POST(app.route.ROUTE_STAR_COMPANY_INFO, param, this.getListSuccess);
     },
-    getListSuccess(data) {
+    getListSuccess (data) {
         if (data.success) {
             if (data.context) {
                 this.setState({
@@ -56,70 +97,70 @@ var CompanyDetail = React.createClass({
             }
         }
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         AppState.removeEventListener('change', this._handleAppStateChange);
     },
-    _handleAppStateChange: function(currentAppState) {
+    _handleAppStateChange: function (currentAppState) {
         if (currentAppState === 'active') {
             // this.playerPlay && this.playerPlay.stopPlayVideo();
-        }else {
+        } else {
             this.playerPlay && this.playerPlay.stopPlayVideo();
         }
     },
-    fullScreenListener(isFullScreen) {
+    fullScreenListener (isFullScreen) {
         app.toggleNavigationBar(!isFullScreen);
         if (app.isandroid) {
-            this.setState({isFullScreen});
-            this.setState({scrollEnabled: !isFullScreen});
+            this.setState({ isFullScreen });
+            this.setState({ scrollEnabled: !isFullScreen });
             app.GlobalVarMgr.setItem('isFullScreen', isFullScreen);
-        }else {
-            setTimeout(()=>{
-                this.setState({isFullScreen});
-                this.setState({scrollEnabled: !isFullScreen});
+        } else {
+            setTimeout(() => {
+                this.setState({ isFullScreen });
+                this.setState({ scrollEnabled: !isFullScreen });
                 app.GlobalVarMgr.setItem('isFullScreen', isFullScreen);
             }, 100);
         }
-        setTimeout(()=>{
-            if (!isFullScreen&&this.posHeight > sr.h) {
+        setTimeout(() => {
+            if (!isFullScreen && this.posHeight > sr.h) {
                 InteractionManager.runAfterInteractions(() => {
-                    this.scrollView.scrollTo({y: this.posHeight-sr.ws(350)});
+                    // this.scrollView.scrollTo({ y: this.posHeight - sr.ws(350) });
+                    this.scrollView.scrollToEnd();
                 });
             }
         }, 600);
-
     },
-    onEnd() {
+    onEnd () {
         this.fullScreenListener(false);
-        this.setState({playing: false});
+        this.setState({ playing: false });
     },
-    changePlaying() {
-        this.setState({playing: true});
+    changePlaying () {
+        this.setState({ playing: true });
     },
-    onLoadEnd() {
+    onLoadEnd () {
         app.dismissProgressHUD();
     },
-    onLayoutPos(e) {
+    onLayoutPos (e) {
         this.posHeight = e.nativeEvent.layout.y;
     },
-    onBridgeMessage(message){
+    onBridgeMessage (message) {
         const { webviewbridge } = this.refs;
         let type, data;
         try {
-            let result = JSON.parse(message);
+            const result = JSON.parse(message);
             type = result.type;
             data = result.data;
         } catch (e) {}
         switch (type) {
-            case "heightChange":
-                this.setState({webHeight: data});
-            break;
+            case 'heightChange':
+                this.setState({ webHeight: data });
+                break;
         }
     },
-    render() {
-        let {dataDetail} = this.state;
+    render () {
+        const { dataDetail } = this.state;
         const injectScript = `
         (function () {
-            var height = document.body.offsetHeight;
+            const height = document.body.offsetHeight;
             WebViewBridge.send(JSON.stringify({
                 type:'heightChange',
                 data: height,
@@ -127,12 +168,12 @@ var CompanyDetail = React.createClass({
           }());`;
         return (
             <View style={styles.container}>
-                <ScrollView style={styles.container} ref={(scrollView) => { this.scrollView = scrollView}}
-                            scrollEnabled={this.state.scrollEnabled}>
+                <ScrollView style={styles.container} ref={(scrollView) => { this.scrollView = scrollView; }}
+                    scrollEnabled={this.state.scrollEnabled}>
                     {
                         !this.state.isFullScreen &&
                         <View>
-                            <View style={styles.line}></View>
+                            <View style={styles.line} />
                             <View style={styles.topView}>
                                 <Text style={styles.titleText}>{dataDetail.title}</Text>
                             </View>
@@ -140,7 +181,7 @@ var CompanyDetail = React.createClass({
                                 <DImage
                                     resizeMode='stretch'
                                     defaultSource={app.img.common_default}
-                                    source={{uri:dataDetail.logo}}
+                                    source={{ uri:dataDetail.logo }}
                                     style={styles.imageStyle} />
                             </View>
 
@@ -148,28 +189,28 @@ var CompanyDetail = React.createClass({
                     }
                     {
                         <WebView
-                            style={[!this.state.isFullScreen?styles.webview:styles.webviewFull,{height: this.state.webHeight+30}]}
-                            ref="webviewbridge"
-                            startInLoadingState={true}
+                            style={[!this.state.isFullScreen ? styles.webview : styles.webviewFull, { height: this.state.webHeight + 30 }]}
+                            ref='webviewbridge'
+                            startInLoadingState
                             onLoadEnd={this.onLoadEnd}
                             onBridgeMessage={this.onBridgeMessage}
                             injectedJavaScript={injectScript}
                             scrollEnabled={false}
-                            source={{uri: app.route.ROUTE_STAR_COMPANY_PAGE+'?userID='+app.personal.info.userID+'&starCompanyID='+this.props.starCompanyID}}
+                            source={{ uri: app.route.ROUTE_STAR_COMPANY_PAGE + '?userID=' + app.personal.info.userID + '&starCompanyID=' + this.props.starCompanyID }}
                             scalesPageToFit={false}
                             />
                     }
                     {
                         !this.state.isFullScreen &&
-                        <View style={styles.blankView}></View>
+                        <View style={styles.blankView} />
                     }
-                    <View  onLayout={this.onLayoutPos} >
+                    <View onLayout={this.onLayoutPos} >
                         {
                             dataDetail.videoDesc != undefined && dataDetail.videoDesc != '' && dataDetail.videoDescImg != '' &&
                             (
-                                this.state.playing?
+                                this.state.playing ?
                                     <Player
-                                        ref={(ref)=>this.playerPlay = ref}
+                                        ref={(ref) => { this.playerPlay = ref; }}
                                         uri={dataDetail.videoDesc}
                                         fullScreenListener={this.fullScreenListener}
                                         onEnd={this.onEnd}
@@ -180,7 +221,7 @@ var CompanyDetail = React.createClass({
                                     <DImage
                                         resizeMode='stretch'
                                         defaultSource={app.img.common_default}
-                                        source={{uri: dataDetail.videoDescImg}}
+                                        source={{ uri: dataDetail.videoDescImg }}
                                         style={styles.playerContainer}>
                                         <TouchableOpacity
                                             style={styles.video_icon_container}
@@ -188,8 +229,7 @@ var CompanyDetail = React.createClass({
                                             <Image
                                                 resizeMode='stretch'
                                                 source={app.img.specops_play}
-                                                style={styles.video_icon}>
-                                            </Image>
+                                                style={styles.video_icon} />
                                         </TouchableOpacity>
                                     </DImage>
                             )
@@ -197,16 +237,23 @@ var CompanyDetail = React.createClass({
                     </View>
                     {
                         !this.state.isFullScreen &&
-                        <View style={styles.blankView}></View>
+                        <View style={styles.blankView} />
                     }
                 </ScrollView>
+                <ShareSheet
+                    visible={this.state.actionSheetVisible}
+                    onCancel={this.doCloseActionSheet} >
+                    <ShareSheet.Button image={app.img.specops_wechat} onPress={this.doShareWeChat}>微信好友</ShareSheet.Button>
+                    <ShareSheet.Button image={app.img.specops_friend_circle} onPress={this.doShareTimeline}>朋友圈</ShareSheet.Button>
+                    <ShareSheet.Button image={app.img.specops_qq} onPress={this.doShareQQ}>QQ</ShareSheet.Button>
+                </ShareSheet>
             </View>
         );
-    }
+    },
 });
 module.exports = CompanyDetail;
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -234,7 +281,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     imageStyle: {
-        width: sr.w-28,
+        width: sr.w - 28,
         marginLeft: 14,
         borderRadius: 2,
         height: 165,
@@ -254,7 +301,7 @@ var styles = StyleSheet.create({
     line: {
         width: sr.w,
         height: 1,
-        backgroundColor: '#E0E0E0'
+        backgroundColor: '#E0E0E0',
     },
     blankView: {
         width: sr.w,

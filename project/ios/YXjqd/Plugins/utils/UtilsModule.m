@@ -1,5 +1,5 @@
-#import "RCTBridge.h"
-#import "RCTUtils.h"
+#import <React/RCTBridge.h>
+#import <React/RCTUtils.h>
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
 

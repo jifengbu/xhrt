@@ -1,0 +1,51 @@
+{
+    "msg": "获取数据成功!",
+    "success": true,
+    "context": {
+        "monthPlanRate": "80",
+        "dayPlanRate": "70",
+        "daySummaryRate": "90",
+        "monthPlanRateList": [
+            {
+                "submitRate": "30",
+                "monthNum": "2017-2"
+            },
+            {
+                "submitRate": "40",
+                "monthNum": "2017-3"
+            },
+            {
+                "submitRate": "60",
+                "monthNum": "2017-4"
+            }
+        ],
+        "dayPlanRateList": [
+            {
+                "submitRate": "40",
+                "monthNum": "2017-2"
+            },
+            {
+                "submitRate": "40",
+                "monthNum": "2017-3"
+            },
+            {
+                "submitRate": "80",
+                "monthNum": "2017-4"
+            }
+        ],
+        "daySummaryRateList": [
+            {
+                "submitRate": "30",
+                "monthNum": "2017-2"
+            },
+            {
+                "submitRate": "70",
+                "monthNum": "2017-3"
+            },
+            {
+                "submitRate": "80",
+                "monthNum": "2017-4"
+            }
+        ]
+    }
+}

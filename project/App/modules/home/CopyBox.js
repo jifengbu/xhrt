@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -13,35 +13,35 @@ var {
 } = ReactNative;
 
 module.exports = React.createClass({
-    doConfirm() {
-          Clipboard.setString(this.props.copyString);
-          app.closeModal();
+    doConfirm () {
+        Clipboard.setString(this.props.copyString);
+        app.closeModal();
     },
-    render() {
-      let { copyX , copyY } = this.props;
+    render () {
+        const { copyX, copyY } = this.props;
         return (
-              <TouchableOpacity activeOpacity={1} onPress={app.closeModal} style={styles.overlayContainer}>
-                  <TouchableOpacity
-                      onPress={this.doConfirm}
-                      style={[styles.container,{marginLeft: sr.ws(copyX-30), marginTop: sr.ws(copyY-40)}]}>
-                      <Image
-                          resizeMode='stretch'
-                          source={app.img.home_copyBox}
-                          style={styles.imageStyle}>
-                          <Text style={styles.buttonStyle}>复 制</Text>
-                      </Image>
-                  </TouchableOpacity>
-              </TouchableOpacity>
+            <TouchableOpacity activeOpacity={1} onPress={app.closeModal} style={styles.overlayContainer}>
+                <TouchableOpacity
+                    onPress={this.doConfirm}
+                    style={[styles.container, { marginLeft: sr.ws(copyX - 30), marginTop: sr.ws(copyY - 40) }]}>
+                    <Image
+                        resizeMode='stretch'
+                        source={app.img.home_copyBox}
+                        style={styles.imageStyle}>
+                        <Text style={styles.buttonStyle}>复 制</Text>
+                    </Image>
+                </TouchableOpacity>
+            </TouchableOpacity>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     buttonStyle: {
         fontSize: 14,
         color: '#FFFFFF',
         alignSelf: 'center',
-        marginTop: app.isandroid?5:8,
+        marginTop: app.isandroid ? 5 : 8,
     },
     container: {
         width: 60,
@@ -60,5 +60,5 @@ var styles = StyleSheet.create({
         height: sr.h,
         left: 0,
         bottom: 0,
-      },
+    },
 });

@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     Image,
     StyleSheet,
     Text,
@@ -10,10 +10,10 @@ var {
     TouchableOpacity,
 } = ReactNative;
 import Share from 'react-native-share';
-var UmengMgr = require('../../manager/UmengMgr.js');
+const UmengMgr = require('../../manager/UmengMgr.js');
 
-var {Button} = COMPONENTS;
-const titleArray = ['精品课程','精彩案例','编辑推荐','课程亮点','优秀案例'];
+const { Button } = COMPONENTS;
+const titleArray = ['精品课程', '精彩案例', '编辑推荐', '课程亮点', '优秀案例'];
 
 const LABEL_IMAGES = [
     app.img.home_class,
@@ -23,67 +23,70 @@ const LABEL_IMAGES = [
 ];
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             personinfo: app.personal.info,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getVideoInfoById();
     },
-    getVideoInfoById() {
-        var param = {
+    getVideoInfoById () {
+        const param = {
             userID:this.state.personinfo.userID,
             videoID: this.props.data.videoID,
         };
         POST(app.route.ROUTE_GET_VIDEO_INFO_BYID, param, this.doGetVideoInfoByIdSuccess);
     },
-    doGetVideoInfoByIdSuccess(data) {
+    doGetVideoInfoByIdSuccess (data) {
         if (data.success) {
-            this.setState({videoInfo: data.context});
+            this.setState({ videoInfo: data.context });
         } else {
             Toast(data.msg);
         }
     },
-    _onPressRow(i) {
+    _onPressRow (i) {
         switch (i) {
-            case 0:
-            var param = {
-                userID:this.state.personinfo.userID,
-                videoID:this.props.data.videoID,
-            };
-            POST(app.route.ROUTE_DO_LIKE, param, this.doSuccess.bind(null, 0));
-            break;
-            case 1:
-            var param = {
-                userID:this.state.personinfo.userID,
-                videoID:this.props.data.videoID,
-            };
-            POST(app.route.ROUTE_DO_COLLECTION, param, this.doSuccess.bind(null, 1));
-            break;
-            case 2:
-            this.doShare();//弹出分享框
-            break;
+            case 0: {
+                const param = {
+                    userID:this.state.personinfo.userID,
+                    videoID:this.props.data.videoID,
+                };
+                POST(app.route.ROUTE_DO_LIKE, param, this.doSuccess.bind(null, 0));
+                break;
+            }
+            case 1: {
+                const param = {
+                    userID:this.state.personinfo.userID,
+                    videoID:this.props.data.videoID,
+                };
+                POST(app.route.ROUTE_DO_COLLECTION, param, this.doSuccess.bind(null, 1));
+                break;
+            }
+            case 2: {
+                this.doShare();// 弹出分享框
+                break;
+            }
             default:
         }
     },
-    doSuccess(index, data) {
+    doSuccess (index, data) {
         if (data.success) {
             switch (index) {
                 case 0:
-                this.noticeShow(this.props.data.videoID);
-                this.setState({isPraise:0});
-                Toast(data.msg);
-                break;
+                    this.noticeShow(this.props.data.videoID);
+                    this.setState({ isPraise:0 });
+                    Toast(data.msg);
+                    break;
                 case 1:
-                this.setState({isCollection:0});
-                Toast(data.msg);
-                break;
+                    this.setState({ isCollection:0 });
+                    Toast(data.msg);
+                    break;
                 case 2:
-                if (data.context.makePoint !==0) {
-                    this.noticeShowBox('分享',data.context.makePoint);
-                }
-                break;
+                    if (data.context.makePoint !== 0) {
+                        this.noticeShowBox('分享', data.context.makePoint);
+                    }
+                    break;
                 default:
 
             }
@@ -91,51 +94,51 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    noticeShow(videoID) {
-        this.show(()=>{
+    noticeShow (videoID) {
+        this.show(() => {
             this.props.noticeShow(videoID);
         });
     },
-    noticeShowBox(title,point) {
-        this.show(()=>{
-            this.props.noticeShowBox(title,point);
+    noticeShowBox (title, point) {
+        this.show(() => {
+            this.props.noticeShowBox(title, point);
         });
     },
-    show(callback) {
+    show (callback) {
         return callback();
     },
-    doShare() {
-        // let shareOptions = {
-        //   title: "title",
-        //   message: "message",
-        //   url: "https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8",
-        //   subject: "Share Link" //  for email
-        // };
-        // Share.open(shareOptions)
-        // .then(function (successResult) {
-        //     console.log(successResult);
-		// })
-        // .catch(function (err) {
-        //     console.log(err);
-		// })
+    doShare () {
+// const shareOptions = {
+//   title: "title",
+//   message: "message",
+//   url: "https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8",
+//   subject: "Share Link" //  for email
+// };
+// Share.open(shareOptions)
+// .then(function (successResult) {
+//     console.log(successResult);
+// })
+// .catch(function (err) {
+//     console.log(err);
+// })
 
-        let {name, clicks, urlPlay, urlImg, videoType} = this.props.data;
-        var data = 'videoTitle='+name+'&playTimes='+clicks+'&videoUrl='+urlPlay+'&videoImg='+urlImg+'&videoType='+videoType
-        var dataEncode = encodeURI(data);
-        UmengMgr.doActionSheetShare(CONSTANTS.SHARE_SHAREDIR_SERVER+'shareStudyVideo.html?'+dataEncode,'赢销学习场',name,'web', urlImg,this.doShareCallback);
+        const { name, clicks, urlPlay, urlImg, videoType } = this.props.data;
+        const data = 'videoTitle=' + name + '&playTimes=' + clicks + '&videoUrl=' + urlPlay + '&videoImg=' + urlImg + '&videoType=' + videoType;
+        const dataEncode = encodeURI(data);
+        UmengMgr.doActionSheetShare(CONSTANTS.SHARE_SHAREDIR_SERVER + 'shareStudyVideo.html?' + dataEncode, '赢销学习场', name, 'web', urlImg, this.doShareCallback);
     },
-    doShareCallback() {
-        var param = {
+    doShareCallback () {
+        const param = {
             userID:this.state.personinfo.userID,
-            shareType:0, //0-分享视频 1-分享抽奖 2-分享战果
+            shareType:0, // 0-分享视频 1-分享抽奖 2-分享战果
             keyword:this.props.data.name,
         };
         POST(app.route.ROUTE_DO_SHARE, param, this.doSuccess.bind(null, 2));
     },
-    render() {
-        var isPraise = 1;
-        var isCollection = 1;
-        if (typeof(this.state.videoInfo) != 'undefined') {
+    render () {
+        let isPraise = 1;
+        let isCollection = 1;
+        if (typeof (this.state.videoInfo) != 'undefined') {
             if (this.state.isPraise == 0 || this.state.videoInfo.isPraise == 0) {
                 isPraise = 0;
             }
@@ -146,68 +149,67 @@ module.exports = React.createClass({
         return (
             <View>
                 {
-                    (typeof(this.state.videoInfo) == 'undefined') ?
-                    <View>
-                    </View>
+                    (typeof (this.state.videoInfo) == 'undefined') ?
+                        <View />
                     :
-                    <View style={styles.panleMenuContainer}>
-                        <View style={styles.panleMenuTopContainer}>
-                            <Text style={styles.videoTitleText}>
-                                {this.state.videoInfo.name}
-                            </Text>
-                            <Image
-                                 resizeMode='stretch'
-                                 source={LABEL_IMAGES[this.state.videoInfo.videoType-1]}
-                                 style={styles.labelStyle} />
-                        </View>
-                        <View style={styles.panleMenuDownContainer}>
-                            <Text style={styles.panleMenuText}>播放次数:{(this.state.videoInfo.clicks+1)*3+50}</Text>
-                            <View
-                                style={styles.panleMenuBtnContainer}
-                                ref="menus">
-                                <TouchableOpacity
-                                    onPress={isPraise == 0?null:this._onPressRow.bind(null, 0)}
-                                    style={styles.menuBtnContainer}>
-                                    <Image
-                                        resizeMode='contain'
-                                        source={isPraise == 0 ? app.img.study_heart_press : app.img.study_heart}
-                                        style={styles.iconStyle}/>
-                                    <Text style={styles.panleMenuBtnText}>
-                                        {isPraise == 0 ?'已赞':'点赞'}
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={isCollection == 0?null:this._onPressRow.bind(null, 1)}
-                                    style={styles.menuBtnContainer}>
-                                    <Image
-                                        resizeMode='contain'
-                                        source={isCollection == 0 ? app.img.study_star_press : app.img.study_star}
-                                        style={styles.iconStyle}/>
-                                    <Text style={styles.panleMenuBtnText}>
+                        <View style={styles.panleMenuContainer}>
+                            <View style={styles.panleMenuTopContainer}>
+                                <Text style={styles.videoTitleText}>
+                                    {this.state.videoInfo.name}
+                                </Text>
+                                <Image
+                                    resizeMode='stretch'
+                                    source={LABEL_IMAGES[this.state.videoInfo.videoType - 1]}
+                                    style={styles.labelStyle} />
+                            </View>
+                            <View style={styles.panleMenuDownContainer}>
+                                <Text style={styles.panleMenuText}>播放次数:{(this.state.videoInfo.clicks + 1) * 3 + 50}</Text>
+                                <View
+                                    style={styles.panleMenuBtnContainer}
+                                    ref='menus'>
+                                    <TouchableOpacity
+                                        onPress={isPraise == 0 ? null : this._onPressRow.bind(null, 0)}
+                                        style={styles.menuBtnContainer}>
+                                        <Image
+                                            resizeMode='contain'
+                                            source={isPraise == 0 ? app.img.study_heart_press : app.img.study_heart}
+                                            style={styles.iconStyle} />
+                                        <Text style={styles.panleMenuBtnText}>
+                                            {isPraise == 0 ? '已赞' : '点赞'}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={isCollection == 0 ? null : this._onPressRow.bind(null, 1)}
+                                        style={styles.menuBtnContainer}>
+                                        <Image
+                                            resizeMode='contain'
+                                            source={isCollection == 0 ? app.img.study_star_press : app.img.study_star}
+                                            style={styles.iconStyle} />
+                                        <Text style={styles.panleMenuBtnText}>
                                         收藏
                                     </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={this._onPressRow.bind(null, 2)}
-                                    style={styles.menuBtnContainer}>
-                                    <Image
-                                        resizeMode='contain'
-                                        source={app.img.study_share}
-                                        style={styles.iconStyle}/>
-                                    <Text style={styles.panleMenuBtnText}>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={this._onPressRow.bind(null, 2)}
+                                        style={styles.menuBtnContainer}>
+                                        <Image
+                                            resizeMode='contain'
+                                            source={app.img.study_share}
+                                            style={styles.iconStyle} />
+                                        <Text style={styles.panleMenuBtnText}>
                                         分享
                                     </Text>
-                                </TouchableOpacity>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
-                    </View>
                 }
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     panleMenuContainer: {
         height: 90,
         width:sr.w,

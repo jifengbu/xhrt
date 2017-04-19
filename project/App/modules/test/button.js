@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     KeyboardAvoidingView,
     Modal,
     SegmentedControlIOS,
@@ -14,55 +14,55 @@ var {
     Image,
 } = ReactNative;
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var {ScoreSelect} = COMPONENTS;
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const { ScoreSelect } = COMPONENTS;
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    getInitialState() {
+    getInitialState () {
         return {
             index: 0,
         };
     },
-    render() {
-        const {index} = this.state;
+    render () {
+        const { index } = this.state;
         return (
             <View style={styles.outerContainer}>
                 <Image
                     resizeMode='cover'
                     source={app.img.personal_head}
-                    style={styles.videoPlayer}  />
+                    style={styles.videoPlayer} />
                 <KeyboardAvoidingView behavior='Padding' style={styles.container}>
                     <TextInput
-                        placeholder="<TextInput />"
+                        placeholder='<TextInput />'
                         style={styles.textInput} />
                     <TextInput
-                        placeholder="<TextInput />"
+                        placeholder='<TextInput />'
                         style={styles.textInput} />
                     <TextInput
-                        placeholder="<TextInput />"
+                        placeholder='<TextInput />'
                         style={styles.textInput} />
                     <TextInput
-                        placeholder="<TextInput />"
+                        placeholder='<TextInput />'
                         style={styles.textInput} />
                     <TextInput
-                        placeholder="<TextInput />"
+                        placeholder='<TextInput />'
                         style={styles.textInput} />
                     <TextInput
-                        placeholder="<TextInput />"
+                        placeholder='<TextInput />'
                         style={styles.textInput} />
                     <TextInput
-                        placeholder="<TextInput />"
+                        placeholder='<TextInput />'
                         style={styles.textInput} />
                     <TextInput
-                        placeholder="<TextInput />"
+                        placeholder='<TextInput />'
                         style={styles.textInput} />
                 </KeyboardAvoidingView>
             </View>
         );
-    }
+    },
 });
 
 const styles = StyleSheet.create({

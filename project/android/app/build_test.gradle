@@ -165,6 +165,7 @@ dependencies {
     compile project(':react-native-camera')
     compile project(':react-native-capture')
     compile project(':react-native-image-picker')
+    compile project(':react-native-picker')
     compile project(':react-native-video')
     compile project(':react-native-audio')
     compile project(':react-native-file-transfer')

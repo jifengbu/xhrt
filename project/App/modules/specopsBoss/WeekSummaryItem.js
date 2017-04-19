@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -14,25 +14,25 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var RecordItemView = require('./BossRecordItem.js');
-var moment = require('moment');
-var {Button, InputBox, DImage} = COMPONENTS;
-var CopyBox = require('../home/CopyBox.js');
-var SpecopsPerson = require('./SpecopsPerson.js');
+const RecordItemView = require('./BossRecordItem.js');
+const moment = require('moment');
+const { Button, InputBox, DImage } = COMPONENTS;
+const CopyBox = require('../home/CopyBox.js');
+const SpecopsPerson = require('./SpecopsPerson.js');
 
 module.exports = React.createClass({
-    onLongPress(str){
+    onLongPress (str) {
         if (str != '' && str.length > 0) {
             // 显示复制按钮
             app.showModal(
                 <CopyBox copyY={app.touchPosition.y}
-                        copyX={app.touchPosition.x}
-                        copyString={str}/>,
-                        {backgroundColor: 'transparent'}
+                    copyX={app.touchPosition.x}
+                    copyString={str} />,
+                        { backgroundColor: 'transparent' }
             );
         }
     },
-    getInitialState() {
+    getInitialState () {
         return {
             daySummary: '',
             problemArray: [],
@@ -41,7 +41,7 @@ module.exports = React.createClass({
             isShow: false,
         };
     },
-    clearMonthData() {
+    clearMonthData () {
         this.userId = '';
         this.userHeadImage = '';
         this.sex = -1;
@@ -50,7 +50,7 @@ module.exports = React.createClass({
         this.userHeadTime = '';
         // process data
         if (this.props.planData) {
-            let {planData} = this.props;
+            const { planData } = this.props;
             this.userId = planData.userId;
             this.userHeadImage = planData.userImg;
             this.sex = planData.sex;
@@ -59,19 +59,19 @@ module.exports = React.createClass({
             this.userHeadTime = planData.submitDate;
 
             if (planData.daySummary) {
-                this.setState({daySummary:planData.daySummary.content});
+                this.setState({ daySummary:planData.daySummary.content });
             }
 
             for (let i = 0; i < planData.fixedProblem.length; i++) {
-                let testData = {};
+                const testData = {};
                 testData.problemTitle = '';
                 testData.problemContent = '';
                 testData.problemTitle = planData.fixedProblem[i].problemTitle;
                 testData.problemContent = planData.fixedProblem[i].problemContent;
                 this.state.problemArray.push(testData);
             }
-            for (let j= 0; j < planData.myQuestionList.length; j++) {
-                let testData = {};
+            for (let j = 0; j < planData.myQuestionList.length; j++) {
+                const testData = {};
                 testData.problemTitle = '';
                 testData.problemContent = '';
                 testData.problemTitle = planData.myQuestionList[j].title;
@@ -80,87 +80,87 @@ module.exports = React.createClass({
             }
         }
     },
-    componentDidMount() {
+    componentDidMount () {
         this.clearMonthData();
     },
-    calculateStrLength(oldStr, strCount) {
+    calculateStrLength (oldStr, strCount) {
         let height = 0;
         let linesHeight = 0;
         if (oldStr) {
-            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/<\/?.+?>/g, /<\/?.+?>/g, '');
             oldStr = oldStr.replace(/[\r\n]/g, '|');
-            let StrArr = oldStr.split('|');
-            for (var i = 0; i < StrArr.length; i++) {
-                //计算字符串长度，一个汉字占2个字节
-                let newStr = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
-                //计算行数
+            const StrArr = oldStr.split('|');
+            for (let i = 0; i < StrArr.length; i++) {
+                // 计算字符串长度，一个汉字占2个字节
+                const newStr = StrArr[i].replace(/[^\x00-\xff]/g, 'aa').length;
+                // 计算行数
                 if (newStr == 0) {
                     linesHeight = 1;
                 } else {
-                    linesHeight = Math.ceil(newStr/strCount);
+                    linesHeight = Math.ceil(newStr / strCount);
                 }
-                //计算高度，每行18
-                height += linesHeight*sr.ws(18);
+                // 计算高度，每行18
+                height += linesHeight * sr.ws(18);
             }
-            return height+1*sr.ws(18);
+            return height + 1 * sr.ws(18);
         } else {
             return 0;
         }
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
-                <View style={styles.separator2}></View>
+                <View style={styles.separator2} />
                 <this.monthPlanHead />
                 <this.weekProblemView />
             </View>
         );
     },
-    toSpecopsPerson(userId) {
+    toSpecopsPerson (userId) {
         app.navigator.push({
             component: SpecopsPerson,
-            passProps: {userID: userId},
+            passProps: { userID: userId },
         });
     },
-    calculateStrWidth(oldStr) {
+    calculateStrWidth (oldStr) {
         let height = 0;
         let linesWidth = 0;
         if (oldStr) {
-            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/<\/?.+?>/g, /<\/?.+?>/g, '');
             oldStr = oldStr.replace(/[\r\n]/g, '|');
-            let StrArr = oldStr.split('|');
-            for (var i = 0; i < StrArr.length; i++) {
-                //计算字符串长度，一个汉字占2个字节
-                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            const StrArr = oldStr.split('|');
+            for (let i = 0; i < StrArr.length; i++) {
+                // 计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g, 'aa').length;
             }
             return linesWidth;
         }
     },
     // 头像view
-    monthPlanHead() {
-        let nameTemWidth = this.calculateStrWidth(this.userHeadName);
-        let postTemWidth = this.calculateStrWidth(this.userHeadJob);
-        let nameWidth = nameTemWidth*13+3;
-        let postWidth = postTemWidth*6+3;
-        let headUrl = this.userHeadImage?this.userHeadImage:this.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
+    monthPlanHead () {
+        const nameTemWidth = this.calculateStrWidth(this.userHeadName);
+        const postTemWidth = this.calculateStrWidth(this.userHeadJob);
+        const nameWidth = nameTemWidth * 13 + 3;
+        const postWidth = postTemWidth * 6 + 3;
+        const headUrl = this.userHeadImage ? this.userHeadImage : this.sex === 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
         return (
             <View style={styles.monthPlanHeadView}>
                 <View style={styles.monthPlanHeadView1}>
-                    <TouchableOpacity onPress={this.toSpecopsPerson.bind(null,this.userId)}>
+                    <TouchableOpacity onPress={this.toSpecopsPerson.bind(null, this.userId)}>
                         <DImage
                             resizeMode='cover'
                             defaultSource={app.img.personal_head}
-                            source={this.userHeadImage?{uri: headUrl}:headUrl}
-                            style={styles.HeadViewImage}  />
+                            source={this.userHeadImage ? { uri: headUrl } : headUrl}
+                            style={styles.HeadViewImage} />
                     </TouchableOpacity>
-                    <View style={{width: nameWidth>140?sr.ws(140):sr.ws(nameWidth)}}>
+                    <View style={{ width: nameWidth > 140 ? sr.ws(140) : sr.ws(nameWidth) }}>
                         <Text numberOfLines={1} style={styles.HeadViewTextName}>
                             {this.userHeadName}
                         </Text>
                     </View>
                     {
                         this.userHeadJob != '' &&
-                        <View style={[styles.rowPosition,{width: postWidth>56?sr.ws(56):sr.ws(postWidth)}]}>
+                        <View style={[styles.rowPosition, { width: postWidth > 56 ? sr.ws(56) : sr.ws(postWidth) }]}>
                             <Text numberOfLines={1} style={styles.rowPositionText}>
                                 {this.userHeadJob}
                             </Text>
@@ -171,179 +171,175 @@ module.exports = React.createClass({
                     {moment(this.userHeadTime).format('M月D日 HH:mm')}
                 </Text>
             </View>
-        )
+        );
     },
-    _measureLineHeight(e) {
+    _measureLineHeight (e) {
         if (!this.state.lineheight) {
-            var {height} = e.nativeEvent.layout;
+            const { height } = e.nativeEvent.layout;
             // this.setState({lineHeight: height});
             if (height >= 90) {
-                this.setState({lineHeight: height, isShow: true});
+                this.setState({ lineHeight: height, isShow: true });
             } else {
-                this.setState({lineHeight: height});
+                this.setState({ lineHeight: height });
             }
         }
     },
-    doLookAll() {
-        this.setState({isLookAll: !this.state.isLookAll});
+    doLookAll () {
+        this.setState({ isLookAll: !this.state.isLookAll });
     },
-    //每日备注
-    weekProblemView() {
-        var {problemArray, isLookAll, lineHeight} = this.state;
-        return(
+    // 每日备注
+    weekProblemView () {
+        const { problemArray, isLookAll, lineHeight } = this.state;
+        return (
             <View onLayout={this.onLayoutProblem}>
-                <View style={styles.separator}>
-                </View>
+                <View style={styles.separator} />
                 <View style={styles.titleContainerWeek}>
                     <Text style={styles.headItemText}>
                         工作总结
                     </Text>
                 </View>
-                <View style={styles.separator1}>
-                </View>
+                <View style={styles.separator1} />
                 <TouchableOpacity
-                    style={[styles.inputContainerDaySummary, {height: lineHeight}]}
+                    style={[styles.inputContainerDaySummary, { height: lineHeight }]}
                     onLongPress={this.onLongPress.bind(null, this.state.daySummary)}>
                     <Text
                         onLayout={this._measureLineHeight}
                         style={styles.detailStyleDaySummary}
-                        numberOfLines={isLookAll?200:4}>
+                        numberOfLines={isLookAll ? 200 : 4}>
                         {this.state.daySummary}
                     </Text>
                     {
-                        !isLookAll&&lineHeight>75&&
-                        <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: lineHeight/2}]}/>
+                        !isLookAll && lineHeight > 75 &&
+                        <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, { height: lineHeight / 2 }]} />
                     }
                 </TouchableOpacity>
                 {
-                    lineHeight<25&&!isLookAll&&
+                    lineHeight < 25 && !isLookAll &&
                     <View style={styles.weekContainer}>
                         <View style={styles.titleContainerWeek}>
                             <Text style={styles.headItemText}>
                                 每日三省
                             </Text>
                         </View>
-                        <View style={styles.separator1}></View>
+                        <View style={styles.separator1} />
                         {
-                            problemArray.length>0&&
+                            problemArray.length > 0 &&
                             <View>
                                 <Text style={styles.questionTitle}>
-                                    {'1、'+problemArray[0].problemTitle}
+                                    {'1、' + problemArray[0].problemTitle}
                                 </Text>
                                 {
-                                    problemArray[0].problemContent==''?
-                                    <Text
-                                        style={styles.detailStyle2}
-                                        multiline={true}>
-                                        {'未完成'}
-                                    </Text>
+                                    problemArray[0].problemContent == '' ?
+                                        <Text
+                                            style={styles.detailStyle2}
+                                            multiline>
+                                            {'未完成'}
+                                        </Text>
                                     :
-                                    <Text
-                                        numberOfLines={1}
-                                        style={styles.detailStyle}
-                                        multiline={true}>
-                                        {problemArray[0].problemContent}
-                                    </Text>
+                                        <Text
+                                            numberOfLines={1}
+                                            style={styles.detailStyle}
+                                            multiline>
+                                            {problemArray[0].problemContent}
+                                        </Text>
                                 }
                             </View>
                         }
                         {
-                            !isLookAll&&
-                            <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: 50}]}/>
+                            !isLookAll &&
+                            <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, { height: 50 }]} />
                         }
                     </View>
                 }
                 {
-                    (lineHeight>25&&lineHeight<50&&!isLookAll)&&
+                    (lineHeight > 25 && lineHeight < 50 && !isLookAll) &&
                     <View style={styles.weekContainer}>
                         <View style={styles.titleContainerWeek}>
                             <Text style={styles.headItemText}>
                                 每日三省
                             </Text>
                         </View>
-                        <View style={styles.separator1}></View>
+                        <View style={styles.separator1} />
                         {
-                            problemArray.length>0&&
+                            problemArray.length > 0 &&
                             <Text style={styles.questionTitle}>
-                                {'1、'+problemArray[0].problemTitle}
+                                {'1、' + problemArray[0].problemTitle}
                             </Text>
                         }
                         {
-                            !isLookAll&&
-                            <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: 50}]}/>
+                            !isLookAll &&
+                            <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, { height: 50 }]} />
                         }
                     </View>
                 }
                 {
-                    (lineHeight>50&&lineHeight<75&&!isLookAll)&&
+                    (lineHeight > 50 && lineHeight < 75 && !isLookAll) &&
                     <View style={styles.weekContainer}>
                         <View style={styles.titleContainerWeek}>
                             <Text style={styles.headItemText}>
                                 每日三省
                             </Text>
                         </View>
-                        <View style={styles.separator1}></View>
+                        <View style={styles.separator1} />
                         {
-                            !isLookAll&&
-                            <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, {height: 50}]}/>
+                            !isLookAll &&
+                            <Image resizeMode='stretch' source={app.img.specops_mask} style={[styles.maskImage, { height: 50 }]} />
                         }
                     </View>
                 }
                 {
-                    isLookAll&&
+                    isLookAll &&
                     <View style={styles.weekContainer}>
                         <View style={styles.titleContainerWeek}>
                             <Text style={styles.headItemText}>
                                 每日三省
                             </Text>
                         </View>
-                        <View style={styles.separator1}>
-                        </View>
+                        <View style={styles.separator1} />
                         {
-                            problemArray.map((item, i)=>{
+                            problemArray.map((item, i) => {
                                 if (item.problemContent) {
-                                    var textInputHeight = this.calculateStrLength(item.problemContent, 34);
+                                    const textInputHeight = this.calculateStrLength(item.problemContent, 34);
                                 }
-                                return(
+                                return (
                                     <View key={i}>
                                         <Text style={styles.questionTitle}>
-                                            {(i+1)+'、'+item.problemTitle}
+                                            {(i + 1) + '、' + item.problemTitle}
                                         </Text>
-                                        <View style={styles.separator3}>
-                                        </View>
+                                        <View style={styles.separator3} />
                                         <TouchableOpacity onLongPress={this.onLongPress.bind(null, item.problemContent)}>
                                             {
-                                                item.problemContent==''?
-                                                <Text
-                                                    style={styles.detailStyle2}
-                                                    multiline={true}>
-                                                    {'未完成'}
-                                                </Text>
+                                                item.problemContent == '' ?
+                                                    <Text
+                                                        style={styles.detailStyle2}
+                                                        multiline>
+                                                        {'未完成'}
+                                                    </Text>
                                                 :
-                                                <Text
-                                                    style={styles.detailStyle}
-                                                    multiline={true}>
-                                                    {item.problemContent}
-                                                </Text>
+                                                    <Text
+                                                        style={styles.detailStyle}
+                                                        multiline>
+                                                        {item.problemContent}
+                                                    </Text>
                                             }
                                         </TouchableOpacity>
                                     </View>
-                                )
+                                );
                             })
                         }
                     </View>
                 }
                 <TouchableOpacity onPress={this.doLookAll} style={styles.lookAllStyle}>
-                    <Text style={styles.lookAllText}>{isLookAll?'点击收起':'点击展开更多'}</Text>
+                    <Text style={styles.lookAllText}>{isLookAll ? '点击收起' : '点击展开更多'}</Text>
                 </TouchableOpacity>
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     weekContainer: {
         width: sr.w,
@@ -395,7 +391,7 @@ var styles = StyleSheet.create({
         fontFamily:'STHeitiSC-Medium',
         fontSize: 14,
         marginVertical: 6,
-        width: sr.w-44,
+        width: sr.w - 44,
     },
     titleContainerWeek: {
         alignItems: 'center',
@@ -418,7 +414,7 @@ var styles = StyleSheet.create({
     },
     separator1: {
         marginLeft: 18,
-        width: sr.w-18,
+        width: sr.w - 18,
         height: 1,
         backgroundColor: '#F1F0F5',
     },
@@ -429,7 +425,7 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
     },
     separator3: {
-        width: sr.w-36,
+        width: sr.w - 36,
         height: 1,
         backgroundColor: '#F1F0F5',
         marginLeft: 18,

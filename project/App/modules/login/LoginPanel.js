@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Image,
     View,
@@ -12,25 +12,23 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var GetVerification = require('./GetVerification.js');
-var Home = require('../home/index.js');
-var Umeng = require('../../native/index.js').Umeng;
-var UmengMgr = require('../../manager/UmengMgr.js');
-var LocalDataMgr = require('../../manager/LocalDataMgr.js');
+const GetVerification = require('./GetVerification.js');
+const Home = require('../home/index.js');
+const Umeng = require('../../native/index.js').Umeng;
+const UmengMgr = require('../../manager/UmengMgr.js');
+const LocalDataMgr = require('../../manager/LocalDataMgr.js');
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
-var WeixinQQPanel = React.createClass({
-    empty(type) {
-        Toast(type === 1?'未安装微信':'未安装QQ');
-    },
-    render() {
+const WeixinQQPanel = React.createClass({
+    render () {
         return (
             <View style={styles.thirdpartyContainer}>
                 <View style={styles.thirdpartyButtonContainer}>
                     {
+                        !!this.props.weixininstalled &&
                         <TouchableOpacity
-                            onPress={!!this.props.weixininstalled ? this.props.doExternalLogin.bind(null,Umeng.platforms.UMShareToWechatSession):this.empty.bind(null,1)}
+                            onPress={this.props.doExternalLogin.bind(null, Umeng.platforms.UMShareToWechatSession)}
                             style={styles.thirdpartyLeftButtonContainer}>
                             <Image
                                 resizeMode='stretch'
@@ -41,8 +39,9 @@ var WeixinQQPanel = React.createClass({
                         </TouchableOpacity>
                     }
                     {
+                        !!this.props.qqinstalled &&
                         <TouchableOpacity
-                            onPress={!!this.props.qqinstalled ?this.props.doExternalLogin.bind(null,Umeng.platforms.UMShareToQQ):this.empty.bind(null,2)}
+                            onPress={this.props.doExternalLogin.bind(null, Umeng.platforms.UMShareToQQ)}
                             style={styles.thirdpartyRightButtonContainer}>
                             <Image
                                 resizeMode='stretch'
@@ -54,37 +53,37 @@ var WeixinQQPanel = React.createClass({
                     }
                 </View>
             </View>
-        )
-    }
+        );
+    },
 });
 
 module.exports = React.createClass({
-    doExternalLogin(type) {
-        UmengMgr.doThirdPartyLogin(type,this.doLoginCallback.bind(null,type));
+    doExternalLogin (type) {
+        UmengMgr.doThirdPartyLogin(type, this.doLoginCallback.bind(null, type));
     },
-    doLoginCallback(type,detail) {
+    doLoginCallback (type, detail) {
         app.uid = detail.uid;
-        this.getData(type,detail);
+        this.getData(type, detail);
     },
-    getData(type,detail) {
+    getData (type, detail) {
         let longType = 0;
         if (type === Umeng.platforms.UMShareToWechatSession) {
             longType = 1;
         } else if (type === Umeng.platforms.UMShareToQQ) {
             longType = 2;
         }
-        var param = {
+        const param = {
             uid: detail.uid,
-            screen_name: detail.screen_name,//昵称
-            iconurl: detail.profile_image_url,//头像
-            longType: longType  //1 表示微信登录  2 表示QQ登录
+            screen_name: detail.screen_name, // 昵称
+            iconurl: detail.profile_image_url, // 头像
+            longType: longType,  // 1 表示微信登录  2 表示QQ登录
         };
         app.showProgressHUD();
         POST(app.route.ROUTE_EXTERNAL_LOGIN, param, this.getDataSuccess, this.getDataError);
     },
-    getDataSuccess(data) {
+    getDataSuccess (data) {
         if (data.success) {
-            this.userID = data.context.userID;
+            app.personal.info.userID = data.context.userID;
             app.isBind = data.context.isBind;
             LocalDataMgr.setValueAndKey('loginMethod', 1);
             this.doGetPersonalInfo();
@@ -93,10 +92,10 @@ module.exports = React.createClass({
             app.dismissProgressHUD();
         }
     },
-    getDataError(error) {
+    getDataError (error) {
         app.dismissProgressHUD();
     },
-    doLogin() {
+    doLogin () {
         if (!app.utils.checkPhone(this.state.phone)) {
             Toast('手机号码不是有效的手机号码');
             return;
@@ -105,17 +104,17 @@ module.exports = React.createClass({
             Toast('密码必须有6-20位的数字，字母，下划线组成');
             return;
         }
-        var param = {
+        const param = {
             phone:this.state.phone,
             pwd:this.state.password,
-            type:1  //1 表示登录  2 表示注册   3 表示忘记密码
+            type:1,  // 1 表示登录  2 表示注册   3 表示忘记密码
         };
         app.showProgressHUD();
         POST(app.route.ROUTE_LOGIN, param, this.doLoginSuccess, this.doLoginError);
     },
-    doLoginSuccess(data) {
+    doLoginSuccess (data) {
         if (data.success) {
-            this.userID = data.context.userID;
+            app.personal.info.userID = data.context.userID;
             app.login.savePhone(this.state.phone);
             app.isBind = true;
             LocalDataMgr.setValueAndKey('loginMethod', 2);
@@ -125,29 +124,29 @@ module.exports = React.createClass({
             app.dismissProgressHUD();
         }
     },
-    doLoginError(error) {
+    doLoginError (error) {
         app.dismissProgressHUD();
     },
-    doShowForgetPassword() {
+    doShowForgetPassword () {
         app.navigator.push({
             component: GetVerification,
         });
     },
-    doGetPersonalInfo() {
-        var param = {
-            userID: this.userID,
+    doGetPersonalInfo () {
+        const param = {
+            userID: app.personal.info.userID,
             __from__: 'login',
         };
         POST(app.route.ROUTE_GET_PERSONAL_INFO, param, this.getPersonalInfoSuccess, this.getPersonalInfoError);
     },
-    getPersonalInfoSuccess(data) {
+    getPersonalInfoSuccess (data) {
         if (data.success) {
-            var context = data.context;
-            context['userID'] = this.userID;
+            const context = data.context;
+            context['userID'] = app.personal.info.userID;
             context['phone'] = this.state.phone;
             app.personal.set(context);
-            //初始化学习视频数据
-            var studyNumInfo = app.studyNumMgr.info;
+            // 初始化学习视频数据
+            const studyNumInfo = app.studyNumMgr.info;
             if (studyNumInfo) {
                 if (studyNumInfo.time != app.utils.getCurrentDateString()) {
                     app.studyNumMgr.initStudyNum();
@@ -158,19 +157,20 @@ module.exports = React.createClass({
             app.navigator.replace({
                 component: Home,
             });
+            app.personal.setNeedLogin(false);
         } else {
             app.dismissProgressHUD();
             Toast(data.msg);
         }
     },
-    getPersonalInfoError(error) {
+    getPersonalInfoError (error) {
         app.dismissProgressHUD();
     },
-    getInitialState() {
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
-            phone: this.props.phone|| app.login.list[0]||"",
-            password: "",
+            phone: this.props.phone || app.login.list[0] || '',
+            password: '',
             dataSource: ds.cloneWithRows(app.login.list),
             showList: false,
             showListBorder: false,
@@ -178,35 +178,35 @@ module.exports = React.createClass({
             qqinstalled: Umeng.isQQInstalled,
         };
     },
-    onPhoneTextInputLayout(e) {
-        var frame = e.nativeEvent.layout;
-        this.listTop = frame.y+ frame.height;
+    onPhoneTextInputLayout (e) {
+        const frame = e.nativeEvent.layout;
+        this.listTop = frame.y + frame.height;
     },
-    renderRow(text) {
+    renderRow (text) {
         return (
-            <TouchableOpacity onPress={()=>this.setState({phone: text, showList:false, showListBorder:false})}>
+            <TouchableOpacity onPress={() => this.setState({ phone: text, showList:false, showListBorder:false })}>
                 <View style={styles.row}>
                     <Text style={styles.itemText}>
                         {text}
                     </Text>
                 </View>
             </TouchableOpacity>
-        )
-    },
-    renderSeparator(sectionID, rowID) {
-        return (
-            <View style={styles.separator} key={rowID}/>
         );
     },
-    onFocus() {
+    renderSeparator (sectionID, rowID) {
+        return (
+            <View style={styles.separator} key={rowID} />
+        );
+    },
+    onFocus () {
         // this.onPhoneTextChange(this.state.phone);
     },
-    onBlur() {
+    onBlur () {
         // this.setState({showListBorder: true});
     },
-    onPhoneTextChange(text) {
-        // var dataSource = this.state.dataSource;
-        // var newData = _.filter(app.login.list, (item)=>{var reg=new RegExp('^'+text+'.*'); return reg.test(item)});
+    onPhoneTextChange (text) {
+        // const dataSource = this.state.dataSource;
+        // const newData = _.filter(app.login.list, (item)=>{const reg=new RegExp('^'+text+'.*'); return reg.test(item)});
         this.setState({
             phone: text,
             // dataSource: dataSource.cloneWithRows(newData),
@@ -214,9 +214,9 @@ module.exports = React.createClass({
             // showListBorder: false,
         });
     },
-    render() {
-        var row = this.state.dataSource.getRowCount();
-        var listHeight = row>4?styles.listHeightMax:row<2?styles.listHeightMin:null;
+    render () {
+        const row = this.state.dataSource.getRowCount();
+        const listHeight = row > 4 ? styles.listHeightMax : row < 2 ? styles.listHeightMin : null;
         return (
             <View style={styles.container}>
                 <View style={styles.inputContainerBK}>
@@ -230,10 +230,11 @@ module.exports = React.createClass({
                             style={styles.input_icon}
                             />
                         <TextInput
-                            placeholder="您的手机号码"
+                            placeholder='您的手机号码'
                             onChangeText={this.onPhoneTextChange}
                             value={this.state.phone}
                             style={styles.text_input}
+                            underlineColorAndroid='transparent'
                             keyboardType='phone-pad'
                             onFocus={this.onFocus}
                             onBlur={this.onBlur}
@@ -246,9 +247,10 @@ module.exports = React.createClass({
                             style={styles.input_icon}
                             />
                         <TextInput
-                            placeholder="您的密码"
-                            secureTextEntry={true}
-                            onChangeText={(text) => this.setState({password: text})}
+                            placeholder='您的密码'
+                            secureTextEntry
+                            underlineColorAndroid='transparent'
+                            onChangeText={(text) => this.setState({ password: text })}
                             defaultValue={this.state.password}
                             style={styles.text_input}
                             />
@@ -261,26 +263,26 @@ module.exports = React.createClass({
                     <Button onPress={this.doLogin} style={styles.btnLogin} textStyle={styles.btnLoginText}>登  录</Button>
                 </View>
                 {
-                    <WeixinQQPanel qqinstalled={this.state.qqinstalled} weixininstalled={this.state.weixininstalled} doExternalLogin={this.doExternalLogin}/>
+                    (!!this.state.qqinstalled || !!this.state.weixininstalled) &&
+                    <WeixinQQPanel qqinstalled={this.state.qqinstalled} weixininstalled={this.state.weixininstalled} doExternalLogin={this.doExternalLogin} />
                 }
                 {
                     this.state.showList &&
                     <ListView
-                        enableEmptySections={true}
+                        enableEmptySections
                         dataSource={this.state.dataSource}
-                        keyboardShouldPersistTaps={true}
+                        keyboardShouldPersistTaps
                         renderRow={this.renderRow}
                         renderSeparator={this.renderSeparator}
-                        style={[styles.list, {top: this.listTop}, listHeight, this.state.showListBorder?{borderColor: '#A62045'}:null]}
+                        style={[styles.list, { top: this.listTop }, listHeight, this.state.showListBorder ? { borderColor: '#A62045' } : null]}
                         />
                 }
             </View>
-        )
-    }
+        );
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -313,7 +315,6 @@ var styles = StyleSheet.create({
         width: 250,
         fontSize:16,
         alignSelf: 'center',
-        backgroundColor: '#FFFFFF',
     },
     btnForgetPassWordContainer: {
         height: 50,
@@ -325,7 +326,7 @@ var styles = StyleSheet.create({
         alignSelf: 'flex-end',
         paddingVertical: 5,
         paddingHorizontal: 10,
-        backgroundColor: '#DE3031'
+        backgroundColor: '#DE3031',
     },
     btnForgetPassWordText: {
         fontSize: 14,
@@ -337,9 +338,9 @@ var styles = StyleSheet.create({
     },
     btnLogin: {
         height: 45,
-        width: (sr.w-30),
+        width: (sr.w - 30),
         borderRadius: 5,
-        backgroundColor: '#DE3031'
+        backgroundColor: '#DE3031',
     },
     btnLoginText: {
         fontSize: 18,
@@ -368,7 +369,7 @@ var styles = StyleSheet.create({
     image_button_text: {
         color: '#4C4D4E',
         fontSize: 13,
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     },
     thirdpartyContainer2: {
         marginTop: 30,
@@ -387,7 +388,7 @@ var styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 5,
         borderColor: 'red',
-        width: (sr.w-48),
+        width: (sr.w - 48),
         left: 38,
         padding: 10,
     },

@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -11,67 +11,67 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var AidKitManagement = require('./AidKitManagement.js');
-var PackageManagementForHelp = require('./PackageManagementForHelp.js');
-var CaseList = require('./CaseList.js');
-var {Button, PageList} = COMPONENTS;
-var Button = require('@remobile/react-native-simple-button');
-var SplashScreen = require('@remobile/react-native-splashscreen');
+const AidKitManagement = require('./AidKitManagement.js');
+const PackageManagementForHelp = require('./PackageManagementForHelp.js');
+const CaseList = require('./CaseList.js');
+const { PageList } = COMPONENTS;
+const Button = require('@remobile/react-native-simple-button');
+const SplashScreen = require('@remobile/react-native-splashscreen');
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    _onPressRow() {
+    _onPressRow () {
         app.navigator.push({
             title: '求救包管理',
             component: AidKitManagement,
-            passProps: {tabIndex: this.props.tabIndex},
+            passProps: { tabIndex: this.props.tabIndex },
         });
     },
-    goSendMadKit() {
+    goSendMadKit () {
         app.navigator.pop();
     },
-    changeTab(tabIndex) {
-        this.setState({tabIndex});
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            tabIndex: 0
+            tabIndex: 0,
         };
     },
-    render() {
-        var isFirstTap = this.state.tabIndex===0;
+    render () {
+        const isFirstTap = this.state.tabIndex === 0;
         return (
             <View style={this.props.style}>
                 <View style={styles.tabContainer}>
                     <TouchableOpacity
                         onPress={this.changeTab.bind(null, 0)}
-                        style={[styles.tabButton, isFirstTap?{backgroundColor:CONSTANTS.THEME_COLOR}:{backgroundColor:'#D5D5D7'}]}>
-                        <Text style={[styles.tabText, {color:isFirstTap?'#FFFFFF':CONSTANTS.THEME_COLOR}]} >发布的</Text>
+                        style={[styles.tabButton, isFirstTap ? { backgroundColor:CONSTANTS.THEME_COLOR } : { backgroundColor:'#D5D5D7' }]}>
+                        <Text style={[styles.tabText, { color:isFirstTap ? '#FFFFFF' : CONSTANTS.THEME_COLOR }]} >发布的</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={this.changeTab.bind(null, 1)}
-                        style={[styles.tabButton, !isFirstTap?{backgroundColor:CONSTANTS.THEME_COLOR}:{backgroundColor:'#D5D5D7'}]}>
-                        <Text style={[styles.tabText, {color:!isFirstTap?'#FFFFFF':CONSTANTS.THEME_COLOR}]} >参与的</Text>
+                        style={[styles.tabButton, !isFirstTap ? { backgroundColor:CONSTANTS.THEME_COLOR } : { backgroundColor:'#D5D5D7' }]}>
+                        <Text style={[styles.tabText, { color:!isFirstTap ? '#FFFFFF' : CONSTANTS.THEME_COLOR }]} >参与的</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.makeup}>
                     <PackageManagementForHelp
                         tabIndex={0}
-                        disable={this.props.disable||this.state.tabIndex!==0}
-                        style={isFirstTap?{flex:1}:{left:-sr.tw, top:0, position:'absolute'}}/>
+                        disable={this.props.disable || this.state.tabIndex !== 0}
+                        style={isFirstTap ? { flex:1 } : { left:-sr.tw, top:0, position:'absolute' }} />
                     <CaseList
                         tabIndex={1}
-                        disable={this.props.disable||this.state.tabIndex!==1}
-                        style={isFirstTap?{left:-sr.tw, top:0, position:'absolute'}:{flex:1}}/>
+                        disable={this.props.disable || this.state.tabIndex !== 1}
+                        style={isFirstTap ? { left:-sr.tw, top:0, position:'absolute' } : { flex:1 }} />
                 </View>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 2,
         backgroundColor: '#EEEEEE',
@@ -130,9 +130,9 @@ var styles = StyleSheet.create({
         backgroundColor:'#f5f5f5',
         top: 0,
         width:sr.w,
-        height:sr.h/5*4,
+        height:sr.h / 5 * 4,
         marginTop:60,
         marginHorizontal:0,
-        position: 'absolute'
+        position: 'absolute',
     },
 });

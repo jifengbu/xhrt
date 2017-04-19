@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -9,50 +9,50 @@ var {
     View,
     TouchableHighlight,
 } = ReactNative;
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 module.exports = React.createClass({
-    doShareWechat() {
-        this.closeModal(()=>{
+    doShareWechat () {
+        this.closeModal(() => {
             this.props.doShareWechat();
         });
     },
-    doShareFriends() {
-        this.closeModal(()=>{
+    doShareFriends () {
+        this.closeModal(() => {
             this.props.doShareFriends();
         });
     },
-    doShareQQ() {
-        this.closeModal(()=>{
+    doShareQQ () {
+        this.closeModal(() => {
             this.props.doShareQQ();
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    doClose() {
-        this.closeModal(()=>{
+    doClose () {
+        this.closeModal(() => {
             this.props.doClose();
         });
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <Image
                         resizeMode='stretch'
@@ -74,43 +74,42 @@ module.exports = React.createClass({
                     </View>
                     <TouchableHighlight
                         onPress={this.doClose}
-                        underlayColor="rgba(0, 0, 0, 0)"
+                        underlayColor='rgba(0, 0, 0, 0)'
                         style={styles.touchableHighlight}>
                         <Image
                             resizeMode='contain'
                             source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
+                            style={styles.closeIcon} />
                     </TouchableHighlight>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     drawHeaderImage: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:100,
         alignItems:'center',
         justifyContent:'center',
     },
     drawButtonView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:80,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'orange'
+        backgroundColor:'orange',
     },
     drawButton: {
         width:60,
         height:60,
-        marginHorizontal:20
+        marginHorizontal:20,
     },
     title: {
         marginVertical:10,
@@ -135,18 +134,18 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     touchableHighlight: {
         position:'absolute',
         top:0,
-        left:sr.w*5/6-24,
+        left:sr.w * 5 / 6 - 24,
         width: 30,
         height: 30,
         marginTop:-8,
     },
     closeIcon: {
         width: 30,
-        height: 30
+        height: 30,
     },
 });

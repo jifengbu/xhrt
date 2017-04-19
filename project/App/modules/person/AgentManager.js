@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     TouchableOpacity,
@@ -11,12 +11,12 @@ var {
     ListView,
 } = ReactNative;
 
-var UmengMgr = require('../../manager/UmengMgr.js');
-var {QRCode,DImage} = COMPONENTS;
+const UmengMgr = require('../../manager/UmengMgr.js');
+const { QRCode, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             dataSource: this.ds.cloneWithRows([]),
             DetailData: null,
@@ -25,69 +25,69 @@ module.exports = React.createClass({
             isShowImage: false,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getQRCodeItem();
     },
-    getQRCodeItem() {
-        var param = {
+    getQRCodeItem () {
+        const param = {
             userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_GET_AGENT_INFO, param, this.getQRCodeItemSuccess);
     },
-    getQRCodeItemSuccess(data) {
+    getQRCodeItemSuccess (data) {
         if (data.success) {
-            this.setState({DetailData: data.context});
-             if (!data.context.freeQRCode.length) {
-                 this.setState({isShowImage: true});
-             }
-            this.old_arry = this.state.DetailData.freeQRCode||[];
-            var codeStr = this.getRandomQRCode(this.old_arry);
+            this.setState({ DetailData: data.context });
+            if (!data.context.freeQRCode.length) {
+                this.setState({ isShowImage: true });
+            }
+            this.old_arry = this.state.DetailData.freeQRCode || [];
+            const codeStr = this.getRandomQRCode(this.old_arry);
             if (codeStr) {
-                this.setState({codeContent:codeStr});
+                this.setState({ codeContent:codeStr });
             }
         } else {
             Toast(data.msg);
         }
     },
-    changeTab(tabIndex) {
-        this.setState({tabIndex});
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
     },
-    updateQRCode() {
-        //更新二维码
-        var codeStr = this.getRandomQRCode(this.old_arry);
+    updateQRCode () {
+        // 更新二维码
+        const codeStr = this.getRandomQRCode(this.old_arry);
         if (!codeStr) {
             this.getQRCodeItem();
             return;
         }
-        this.setState({codeContent:codeStr});
+        this.setState({ codeContent:codeStr });
     },
-    shareQRCode(code) {
-        //分享二维码
-        var data = 'code='+code;
-        var dataEncode = encodeURI(data);
-        UmengMgr.doActionSheetShare(CONSTANTS.SHARE_SHAREDIR_SERVER+'shareQRCode.html?'+dataEncode,'赢销二维码','扫一扫可成为我们尊贵的特种兵，可以拥有一年的学习时间。专业为你打造特种兵','web',CONSTANTS.SHARE_IMGDIR_SERVER+'qr-code.png',this.doShareCallback);
+    shareQRCode (code) {
+        // 分享二维码
+        const data = 'code=' + code;
+        const dataEncode = encodeURI(data);
+        UmengMgr.doActionSheetShare(CONSTANTS.SHARE_SHAREDIR_SERVER + 'shareQRCode.html?' + dataEncode, '赢销二维码', '扫一扫可成为我们尊贵的特种兵，可以拥有一年的学习时间。专业为你打造特种兵', 'web', CONSTANTS.SHARE_IMGDIR_SERVER + 'qr-code.png', this.doShareCallback);
     },
-    doShareCallback(){
+    doShareCallback () {
 
     },
-    getRandomQRCode(codeArr) {
-        var index = _.random(0, codeArr.length-1);
-        var code = codeArr[index];
-        //在原数组删掉，然后在下轮循环中就可以避免重复获取
+    getRandomQRCode (codeArr) {
+        const index = _.random(0, codeArr.length - 1);
+        const code = codeArr[index];
+        // 在原数组删掉，然后在下轮循环中就可以避免重复获取
         codeArr.splice(index, 1);
         return code;
     },
-    render() {
-        var isFirstTap = this.state.tabIndex===0;
-        var {DetailData,tabIndex,isShowImage} = this.state;
-        var {authorized} = this.props;
-        var already = 0;
-        var surplus = 0;
-        var codeText = '';
-        let isFree = (authorized===1&&tabIndex===0)?1:0; //1表示免费  0表示收费
+    render () {
+        const isFirstTap = this.state.tabIndex === 0;
+        const { DetailData, tabIndex, isShowImage } = this.state;
+        const { authorized } = this.props;
+        let already = 0;
+        let surplus = 0;
+        let codeText = '';
+        const isFree = (authorized === 1 && tabIndex === 0) ? 1 : 0; // 1表示免费  0表示收费
         if (DetailData) {
             if (isFree) {
-                surplus = DetailData.totalFreeQRCodeNum-DetailData.boundFreeQRCodeNum;
+                surplus = DetailData.totalFreeQRCodeNum - DetailData.boundFreeQRCodeNum;
                 already = DetailData.boundFreeQRCodeNum;
                 codeText = this.state.codeContent;
             } else {
@@ -100,38 +100,38 @@ module.exports = React.createClass({
                 resizeMode='stretch'
                 source={app.img.login_background}
                 style={styles.imageContainer}>
-                {   //authorized 1表示代理商 2表示特种兵
-                    authorized===1?
-                    <View style={styles.tabContainer}>
-                        <TouchableOpacity
-                            onPress={this.changeTab.bind(null, 0)}
-                            style={[styles.tabButton, {backgroundColor: isFirstTap?CONSTANTS.THEME_COLOR:'#FFFFFF'}]}>
-                            <Text style={[styles.tabText, {color:isFirstTap?'#FFFFFF':CONSTANTS.THEME_COLOR}]} >免费二维码管理</Text>
-                            {isFirstTap&&<View style={[styles.makeup, {right:0}]}></View>}
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={this.changeTab.bind(null, 1)}
-                            style={[styles.tabButton, {backgroundColor:!isFirstTap?CONSTANTS.THEME_COLOR:'#FFFFFF'}]}>
-                            <Text style={[styles.tabText, {color:!isFirstTap?'#FFFFFF':CONSTANTS.THEME_COLOR}]} >收费二维码管理</Text>
-                            {!isFirstTap&&<View style={[styles.makeup, {left:0}]}></View>}
-                        </TouchableOpacity>
-                    </View>
+                {   // authorized 1表示代理商 2表示特种兵
+                    authorized === 1 ?
+                        <View style={styles.tabContainer}>
+                            <TouchableOpacity
+                                onPress={this.changeTab.bind(null, 0)}
+                                style={[styles.tabButton, { backgroundColor: isFirstTap ? CONSTANTS.THEME_COLOR : '#FFFFFF' }]}>
+                                <Text style={[styles.tabText, { color:isFirstTap ? '#FFFFFF' : CONSTANTS.THEME_COLOR }]} >免费二维码管理</Text>
+                                {isFirstTap && <View style={[styles.makeup, { right:0 }]} />}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={this.changeTab.bind(null, 1)}
+                                style={[styles.tabButton, { backgroundColor:!isFirstTap ? CONSTANTS.THEME_COLOR : '#FFFFFF' }]}>
+                                <Text style={[styles.tabText, { color:!isFirstTap ? '#FFFFFF' : CONSTANTS.THEME_COLOR }]} >收费二维码管理</Text>
+                                {!isFirstTap && <View style={[styles.makeup, { left:0 }]} />}
+                            </TouchableOpacity>
+                        </View>
                     :
-                    <View style={styles.themeContainer}>
-                        <Text style={[styles.tabText,{color: '#FFFFFF'}]}>{'我的二维码管理'}</Text>
-                    </View>
+                        <View style={styles.themeContainer}>
+                            <Text style={[styles.tabText, { color: '#FFFFFF' }]}>{'我的二维码管理'}</Text>
+                        </View>
                 }
                 {
-                    isFree?
-                    <View style={styles.MessageView}>
-                        <Text style={[styles.MessageText,{color: '#555555'}]}>{'剩余'}</Text>
-                        <Text style={[styles.MessageText,{color: CONSTANTS.THEME_COLOR}]}>{surplus}</Text>
-                        <Text style={[styles.MessageText,{color: '#555555'}]}>{'个邀请码，该码使用权限为1年'}</Text>
-                    </View>
+                    isFree ?
+                        <View style={styles.MessageView}>
+                            <Text style={[styles.MessageText, { color: '#555555' }]}>{'剩余'}</Text>
+                            <Text style={[styles.MessageText, { color: CONSTANTS.THEME_COLOR }]}>{surplus}</Text>
+                            <Text style={[styles.MessageText, { color: '#555555' }]}>{'个邀请码，该码使用权限为1年'}</Text>
+                        </View>
                     :
-                    <View style={styles.MessageView}>
-                        <Text style={[styles.MessageText,{color: '#555555'}]}>{'邀请码使用权限为1年'}</Text>
-                    </View>
+                        <View style={styles.MessageView}>
+                            <Text style={[styles.MessageText, { color: '#555555' }]}>{'邀请码使用权限为1年'}</Text>
+                        </View>
                 }
                 <View style={styles.QRcodeContainer}>
                     <Image
@@ -139,70 +139,70 @@ module.exports = React.createClass({
                         source={app.img.personal_green_end}
                         style={styles.QRcodeStyle}>
                         {
-                            isShowImage&&isFree?
-                            <View style={styles.QRCodeNullView}>
-                                <Image
-                                    resizeMode='stretch'
-                                    source={app.img.login_loginLogo}
-                                    style={styles.QRCodeImage}/>
-                                <Text style={styles.nullText}>{'暂无二维码'}</Text>
-                            </View>:
-                            <View style={[styles.QRCodeView,{marginTop: isFree?20:40}]}>
-                                {
-                                    codeText!=''&&
+                            isShowImage && isFree ?
+                                <View style={styles.QRCodeNullView}>
+                                    <Image
+                                        resizeMode='stretch'
+                                        source={app.img.login_loginLogo}
+                                        style={styles.QRCodeImage} />
+                                    <Text style={styles.nullText}>{'暂无二维码'}</Text>
+                                </View> :
+                                <View style={[styles.QRCodeView, { marginTop: isFree ? 20 : 40 }]}>
+                                    {
+                                    codeText != '' &&
                                     <QRCode
                                         text={codeText}
-                                        colorDark="black"
+                                        colorDark='black'
                                         width={sr.ws(150)}
                                         height={sr.ws(150)}
                                         />
                                 }
-                                {
-                                    codeText!=''&&
+                                    {
+                                    codeText != '' &&
                                     <Image
                                         resizeMode='contain'
                                         source={app.img.personal_circular_logo}
-                                        style={styles.logo}/>
+                                        style={styles.logo} />
                                 }
-                            </View>
+                                </View>
                         }
                         {
-                            !isShowImage&&isFree?
-                            <View style={styles.textTitle}>
-                                <Text style={styles.detailText}>{'一个二维码只绑定一个用户'}</Text>
-                                <Text style={styles.detailText}>{'扫一扫或者分享之前请点击更新'}</Text>
-                            </View>:null
+                            !isShowImage && isFree ?
+                                <View style={styles.textTitle}>
+                                    <Text style={styles.detailText}>{'一个二维码只绑定一个用户'}</Text>
+                                    <Text style={styles.detailText}>{'扫一扫或者分享之前请点击更新'}</Text>
+                                </View> : null
                         }
                         {
-                            isShowImage&&isFree?
-                            null:
+                            isShowImage && isFree ?
+                            null :
                             <View style={styles.btnContainer}>
                                 <TouchableOpacity
-                                    onPress={this.shareQRCode.bind(null,codeText)}
-                                    style={[styles.tabBtn,{backgroundColor: '#BB9F6A'}]}>
-                                    <Text style={[styles.tabText, {color:'#FFFFFF'}]} >分享</Text>
+                                    onPress={this.shareQRCode.bind(null, codeText)}
+                                    style={[styles.tabBtn, { backgroundColor: '#BB9F6A' }]}>
+                                    <Text style={[styles.tabText, { color:'#FFFFFF' }]} >分享</Text>
                                 </TouchableOpacity>
                                 {
-                                    isFree?
-                                    <TouchableOpacity
-                                        onPress={this.updateQRCode}
-                                        style={[styles.tabBtn, {backgroundColor: '#98CEA3'}]}>
-                                        <Text style={[styles.tabText, {color:'#FFFFFF'}]} >更新</Text>
-                                    </TouchableOpacity>:null
+                                    isFree ?
+                                        <TouchableOpacity
+                                            onPress={this.updateQRCode}
+                                            style={[styles.tabBtn, { backgroundColor: '#98CEA3' }]}>
+                                            <Text style={[styles.tabText, { color:'#FFFFFF' }]} >更新</Text>
+                                        </TouchableOpacity> : null
                                 }
                             </View>
                         }
                     </Image>
                 </View>
                 <View style={styles.MessageBottom}>
-                    <Text style={[styles.MessageText,{color: '#555555'}]}>{'已成功绑定账号'}</Text>
-                    <Text style={[styles.MessageText,{color: CONSTANTS.THEME_COLOR}]}>{already}</Text>
-                    <Text style={[styles.MessageText,{color: '#555555'}]}>{'个'}</Text>
+                    <Text style={[styles.MessageText, { color: '#555555' }]}>{'已成功绑定账号'}</Text>
+                    <Text style={[styles.MessageText, { color: CONSTANTS.THEME_COLOR }]}>{already}</Text>
+                    <Text style={[styles.MessageText, { color: '#555555' }]}>{'个'}</Text>
                 </View>
                 <View style={styles.bottomContainer}>
                     {
-                        this.state.DetailData&&
-                        <QRCodeData DetailData={this.state.DetailData} authorized={this.props.authorized} tabIndex={this.state.tabIndex}/>
+                        this.state.DetailData &&
+                        <QRCodeData DetailData={this.state.DetailData} authorized={this.props.authorized} tabIndex={this.state.tabIndex} />
                     }
                 </View>
             </Image>
@@ -210,29 +210,29 @@ module.exports = React.createClass({
     },
 });
 
-var QRCodeData = React.createClass({
-    componentWillMount() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+const QRCodeData = React.createClass({
+    componentWillMount () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     },
-    renderRow(obj){
-        return(
+    renderRow (obj) {
+        return (
             <View style={styles.itemContainer}>
                 <View style={styles.headContainer}>
                     <DImage
                         resizeMode='stretch'
                         defaultSource={app.img.personal_head}
-                        source={{uri:obj.userHead}}
-                        style={styles.headImage}/>
+                        source={{ uri:obj.userHead }}
+                        style={styles.headImage} />
                     <Text style={styles.dateText}>{obj.userName}</Text>
                 </View>
                 <Text style={styles.dateText}>{obj.userBoundTime}</Text>
             </View>
-        )
+        );
     },
-    render() {
-        var {DetailData,authorized,tabIndex} = this.props;
-        var item = [];
-        if (authorized===1&&tabIndex===0) {
+    render () {
+        const { DetailData, authorized, tabIndex } = this.props;
+        let item = [];
+        if (authorized === 1 && tabIndex === 0) {
             item = DetailData.boundFreeQRCodeInfo;
         } else {
             item = DetailData.boundFeeQRCodeInfo;
@@ -240,12 +240,12 @@ var QRCodeData = React.createClass({
         return (
             <View style={styles.container}>
                 {
-                    DetailData&&
+                    DetailData &&
                     <ListView
                         initialListSize={1}
                         pageSize={50}
-                        enableEmptySections={true}
-                        removeClippedSubviews={true}
+                        enableEmptySections
+                        removeClippedSubviews
                         style={styles.list}
                         dataSource={this.ds.cloneWithRows(item)}
                         renderRow={this.renderRow}
@@ -253,10 +253,10 @@ var QRCodeData = React.createClass({
                 }
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -282,19 +282,19 @@ var styles = StyleSheet.create({
     },
     bottomContainer: {
         flex: 1,
-        backgroundColor: 'rgba(255,255,255,0.4)'
+        backgroundColor: 'rgba(255,255,255,0.4)',
     },
     MessageText: {
         fontSize: 14,
     },
     QRcodeContainer: {
         width: 270,
-        marginLeft: (sr.w-270)/2,
+        marginLeft: (sr.w - 270) / 2,
         height: 302,
         marginTop: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: CONSTANTS.THEME_COLOR
+        backgroundColor: CONSTANTS.THEME_COLOR,
     },
     QRcodeStyle: {
         width: 235,
@@ -367,7 +367,7 @@ var styles = StyleSheet.create({
         height: 30,
         marginTop: 22,
         width: 162,
-        marginLeft: (sr.w-162)/2,
+        marginLeft: (sr.w - 162) / 2,
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
@@ -401,7 +401,7 @@ var styles = StyleSheet.create({
         width: 36,
         height: 36,
         marginLeft: 22,
-        borderRadius: app.isandroid?36*4:18,
+        borderRadius: app.isandroid ? 36 * 4 : 18,
     },
     dateText: {
         fontSize: 16,
@@ -413,6 +413,6 @@ var styles = StyleSheet.create({
         top: 0,
         width: 15,
         height: 30,
-        position: 'absolute'
+        position: 'absolute',
     },
 });

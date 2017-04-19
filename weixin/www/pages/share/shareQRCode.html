@@ -6,6 +6,7 @@
 	<meta http-equiv="content-security-policy">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 	<title>赢销截拳道</title>
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
 </head>
 <style>
 	body {
@@ -86,9 +87,15 @@
 		width: 90%;
 		height: 187px;
 	}
+	#topView{
+		margin-top: 90px;
+	}
+	.downloadClose {
+		margin-right: 10px;
+	}
 </style>
 <body>
-	<div class="header">
+	<div class="header" id="topView">
 		<div class="name">特种兵赢销二维码</div>
 	</div>
 	<div class="centent">
@@ -102,9 +109,20 @@
 		<div class="button"><img src="../../img/button_1.png" /></div>
 	</div>
 	<div class="footer"><img src="../../img/video_1.png" /></div>
+	<div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+		<button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button>
+		<div class="installTipCell">
+			<img src="../../img/logo.png"></img>
+			<div class="cellRight">
+				<div class="cellTitle">赢销截拳道</div>
+				<div class="cellContent">赢销截拳道人人都需要</div>
+			</div>
+		</div>
+	</div>
 </body>
 <script type="text/javascript" src="../../js/thirdparty/jquery-1.11.1.js" ></script>
 <script type="text/javascript" src="../../js/thirdparty/jquery-qrcode-0.14.0.js" ></script>
+<script src="../../js/thirdparty/mui.min.js"></script>
 <script>
 	$(function(){
 		var code = getParameter("code");
@@ -112,10 +130,11 @@
             render: 'image',
 		    background: 'white',
 		    text: code,
-            image: '../../img/circular_logo.png' 
+            image: '../../img/circular_logo.png'
         };
 
         $('.QRCodeImg').qrcode(options);
+		mui.os.ios?$('.installTipCell').append('<button class="downloadApp"><a href="https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8">下载APP</a></button>'):$('.installTipCell').append('<button class="downloadApp"><a href="market://details?id=com.yxjqd">下载APP</a></button>');
 	});
 
 	$(".centent .button").on('click',function(){
@@ -134,6 +153,10 @@
 		var re = new RegExp("" + val + "=([^&?]*)", "ig");
 		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
 		return decodeURIComponent(str);
+	}
+	function closeWarning () {
+		document.getElementById('warning').style.display='none';
+		document.getElementById('topView').style.margin='0';
 	}
 </script>
 </html>

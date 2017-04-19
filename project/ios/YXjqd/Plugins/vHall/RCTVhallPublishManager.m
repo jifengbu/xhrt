@@ -8,7 +8,7 @@
 
 #import "RCTVhallPublishManager.h"
 #import "RCTVhallPublishView.h"
-#import "RCTBridge.h"
+#import <React/RCTBridge.h>
 #import <AVFoundation/AVFoundation.h>
 
 @implementation RCTVhallPublishManager

@@ -1,7 +1,7 @@
 'use strict';
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     Image,
     StyleSheet,
     Text,
@@ -12,7 +12,7 @@ var {
 import Echarts from 'native-echarts';
 
 module.exports = React.createClass({
-    render() {
+    render () {
         const xData = this.props.xData;
         const yData = this.props.yData;
         const option = {
@@ -20,21 +20,21 @@ module.exports = React.createClass({
                 left: '5%',
                 right: '6%',
                 bottom: '3%',
-                containLabel: true
+                containLabel: true,
             },
-            color:["#ff8f8f"],
+            color:['#ff8f8f'],
             xAxis: {
                 boundaryGap : false,
                 data: xData,
                 axisLine:{
                     lineStyle:{
                         color:'#DDDDDD',
-                    }
+                    },
                 },
                 axisLabel: {
                     textStyle: {
-                        color: '#AEAEAE'
-                    }
+                        color: '#AEAEAE',
+                    },
                 },
             },
             yAxis: {
@@ -42,48 +42,48 @@ module.exports = React.createClass({
                 axisLine:{
                     lineStyle:{
                         color:'#DDDDDD',
-                    }
+                    },
                 },
                 axisLabel: {
                     textStyle: {
-                        color: '#AEAEAE'
+                        color: '#AEAEAE',
                     },
                 },
             },
             series: [{
                 name: '销量',
                 type: 'line',
-                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                itemStyle: { normal: { areaStyle: { type: 'default' } } },
                 data: yData,
                 markPoint : {
-                data : [
-                    {name: '当前', xAxis: xData[xData.length-1],yAxis:yData[yData.length-1]}
-               ]},
-               markLine : {
-                   symbol:[],
-                   itemStyle: {
+                    data : [
+                    { name: '当前', xAxis: xData[xData.length - 1], yAxis:yData[yData.length - 1] },
+                    ] },
+                markLine : {
+                    symbol:[],
+                    itemStyle: {
                         normal: {
-                            label:{show: false},
+                            label:{ show: false },
                         },
                     },
-                   data : [
-                      {xAxis:1},
-                      {xAxis:2},
-                      {xAxis:3},
-                      {xAxis:4},
-                      {xAxis:5},
-              ]},
-            }]
+                    data : [
+                      { xAxis:1 },
+                      { xAxis:2 },
+                      { xAxis:3 },
+                      { xAxis:4 },
+                      { xAxis:5 },
+                    ] },
+            }],
         };
         return (
             <View style={styles.container}>
                 <Echarts option={option} height={this.props.height} />
             </View>
         );
-      }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',

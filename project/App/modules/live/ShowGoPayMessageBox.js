@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -12,7 +12,7 @@ var {
 } = ReactNative;
 
 module.exports = React.createClass({
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.panelContainer}>
@@ -38,21 +38,19 @@ module.exports = React.createClass({
                 </View>
                 <TouchableHighlight
                     onPress={app.closeModal}
-                    underlayColor="rgba(0, 0, 0, 0)"
+                    underlayColor='rgba(0, 0, 0, 0)'
                     style={styles.touchableHighlight}>
                     <Image
                         resizeMode='contain'
                         source={app.img.draw_back}
-                        style={styles.closeIcon}>
-                    </Image>
+                        style={styles.closeIcon} />
                 </TouchableHighlight>
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         position:'absolute',
         bottom: 0,
@@ -66,10 +64,10 @@ var styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         paddingTop: 50,
-        marginTop: (sr.h-200)/2,
+        marginTop: (sr.h - 200) / 2,
         paddingBottom: 10,
         borderRadius: 6,
-        width:sr.w/8*7,
+        width:sr.w / 8 * 7,
         backgroundColor:'#FFFFFF',
     },
     btnText: {
@@ -104,13 +102,13 @@ var styles = StyleSheet.create({
     touchableHighlight: {
         position:'absolute',
         top:0,
-        left:sr.w*8/9-3,
+        left:sr.w * 8 / 9 - 3,
         width: 30,
         height: 30,
-        marginTop: (sr.h-200-20)/2,
+        marginTop: (sr.h - 200 - 20) / 2,
     },
     closeIcon: {
         width: 30,
-        height: 30
+        height: 30,
     },
 });

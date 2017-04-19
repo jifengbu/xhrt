@@ -1,45 +1,45 @@
 'use strict';
-var ReactNative = require('react-native');
-var {
+const ReactNative = require('react-native');
+const {
     AsyncStorage,
 } = ReactNative;
-var EventEmitter = require('EventEmitter');
+const EventEmitter = require('EventEmitter');
 
-const ITEM_NAME = "LOGIN_HISTORY_LIST";
+const ITEM_NAME = 'LOGIN_HISTORY_LIST';
 
 class Manager extends EventEmitter {
-	constructor() {
+    constructor () {
         super();
         this.list = [];
         this.get();
-	}
-    get() {
-        return new Promise(async(resolve, reject)=>{
-            var list = [];
+    }
+    get () {
+        return new Promise(async(resolve, reject) => {
+            let list = [];
             try {
-                var infoStr = await AsyncStorage.getItem(ITEM_NAME);
+                const infoStr = await AsyncStorage.getItem(ITEM_NAME);
                 list = JSON.parse(infoStr);
-            } catch(e) {
+            } catch (e) {
             }
-            this.list = list||[];
+            this.list = list || [];
         });
     }
-    set(list) {
-        return new Promise(async(resolve, reject)=>{
+    set (list) {
+        return new Promise(async(resolve, reject) => {
             this.list = list;
             await AsyncStorage.setItem(ITEM_NAME, JSON.stringify(list));
             resolve();
         });
     }
-    savePhone(phone) {
-        var list = this.list;
+    savePhone (phone) {
+        let list = this.list;
         if (_.includes(list, phone)) {
             list = _.without(list, phone);
         }
         list.unshift(phone);
         this.set(list);
     }
-    clear() {
+    clear () {
         this.list = [];
         AsyncStorage.removeItem(ITEM_NAME);
     }

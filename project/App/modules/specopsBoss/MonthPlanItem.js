@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -14,15 +14,15 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var RecordItemView = require('./BossRecordItem.js');
-var moment = require('moment');
-var {Button, InputBox, DImage} = COMPONENTS;
-var CopyBox = require('../home/CopyBox.js');
-var SpecopsPerson = require('./SpecopsPerson.js');
+const RecordItemView = require('./BossRecordItem.js');
+const moment = require('moment');
+const { Button, InputBox, DImage } = COMPONENTS;
+const CopyBox = require('../home/CopyBox.js');
+const SpecopsPerson = require('./SpecopsPerson.js');
 
 module.exports = React.createClass({
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             tabIndex: 0,
             weekCount: 0,
@@ -31,20 +31,20 @@ module.exports = React.createClass({
             memWeekTime: [],
         };
     },
-    getWeekPlan(index) {
+    getWeekPlan (index) {
         return this.monthData.weekPlan[index];
     },
-    clearMonthData() {
+    clearMonthData () {
         this.monthData = {};
         this.monthData.monthPlan = [];
         this.monthData.weekPlan = [];
-        for (var i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++) {
             this.monthData.weekPlan[i] = [];
         }
 
         // process data.
         if (this.props.planData) {
-            let {planData} = this.props;
+            const { planData } = this.props;
 
             this.userId = planData.userId;
             this.userHeadImage = planData.userImg;
@@ -54,17 +54,17 @@ module.exports = React.createClass({
             this.userHeadTime = planData.submitDate;
             this.monthData.monthPlan = this.props.planData.monthPlan.slice(0);
             // process week plan..
-            for (var i = 0; i < this.props.planData.weekPlan.length; i++) {
+            for (let i = 0; i < this.props.planData.weekPlan.length; i++) {
                 this.processWeekPlan(this.props.planData.weekPlan[i]);
             }
-        }else {
+        } else {
             // test data
             this.userId = '';
             this.userHeadImage = '';
             this.userHeadName = '姓名姓名';
             this.userHeadJob = '职位职位';
             this.userHeadTime = '2017-02-02 04:04:04';
-            let obj = {};
+            const obj = {};
             obj.content = '12345';
             obj.isOver = 0;
             this.monthData.monthPlan.push(obj);
@@ -73,26 +73,26 @@ module.exports = React.createClass({
             this.monthData.weekPlan[0].push(obj);
             this.monthData.weekPlan[0].push(obj);
         }
-        this.setState({monthDataSource: this.ds.cloneWithRows(this.monthData.monthPlan)});
+        this.setState({ monthDataSource: this.ds.cloneWithRows(this.monthData.monthPlan) });
         this.changeTab(0);
     },
-    processWeekPlan(obj){
-        this.monthData.weekPlan[obj.weekNum-1].push(obj);
+    processWeekPlan (obj) {
+        this.monthData.weekPlan[obj.weekNum - 1].push(obj);
     },
-    processWeekTime(year, month){
+    processWeekTime (year, month) {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).set('month', month).set('year', year).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
@@ -103,48 +103,48 @@ module.exports = React.createClass({
             firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
             firstMonday = '';
             while (isFirstMonday === false) {
-                var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+                const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
                 if (isMonday === 1) {
                     isFirstMonday = true;
-                    firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                    firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                     break;
                 }
                 addPos++;
             }
         }
         // get week date
-        for (var i = 0; i < 6; i++) {
-            if (moment(firstMonday).add(7*i, 'd').month() === moment(firstMonday).month()) {
-                this.state.memWeekTime[i] = moment(firstMonday).add(7*i, 'd').format('YYYY-MM-DD');
-            }else {
-                this.setState({weekCount: i});
+        for (let i = 0; i < 6; i++) {
+            if (moment(firstMonday).add(7 * i, 'd').month() === moment(firstMonday).month()) {
+                this.state.memWeekTime[i] = moment(firstMonday).add(7 * i, 'd').format('YYYY-MM-DD');
+            } else {
+                this.setState({ weekCount: i });
                 this.memWeekCount = i;
                 break;
             }
         }
     },
-    getWeekNum(time){
+    getWeekNum (time) {
         let currentWeek = moment(time).week();
-        let currentWeekday = moment(time).weekday();
-        if (currentWeekday===0) {
+        const currentWeekday = moment(time).weekday();
+        if (currentWeekday === 0) {
             currentWeek = currentWeek - 1;
         }
         return currentWeek;
     },
-    getCurrentMonthMonday(){
+    getCurrentMonthMonday () {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
@@ -155,10 +155,10 @@ module.exports = React.createClass({
             firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
             firstMonday = '';
             while (isFirstMonday === false) {
-                var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+                const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
                 if (isMonday === 1) {
                     isFirstMonday = true;
-                    firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                    firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                     break;
                 }
                 addPos++;
@@ -166,62 +166,62 @@ module.exports = React.createClass({
         }
         return firstMonday;
     },
-    getCurrentMonth(){
-        var strFirstMonday = this.getCurrentMonthMonday();
-        var monthNum = 0;
+    getCurrentMonth () {
+        const strFirstMonday = this.getCurrentMonthMonday();
+        let monthNum = 0;
         if (moment().date() < moment(strFirstMonday).date()) {
             return moment().month();
-        }else {
-            return moment().month()+1;
+        } else {
+            return moment().month() + 1;
         }
     },
-    getCurrentYear(){
-        var strFirstMonday = this.getCurrentMonthMonday();
-        var monthNum = 0;
+    getCurrentYear () {
+        const strFirstMonday = this.getCurrentMonthMonday();
+        let monthNum = 0;
         if (moment().date() < moment(strFirstMonday).date()) {
             if (moment().month() == 0) {
-                return moment().year()-1;
+                return moment().year() - 1;
             }
         }
         return moment().year();
     },
-    getCurrentTimeWeekSeq(){
-        var curWeekNum = this.getWeekNum(moment().format('YYYY-MM-DD'));
-        for (var i = 0; i < this.state.memWeekTime.length; i++) {
-            var weekNum = this.getWeekNum(this.state.memWeekTime[i]);
+    getCurrentTimeWeekSeq () {
+        const curWeekNum = this.getWeekNum(moment().format('YYYY-MM-DD'));
+        for (let i = 0; i < this.state.memWeekTime.length; i++) {
+            const weekNum = this.getWeekNum(this.state.memWeekTime[i]);
             if (curWeekNum == weekNum) {
-                return (i+1);
+                return (i + 1);
             }
         }
         return 0;
     },
-    isSameWeekWithCurrentTime(time) {
-        let currentWeek = this.getWeekNum(moment().format('YYYY-MM-DD'));
-        let selectWeek = this.getWeekNum(time);
+    isSameWeekWithCurrentTime (time) {
+        const currentWeek = this.getWeekNum(moment().format('YYYY-MM-DD'));
+        const selectWeek = this.getWeekNum(time);
         if (currentWeek === selectWeek) {
             return true;
-        }else {
+        } else {
             return false;
         }
     },
-    isLastWeekWithCurrentTime(time) {
-        let currentWeek = this.getWeekNum(moment().format('YYYY-MM-DD'));
-        let selectWeek = this.getWeekNum(time);
+    isLastWeekWithCurrentTime (time) {
+        const currentWeek = this.getWeekNum(moment().format('YYYY-MM-DD'));
+        const selectWeek = this.getWeekNum(time);
         if (currentWeek > selectWeek) {
             return true;
-        }else {
+        } else {
             return false;
         }
     },
-    getCurrentWeekIndex() {
-        var index = 0;
-        var strWeek = '';
+    getCurrentWeekIndex () {
+        let index = 0;
+        let strWeek = '';
         if (moment().day() === 0) {
             strWeek = moment().subtract(1, 'd').format('YYYY-MM-DD');
-        }else {
+        } else {
             strWeek = moment().format('YYYY-MM-DD');
         }
-        for (var i = 0; i < this.memWeekCount; i++) {
+        for (let i = 0; i < this.memWeekCount; i++) {
             if (moment(this.state.memWeekTime[i]).week() === moment(strWeek).week()) {
                 index = i;
                 break;
@@ -229,7 +229,7 @@ module.exports = React.createClass({
         }
         return index;
     },
-    componentDidMount() {
+    componentDidMount () {
         this.onInputBoxFun = null;
         this.memTabIndex = 0;
         this.memWeekCount = 0;
@@ -240,92 +240,92 @@ module.exports = React.createClass({
         this.currentWeekSeq = this.getCurrentTimeWeekSeq();
         this.clearMonthData();
         // this.setState({tabIndex: this.getCurrentWeekIndex()});
-        var weekData = this.getWeekPlan(this.getCurrentWeekIndex());
+        const weekData = this.getWeekPlan(this.getCurrentWeekIndex());
 
-        this.setState({weekDataSource: this.ds.cloneWithRows(weekData), tabIndex: this.getCurrentWeekIndex()});
+        this.setState({ weekDataSource: this.ds.cloneWithRows(weekData), tabIndex: this.getCurrentWeekIndex() });
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
-            <View style={styles.separator3} key={rowID}/>
+            <View style={styles.separator3} key={rowID} />
         );
     },
-    changeTab(tabIndex) {
-        this.setState({tabIndex});
-        var weekData = this.getWeekPlan(tabIndex);
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
+        const weekData = this.getWeekPlan(tabIndex);
 
-        this.setState({weekDataSource: this.ds.cloneWithRows(weekData)});
+        this.setState({ weekDataSource: this.ds.cloneWithRows(weekData) });
     },
-    renderRowMonth(obj) {
+    renderRowMonth (obj) {
         return (
             <RecordItemView
                 data={obj}
                 rowHeight={5}
                 />
-        )
+        );
     },
-    renderRowWeek(obj) {
+    renderRowWeek (obj) {
         return (
             <RecordItemView
                 data={obj}
                 rowHeight={5}
                 />
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
-                <View style={styles.separator2}></View>
+                <View style={styles.separator2} />
                 <this.monthPlanHead />
                 <this.monthPlanPurpose />
                 <this.monthPlanContent />
             </View>
         );
     },
-    toSpecopsPerson(userId) {
+    toSpecopsPerson (userId) {
         app.navigator.push({
             component: SpecopsPerson,
-            passProps: {userID: userId},
+            passProps: { userID: userId },
         });
     },
-    calculateStrLength(oldStr) {
+    calculateStrLength (oldStr) {
         let height = 0;
         let linesWidth = 0;
         if (oldStr) {
-            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/<\/?.+?>/g, /<\/?.+?>/g, '');
             oldStr = oldStr.replace(/[\r\n]/g, '|');
-            let StrArr = oldStr.split('|');
-            for (var i = 0; i < StrArr.length; i++) {
-                //计算字符串长度，一个汉字占2个字节
-                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            const StrArr = oldStr.split('|');
+            for (let i = 0; i < StrArr.length; i++) {
+                // 计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g, 'aa').length;
             }
             return linesWidth;
         }
     },
     // 头像view
-    monthPlanHead() {
-        let nameTemWidth = this.calculateStrLength(this.userHeadName);
-        let postTemWidth = this.calculateStrLength(this.userHeadJob);
-        let nameWidth = nameTemWidth*13+3;
-        let postWidth = postTemWidth*6+3;
-        let headUrl = this.userHeadImage?this.userHeadImage:this.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
+    monthPlanHead () {
+        const nameTemWidth = this.calculateStrLength(this.userHeadName);
+        const postTemWidth = this.calculateStrLength(this.userHeadJob);
+        const nameWidth = nameTemWidth * 13 + 3;
+        const postWidth = postTemWidth * 6 + 3;
+        const headUrl = this.userHeadImage ? this.userHeadImage : this.sex === 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
         return (
             <View style={styles.monthPlanHeadView}>
                 <View style={styles.monthPlanHeadView1}>
-                    <TouchableOpacity onPress={this.toSpecopsPerson.bind(null,this.userId)}>
-                    <DImage
-                        resizeMode='cover'
-                        defaultSource={app.img.personal_head}
-                        source={this.userHeadImage?{uri: headUrl}:headUrl}
-                        style={styles.HeadViewImage}  />
+                    <TouchableOpacity onPress={this.toSpecopsPerson.bind(null, this.userId)}>
+                        <DImage
+                            resizeMode='cover'
+                            defaultSource={app.img.personal_head}
+                            source={this.userHeadImage ? { uri: headUrl } : headUrl}
+                            style={styles.HeadViewImage} />
                     </TouchableOpacity>
-                    <View style={{width: nameWidth>140?sr.ws(140):sr.ws(nameWidth)}}>
+                    <View style={{ width: nameWidth > 140 ? sr.ws(140) : sr.ws(nameWidth) }}>
                         <Text onLayout={this._measureLineHeight} numberOfLines={1} style={styles.HeadViewTextName}>
                             {this.userHeadName}
                         </Text>
                     </View>
                     {
                         this.userHeadJob != '' &&
-                        <View style={[styles.rowPosition,{width: postWidth>56?sr.ws(56):sr.ws(postWidth)}]}>
+                        <View style={[styles.rowPosition, { width: postWidth > 56 ? sr.ws(56) : sr.ws(postWidth) }]}>
                             <Text numberOfLines={1} style={styles.rowPositionText}>
                                 {this.userHeadJob}
                             </Text>
@@ -336,58 +336,58 @@ module.exports = React.createClass({
                     {moment(this.userHeadTime).format('M月D日 HH:mm')}
                 </Text>
             </View>
-        )
+        );
     },
-    //本月工作计划
-    monthPlanPurpose() {
+    // 本月工作计划
+    monthPlanPurpose () {
         return (
             <View style={styles.monthPlanPurposeViewStyle}>
-                    <View style={styles.separator}></View>
-                    <View style={styles.titleContainerWeek}>
-                        <View style={styles.titleContainerWeekSub}>
-                            <Text style={styles.headItemText}>
+                <View style={styles.separator} />
+                <View style={styles.titleContainerWeek}>
+                    <View style={styles.titleContainerWeekSub}>
+                        <Text style={styles.headItemText}>
                                 月工作目标
                             </Text>
-                        </View>
                     </View>
-                    <View style={styles.separator3}></View>
+                </View>
+                <View style={styles.separator3} />
                 <ListView
                     style={styles.list}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={this.state.monthDataSource}
                     renderRow={this.renderRowMonth}
                     renderSeparator={this.renderSeparator}
                     />
             </View>
-        )
+        );
     },
-    //本月详细工作计划
-    monthPlanContent() {
-        var {tabIndex} = this.state;
-        var menuAdminArray1 = ['第一周', '第二周', '第三周', '第四周'];
-        var menuAdminArray2 = ['第一周', '第二周', '第三周', '第四周', '第五周'];
-        var menuAdminArray = [];
+    // 本月详细工作计划
+    monthPlanContent () {
+        const { tabIndex } = this.state;
+        const menuAdminArray1 = ['第一周', '第二周', '第三周', '第四周'];
+        const menuAdminArray2 = ['第一周', '第二周', '第三周', '第四周', '第五周'];
+        let menuAdminArray = [];
         if (this.state.weekCount > 4) {
             menuAdminArray = menuAdminArray2;
-        }else{
+        } else {
             menuAdminArray = menuAdminArray1;
         }
         return (
             <View style={styles.monthPlanInfoViewStyle}>
                 <View style={styles.tabContainer}>
                     {
-                        menuAdminArray.map((item, i)=>{
-                            var time1 = moment(this.state.memWeekTime[i]);
-                            var time2 = moment(this.state.memWeekTime[i]).add(6, 'd');
-                            var strTime = '';
+                        menuAdminArray.map((item, i) => {
+                            const time1 = moment(this.state.memWeekTime[i]);
+                            const time2 = moment(this.state.memWeekTime[i]).add(6, 'd');
+                            let strTime = '';
 
                             if (this.state.memWeekTime[i] != undefined) {
-                                strTime = time1.format('MM.DD')+'-'+time2.format('MM.DD');
+                                strTime = time1.format('MM.DD') + '-' + time2.format('MM.DD');
                             }
 
-                            var isCurrentWeek = this.isSameWeekWithCurrentTime(this.state.memWeekTime[i]);
+                            const isCurrentWeek = this.isSameWeekWithCurrentTime(this.state.memWeekTime[i]);
 
-                            if (this.state.tabIndex===i) {
+                            if (this.state.tabIndex === i) {
                                 return (
                                     <TouchableOpacity
                                         key={i}
@@ -396,57 +396,57 @@ module.exports = React.createClass({
                                         <Image
                                             resizeMode='stretch'
                                             source={app.img.specops_weekBackImg}
-                                            style={[styles.weekImageStyle, {width: sr.w/menuAdminArray.length}]}>
+                                            style={[styles.weekImageStyle, { width: sr.w / menuAdminArray.length }]}>
                                             <View style={styles.tabButtonItem}>
-                                                <Text style={[styles.tabText,{color:'white'}]} >
-                                                    {isCurrentWeek?item:item}
+                                                <Text style={[styles.tabText, { color:'white' }]} >
+                                                    {isCurrentWeek ? item : item}
                                                 </Text>
-                                                <Text style={[styles.tabText2,{color:'white'}]} >
+                                                <Text style={[styles.tabText2, { color:'white' }]} >
                                                     {strTime}
                                                 </Text>
                                             </View>
                                         </Image>
                                     </TouchableOpacity>
-                                )
-                            }else {
+                                );
+                            } else {
                                 return (
                                     <TouchableOpacity
                                         key={i}
                                         onPress={this.changeTab.bind(null, i)}
                                         style={styles.tabButton}>
                                         <View style={styles.tabButtonItemView}>
-                                        <View style={styles.tabButtonItem}>
-                                            <Text style={styles.tabText} >
-                                                {isCurrentWeek?item:item}
-                                            </Text>
-                                            <Text style={styles.tabText2} >
-                                                {strTime}
-                                            </Text>
+                                            <View style={styles.tabButtonItem}>
+                                                <Text style={styles.tabText} >
+                                                    {isCurrentWeek ? item : item}
+                                                </Text>
+                                                <Text style={styles.tabText2} >
+                                                    {strTime}
+                                                </Text>
+                                            </View>
                                         </View>
-                                        </View>
-                                        {(i!==menuAdminArray.length-1 && this.state.tabIndex-1 !== i) &&
-                                            <Image resizeMode='stretch' source={app.img.specops_grey_line} style={styles.vline}/>}
+                                        {(i !== menuAdminArray.length - 1 && this.state.tabIndex - 1 !== i) &&
+                                            <Image resizeMode='stretch' source={app.img.specops_grey_line} style={styles.vline} />}
                                     </TouchableOpacity>
-                                )
+                                );
                             }
                         })
                     }
                 </View>
                 <ListView
                     style={styles.list}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={this.state.weekDataSource}
                     renderRow={this.renderRowWeek}
                     renderSeparator={this.renderSeparator}
                     />
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     monthPlanHeadView: {
         height: 50,
@@ -525,7 +525,7 @@ var styles = StyleSheet.create({
     },
     separator3: {
         marginLeft: 20,
-        width: sr.w-20,
+        width: sr.w - 20,
         height: 1,
         backgroundColor: '#F1F0F5',
     },

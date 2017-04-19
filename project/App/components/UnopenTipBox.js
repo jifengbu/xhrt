@@ -1,24 +1,23 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
+const React = require('react');const ReactNative = require('react-native');
 
-var {
+const {
     Image,
     StyleSheet,
     Text,
     View,
 } = ReactNative;
 
-
 module.exports = React.createClass({
-    getDefaultProps() {
+    getDefaultProps () {
         return {
             title: '温馨提示',
             content: '暂未开放，敬情期待...',
         };
     },
-    render() {
-        const {title, content} = this.props;
+    render () {
+        const { title, content } = this.props;
         return (
             <View style={styles.container}>
                 <View style={styles.boxContainer}>
@@ -27,17 +26,17 @@ module.exports = React.createClass({
                 </View>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
     boxContainer: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:120,
         alignItems:'center',
         justifyContent:'center',

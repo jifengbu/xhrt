@@ -1,34 +1,34 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
   View,
-  StyleSheet
+  StyleSheet,
 } = ReactNative;
 
-var {ClipRect} = COMPONENTS;
+const { ClipRect } = COMPONENTS;
 
 module.exports = React.createClass({
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.container1}>
-                    <ClipRect style={styles.cliprect1}/>
+                    <ClipRect style={styles.cliprect1} />
                     <View style={styles.rect1} />
                 </View>
                 <View style={styles.line} />
                 <View style={styles.container1}>
-                    <ClipRect style={styles.cliprect2}/>
+                    <ClipRect style={styles.cliprect2} />
                     <View style={styles.rect1} />
                 </View>
                 <View style={styles.rect1} />
             </View>
-        )
-    }
+        );
+    },
 });
 
-var BACK_COLOR = 'rgba(0, 0, 0, 0.4)';
+const BACK_COLOR = 'rgba(0, 0, 0, 0.4)';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -55,5 +55,5 @@ const styles = StyleSheet.create({
     rect1: {
         flex: 1,
         backgroundColor: BACK_COLOR,
-    }
+    },
 });

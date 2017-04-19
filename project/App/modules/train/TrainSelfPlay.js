@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Navigator,
@@ -9,40 +9,40 @@ var {
     Image,
 } = ReactNative;
 
-var TrainHearerAngleView = require('./TrainHearerAngleView.js');
-var SpeechState = require('./SpeechState.js');
-var AudioRecorder = require('../../native/index.js').AudioRecorder;
-var virtualUsers = require('../../data/virtualUsers.js');
+const TrainHearerAngleView = require('./TrainHearerAngleView.js');
+const SpeechState = require('./SpeechState.js');
+const AudioRecorder = require('../../native/index.js').AudioRecorder;
+const virtualUsers = require('../../data/virtualUsers.js');
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '自我回顾',
-        leftButton: {handler: ()=>app.scene.goBack()},
+        leftButton: { handler: () => app.scene.goBack() },
     },
-    componentWillMount() {
+    componentWillMount () {
         this.competitors = this.getCompetitors();
     },
-    componentDidMount() {
-        AudioRecorder.play(this.props.filepath, (result)=>{
+    componentDidMount () {
+        AudioRecorder.play(this.props.filepath, (result) => {
             app.navigator.pop();
-        }, (error)=>{
+        }, (error) => {
             Toast('无效历史记录');
             app.navigator.pop();
         });
     },
-    goBack() {
+    goBack () {
         AudioRecorder.playStop();
         app.navigator.pop();
     },
-    getCompetitors() {
-        var info = [];
-        var virtualNum = [];
-        var length = virtualUsers.length;
+    getCompetitors () {
+        const info = [];
+        const virtualNum = [];
+        const length = virtualUsers.length;
 
-        var personInfo = app.personal.info;
-        var personInfoMap = {};
-        var userInfo = {};
+        const personInfo = app.personal.info;
+        const personInfoMap = {};
+        const userInfo = {};
         personInfoMap['userID'] = personInfo.userID;
         personInfoMap['channelState'] = app.phoneMgr.phone.channelStates.MCAS_CHANNEL_STATE_SPEAKERING;
         userInfo['sex'] = personInfo.sex;
@@ -53,31 +53,31 @@ module.exports = React.createClass({
         personInfoMap['userInfo'] = userInfo;
         info.push(personInfoMap);
 
-        virtualNum.push(_.random(length-1));
+        virtualNum.push(_.random(length - 1));
         while (virtualNum.length < 3) {
-            var num = _.random(length-1);
+            let num = _.random(length - 1);
             while (_.includes(virtualNum, num)) {
-                num = _.random(length-1);
+                num = _.random(length - 1);
             }
             virtualNum.push(num);
         }
 
-        _.forEach(virtualNum, (i)=>{
+        _.forEach(virtualNum, (i) => {
             info.push(virtualUsers[i]);
         });
 
         return info;
     },
-    render() {
-        var {sex, userID} = app.personal.info;
+    render () {
+        const { sex, userID } = app.personal.info;
         return (
             <View style={styles.container}>
                 <TrainHearerAngleView
                     competitors={this.competitors}
-                    speaker={{userInfo:{sex: sex}, userID}}
+                    speaker={{ userInfo:{ sex: sex }, userID }}
                     />
                 <View style={styles.propBottomView}>
-                    <View style={{marginTop: 20}}>
+                    <View style={{ marginTop: 20 }}>
                         <Text style={styles.text}>
                             {'     '}认真欣赏你的训练成果吧.
                         </Text>
@@ -92,17 +92,17 @@ module.exports = React.createClass({
                         />
                 </View>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         width:sr.w,
         height:sr.ch,
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'black'
+        backgroundColor:'black',
     },
     propBottomView: {
         position:'absolute',

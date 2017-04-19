@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -14,40 +14,40 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var RecordItemView = require('./RecordItemView.js');
-var moment = require('moment');
-var {Button, InputBox} = COMPONENTS;
-var CopyBox = require('../home/CopyBox.js');
+const RecordItemView = require('./RecordItemView.js');
+const moment = require('moment');
+const { Button, InputBox } = COMPONENTS;
+const CopyBox = require('../home/CopyBox.js');
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '历史记录',
-        leftButton: {handler: ()=>app.scene.goBack()},
+        leftButton: { handler: () => app.scene.goBack() },
     },
-    onStartShouldSetResponderCapture(evt){
-        console.log('----onStartShouldSetResponderCapture',evt.nativeEvent.pageX, evt.nativeEvent.pageY);
+    onStartShouldSetResponderCapture (evt) {
+        console.log('----onStartShouldSetResponderCapture', evt.nativeEvent.pageX, evt.nativeEvent.pageY);
         app.touchPosition.x = evt.nativeEvent.pageX;
         app.touchPosition.y = evt.nativeEvent.pageY;
         return false;
     },
-    onLongPress(str){
+    onLongPress (str) {
         if (str != '' && str.length > 0) {
             // 显示复制按钮
             app.showModal(
                 <CopyBox copyY={app.touchPosition.y}
-                        copyX={app.touchPosition.x}
-                        copyString={str}/>,
-                        {backgroundColor: 'transparent'}
+                    copyX={app.touchPosition.x}
+                    copyString={str} />,
+                        { backgroundColor: 'transparent' }
             );
         }
     },
-    goBack() {
+    goBack () {
         this.props.updateItem();
         app.navigator.pop();
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             tabIndex: 0,
             weekSummary: '',
@@ -64,63 +64,62 @@ module.exports = React.createClass({
             isModify:true,
         };
     },
-    getWeekPlan(index) {
+    getWeekPlan (index) {
         return this.monthData.weekPlan[index];
     },
-    clearMonthData() {
+    clearMonthData () {
         this.monthData.monthPlan = [];
         this.monthData.weekPlan = [];
-        for (var i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++) {
             this.monthData.weekPlan[i] = [];
         }
     },
-    processWeekPlan(obj){
-        this.monthData.weekPlan[obj.weekNum-1].push(obj);
+    processWeekPlan (obj) {
+        this.monthData.weekPlan[obj.weekNum - 1].push(obj);
     },
-    processWeekTime(startTime){
-        var firstMonday = moment(startTime).day(1);
+    processWeekTime (startTime) {
+        let firstMonday = moment(startTime).day(1);
         if (moment(firstMonday).month() != moment(startTime).month()) {
             firstMonday = moment(startTime).day(8);
         }
-        for (var i = 0; i < 6; i++) {
-            if (moment(firstMonday).add(7*i, 'd').month() === moment(firstMonday).month()) {
-                this.state.memWeekTime[i] = moment(firstMonday).add(7*i, 'd').format('YYYY-MM-DD');
-            }else {
-                this.setState({weekCount: i});
+        for (let i = 0; i < 6; i++) {
+            if (moment(firstMonday).add(7 * i, 'd').month() === moment(firstMonday).month()) {
+                this.state.memWeekTime[i] = moment(firstMonday).add(7 * i, 'd').format('YYYY-MM-DD');
+            } else {
+                this.setState({ weekCount: i });
                 this.memWeekCount = i;
                 break;
             }
         }
-
     },
-    getWeekSummary(index) {
-        this.setState({weekSummary:''});
-        var param = {
+    getWeekSummary (index) {
+        this.setState({ weekSummary:'' });
+        const param = {
             userID:this.userID,
             planDate:moment(this.state.memWeekTime[index]).format('YYYY-MM-DD'),
         };
         POST(app.route.ROUTE_GET_WEEK_SUMMARY, param, this.getWeekSummarySuccess, true);
 
         // can modify.
-        var currentIndex = this.getCurrentWeekIndex();
-        this.setState({isModify: !(index < currentIndex)});
+        const currentIndex = this.getCurrentWeekIndex();
+        this.setState({ isModify: !(index < currentIndex) });
     },
-    getWeekSummarySuccess(data) {
+    getWeekSummarySuccess (data) {
         if (data.success) {
-            this.setState({weekSummary:data.context?data.context.content:''});
+            this.setState({ weekSummary:data.context ? data.context.content : '' });
         } else {
             Toast(data.msg);
         }
     },
-    getCurrentWeekIndex() {
-        var index = 0;
-        var strWeek = '';
+    getCurrentWeekIndex () {
+        let index = 0;
+        let strWeek = '';
         if (moment().day() === 0) {
             strWeek = moment().subtract(1, 'd').format('YYYY-MM-DD');
-        }else {
+        } else {
             strWeek = moment().format('YYYY-MM-DD');
         }
-        for (var i = 0; i < this.memWeekCount; i++) {
+        for (let i = 0; i < this.memWeekCount; i++) {
             if (moment(this.state.memWeekTime[i]).week() === moment(strWeek).week()) {
                 index = i;
                 break;
@@ -128,10 +127,10 @@ module.exports = React.createClass({
         }
         return index;
     },
-    componentDidMount() {
+    componentDidMount () {
         if (this.props.userID) {
             this.userID = this.props.userID;
-        }else {
+        } else {
             this.userID = app.personal.info.userID;
         }
 
@@ -143,98 +142,98 @@ module.exports = React.createClass({
         this.processWeekTime(this.props.time);
         this.getMonthData();
     },
-    getMonthData(){
-        var param = {
+    getMonthData () {
+        const param = {
             userID:this.userID,
             planDate:moment(this.state.memWeekTime[0]).format('YYYY-MM-DD'),
         };
         POST(app.route.ROUTE_GET_MONTH_PLAN, param, this.getMonthDataSuccess, true);
     },
-    getMonthDataSuccess(data) {
+    getMonthDataSuccess (data) {
         if (data.success) {
             // process month plan..
-            let monthPlan = data.context.monthPlan||[];
-            let weekPlan = data.context.weekPlan||[];
-            for (var i = 0; i < monthPlan.length; i++) {
+            const monthPlan = data.context.monthPlan || [];
+            const weekPlan = data.context.weekPlan || [];
+            for (let i = 0; i < monthPlan.length; i++) {
                 this.monthData.monthPlan.push(monthPlan[i]);
             }
             // process week plan..
-            for (var i = 0; i < weekPlan.length; i++) {
+            for (let i = 0; i < weekPlan.length; i++) {
                 this.processWeekPlan(weekPlan[i]);
             }
 
-            this.setState({monthDataSource: this.ds.cloneWithRows(this.monthData.monthPlan)});
+            this.setState({ monthDataSource: this.ds.cloneWithRows(this.monthData.monthPlan) });
             this.changeTab(this.getCurrentWeekIndex());
         } else {
             Toast(data.msg);
         }
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
-            <View style={styles.separator} key={rowID}/>
+            <View style={styles.separator} key={rowID} />
         );
     },
-    modifyMonthPlanContent(obj) {
-        this.setState({isInputBoxShow: true});
+    modifyMonthPlanContent (obj) {
+        this.setState({ isInputBoxShow: true });
         this.onInputBoxFun = this.modifyMonthPlan;
-        this.setState({inputBoxText: obj.content});
-        this.setState({currentMonthID: obj.id});
-        this.setState({haveCannel: true});
+        this.setState({ inputBoxText: obj.content });
+        this.setState({ currentMonthID: obj.id });
+        this.setState({ haveCannel: true });
     },
-    modifyWeekPlanContent(obj) {
-        this.setState({isInputBoxShow: true});
+    modifyWeekPlanContent (obj) {
+        this.setState({ isInputBoxShow: true });
         this.onInputBoxFun = this.modifyWeekPlan;
-        this.setState({inputBoxText: obj.content});
-        this.setState({currentWeekID: obj.id});
-        this.setState({haveCannel: true});
+        this.setState({ inputBoxText: obj.content });
+        this.setState({ currentWeekID: obj.id });
+        this.setState({ haveCannel: true });
     },
-    showMonthPlanDetail(obj){
-        this.setState({isInputBoxShow: true});
+    showMonthPlanDetail (obj) {
+        this.setState({ isInputBoxShow: true });
         this.onInputBoxFun = this.doCancel;
-        this.setState({inputBoxText: obj.content});
-        this.setState({currentDayID: obj.id});
-        this.setState({haveCannel: false});
+        this.setState({ inputBoxText: obj.content });
+        this.setState({ currentDayID: obj.id });
+        this.setState({ haveCannel: false });
     },
-    showWeekPlanDetail(obj){
-        this.setState({isInputBoxShow: true});
+    showWeekPlanDetail (obj) {
+        this.setState({ isInputBoxShow: true });
         this.onInputBoxFun = this.doCancel;
-        this.setState({inputBoxText: obj.content});
-        this.setState({currentWeekID: obj.id});
-        this.setState({haveCannel: false});
+        this.setState({ inputBoxText: obj.content });
+        this.setState({ currentWeekID: obj.id });
+        this.setState({ haveCannel: false });
     },
-    doCancel(){
-        this.setState({isInputBoxShow: false});
+    doCancel () {
+        this.setState({ isInputBoxShow: false });
     },
-    changeTab(tabIndex) {
-        this.setState({tabIndex});
-        var weekData = this.getWeekPlan(tabIndex);
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
+        const weekData = this.getWeekPlan(tabIndex);
 
-        this.setState({weekDataSource: this.ds.cloneWithRows(weekData)});
+        this.setState({ weekDataSource: this.ds.cloneWithRows(weekData) });
         this.getWeekSummary(tabIndex);
     },
-    renderRowMonth(obj) {
+    renderRowMonth (obj) {
         return (
             <View style={styles.listRow}>
                 <RecordItemView
                     data={obj}
                     rowHeight={5}
-                    onPress = {this.modifyMonthPlanContent.bind(null, obj)}
+                    onPress={this.modifyMonthPlanContent.bind(null, obj)}
                     />
             </View>
-        )
+        );
     },
-    renderRowWeek(obj) {
+    renderRowWeek (obj) {
         return (
             <View style={styles.listRowWeek}>
                 <RecordItemView
                     data={obj}
                     rowHeight={14}
-                    onPress = {this.modifyWeekPlanContent.bind(null, obj)}
+                    onPress={this.modifyWeekPlanContent.bind(null, obj)}
                     />
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}
                 onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
@@ -246,12 +245,12 @@ module.exports = React.createClass({
             </View>
         );
     },
-    //本月工作计划
-    monthPlanPurpose() {
-        var monthStr = '';
+    // 本月工作计划
+    monthPlanPurpose () {
+        let monthStr = '';
         if (this.state.isNextMonth) {
             monthStr = moment().add(1, 'M').format('YYYY年MM月');
-        }else{
+        } else {
             monthStr = moment().format('YYYY年MM月DD日');
         }
 
@@ -262,8 +261,7 @@ module.exports = React.createClass({
                         <Image
                             resizeMode='contain'
                             source={app.img.specops_cicle}
-                            style={styles.iconCycleStyle}>
-                        </Image>
+                            style={styles.iconCycleStyle} />
                         <Text style={styles.contextText}>
                             月工作目标
                         </Text>
@@ -271,40 +269,38 @@ module.exports = React.createClass({
                 </View>
                 <ListView
                     style={styles.list}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={this.state.monthDataSource}
                     renderRow={this.renderRowMonth}
                     />
             </View>
-        )
+        );
     },
-    getStrTime(index) {
-        var time1 = moment(this.state.memWeekTime[index]);
-        var time2 = moment(this.state.memWeekTime[index]).add(6, 'd');
-        var strTime = '';
+    getStrTime (index) {
+        const time1 = moment(this.state.memWeekTime[index]);
+        const time2 = moment(this.state.memWeekTime[index]).add(6, 'd');
+        let strTime = '';
 
         if (this.state.memWeekTime[index] != undefined) {
             if (time2.year() > time1.year()) {
-                strTime = time1.format('MM.DD')+'-'+time2.format('MM.DD');
-            }
-            else if (time2.month() > time1.month()) {
-                strTime = time1.format('MM.DD')+'-'+time2.format('MM.DD');
-            }
-            else {
-                strTime = time1.format('MM.DD')+'-'+time2.format('MM.DD');
+                strTime = time1.format('MM.DD') + '-' + time2.format('MM.DD');
+            } else if (time2.month() > time1.month()) {
+                strTime = time1.format('MM.DD') + '-' + time2.format('MM.DD');
+            } else {
+                strTime = time1.format('MM.DD') + '-' + time2.format('MM.DD');
             }
         }
         return strTime;
     },
-    //本月详细工作计划
-    monthPlanContent() {
-        var {tabIndex} = this.state;
-        var menuAdminArray1 = ['第一周', '第二周', '第三周', '第四周'];
-        var menuAdminArray2 = ['第一周', '第二周', '第三周', '第四周', '第五周'];
-        var menuAdminArray = [];
+    // 本月详细工作计划
+    monthPlanContent () {
+        const { tabIndex } = this.state;
+        const menuAdminArray1 = ['第一周', '第二周', '第三周', '第四周'];
+        const menuAdminArray2 = ['第一周', '第二周', '第三周', '第四周', '第五周'];
+        let menuAdminArray = [];
         if (this.state.weekCount > 4) {
             menuAdminArray = menuAdminArray2;
-        }else{
+        } else {
             menuAdminArray = menuAdminArray1;
         }
         return (
@@ -313,73 +309,71 @@ module.exports = React.createClass({
                     <Image
                         resizeMode='contain'
                         source={app.img.specops_cicle}
-                        style={styles.iconCycleStyle}>
-                    </Image>
+                        style={styles.iconCycleStyle} />
                     <Text style={styles.contextText}>
                         周工作目标
                     </Text>
                 </View>
                 <View style={styles.tabContainer}>
                     {
-                        menuAdminArray.map((item, i)=>{
+                        menuAdminArray.map((item, i) => {
                             return (
                                 <TouchableOpacity
                                     key={i}
                                     onPress={this.changeTab.bind(null, i)}
                                     style={styles.tabButton}>
-                                    <View style={[styles.tabView, this.state.tabIndex===i?{backgroundColor: '#FF6363'}:{backgroundColor: '#F2FFF9'}]}>
-                                        <Text style={[styles.tabText, this.state.tabIndex===i?{color: 'white'}:null]} >
+                                    <View style={[styles.tabView, this.state.tabIndex === i ? { backgroundColor: '#FF6363' } : { backgroundColor: '#F2FFF9' }]}>
+                                        <Text style={[styles.tabText, this.state.tabIndex === i ? { color: 'white' } : null]} >
                                             {item}
                                         </Text>
-                                        <Text style={[styles.contextTextDayTime, this.state.tabIndex===i?{color: 'white'}:null]}>
+                                        <Text style={[styles.contextTextDayTime, this.state.tabIndex === i ? { color: 'white' } : null]}>
                                             {this.getStrTime(i)}
                                         </Text>
                                     </View>
                                     {
-                                        this.state.tabIndex===i?
-                                        <View style={styles.triangle}/>
+                                        this.state.tabIndex === i ?
+                                            <View style={styles.triangle} />
                                         :
-                                        this.state.tabIndex!=i&&this.state.tabIndex-1 !== i&&
-                                       <Image resizeMode='stretch' source={app.img.specops_grey_line} style={styles.vline}/>
+                                        this.state.tabIndex != i && this.state.tabIndex - 1 !== i &&
+                                        <Image resizeMode='stretch' source={app.img.specops_grey_line} style={styles.vline} />
                                    }
                                 </TouchableOpacity>
-                            )
+                            );
                         })
                     }
                 </View>
                 <ListView
                     style={styles.list}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={this.state.weekDataSource}
                     renderRow={this.renderRowWeek}
                     renderSeparator={this.renderSeparator}
                     />
             </View>
-        )
+        );
     },
-    //每周总结
-    monthPlanConclusion() {
+    // 每周总结
+    monthPlanConclusion () {
         return (
             <View style={styles.monthPlanConclusionViewStyle}>
                 <View style={styles.titleWeekContainer}>
                     <Image
                         resizeMode='contain'
                         source={app.img.specops_cicle}
-                        style={styles.iconCycleStyle}>
-                    </Image>
+                        style={styles.iconCycleStyle} />
                     <Text style={styles.contextText}>{'周工作总结'}</Text>
                 </View>
                 <TouchableOpacity onLongPress={this.onLongPress.bind(null, this.state.weekSummary)}>
-                <Text style={[styles.detailStyle,this.state.weekSummary?null:{color:'#FF6363'}]}>{this.state.weekSummary?this.state.weekSummary:"未完成"}</Text>
+                    <Text style={[styles.detailStyle, this.state.weekSummary ? null : { color:'#FF6363' }]}>{this.state.weekSummary ? this.state.weekSummary : '未完成'}</Text>
                 </TouchableOpacity>
-        </View>
-        )
+            </View>
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     listRow: {
         marginLeft:12,
@@ -390,7 +384,7 @@ var styles = StyleSheet.create({
     containerMonthList: {
         marginTop: 1,
         flex: 1,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     monthPlanPurposeViewStyle: {
         width: sr.w,
@@ -551,8 +545,8 @@ var styles = StyleSheet.create({
         borderRightColor: 'transparent',
         borderBottomColor: '#FF6363',
         transform: [
-            {rotate: '180deg'}
-        ]
+            { rotate: '180deg' },
+        ],
     },
     iconCycleStyle: {
         width: 12,

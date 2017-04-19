@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -9,184 +9,181 @@ var {
     View,
 } = ReactNative;
 
-var TimerMixin = require('react-timer-mixin');
-var {Button} = COMPONENTS;
-var Button = require('@remobile/react-native-simple-button');
+const TimerMixin = require('react-timer-mixin');
+const Button = require('@remobile/react-native-simple-button');
 
-var RecordVoiceMessageBoxRecording = React.createClass({
-    doGiveup() {
-        this.closeModal(()=>{
+const RecordVoiceMessageBoxRecording = React.createClass({
+    doGiveup () {
+        this.closeModal(() => {
             this.props.doGiveup();
         });
     },
-    doConfirm() {
+    doConfirm () {
         clearInterval(this.setIntervalID);
         this.setIntervalID = null;
-        this.closeModal(()=>{
-            this.props.doConfirm(this.state.second+this.state.minute*60);
-        })
+        this.closeModal(() => {
+            this.props.doConfirm(this.state.second + this.state.minute * 60);
+        });
     },
-    getInitialState() {
-          return {
-              second : 0,
-              minute : 0,
-              opacity: new Animated.Value(0)
-          };
+    getInitialState () {
+        return {
+            second : 0,
+            minute : 0,
+            opacity: new Animated.Value(0),
+        };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
         this.props.doStartRecord();
-        this.setIntervalID = setInterval(()=>{
-            var {second,minute}  = this.state;
+        this.setIntervalID = setInterval(() => {
+            let { second, minute } = this.state;
             second++;
             if (second >= 60) {
-              second = 0;
-              minute++;
+                second = 0;
+                minute++;
             }
-            this.setState({second:second, minute:minute});
+            this.setState({ second:second, minute:minute });
         }, 1000);
     },
-    doClose() {
-        this.closeModal(()=>{
+    doClose () {
+        this.closeModal(() => {
             this.props.doClose();
         });
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    noticeShow(second, minute) {
-        this.show(()=>{
+    noticeShow (second, minute) {
+        this.show(() => {
             this.props.noticeShow(second, minute);
         });
     },
-    show(callback) {
+    show (callback) {
         return callback();
     },
-    render() {
-        var {second,minute}  = this.state;
+    render () {
+        let { second, minute } = this.state;
         if (minute < 10) {
-          minute = '0'+minute;
+            minute = '0' + minute;
         }
         if (second < 10) {
-          second = '0'+second;
+            second = '0' + second;
         }
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
-                    <Text style={[styles.title, {marginTop: 15, marginBottom: 8}]}>录音中</Text>
-                    <Text style={styles.lineView}/>
-                    <Text style={styles.title2}>{minute+":"+second}</Text>
+                    <Text style={[styles.title, { marginTop: 15, marginBottom: 8 }]}>录音中</Text>
+                    <Text style={styles.lineView} />
+                    <Text style={styles.title2}>{minute + ':' + second}</Text>
                     <Image
                         resizeMode='stretch'
                         source={app.img.actualCombat_recording_voice}
-                        style={[styles.centerImage, {marginTop: 8, marginBottom: 35}]}>
-                    </Image>
+                        style={[styles.centerImage, { marginTop: 8, marginBottom: 35 }]} />
                     <View style={styles.recordVoiceMessageBoxRecordingButtonView}>
                         <Button
                             onPress={this.doGiveup}
-                            textStyle={[styles.btnText, {color: CONSTANTS.THEME_COLOR}]}
+                            textStyle={[styles.btnText, { color: CONSTANTS.THEME_COLOR }]}
                             style={styles.recordVoiceMessageBoxRecordingButtonLeft}>放  弃</Button>
                         <Button
                             onPress={this.doConfirm}
-                            textStyle={[styles.btnText, {color: '#FFFFFF'}]}
+                            textStyle={[styles.btnText, { color: '#FFFFFF' }]}
                             style={styles.recordVoiceMessageBoxRecordingButtonRight}>确  定</Button>
                     </View>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
-var RecordVoiceMessageBoxWaiting = React.createClass({
+const RecordVoiceMessageBoxWaiting = React.createClass({
     mixins: [TimerMixin],
-    getInitialState() {
+    getInitialState () {
         return {
             second : 3,
             opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
-        var intervalID = setInterval(()=>{
-            var {second}  = this.state;
+        let intervalID = setInterval(() => {
+            let { second } = this.state;
             second--;
-            this.setState({second});
+            this.setState({ second });
             if (second === 1) {
                 clearInterval(intervalID);
                 intervalID = null;
             }
         }, 1000);
-        this.setTimeout(()=>{
+        this.setTimeout(() => {
             this.props.showRecordVoiceMessageBoxRecording();
         }, 3000);
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
-      var {second}  = this.state;
+    render () {
+        const { second } = this.state;
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.chooseContainer}>
                     <View style={styles.titleContainer}>
-                        <Text style={styles.title}>{"录音在 "}</Text>
+                        <Text style={styles.title}>{'录音在 '}</Text>
                         <Text style={styles.secondText}>{second}</Text>
-                        <Text style={styles.title}>{" 秒后开始"}</Text>
+                        <Text style={styles.title}>{' 秒后开始'}</Text>
                     </View>
-                    <View style={styles.lineView}/>
+                    <View style={styles.lineView} />
                     <Image
                         resizeMode='stretch'
                         source={app.img.actualCombat_recording_voice}
-                        style={styles.centerImage}>
-                    </Image>
+                        style={styles.centerImage} />
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
-            showType:this.props.showType
+            showType:this.props.showType,
         };
     },
-    showRecordVoiceMessageBoxWaiting() {
-        this.setState({showType:0});
+    showRecordVoiceMessageBoxWaiting () {
+        this.setState({ showType:0 });
     },
-    showRecordVoiceMessageBoxRecording() {
-        this.setState({showType:1});
+    showRecordVoiceMessageBoxRecording () {
+        this.setState({ showType:1 });
     },
-    render() {
+    render () {
         return (
-            this.state.showType===0?
-            <RecordVoiceMessageBoxWaiting
-                showRecordVoiceMessageBoxRecording={this.showRecordVoiceMessageBoxRecording}/>
+            this.state.showType === 0 ?
+                <RecordVoiceMessageBoxWaiting
+                    showRecordVoiceMessageBoxRecording={this.showRecordVoiceMessageBoxRecording} />
             :
-            <RecordVoiceMessageBoxRecording
-                doStartRecord={this.props.doStartRecord}
-                doGiveup={this.props.doGiveup}
-                doConfirm={this.props.doConfirm}/>
+                <RecordVoiceMessageBoxRecording
+                    doStartRecord={this.props.doStartRecord}
+                    doGiveup={this.props.doGiveup}
+                    doConfirm={this.props.doConfirm} />
         );
-    }
+    },
 });
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        width:sr.w*5/8,
+        width:sr.w * 5 / 8,
         alignItems:'center',
         justifyContent:'center',
         backgroundColor:'#FFFFFF',
@@ -198,10 +195,10 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     chooseContainer: {
-        width:sr.w*5/8,
+        width:sr.w * 5 / 8,
         height:200,
         alignItems:'center',
         justifyContent:'center',
@@ -235,9 +232,9 @@ var styles = StyleSheet.create({
         overflow: 'hidden',
     },
     lineView: {
-        width: sr.w*5/8-50,
+        width: sr.w * 5 / 8 - 50,
         height: 1,
-        backgroundColor: '#cccccc'
+        backgroundColor: '#cccccc',
     },
     centerImage: {
         width:210,
@@ -246,7 +243,7 @@ var styles = StyleSheet.create({
         marginVertical:25,
     },
     recordVoiceMessageBoxRecordingButtonView: {
-        width:sr.w*5/8,
+        width:sr.w * 5 / 8,
         height:40,
         flexDirection:'row',
         alignItems:'center',
@@ -266,7 +263,7 @@ var styles = StyleSheet.create({
         margin: 1,
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'#FFFFFF'
+        backgroundColor:'#FFFFFF',
     },
     btnText: {
         fontSize: 16,

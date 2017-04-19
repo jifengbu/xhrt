@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -12,12 +12,12 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var SpecopsPerson = require('./SpecopsPerson.js');
-var moment = require('moment');
+const SpecopsPerson = require('./SpecopsPerson.js');
+const moment = require('moment');
 
 module.exports = React.createClass({
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             excellent: null,
             good: null,
@@ -27,40 +27,40 @@ module.exports = React.createClass({
             dataSource: this.ds.cloneWithRows([]),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         if (this.props.quizzesDetailsData) {
-            let {excellent, good, medium, poor} = this.props.quizzesDetailsData;
-            var listData = [];
-            (excellent&&JSON.stringify(excellent)!='{}'&&excellent.userList.length)&&listData.push(excellent);
-            (good&&JSON.stringify(good)!='{}'&&good.userList.length)&&listData.push(good);
-            (medium&&JSON.stringify(medium)!='{}'&&medium.userList.length)&&listData.push(medium);
-            (poor&&JSON.stringify(poor)!='{}'&&poor.userList.length)&&listData.push(poor);
-            var infiniteLoadStatus = !listData.length ? '暂无成绩数据' : '没有更多数据';
-            this.setState({dataSource: this.ds.cloneWithRows(listData), infiniteLoadStatus: infiniteLoadStatus});
+            const { excellent, good, medium, poor } = this.props.quizzesDetailsData;
+            const listData = [];
+            (excellent && JSON.stringify(excellent) != '{}' && excellent.userList.length) && listData.push(excellent);
+            (good && JSON.stringify(good) != '{}' && good.userList.length) && listData.push(good);
+            (medium && JSON.stringify(medium) != '{}' && medium.userList.length) && listData.push(medium);
+            (poor && JSON.stringify(poor) != '{}' && poor.userList.length) && listData.push(poor);
+            const infiniteLoadStatus = !listData.length ? '暂无成绩数据' : '没有更多数据';
+            this.setState({ dataSource: this.ds.cloneWithRows(listData), infiniteLoadStatus: infiniteLoadStatus });
         }
     },
-    goSpecopsPersonPage(userId) {
+    goSpecopsPersonPage (userId) {
         app.navigator.push({
             component: SpecopsPerson,
-            passProps: {userID: userId},
+            passProps: { userID: userId },
         });
     },
-    calculateStrLength(oldStr) {
+    calculateStrLength (oldStr) {
         let height = 0;
         let linesWidth = 0;
         if (oldStr) {
-            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/<\/?.+?>/g, /<\/?.+?>/g, '');
             oldStr = oldStr.replace(/[\r\n]/g, '|');
-            let StrArr = oldStr.split('|');
-            for (var i = 0; i < StrArr.length; i++) {
-                //计算字符串长度，一个汉字占2个字节
-                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            const StrArr = oldStr.split('|');
+            for (let i = 0; i < StrArr.length; i++) {
+                // 计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g, 'aa').length;
             }
             return linesWidth;
         }
     },
-    renderRow(obj) {
-        let title = obj.sectionMax + '~' + obj.sectionMin + ' (分) ' + obj.number + ' 人';
+    renderRow (obj) {
+        const title = obj.sectionMax + '~' + obj.sectionMin + ' (分) ' + obj.number + ' 人';
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.headerContainer}>
@@ -70,12 +70,12 @@ module.exports = React.createClass({
                 </View>
                 <View>
                     {
-                        obj.userList.map((item, i)=>{
-                            let headUrl = item.userImg?item.userImg:item.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
-                            let nameTemWidth = this.calculateStrLength(item.userName);
-                            let postTemWidth = this.calculateStrLength(item.post);
-                            let nameWidth = nameTemWidth*9+3;
-                            let postWidth = postTemWidth*6+3;
+                        obj.userList.map((item, i) => {
+                            const headUrl = item.userImg ? item.userImg : item.sex === 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
+                            const nameTemWidth = this.calculateStrLength(item.userName);
+                            const postTemWidth = this.calculateStrLength(item.post);
+                            const nameWidth = nameTemWidth * 9 + 3;
+                            const postWidth = postTemWidth * 6 + 3;
                             return (
                                 <TouchableOpacity onPress={this.goSpecopsPersonPage.bind(null, item.userId)} key={i} style={styles.listViewItemContain}>
                                     <View style={styles.listTtemContainer}>
@@ -83,20 +83,20 @@ module.exports = React.createClass({
                                             <Image
                                                 resizeMode='cover'
                                                 defaultSource={app.img.common_default}
-                                                source={item.userImg?{uri: headUrl}:headUrl}
+                                                source={item.userImg ? { uri: headUrl } : headUrl}
                                                 style={styles.headImg} />
                                         </View>
                                         <View style={styles.rowRight}>
                                             <View style={styles.courseContent}>
                                                 <View style={styles.rightTopStyle}>
-                                                    <View style={{width: nameWidth>145?sr.ws(145):sr.ws(nameWidth)}}>
+                                                    <View style={{ width: nameWidth > 145 ? sr.ws(145) : sr.ws(nameWidth) }}>
                                                         <Text numberOfLines={1} style={styles.nameText} >
                                                             {item.userName}
                                                         </Text>
                                                     </View>
                                                     {
-                                                        item.post!=''&&
-                                                        <View style={[styles.postContainer,{width: postWidth>56?sr.ws(56):sr.ws(postWidth)}]}>
+                                                        item.post != '' &&
+                                                        <View style={[styles.postContainer, { width: postWidth > 56 ? sr.ws(56) : sr.ws(postWidth) }]}>
                                                             <Text numberOfLines={1} style={styles.positionText} >
                                                                 {item.post}
                                                             </Text>
@@ -104,7 +104,7 @@ module.exports = React.createClass({
                                                     }
                                                 </View>
                                                 <Text numberOfLines={1} style={styles.courseText} >
-                                                    {'课程: '+item.courseTitle}
+                                                    {'课程: ' + item.courseTitle}
                                                 </Text>
                                             </View>
                                             <View style={styles.courseScore}>
@@ -123,40 +123,39 @@ module.exports = React.createClass({
                                         </View>
                                     </View>
                                     {
-                                        obj.userList.length-1!=i&&<View style={styles.separator} />
+                                        obj.userList.length - 1 != i && <View style={styles.separator} />
                                     }
                                 </TouchableOpacity>
-                            )
+                            );
                         })
                     }
                 </View>
             </View>
-        )
+        );
     },
-    renderFooter() {
-        var status = this.state.infiniteLoadStatus;
+    renderFooter () {
+        const status = this.state.infiniteLoadStatus;
         return (
             <View style={styles.listFooterContainer}>
                 <Text style={styles.listFooter}>{status}</Text>
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <ListView
                     initialListSize={1}
-                    enableEmptySections={true}
+                    enableEmptySections
                     renderRow={this.renderRow}
                     dataSource={this.state.dataSource}
-                    renderFooter={this.renderFooter}/>
+                    renderFooter={this.renderFooter} />
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         flexDirection: 'column',

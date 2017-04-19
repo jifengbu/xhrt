@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -10,35 +10,35 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {ClipRect} = COMPONENTS;
+const { ClipRect } = COMPONENTS;
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             overlayIntroduce: true,
             overlayStudy: false,
             overlayTrain: false,
-            overlayActualCombat: false
+            overlayActualCombat: false,
         };
     },
-    _onPressIntroduce() {
+    _onPressIntroduce () {
         this.setState({
             overlayIntroduce: false,
             overlayStudy: true,
         });
     },
-    _onPressStudy() {
+    _onPressStudy () {
         this.setState({
             overlayStudy: false,
             overlayTrain: true,
         });
     },
-    _onPressTrain() {
+    _onPressTrain () {
         this.setState({
             overlayTrain: false,
             overlayActualCombat: true,
         });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 {
@@ -49,8 +49,7 @@ module.exports = React.createClass({
                         <Image
                             resizeMode='stretch'
                             source={app.img.guide_main}
-                            style={styles.guideStyle}>
-                        </Image>
+                            style={styles.guideStyle} />
                     </TouchableOpacity>
                 }
                 {
@@ -63,31 +62,28 @@ module.exports = React.createClass({
                                 <Image
                                     resizeMode='stretch'
                                     source={app.img.guide_study_txt}
-                                    style={styles.guide_study_txt}>
-                                </Image>
+                                    style={styles.guide_study_txt} />
                             </View>
                             <View style={styles.buttonContainer}>
                                 <View style={styles.marginRect2} />
-                                <ClipRect style={styles.cliprect2}/>
+                                <ClipRect style={styles.cliprect2} />
                                 <View style={styles.rect1} />
                             </View>
                             <View style={styles.rect1} />
                             <View style={styles.tabBar} >
                                 <View style={styles.rect1} />
-                                <ClipRect style={styles.cliprect3}/>
+                                <ClipRect style={styles.cliprect3} />
                                 <View style={styles.rect1} />
                                 <View style={styles.rect1} />
                             </View>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.guide_cartoon_image}
-                                style={styles.guide_cartoon_image}>
-                            </Image>
+                                style={styles.guide_cartoon_image} />
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.guide_hand_gif}
-                                style={styles.guide_hand_gif}>
-                            </Image>
+                                style={styles.guide_hand_gif} />
                         </View>
                     </TouchableOpacity>
                 }
@@ -101,31 +97,28 @@ module.exports = React.createClass({
                                 <Image
                                     resizeMode='stretch'
                                     source={app.img.guide_train_txt}
-                                    style={styles.guide_train_txt}>
-                                </Image>
+                                    style={styles.guide_train_txt} />
                             </View>
                             <View style={styles.buttonContainer}>
                                 <View style={styles.rect1} />
-                                <ClipRect style={styles.cliprect2}/>
+                                <ClipRect style={styles.cliprect2} />
                                 <View style={styles.marginRect2} />
                             </View>
                             <View style={styles.rect1} />
                             <View style={styles.tabBar} >
                                 <View style={styles.rect1} />
                                 <View style={styles.rect1} />
-                                <ClipRect style={styles.cliprect3}/>
+                                <ClipRect style={styles.cliprect3} />
                                 <View style={styles.rect1} />
                             </View>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.guide_cartoon_image2}
-                                style={styles.guide_cartoon_image2}>
-                            </Image>
+                                style={styles.guide_cartoon_image2} />
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.guide_hand_gif}
-                                style={styles.guide_hand_gif2}>
-                            </Image>
+                                style={styles.guide_hand_gif2} />
                         </View>
                     </TouchableOpacity>
                 }
@@ -137,43 +130,40 @@ module.exports = React.createClass({
                         <View style={styles.container}>
                             <View style={styles.topRect} />
 
-                                <View style={styles.buttonContainer1}>
-                                    <View style={styles.marginRect3} />
-                                    <ClipRect style={styles.cliprect1}/>
-                                    <View style={styles.rect1} />
-                                </View>
+                            <View style={styles.buttonContainer1}>
+                                <View style={styles.marginRect3} />
+                                <ClipRect style={styles.cliprect1} />
+                                <View style={styles.rect1} />
+                            </View>
                             <View style={styles.rect1} />
                             <View style={styles.tabBar} >
                                 <View style={styles.rect1} />
                                 <View style={styles.rect1} />
                                 <View style={styles.rect1} />
-                                <ClipRect style={styles.cliprect3}/>
+                                <ClipRect style={styles.cliprect3} />
                             </View>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.guide_actual_combat_txt}
-                                style={styles.guide_actual_combat_txt}>
-                            </Image>
+                                style={styles.guide_actual_combat_txt} />
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.guide_cartoon_image}
-                                style={styles.guide_cartoon_image}>
-                            </Image>
+                                style={styles.guide_cartoon_image} />
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.guide_hand_gif}
-                                style={styles.guide_hand_gif3}>
-                            </Image>
+                                style={styles.guide_hand_gif3} />
                         </View>
                     </TouchableOpacity>
                 }
             </View>
         );
-    }
+    },
 });
 
-var BACK_COLOR = 'rgba(0, 0, 0, 0.4)';
-var styles = StyleSheet.create({
+const BACK_COLOR = 'rgba(0, 0, 0, 0.4)';
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -188,28 +178,28 @@ var styles = StyleSheet.create({
         backgroundColor: BACK_COLOR,
     },
     cliprect1: {
-        width: sr.w-20,
+        width: sr.w - 20,
         height: 40,
         borderRadius: 4,
         color: BACK_COLOR,
     },
     cliprect2: {
         flex:1,
-        width: sr.w/2-13,
+        width: sr.w / 2 - 13,
         height: 74,
         borderRadius: 6,
         color: BACK_COLOR,
     },
     cliprect3:{
         flex:1,
-        width:(sr.w-20)/4,
-        height:(sr.w-20)/4,
-        borderRadius:(sr.w-20)/8,
+        width:(sr.w - 20) / 4,
+        height:(sr.w - 20) / 4,
+        borderRadius:(sr.w - 20) / 8,
         color: BACK_COLOR,
     },
     topRect: {
         backgroundColor: BACK_COLOR,
-        height: 220+sr.totalNavHeight,
+        height: 220 + sr.totalNavHeight,
     },
     buttonContainer: {
         height: 74,
@@ -238,11 +228,11 @@ var styles = StyleSheet.create({
         height: sr.h,
     },
     guideStyle2: {
-        width: sr.w-20,
-        height: (sr.w-20)/3,
+        width: sr.w - 20,
+        height: (sr.w - 20) / 3,
     },
     guide_study_txt: {
-        width: sr.w-30,
+        width: sr.w - 30,
         height: 120,
         marginHorizontal:10,
         marginTop:130,
@@ -251,12 +241,12 @@ var styles = StyleSheet.create({
         position: 'absolute',
         left: 20,
         marginTop:80,
-        width: sr.w-30,
+        width: sr.w - 30,
         height: 120,
     },
     guide_actual_combat_txt: {
-        width: sr.w-100,
-        height: (sr.w-100)/2.8,
+        width: sr.w - 100,
+        height: (sr.w - 100) / 2.8,
         position: 'absolute',
         left: 10,
         top: 120,
@@ -276,7 +266,7 @@ var styles = StyleSheet.create({
         top: 200,
     },
     guide_hand_gif: {
-        transform:[{rotate:'135deg'}],
+        transform:[{ rotate:'135deg' }],
         position: 'absolute',
         width: 74,
         height: 115,
@@ -284,15 +274,15 @@ var styles = StyleSheet.create({
         top: 340,
     },
     guide_hand_gif2: {
-        transform:[{rotate:'180deg'}],
+        transform:[{ rotate:'180deg' }],
         position: 'absolute',
         width: 74,
         height: 115,
-        right: sr.w/4-37,
+        right: sr.w / 4 - 37,
         top: 340,
     },
     guide_hand_gif3: {
-        transform:[{rotate:'0deg'}],
+        transform:[{ rotate:'0deg' }],
         position: 'absolute',
         width: 74,
         height: 115,

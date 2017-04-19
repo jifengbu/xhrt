@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -12,14 +12,14 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var moment = require('moment');
+const moment = require('moment');
 
 module.exports = React.createClass({
     statics: {
         title: '随堂测试成绩',
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             excellent: null,
             good: null,
@@ -29,32 +29,32 @@ module.exports = React.createClass({
             dataSource: this.ds.cloneWithRows([]),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getPersonalQuizzesDetailsData();
     },
-    getPersonalQuizzesDetailsData() {
-        var param = {
+    getPersonalQuizzesDetailsData () {
+        const param = {
             companyId: app.personal.info.companyInfo.companyId,
             userID: this.props.userID,
         };
         POST(app.route.ROUTE_GET_PERSONAL_QUIZZES_DETAILS, param, this.getPersonalQuizzesDetailsDataSuccess);
     },
-    getPersonalQuizzesDetailsDataSuccess(data) {
+    getPersonalQuizzesDetailsDataSuccess (data) {
         if (data.success) {
-            let {excellent, good, medium, poor} = data.context;
-            var listData = [];
-            (excellent&&JSON.stringify(excellent)!='{}')&&listData.push(excellent);
-            (good&&JSON.stringify(good)!='{}')&&listData.push(good);
-            (medium&&JSON.stringify(medium)!='{}')&&listData.push(medium);
-            (poor&&JSON.stringify(poor)!='{}')&&listData.push(poor);
-            var infiniteLoadStatus = !listData.length ? '暂无成绩数据' : '没有更多数据';
-            this.setState({dataSource: this.ds.cloneWithRows(listData), infiniteLoadStatus: infiniteLoadStatus});
+            const { excellent, good, medium, poor } = data.context;
+            const listData = [];
+            (excellent && JSON.stringify(excellent) != '{}') && listData.push(excellent);
+            (good && JSON.stringify(good) != '{}') && listData.push(good);
+            (medium && JSON.stringify(medium) != '{}') && listData.push(medium);
+            (poor && JSON.stringify(poor) != '{}') && listData.push(poor);
+            const infiniteLoadStatus = !listData.length ? '暂无成绩数据' : '没有更多数据';
+            this.setState({ dataSource: this.ds.cloneWithRows(listData), infiniteLoadStatus: infiniteLoadStatus });
         } else {
             Toast(data.msg);
         }
     },
-    renderRow(obj) {
-        let title = obj.sectionMax + '~' + obj.sectionMin + ' (分) ' + obj.number + ' 次';
+    renderRow (obj) {
+        const title = obj.sectionMax + '~' + obj.sectionMin + ' (分) ' + obj.number + ' 次';
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.headerContainer}>
@@ -64,14 +64,14 @@ module.exports = React.createClass({
                 </View>
                 <View>
                     {
-                        obj.contentList&&obj.contentList.map((item, i)=>{
+                        obj.contentList && obj.contentList.map((item, i) => {
                             return (
                                 <View key={i} style={styles.itemContainer}>
                                     <View style={styles.listItemContain}>
                                         <View style={styles.rowRight}>
                                             <View style={styles.courseContent}>
                                                 <Text style={styles.courseText} >
-                                                    {'课程: '+item.courseTitle}
+                                                    {'课程: ' + item.courseTitle}
                                                 </Text>
                                             </View>
                                             <View style={styles.courseScore}>
@@ -89,40 +89,39 @@ module.exports = React.createClass({
                                             </View>
                                         </View>
                                     </View>
-                                    <View style={styles.separator}></View>
+                                    <View style={styles.separator} />
                                 </View>
-                            )
+                            );
                         })
                     }
                 </View>
             </View>
         );
     },
-    renderFooter() {
-        var status = this.state.infiniteLoadStatus;
+    renderFooter () {
+        const status = this.state.infiniteLoadStatus;
         return (
             <View style={styles.listFooterContainer}>
                 <Text style={styles.listFooter}>{status}</Text>
             </View>
-        )
+        );
     },
-    render() {
-        let {excellent, good, medium, poor} = this.state;
+    render () {
+        const { excellent, good, medium, poor } = this.state;
         return (
             <View style={styles.container}>
                 <ListView
                     initialListSize={1}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
-                    renderFooter={this.renderFooter}/>
+                    renderFooter={this.renderFooter} />
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
@@ -198,7 +197,7 @@ var styles = StyleSheet.create({
         paddingHorizontal: 3,
     },
     courseText: {
-        width: sr.w-90,
+        width: sr.w - 90,
         fontSize: 16,
         color: '#424242',
         fontFamily: 'STHeitiSC-Medium',

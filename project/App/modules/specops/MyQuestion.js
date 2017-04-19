@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -12,58 +12,56 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var {PageList,RText} = COMPONENTS;
-var AidBigImage = require('../actualCombat/AidBigImage.js');
-const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+const { PageList, RText } = COMPONENTS;
+const AidBigImage = require('../actualCombat/AidBigImage.js');
+const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
 
 module.exports = React.createClass({
     statics: {
         title: '我的周任务',
     },
-    showBigImage(imageArray, index) {
+    showBigImage (imageArray, index) {
         app.showModal(
             <AidBigImage
                 doImageClose={app.closeModal}
                 defaultIndex={index}
-                defaultImageArray={imageArray}>
-            </AidBigImage>
+                defaultImageArray={imageArray} />
         );
     },
-    renderRow(obj,sectionID,rowID) {
-        var imageArray = obj.images;
-        var strHomeworkContent = obj.homeworkContent?obj.homeworkContent:'';
+    renderRow (obj, sectionID, rowID) {
+        const imageArray = obj.images;
+        const strHomeworkContent = obj.homeworkContent ? obj.homeworkContent : '';
         return (
             <TouchableHighlight
                 onPress={null}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.itemContainer}>
                     <View style={styles.dataContainer}>
                         <Image
                             resizeMode='stretch'
                             source={app.img.specops_calendar}
-                            style={styles.icon_item}  />
+                            style={styles.icon_item} />
                         <Text style={styles.dateText}>{obj.homeworkTime}</Text>
                     </View>
                     <View style={styles.questionContainer}>
-                        <Text style={styles.questionText}>{'问题：'+strHomeworkContent}</Text>
+                        <Text style={styles.questionText}>{'问题：' + strHomeworkContent}</Text>
                     </View>
-                    <View style={styles.lineStyle}>
-                    </View>
+                    <View style={styles.lineStyle} />
                     {
-                        imageArray.length>0&&
-                        <ScrollView horizontal={true} style={styles.imageContainer}>
+                        imageArray.length > 0 &&
+                        <ScrollView horizontal style={styles.imageContainer}>
                             {
-                                imageArray.map((item, i)=>{
+                                imageArray.map((item, i) => {
                                     return (
-                                        <TouchableHighlight key={i} underlayColor="rgba(0, 0, 0, 0)" onPress={this.showBigImage.bind(null, imageArray, i)} style={styles.bigImageTouch}>
+                                        <TouchableHighlight key={i} underlayColor='rgba(0, 0, 0, 0)' onPress={this.showBigImage.bind(null, imageArray, i)} style={styles.bigImageTouch}>
                                             <Image
                                                 resizeMode='stretch'
                                                 defaultSource={app.img.common_default}
-                                                source={{uri: item}}
+                                                source={{ uri: item }}
                                                 style={styles.imageStyle}
                                                 />
                                         </TouchableHighlight>
-                                    )
+                                    );
                                 })
                             }
                         </ScrollView>
@@ -73,29 +71,28 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
-                    <PageList
-                        ref={listView=>this.listView=listView}
-                        disable={this.props.disable}
-                        style={styles.list}
-                        renderRow={this.renderRow}
-                        renderSeparator={()=>null}
-                        listParam={{userID: app.personal.info.userID}}
-                        listName={"homeworkList"}
-                        listUrl={app.route.ROUTE_GET_SPECIAL_SOLDIER_HOMEWORK}
-                        refreshEnable={true}
+                <PageList
+                    ref={listView => { this.listView = listView; }}
+                    disable={this.props.disable}
+                    style={styles.list}
+                    renderRow={this.renderRow}
+                    renderSeparator={() => null}
+                    listParam={{ userID: app.personal.info.userID }}
+                    listName={'homeworkList'}
+                    listUrl={app.route.ROUTE_GET_SPECIAL_SOLDIER_HOMEWORK}
+                    refreshEnable
                         />
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -135,7 +132,7 @@ var styles = StyleSheet.create({
         marginVertical: 10,
         fontSize: 16,
         lineHeight: 20,
-        color: '#555555'
+        color: '#555555',
     },
     bottomStyle: {
         marginHorizontal: 10,

@@ -1,9 +1,9 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
+const React = require('react');
+const ReactNative = require('react-native');
 
-var {
+const {
     StyleSheet,
     View,
     Text,
@@ -14,34 +14,33 @@ var {
     UIManager,
 } = ReactNative;
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var Button = require('@remobile/react-native-simple-button');
-import  Swipeout  from 'react-native-swipe-out';
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const Button = require('@remobile/react-native-simple-button');
+import Swipeout from 'react-native-swipe-out';
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    doPost() {
-        var param = {
+    doPost () {
+        const param = {
             userID: '578ed52f0cf2a4e1d94c8efa',
         };
         POST(app.route.ROUTE_GET_PERSONAL_INFO, param, this.doPostSuccess);
     },
-    doPostSuccess(data) {
+    doPostSuccess (data) {
         console.log(data);
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <Button onPress={this.doPost}>测试</Button>
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',

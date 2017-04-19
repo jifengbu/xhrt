@@ -1,53 +1,58 @@
 'use strict';
-var ReactNative = require('react-native');
-var {
+const ReactNative = require('react-native');
+const {
     AsyncStorage,
 } = ReactNative;
-var EventEmitter = require('EventEmitter');
-var moment = require('moment');
-const ITEM_NAME = "personalInfo";
+const EventEmitter = require('EventEmitter');
+const moment = require('moment');
+const ITEM_NAME = 'personalInfo';
+const NEED_LOGIN_ITEM_NAME = 'personalInfoNeedLogin';
 
 class Manager extends EventEmitter {
-	constructor() {
+    constructor () {
         super();
         this.get();
-	}
-    get() {
-        return new Promise(async(resolve, reject)=>{
-            var info;
+    }
+    get () {
+        return new Promise(async(resolve, reject) => {
+            let info;
             try {
-                var infoStr = await AsyncStorage.getItem(ITEM_NAME);
+                const needLogin = await AsyncStorage.getItem(NEED_LOGIN_ITEM_NAME);
+                this.needLogin = needLogin !== 'false';
+                const infoStr = await AsyncStorage.getItem(ITEM_NAME);
                 info = JSON.parse(infoStr);
-            } catch(e) {
-                info = null;
+            } catch (e) {
+                this.needLogin = true;
             }
-            this.info = info;
+            this.info = info || {};
+            this.needLogin = this.needLogin || !info;
+            this.initialized = true;
         });
     }
-    set(info) {
-        return new Promise(async(resolve, reject)=>{
-            this.info = info;
+    set (info) {
+        this.info = info;
+        return new Promise(async(resolve, reject) => {
             await AsyncStorage.setItem(ITEM_NAME, JSON.stringify(info));
             resolve();
         });
     }
-    setUserHead(head) {
-        this.emit('USER_HEAD_CHANGE_EVENT', {head:head});
+    setUserHead (head) {
+        this.emit('USER_HEAD_CHANGE_EVENT', { head:head });
     }
-    setIndexTab(index) {
-        this.emit('INDEX_TAB_CHANGE_EVENT', {index:index});
+    setIndexTab (index) {
+        this.emit('INDEX_TAB_CHANGE_EVENT', { index:index });
     }
-    updateSpecopsTask() {
+    updateSpecopsTask () {
         this.emit('UPDATE_SPECOPS_TASK_EVENT');
     }
-    setSpecialSoldier(flag) {
+    setSpecialSoldier (flag) {
         this.info.isSpecialSoldier = flag;
         this.info.becomeSpecialSoldierDay = moment().format('YYYY-MM-DD HH:mm:ss');
         this.set(this.info);
     }
-    clear() {
-        this.info = null;
-        AsyncStorage.removeItem(ITEM_NAME);
+    setNeedLogin (flag) {
+        this.needLogin = flag;
+        AsyncStorage.setItem(NEED_LOGIN_ITEM_NAME, flag + '');
     }
 }
 

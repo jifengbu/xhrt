@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -9,96 +9,93 @@ var {
     View,
     TouchableHighlight,
 } = ReactNative;
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             taskList: this.props.taskList,
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    doCloseTask() {
-        this.closeModal(()=>{
+    doCloseTask () {
+        this.closeModal(() => {
             this.props.doCloseTask();
         });
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
+    render () {
         return (
             <Animated.View style={styles.overlayContainer}>
                 <View style={styles.container}>
                     <View style={[styles.panelContainer, this.props.style]}>
                         {
-                            this.state.taskList.map((item, i)=>{
+                            this.state.taskList.map((item, i) => {
                                 return (
-                                    item.isFinish===0?
-                                    <View
-                                        key={i}
-                                        style={[styles.isFinishPanelBtn, {marginBottom:18}]}>
-                                        <Text style={[styles.btnText, {color:'#FFFFFF'}]}>
-                                            {item.taskName}
-                                        </Text>
-                                        <Image
-                                            resizeMode='contain'
-                                            source={app.img.study_progres_ok}
-                                            style={styles.finish_icon}>
-                                        </Image>
-                                    </View>
+                                    item.isFinish === 0 ?
+                                        <View
+                                            key={i}
+                                            style={[styles.isFinishPanelBtn, { marginBottom:18 }]}>
+                                            <Text style={[styles.btnText, { color:'#FFFFFF' }]}>
+                                                {item.taskName}
+                                            </Text>
+                                            <Image
+                                                resizeMode='contain'
+                                                source={app.img.study_progres_ok}
+                                                style={styles.finish_icon} />
+                                        </View>
                                     :
-                                    <Button
-                                        key={i}
-                                        disable={true}
-                                        style={[styles.panelBtn, {marginBottom:18}]}
-                                        textStyle={[styles.btnText, {color:'grey'}]}>
-                                        {item.taskName}
-                                    </Button>
-                                )
+                                        <Button
+                                            key={i}
+                                            disable
+                                            style={[styles.panelBtn, { marginBottom:18 }]}
+                                            textStyle={[styles.btnText, { color:'grey' }]}>
+                                            {item.taskName}
+                                        </Button>
+                                );
                             })
                         }
                     </View>
                     <TouchableHighlight
                         onPress={this.doCloseTask}
-                        underlayColor="rgba(0, 0, 0, 0)"
+                        underlayColor='rgba(0, 0, 0, 0)'
                         style={[styles.touchableHighlight, this.props.style]}>
                         <Image
                             resizeMode='contain'
                             source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
+                            style={styles.closeIcon} />
                     </TouchableHighlight>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         paddingBottom: 80,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     panelContainer: {
         alignSelf: 'center',
         paddingTop: 35,
         paddingBottom: 10,
         borderRadius: 10,
-        width:sr.w/5*4,
+        width:sr.w / 5 * 4,
         backgroundColor:'#FFFFFF',
     },
     overlayContainer: {
@@ -108,7 +105,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     isFinishPanelBtn: {
         height: 30,
@@ -141,13 +138,13 @@ var styles = StyleSheet.create({
     touchableHighlight: {
         position:'absolute',
         top:-5,
-        left:sr.w*5/6-36,
+        left:sr.w * 5 / 6 - 36,
         width: 38,
         height: 38,
         marginTop:-12,
     },
     closeIcon: {
         width: 38,
-        height: 38
+        height: 38,
     },
 });

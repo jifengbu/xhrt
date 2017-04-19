@@ -2,47 +2,189 @@
 <html>
 
 	<head>
-		<meta charset="utf-8">
+		<meta charset="utf-8"/>
 		<title>赢销截拳道</title>
-		<meta http-equiv="Access-Control-Allow-Origin" content="*">
-		<meta http-equiv="content-security-policy">
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+		<meta http-equiv="content-security-policy"/>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
 
-		<!--标准mui.css-->
-		<link rel="stylesheet" href="../../css/mui.min.css">
-		<link rel="stylesheet" href="../../css/common.css">
-		<!--App自定义的css-->
-		<link rel="stylesheet" type="text/css" href="../../css/apply.css" />
+		<link rel="stylesheet" href="../../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+	</head>
+	<body>
 		<style>
-			.title {
-				margin: 6px 15px 6px;
-				color: #6d6d72;
-				font-size: 12px;
+			.mui-fullscreen .mui-segmented-control~.mui-slider-group {
+			    top: 40px;
 			}
-			.courseTime {
-				float: right;
-				color: orange;
-				font-size: 12px;
+			.mui-control-content .mui-loading {
+				margin-top: 50px;
 			}
-			.midWord {
-				color: #6d6d72;
-				font-size: 12px;
-			}
-			.back-color {
-				background-color: #EEEEEE;
-			}
-
-			.header-text {
+			.mui-pull-top-tips {
 				position: absolute;
-				z-indent: 2;
-				left: 0;
-				top: 0;
-				margin: 4px;
-			    padding: 0 5px 0;
-				border-radius: 10px;
-				background:#4bd963;
-				font-size: 12px;
+				top: -20px;
+				left: 50%;
+				margin-left: -25px;
+				width: 40px;
+				height: 40px;
+				border-radius: 100%;
+				z-index: 1;
 			}
+			.mui-bar~.mui-pull-top-tips {
+				top: 24px;
+			}
+			.mui-pull-top-wrapper {
+				width: 42px;
+				height: 42px;
+				display: block;
+				text-align: center;
+				background-color: #efeff4;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+				box-shadow: 0 4px 10px #bbb;
+				overflow: hidden;
+			}
+			.mui-pull-top-tips.mui-transitioning {
+				-webkit-transition-duration: 200ms;
+				transition-duration: 200ms;
+			}
+			.mui-pull-top-wrapper .mui-icon,
+			.mui-pull-top-wrapper .mui-spinner {
+				margin-top: 7px;
+			}
+			.mui-pull-bottom-tips {
+				text-align: center;
+				background-color: #efeff4;
+				font-size: 15px;
+				line-height: 40px;
+				color: #777;
+			}
+			.mui-pull-top-canvas {
+				overflow: hidden;
+				background-color: #fafafa;
+				border-radius: 40px;
+				box-shadow: 0 4px 10px #bbb;
+				width: 40px;
+				height: 40px;
+				margin: 0 auto;
+			}
+			.mui-pull-top-canvas canvas {
+				width: 40px;
+			}
+			.mui-slider-indicator.mui-segmented-control {
+				background-color: white;
+			}
+			#sliderSegmentedControl {
+				height: 40px;
+				background-color: white;
+				font-size: 18px;
+				padding-top: 3px;
+			}
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+			    color: #d14b4c;
+			    border-bottom: 0px !important;
+			    background: 0 0;
+			}
+			.mui-segmented-control.mui-segmented-control-inverted~.mui-slider-progress-bar {
+			    background-color: #d14b4c;
+			}
+			.mui-table-view-cell {
+			    margin-bottom: 10px;
+			}
+			.mui-table-view-cell:after {
+			    height: 0px !important;
+			}
+			li {
+				background: #ECEDEE;
+				padding: 0 !important;
+			}
+			.icon {
+				position: relative;
+				top:2px;
+				width: 15px !important;
+				height: 15px !important;
+			}
+			.icon-location {
+				width: 9px !important;
+				height: 12px;
+			}
+			.div-top {
+				height: 80px;
+				background-color: white;
+			}
+			.div-bottom {
+				padding-right: 15px;
+				padding-left: 15px;
+				padding-bottom: 5px;
+				background-color: white;
+			}
+			.div-seprator {
+				height: 12px;
+				background-color: #ECEDEE;
+				border-top: 1px solid #DCDDDE;
+				border-bottom: 1px solid #DCDDDE;
+			}
+			.div-left {
+				width: 49%;
+				height: 100px;
+				padding-top: 16px;
+				padding-left: 20px;
+			}
+			.div-right {
+				width: 51%;
+				height: 100px;
+				position: absolute;
+				right: 0px;
+				top: 12px;
+				padding-top: 16px;
+			}
+			.vertical_line {
+				position: absolute;
+				top: 20px;
+				width: 1px !important;
+				height: 30px;
+			}
+			.label_on_off {
+				position: absolute;
+				width: 50px !important;
+				height: 50px;
+				right: 0;
+				top: 0;
+			}
+			.label {
+				font-size: 14px !important;
+				color: #C1C1C1;
+				margin-left: 5px;
+			}
+			.label-time {
+				font-size: 14px !important;
+				color: #d14b4c;
+				margin-left: 35px;
+			}
+			.label1 {
+				font-size: 14px !important;
+				color: #C1C1C1;
+			}
+			.label-address {
+				font-size: 14px !important;
+				color: #171717;
+				margin-left: 5px;
+			}
+			.div-left-bottom {
+				margin-top: 2px;
+			}
+			.div-right-top {
+				text-align: center;
+			}
+			.div-right-bottom {
+				margin-top: 2px;
+				text-align: center;
+			}
+			.tip{
+            	text-align: center;
+            	font-size: 12px;
+            	color: gray;
+            }
 			.empty_list {
 				color: red;
 				padding-top: 150px;
@@ -52,24 +194,41 @@
 				font-size: 25px;
 			}
 		</style>
-	</head>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider mui-fullscreen">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<a class="mui-control-item homework-menu mui-active" href="#homework0" data-tap=0 >
+						优秀作业
+					</a>
+					<a class="mui-control-item homework-menu" href="#homework1" data-tap=1>
+						我的作业
+					</a>
+				</div>
+				<div class="mui-slider-progress-bar mui-col-xs-6"></div>
+				<div class="mui-slider-group"  id="homework-container">
+					<div id="homework0" style="background: lightgrey;" class="mui-slider-item mui-control-content homework-content mui-active">
+						<div id="pullrefresh" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul id="homework-list0" class="mui-table-view mui-homework-detail"></ul>
+							</div>
+						</div>
 
-	<body>
-		<header class="mui-bar mui-bar-nav">
-			<!--<a href="search.html" class="mui-pull-right mui-icon">
-				<span class="mui-icon mui-icon-search"></span>
-			</a>-->
-			<h1 class="mui-title">优秀作业</h1>
-		</header>
-		<div id="pullrefresh" class="mui-content mui-scroll-wrapper back-color">
-			<div class="mui-scroll">
-				<ul class="mui-table-view" id="course-list"></ul>
-				<div class="technical-support">技术支持@贵阳赢销截拳道网络科技有限公司</div>
+					</div>
+					<div id="homework1" style="background: lightgrey;" class="mui-slider-item mui-control-content homework-content">
+						<div id="pullrefresh" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul id="homework-list1" class="mui-table-view mui-homework-detail"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>
-	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
 	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/mui.pullToRefresh.js" ></script>
+	<script src="../../js/thirdparty/mui.pullToRefresh.material.js" ></script>
 	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
 	<script src="../../js/thirdparty/spin.min.js"></script>
 	<script src="../../js/utils/regular.js"></script>
@@ -78,153 +237,218 @@
 	<script>
 		"use strict";
 
-		mui.init({
-			pullRefresh: {
-				container: '#pullrefresh',
-				down: {
-					callback: pulldownRefresh
-				},
-				up: {
-					contentrefresh: '正在加载...',
-					callback: pullupRefresh
-				}
-			}
-		});
+		mui.init();
+		var self = null;
+		(function($) {
+			//阻尼系数
+			var deceleration = mui.os.ios?0.003:0.0009;
+			$('.mui-scroll-wrapper').scroll({
+				bounce: false,
+				indicators: true, //是否显示滚动条
+				deceleration:deceleration
+			});
+			$.ready(function() {
+				//循环初始化所有下拉刷新，上拉加载。
+				$.each(document.querySelectorAll('.mui-slider-group .mui-scroll'), function(index, pullRefreshEl) {
+					$(pullRefreshEl).pullToRefresh({
+						up: {
+							callback: function() {
+								self = this;
+								pullupRefresh();
+							}
+						}
+					});
+				});
+			});
+		})(mui);
+		function setScrollTop() {
+			setTimeout(function() {
+				var y = saved.homeworkScrollTop[saved.tabIndex];
+				mui('#day'+saved.tabIndex+' #pullrefresh').pullRefresh().scrollTo(0, y);
+			}, 0);
+		}
 
-		function getCourseListData(pageNo) {
+		function getClassList(tpye, page) {
 			var url = app.route.ROUTE_GET_COURSE_LIST;
 			var data = {
 				userID: params.userID,
-				type: 0,
-				pageNo: pageNo,
+				openid: params.openid,
+				type: tpye,
+				pageNo: page,
 			};
 			app.utils.post({
 				url: url,
 				data: data,
-				success: getCourseListDataSuccess,
+				success: getClassListSuccess,
 			});
 		}
 
-		function getCourseListDataSuccess(data) {
-			if(data.success === true && data.context) {
+		function getClassListSuccess(data) {
+			if (data.success === true && data.context) {
 				var list = data.context.courseList;
-				if(!list || !list.length) {
-					// mui.toast('暂无数据');
-					if(query.pageNo == FIRST_PAGE_NO) {
+				if (!list || !list.length) {
+					if (saved.pageNo[saved.tabIndex] == FIRST_PAGE_NO) {
 						showEmptyList();
 					}
-					if (query.dir === 'down') {
-						mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
-					} else if (query.dir === 'up') {
-						mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+					if (saved.query[saved.tabIndex] === 'up') {
+						if(self != null){
+							self.endPullUpToRefresh(true);
+						}
+					} else {
+						if(self != null && saved.query[saved.tabIndex] === 'down'){
+							self.endPullDownToRefresh();
+							saved.pageNo[saved.tabIndex] = 1;
+						}
 					}
 				} else {
-					if(query.dir === 'up') {
-						showList(list, saved.list.length);
-						saved.list = saved.list.concat(list);
+					if (saved.query[saved.tabIndex] === 'up') {
+						showList(list, saved.list[saved.tabIndex].length);
+						saved.list[saved.tabIndex]  = saved.list[saved.tabIndex].concat(list);
+						if(self != null){
+							self.endPullUpToRefresh();
+						}
 					} else {
 						showList(list);
-						saved.list = list;
+						saved.list[saved.tabIndex] = list;
+						if(self != null && saved.query[saved.tabIndex] === 'down'){
+							self.endPullDownToRefresh();
+							self.refresh(true);
+							saved.pageNo[saved.tabIndex] = 1;
+						}
 					}
 				}
-				if(query.dir === 'down') {
-					mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
-					mui('#pullrefresh').pullRefresh().refresh(true);
-				} else if(query.dir === 'up') {
-					mui('#pullrefresh').pullRefresh().endPullupToRefresh();
-				}
 			} else {
-				if(query.pageNo == FIRST_PAGE_NO) {
+				if (saved.pageNo[saved.tabIndex] == FIRST_PAGE_NO) {
 					showEmptyList();
 				}
-				if (query.dir === 'down') {
-					mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
-				} else if (query.dir === 'up') {
-					mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+				if (saved.query[saved.tabIndex] === 'up') {
+					if(self != null){
+						self.endPullUpToRefresh(true);
+					}
+				} else {
+					if(self != null && saved.query[saved.tabIndex] === 'down'){
+						self.endPullDownToRefresh();
+						saved.pageNo[saved.tabIndex] = 1;
+					}
 				}
 			}
-			query.dir = 'none';
+			saved.query[saved.tabIndex] = 'none';
 		}
 
-		function setScrollTop(y) {
-			setTimeout(function() {
-				mui('#pullrefresh').pullRefresh().scrollTo(0, y);
-			}, 0);
-		}
-
-		function getListItem(item) {
+		function getListItem(item,index,append) {
+			index = index * 1 + (append || 0) * 1;
 			var html = '';
-			html += '<li class="mui-table-view-cell" data-id="'+item.id +'" data-coursename="'+item.courseName+'">'
-//			html += '<div >'//
-//			html += '<img class="mui-media-object mui-pull-left" src=' + item.courseHeadImg + '>'
-//			html += '<div class="header-text">'//
-//			html += "上课中"//
-//			html += '</div>'//
-//			html += '</div>'//
-			html += '<div class="mui-media-body">'
-			html += item.courseName
-//			html += '<p class="mui-ellipsis">' + item.courseIntroduction + '</p>'
-			html += '<p class="courseTime">' + item.courseStartTime + '<span class="midWord">至</span>'+item.courseEndTime +'</p>'
-			html += '</div>'
-			html += '</li>'
+			html += '<li class="mui-table-view-cell" data-index="'+index+'">'
+			html +=	'	<div class="div-seprator" />'
+			html +=	'	<div class="div-top">'
+			html +=	'		<div class="div-left">'
+			html +=	'			<div><img class="icon" src="../../img/label_time.png" /><span class="label">开课时间</span></div>'
+			html +=	'			<div class="div-left-bottom"><span class="label-time">'+item.courseStartTime.slice(5)+'~'+item.courseEndTime.slice(5)+'</span></div>'
+			html += '		</div>'
+			html +=	'		<div class="div-right">'
+			html +=	'			<img class="vertical_line" src="../../img/vertical_line.png" />'
+			html +=	'			<div class="div-right-top">'
+			html +=	(item.courseType==2?'<img class="icon" src="../../img/label_class_type.png" /><span class="label1">'+'总裁赢销截拳道'+'</span>':'<span class="label1">赢销截拳道</span>')
+			html +=	'			</div>'
+			html +=	'			<div class="div-right-bottom"><span class="label-address">'+item.courseName+'</span></div>'
+			html +=	'			<img class="label_on_off" src="../../img/'+((chkSmallDate(item.courseEndTime)&&chkBigDate(item.courseStartTime))?'label_on':(chkSmallDate(item.courseStartTime)?'label_not_start':'label_off'))+'.png" />'
+			html += '		</div>'
+			html += '	</div>'
+			html +=	'	<div class="div-bottom">'
+			html +=	'		<img class="icon-location" src="../../img/label_location.png" /><span class="label">'+item.address+'</span>'
+			html += '	</div>'
+			html +='</li>'
 			return html;
 		}
 
 		function showEmptyList() {
-			$('#pullrefresh').html('<div class="empty_list">没有相关数据</div>');
+			$('#homework-list'+saved.tabIndex).html('<div class="empty_list tip">没有相关数据</div>');
 		}
 
 		function showList(list, append) {
 			var html = '';
-			for(var i in list) {
-				html += getListItem(list[i]);
+			for (var i in list) {
+				html += getListItem(list[i], i, append);
 			}
-			if(!append) {
-				$('#course-list').html(html);
+
+			if (!append) {
+				$('#homework-list'+saved.tabIndex).html(html);
 			} else {
-				$('#course-list').append(html);
+				$('#homework-list'+saved.tabIndex).append(html);
 			}
-			if(query.dir === "none") {
+			if (saved.query[saved.tabIndex] === "none") {
 				app.router.resetScollerBar(setScrollTop);
 			}
 		}
 
-		function pulldownRefresh() {
-			query.pageNo = FIRST_PAGE_NO;
-			query.dir = 'down';
-			getCourseListData(query.pageNo);
+		function pullupRefresh() {
+			saved.pageNo[saved.tabIndex]++;
+			saved.query[saved.tabIndex] = 'up';
+			getClassList(saved.tabIndex, saved.pageNo[saved.tabIndex]);
 		}
 
-		function pullupRefresh() {
-			query.pageNo++;
-			query.dir = 'up';
-			getCourseListData(query.pageNo);
+		function restoreOrderTabSegment(index) {
+			$('#sliderSegmentedControl .homework-menu.mui-active').removeClass("mui-active");
+			$('#sliderSegmentedControl .homework-menu[data-tap="'+index+'"]').addClass("mui-active");
+			$('#homework-container .homework-content.mui-active').removeClass("mui-active");
+			$($('#homework-container .homework-content')[index]).addClass("mui-active");
 		}
-		mui('#course-list').on('tap', 'li', function() {
-			var id = $(this).data('id');
-			var courseName = $(this).data('coursename');
-			var data = {
-				courseId:id,
-				openid:params.openid,
-				userID: params.userID,
-				courseName:courseName,
+
+		mui('.mui-slider-group').on('shown.mui.tab', '.homework-content', function(e) {
+			var id = e.target.id;
+			saved.tabIndex = 1*id.slice(8);
+			if (saved.list[saved.tabIndex]) {
+				showList(saved.list[saved.tabIndex]);
+			} else {
+				getClassList(saved.tabIndex, saved.pageNo[saved.tabIndex]);
 			}
-			app.router.showView('./excellentHomeworkList.html', data);
 		});
+
+		mui('#homework-list0').on('tap','li', function() {
+			var index = $(this).data('index');
+			var data = {
+				courseId:saved.list[saved.tabIndex][index].id,
+				openid:params.openid,
+				userID: saved.list[saved.tabIndex][index].userID,
+				courseName:saved.list[saved.tabIndex][index].courseName,
+				isSelf:0,
+				tabIndex:0,
+				currentDay:saved.list[saved.tabIndex][index].currentDay,
+			}
+			app.router.showView('./excellentHomeworkList.html', data,saved);
+		});
+		mui('#homework-list1').on('tap','li', function() {
+			var index = $(this).data('index');
+			var data = {
+				courseId:saved.list[saved.tabIndex][index].id,
+				openid:params.openid,
+				userID: saved.list[saved.tabIndex][index].userID,
+				courseName:saved.list[saved.tabIndex][index].courseName,
+				isSelf:1,
+				tabIndex:1,
+				currentDay:saved.list[saved.tabIndex][index].currentDay,
+			}
+			app.router.showView('./excellentHomeworkList.html', data,saved);
+		});
+
 		var FIRST_PAGE_NO = 1;
 		var params = app.router.getParameter();
 		var saved = app.router.getSavedData();
-		var query = saved.query || {
-			pageNo: FIRST_PAGE_NO,
-			type: params.typeID,
-			dir: 'none'
-		};
-
-		if(saved.list) {
-			showList(saved.list);
-		} else {
-			getCourseListData(query.pageNo);
+		if (typeof(saved.list) == "undefined") {
+			saved.list = [null, null];
+			saved.pageNo = [1, 1];
+			saved.tabIndex = params.tabIndex;
+			saved.query = ['none', 'none'];
+			saved.homeworkScrollTop = [0, 0];
 		}
-	</script>
+		if (saved.tabIndex) {
+			restoreOrderTabSegment(saved.tabIndex);
+		}
+		if (saved.list[saved.tabIndex]) {
+			showList(saved.list[saved.tabIndex]);
+		} else {
+			getClassList(saved.tabIndex, saved.pageNo[saved.tabIndex]);
+		}
 
+	</script>
 </html>

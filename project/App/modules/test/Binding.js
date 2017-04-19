@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -12,38 +12,38 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var {Button} = COMPONENTS;
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    getInitialState() {
-        var {DEFAULT_CODE_TIMEOUT} = CONSTANTS;
-        var time = Math.floor((Date.now() - (app.data.registerVerificationCodeTimeout||0))/1000);
-        var flag = time > DEFAULT_CODE_TIMEOUT;
+    getInitialState () {
+        const { DEFAULT_CODE_TIMEOUT } = CONSTANTS;
+        const time = Math.floor((Date.now() - (app.data.registerVerificationCodeTimeout || 0)) / 1000);
+        const flag = time > DEFAULT_CODE_TIMEOUT;
         return {
             opacity: new Animated.Value(0),
             verificationCode: '',
-            phone: app.data.registerVerificationCodePhone||'',
+            phone: app.data.registerVerificationCodePhone || '',
             password: '',
-            verificationCodeTimeout: flag?DEFAULT_CODE_TIMEOUT:DEFAULT_CODE_TIMEOUT-time,
+            verificationCodeTimeout: flag ? DEFAULT_CODE_TIMEOUT : DEFAULT_CODE_TIMEOUT - time,
             verificationCodeEnable: flag,
-            verificationCodeText: flag?'发送验证码':DEFAULT_CODE_TIMEOUT-time+'秒后再发送...',
+            verificationCodeText: flag ? '发送验证码' : DEFAULT_CODE_TIMEOUT - time + '秒后再发送...',
         };
     },
-    doCancel() {
-        this.closeModal(()=>{
+    doCancel () {
+        this.closeModal(() => {
             // this.props.doCancel();
         });
     },
-    doConfirm() {
-        this.closeModal(()=>{
+    doConfirm () {
+        this.closeModal(() => {
             // this.props.doConfirm();
         });
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
@@ -52,15 +52,15 @@ module.exports = React.createClass({
             this.updateVerificationCodeTimeout();
         }
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    doGetVerificationCode() {
+    doGetVerificationCode () {
         if (!this.state.verificationCodeEnable) {
             return;
         }
@@ -68,16 +68,16 @@ module.exports = React.createClass({
             Toast('手机号码不是有效的手机号码');
             return;
         }
-        var param = {
+        const param = {
             phone:this.state.phone,
             type: 2, //1 表示登录  2 表示注册   3 表示忘记密码
         };
         app.data.registerVerificationCodePhone = this.state.phone;
         POST(app.route.ROUTE_SEND_VERIFICATION_CODE, param, this.doGetVerificationCodeSuccess, true);
     },
-    doGetVerificationCodeSuccess(data) {
+    doGetVerificationCodeSuccess (data) {
         if (data.success) {
-            this.setState({verificationCodeEnable: false, verificationCodeText: CONSTANTS.DEFAULT_CODE_TIMEOUT+'秒后再发送...'});
+            this.setState({ verificationCodeEnable: false, verificationCodeText: CONSTANTS.DEFAULT_CODE_TIMEOUT + '秒后再发送...' });
             app.data.registerVerificationCodeTimeout = Date.now();
             this.updateVerificationCodeTimeout();
             Toast('验证码发送成功!');
@@ -85,18 +85,18 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    updateVerificationCodeTimeout() {
-        this.intervalID = this.setInterval(()=>{
-            var verificationCodeTimeout = this.state.verificationCodeTimeout - 1;
+    updateVerificationCodeTimeout () {
+        this.intervalID = this.setInterval(() => {
+            const verificationCodeTimeout = this.state.verificationCodeTimeout - 1;
             if (verificationCodeTimeout === 0) {
                 this.clearInterval(this.intervalID);
-                this.setState({verificationCodeTimeout:CONSTANTS.DEFAULT_CODE_TIMEOUT, verificationCodeEnable: true, verificationCodeText: '发送验证码'});
+                this.setState({ verificationCodeTimeout:CONSTANTS.DEFAULT_CODE_TIMEOUT, verificationCodeEnable: true, verificationCodeText: '发送验证码' });
             } else {
-                this.setState({verificationCodeTimeout, verificationCodeText: verificationCodeTimeout+'秒后再发送...'});
+                this.setState({ verificationCodeTimeout, verificationCodeText: verificationCodeTimeout + '秒后再发送...' });
             }
         }, 1000);
     },
-    doRegister() {
+    doRegister () {
         if (!this.state.protocalRead) {
             Toast('注册前请先阅读赢销截拳道用户协议');
             return;
@@ -113,14 +113,14 @@ module.exports = React.createClass({
             Toast('密码必须由 6-20 位的数字或，字母，下划线组成');
             return;
         }
-        var param = {
+        const param = {
             phone:this.state.phone,
             verificationCode: this.state.verificationCode,
             pwd: this.state.password,
         };
         POST(app.route.ROUTE_REGISTER, param, this.doRegisterSuccess);
     },
-    doRegisterSuccess(data) {
+    doRegisterSuccess (data) {
         if (data.success) {
             Toast(data.msg);
             this.props.changeToLoginPanel(this.state.phone);
@@ -128,24 +128,24 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <View style={styles.titleView}>
                         <Text style={styles.title}>
                             {'绑定手机号'}
                         </Text>
                     </View>
-                    <Text style={styles.redLine}>
-                    </Text>
+                    <Text style={styles.redLine} />
                     <View
                         style={styles.inputContainerBK}>
-                        <View style={[styles.inputContainerIphone, {justifyContent: 'space-between'}]}>
+                        <View style={[styles.inputContainerIphone, { justifyContent: 'space-between' }]}>
                             <Text style={styles.text_phone_header}>+86</Text>
                             <TextInput
                                 placeholder='手机号码'
-                                onChangeText={(text) => this.setState({phone: text})}
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ phone: text })}
                                 defaultValue={this.state.phone}
                                 style={styles.text_input}
                                 keyboardType='phone-pad'
@@ -153,15 +153,16 @@ module.exports = React.createClass({
                             <Button
                                 onPress={this.doGetVerificationCode}
                                 disable={!this.state.verificationCodeEnable}
-                                style={[styles.btnVerification, this.state.verificationCodeEnable?{backgroundColor: '#DE3031'}:{backgroundColor: '#D5D6D7'}]}
-                                textStyle={[styles.btnVerificationText, this.state.verificationCodeEnable?{color: 'white'}:{color: '#525252'}]}>
+                                style={[styles.btnVerification, this.state.verificationCodeEnable ? { backgroundColor: '#DE3031' } : { backgroundColor: '#D5D6D7' }]}
+                                textStyle={[styles.btnVerificationText, this.state.verificationCodeEnable ? { color: 'white' } : { color: '#525252' }]}>
                                 {this.state.verificationCodeText}
                             </Button>
                         </View>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 placeholder='验证码'
-                                onChangeText={(text) => this.setState({verificationCode: text})}
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ verificationCode: text })}
                                 defaultValue={this.state.verificationCode}
                                 style={styles.text_input2}
                                 keyboardType='number-pad'
@@ -170,8 +171,9 @@ module.exports = React.createClass({
                         <View style={styles.inputContainer}>
                             <TextInput
                                 placeholder='密码'
-                                secureTextEntry={true}
-                                onChangeText={(text) => this.setState({password: text})}
+                                underlineColorAndroid='transparent'
+                                secureTextEntry
+                                onChangeText={(text) => this.setState({ password: text })}
                                 defaultValue={this.state.password}
                                 style={styles.text_input2}
                                 />
@@ -192,24 +194,24 @@ module.exports = React.createClass({
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     buttonViewStyle: {
         marginTop: 1,
         flexDirection: 'row',
-        width: sr.w-60,
+        width: sr.w - 60,
         height: 60,
         borderBottomLeftRadius: 2,
         borderBottomRightRadius: 2,
         justifyContent: 'center',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     redLine: {
-        width: sr.w-60,
+        width: sr.w - 60,
         height: 1,
-        backgroundColor: '#DC3237'
+        backgroundColor: '#DC3237',
     },
     buttonStyleContain: {
         width: 120,
@@ -241,16 +243,16 @@ var styles = StyleSheet.create({
         fontFamily: 'STHeitiSC-Medium',
     },
     container: {
-        width:sr.w-60,
+        width:sr.w - 60,
         borderRadius: 2,
         alignItems:'center',
         backgroundColor:'#EEEEEE',
     },
     titleView: {
-        width: sr.w-60,
+        width: sr.w - 60,
         borderTopLeftRadius: 2,
         borderTopRightRadius: 2,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     title: {
         color: '#151515',
@@ -266,7 +268,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     inputContainerBK: {
         height: 152,

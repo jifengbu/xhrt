@@ -1,25 +1,25 @@
 'use strict';
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     AsyncStorage,
 } = ReactNative;
-var EventEmitter = require('EventEmitter');
+const EventEmitter = require('EventEmitter');
 
-const ITEM_NAME = "LocalData";
+const ITEM_NAME = 'LocalData';
 
 class LocalDataMgr extends EventEmitter {
-  	constructor() {
-          super();
-          this.list = [];
-          this.get();
-  	}
-    get() {
-        return new Promise(async(resolve, reject)=>{
-            var list;
+    constructor () {
+        super();
+        this.list = [];
+        this.get();
+    }
+    get () {
+        return new Promise(async(resolve, reject) => {
+            let list;
             try {
-                var infoStr = await AsyncStorage.getItem(ITEM_NAME);
+                const infoStr = await AsyncStorage.getItem(ITEM_NAME);
                 list = JSON.parse(infoStr);
-            } catch(e) {
+            } catch (e) {
                 list = [];
             }
             this.list = list;
@@ -28,31 +28,31 @@ class LocalDataMgr extends EventEmitter {
             }
         });
     }
-    set(list) {
-        return new Promise(async(resolve, reject)=>{
+    set (list) {
+        return new Promise(async(resolve, reject) => {
             this.list = list;
             await AsyncStorage.setItem(ITEM_NAME, JSON.stringify(list));
             resolve();
         });
     }
-    getValueFromKey(key){
-        var data = _.find(this.list, (item)=>item.key===key);
-        return data?data.value:null;
+    getValueFromKey (key) {
+        const data = _.find(this.list, (item) => item.key === key);
+        return data ? data.value : null;
     }
-    setValueAndKey(key, value) {
-        var data = _.find(this.list, (item)=>item.key===key);
+    setValueAndKey (key, value) {
+        const data = _.find(this.list, (item) => item.key === key);
         if (data) {
             data.value = value;
         } else {
-            this.list.push({key, value});
+            this.list.push({ key, value });
         }
         this.set(this.list);
     }
-    removeItem(key){
-        _.remove(this.list, (item)=>item.key===key);
+    removeItem (key) {
+        _.remove(this.list, (item) => item.key === key);
         this.set(this.list);
     }
-    clear() {
+    clear () {
         this.list = [];
         AsyncStorage.removeItem(ITEM_NAME);
     }

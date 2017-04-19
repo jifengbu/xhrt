@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native')
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     View,
@@ -11,14 +11,14 @@ var {
     TextInput,
 } = ReactNative;
 
-var moment = require('moment');
-var Subscribable = require('Subscribable');
-var TimerMixin = require('react-timer-mixin');
-var PromptMessageBox = require('../meeting/PromptMessageBox.js');
-var {ProgressHud, Button, MessageBox, DImage} = COMPONENTS;
+const moment = require('moment');
+const Subscribable = require('Subscribable');
+const TimerMixin = require('react-timer-mixin');
+const PromptMessageBox = require('../meeting/PromptMessageBox.js');
+const { ProgressHud, Button, MessageBox, DImage } = COMPONENTS;
 
-var RoundButton = React.createClass({
-    render() {
+const RoundButton = React.createClass({
+    render () {
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
@@ -30,21 +30,21 @@ var RoundButton = React.createClass({
                     style={styles.roundButton}
                     />
             </TouchableOpacity>
-        )
-    }
+        );
+    },
 });
 
 module.exports = React.createClass({
-    mixins: [Subscribable.Mixin, ProgressHud.Mixin, TimerMixin, SceneMixin], 
+    mixins: [Subscribable.Mixin, ProgressHud.Mixin, TimerMixin, SceneMixin],
     statics: {
-        leftButton: {handler: ()=>app.scene.goBackPrompt()},
+        leftButton: { handler: () => app.scene.goBackPrompt() },
     },
-    registerEvents(name) {
-        this.addListenerOn(app.phoneMgr, name, (param)=>{
+    registerEvents (name) {
+        this.addListenerOn(app.phoneMgr, name, (param) => {
             this[name](param);
         });
     },
-    componentWillMount() {
+    componentWillMount () {
         this.exit = false;
         app.phoneMgr.toggleSpeaker(true);
         this.registerEvents('EVENT_SERVER_INFO_ERROR');
@@ -53,119 +53,118 @@ module.exports = React.createClass({
         this.registerEvents('EVENT_MEET_UPDATE_USERLIST');
         this.registerEvents('EVENT_YOUR_ARE_KICKED');
     },
-    goBack() {
+    goBack () {
         this.dismissProgressHUD();
         app.phoneMgr.closeSocket();
         app.navigator.pop();
     },
-    EVENT_CONNECT(result) {
+    EVENT_CONNECT (result) {
         if (!this.exit) {
             app.phoneMgr.joinMeetingRoom();
         }
     },
-    EVENT_DISCONNECT(result) {
+    EVENT_DISCONNECT (result) {
         this.exit = true;
         Toast('网络不稳定，请稍候重试');
         this.dismissProgressHUD();
         this.goBack();
     },
-    EVENT_SERVER_INFO_ERROR(result) {
+    EVENT_SERVER_INFO_ERROR (result) {
         Toast(result);
         this.goBack();
     },
-    EVENT_YOUR_ARE_KICKED() {
+    EVENT_YOUR_ARE_KICKED () {
         Toast('你已经被踢出了房间');
         this.goBack();
     },
-    EVENT_MEET_UPDATE_USERLIST(result) {
-
+    EVENT_MEET_UPDATE_USERLIST (result) {
         if (result && result.start) {
             this.dismissProgressHUD();
             if (this.intervalIDSy != null) {
-                  this.clearTimeout(this.intervalIDSy);
-                  this.intervalIDSy = null;
+                this.clearTimeout(this.intervalIDSy);
+                this.intervalIDSy = null;
             }
         }
-        var mgr = app.phoneMgr;
-        var states = mgr.phone.meetChannelStates;
-        var myUserID = app.personal.info.userID;
-        var isAdmin = mgr.adminUserID==myUserID;
+        const mgr = app.phoneMgr;
+        const states = mgr.phone.meetChannelStates;
+        const myUserID = app.personal.info.userID;
+        const isAdmin = mgr.adminUserID == myUserID;
 
-        var admin = _.find(mgr.competitors, (item)=>mgr.adminUserID==item.userID);
-        var myself = _.find(mgr.competitors, (item)=>myUserID==item.userID);
+        const admin = _.find(mgr.competitors, (item) => mgr.adminUserID == item.userID);
+        let myself = _.find(mgr.competitors, (item) => myUserID == item.userID);
 
-        var speakers = _.filter(mgr.competitors, (item)=>item.meetChannelState==states.MCAS_CHANNEL_MEET_STATE_SPEAKING);
-        var listeners = _.filter(mgr.competitors, (item)=>item.meetChannelState==states.MCAS_CHANNEL_MEET_STATE_LISTENING);
-        var appliers = _.filter(mgr.competitors, (item)=>item.meetChannelState==states.MCAS_CHANNEL_MEET_STATE_APPLYSPEAKING);
+        const speakers = _.filter(mgr.competitors, (item) => item.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_SPEAKING);
+        let listeners = _.filter(mgr.competitors, (item) => item.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_LISTENING);
+        const appliers = _.filter(mgr.competitors, (item) => item.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_APPLYSPEAKING);
         this.speakingNumber = speakers.length;
 
         if (isAdmin) {
             if (admin) {
                 if (admin.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_SPEAKING) {
-                    _.remove(speakers, (item)=>mgr.adminUserID==item.userID);
+                    _.remove(speakers, (item) => mgr.adminUserID == item.userID);
                     speakers.unshift(admin);
                 } else if (admin.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_LISTENING) {
-                    _.remove(listeners, (item)=>mgr.adminUserID==item.userID);
+                    _.remove(listeners, (item) => mgr.adminUserID == item.userID);
                     listeners.unshift(admin);
                 }
                 myself = admin;
             }
         } else {
             if (myself.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_SPEAKING) {
-                _.remove(speakers, (item)=>myUserID==item.userID);
+                _.remove(speakers, (item) => myUserID == item.userID);
                 speakers.unshift(myself);
             } else if (myself.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_LISTENING) {
-                _.remove(listeners, (item)=>myUserID==item.userID);
+                _.remove(listeners, (item) => myUserID == item.userID);
                 listeners.unshift(myself);
             } else if (myself.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_APPLYSPEAKING) {
-                _.remove(appliers, (item)=>myUserID==item.userID);
+                _.remove(appliers, (item) => myUserID == item.userID);
                 appliers.unshift(myself);
             }
             if (admin) {
                 if (admin.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_SPEAKING) {
-                    _.remove(speakers, (item)=>mgr.adminUserID==item.userID);
+                    _.remove(speakers, (item) => mgr.adminUserID == item.userID);
                     speakers.unshift(admin);
                 } else if (admin.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_LISTENING) {
-                    _.remove(listeners, (item)=>mgr.adminUserID==item.userID);
+                    _.remove(listeners, (item) => mgr.adminUserID == item.userID);
                     listeners.unshift(admin);
                 }
             }
         }
 
-        var isOnDesk = myself.meetChannelState==states.MCAS_CHANNEL_MEET_STATE_SPEAKING;
+        const isOnDesk = myself.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_SPEAKING;
         listeners = appliers.concat(listeners);
         this.setState({
             dataSource: this.ds.cloneWithRowsAndSections([speakers, listeners]),
             speakers: speakers,
             isAdmin: isAdmin,
             isOnDesk: isOnDesk,
-            isApplying: mgr.status===mgr.constants.STATUS_MEET_APPLY_SPEAKING,
+            isApplying: mgr.status === mgr.constants.STATUS_MEET_APPLY_SPEAKING,
         });
     },
-    componentDidMount() {
+    componentDidMount () {
         this.showProgressHUD();
         app.phoneMgr.toggleSpeaker(true);
-        this.setState({isSpeakerOn:app.phoneMgr.isSpeakerOn});
+        this.setState({ isSpeakerOn:app.phoneMgr.isSpeakerOn });
         app.phoneMgr.connectMeetingServer(this.props.roomInfo);
         this.endMoment = moment(this.props.roomInfo.endTime);
         this.startCountTimeDown();
 
         // add timeout exit chatroom.
-        this.intervalIDSy = this.setTimeout(()=>{
-              Toast('进入房间超时');
-              this.goBack();
+        this.intervalIDSy = this.setTimeout(() => {
+            Toast('进入房间超时');
+            this.goBack();
         }, 15000);
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         app.phoneMgr.toggleSpeaker(true);
     },
-    getInitialState() {
+    getInitialState () {
         this.ds = new ListView.DataSource({
             rowHasChanged: (r1, r2) => r1 !== r2,
-            sectionHeaderHasChanged : (s1, s2) => s1 !== s2
+            sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
         });
         return {
-            dataSource: this.ds.cloneWithRowsAndSections([[],[]]),
+            dataSource: this.ds.cloneWithRowsAndSections([[], []]),
             speakers: [],
             isAdmin: false,
             isOnDesk: false,
@@ -178,22 +177,22 @@ module.exports = React.createClass({
             promptMessageContent: null,
         };
     },
-    toggleSpeaker() {
+    toggleSpeaker () {
         app.phoneMgr.toggleSpeaker();
-        this.setState({isSpeakerOn:app.phoneMgr.isSpeakerOn});
+        this.setState({ isSpeakerOn:app.phoneMgr.isSpeakerOn });
     },
-    getDiffFormat(duration) {
-        var second = Math.floor(duration/1000);
-        var minute = Math.floor(second/60);
+    getDiffFormat (duration) {
+        let second = Math.floor(duration / 1000);
+        let minute = Math.floor(second / 60);
         second = second - minute * 60;
-        var hour = Math.floor(minute/60);
+        const hour = Math.floor(minute / 60);
         minute = minute - hour * 60;
         return app.utils.timeFormat(hour, minute, second);
     },
-    startCountTimeDown() {
+    startCountTimeDown () {
         // this.intervalID = this.setInterval(()=>{
-        //     var now = moment();
-        //     var duration = this.endMoment.diff(now);
+        //     const now = moment();
+        //     const duration = this.endMoment.diff(now);
         //     if (duration < 0 && !this.intervalID) {
         //         this.clearInterval(this.intervalID);
         //         this.intervalID = null;
@@ -215,18 +214,18 @@ module.exports = React.createClass({
         //         }
         // }, 1000);
     },
-    meetingApplySpeak() {
-        this.setState({isApplying: true,});
+    meetingApplySpeak () {
+        this.setState({ isApplying: true });
         app.phoneMgr.meetingApplySpeak();
     },
-    meetingCancelApplySpeak() {
-        this.setState({isApplying: false,});
+    meetingCancelApplySpeak () {
+        this.setState({ isApplying: false });
         app.phoneMgr.meetingCancelApplySpeak();
     },
 
-    goBackPrompt() {
-        this.doPromptMessageBoxConfirm = ()=>{
-            this.setState({showPromptMessageBox: false});
+    goBackPrompt () {
+        this.doPromptMessageBoxConfirm = () => {
+            this.setState({ showPromptMessageBox: false });
             this.goBack();
         };
         this.setState({
@@ -234,9 +233,9 @@ module.exports = React.createClass({
             promptMessageContent: <Text style={styles.promptText}>是否要退出房间</Text>,
         });
     },
-    meetingChangeAdmin(obj) {
-        this.doPromptMessageBoxConfirm = ()=>{
-            this.setState({showPromptMessageBox: false});
+    meetingChangeAdmin (obj) {
+        this.doPromptMessageBoxConfirm = () => {
+            this.setState({ showPromptMessageBox: false });
             app.phoneMgr.meetingChangeAdmin(obj.userID);
         };
         this.setState({
@@ -244,9 +243,9 @@ module.exports = React.createClass({
             promptMessageContent: <Text style={styles.promptText}>是否将管理员移交给 <Text style={styles.promptUsername}>{obj.userInfo.userName}</Text></Text>,
         });
     },
-    meetingKickUser(obj) {
-        this.doPromptMessageBoxConfirm = ()=>{
-            this.setState({showPromptMessageBox: false});
+    meetingKickUser (obj) {
+        this.doPromptMessageBoxConfirm = () => {
+            this.setState({ showPromptMessageBox: false });
             app.phoneMgr.meetingKickUser(obj.userID);
         };
         this.setState({
@@ -254,39 +253,39 @@ module.exports = React.createClass({
             promptMessageContent: <Text style={styles.promptText}>是否将 <Text style={styles.promptUsername}>{obj.userInfo.userName}</Text> 踢出本房间</Text>,
         });
     },
-    meetingEndSpeak(userID) {
+    meetingEndSpeak (userID) {
         app.phoneMgr.meetingEndSpeak(userID);
     },
-    meetingBeginSpeak(userID) {
+    meetingBeginSpeak (userID) {
         if (this.speakingNumber < CONSTANTS.MAX_MEETING_SPEAKER_NUMBER) {
             app.phoneMgr.meetingBeginSpeak(userID);
         } else {
-            Toast("没有空位置");
+            Toast('没有空位置');
         }
     },
-    meetingCloseRoom(userID) {
+    meetingCloseRoom (userID) {
         app.phoneMgr.meetingCloseRoom(userID);
     },
-    getNameColor(person) {
+    getNameColor (person) {
         if (!person) {
             return null;
         }
-        var mgr = app.phoneMgr;
-        var states = mgr.phone.meetChannelStates;
-        if (mgr.adminUserID==person.userID) {
-            return {color: '#FA3F3D'}
-        } else if (person.meetChannelState==states.MCAS_CHANNEL_MEET_STATE_SPEAKING) {
-            return {color: '#40B2DA'}
+        const mgr = app.phoneMgr;
+        const states = mgr.phone.meetChannelStates;
+        if (mgr.adminUserID == person.userID) {
+            return { color: '#FA3F3D' };
+        } else if (person.meetChannelState == states.MCAS_CHANNEL_MEET_STATE_SPEAKING) {
+            return { color: '#40B2DA' };
         }
-        return {color: '#AEAEAE'}
+        return { color: '#AEAEAE' };
     },
-    getBottomButton() {
-        var mgr = app.phoneMgr;
-        var button;
+    getBottomButton () {
+        const mgr = app.phoneMgr;
+        let button;
         if (this.state.isOnDesk) {
             button = (
                 <Button
-                    style={[styles.btn, {backgroundColor:'#BD9F67'}]}
+                    style={[styles.btn, { backgroundColor:'#BD9F67' }]}
                     textStyle={styles.btnText}
                     onPress={this.meetingEndSpeak.bind(null, app.personal.info.userID)}>
                     下  麦
@@ -295,7 +294,7 @@ module.exports = React.createClass({
         } else if (mgr.status === mgr.constants.STATUS_MEET_APPLY_SPEAKING) {
             button = (
                 <Button
-                    style={[styles.btn, {backgroundColor:'#70BE99'}]}
+                    style={[styles.btn, { backgroundColor:'#70BE99' }]}
                     textStyle={styles.btnText}
                     onPress={this.meetingCancelApplySpeak}>放弃上麦</Button>
             );
@@ -311,24 +310,24 @@ module.exports = React.createClass({
             <View style={styles.bottomContainer}>
                 {button}
             </View>
-        )
+        );
     },
-    renderRowButton(obj, sectionID) {
-        var buttons = [];
-        var mgr = app.phoneMgr;
+    renderRowButton (obj, sectionID) {
+        const buttons = [];
+        const mgr = app.phoneMgr;
         if (obj.userID === app.personal.info.userID) {
-            if (sectionID==0) {
+            if (sectionID == 0) {
                 buttons.push(
                     <RoundButton
                         image={app.img.meeting_hung_up}
-                        key="1"
+                        key='1'
                         onPress={this.meetingEndSpeak.bind(null, obj.userID)} />
                 );
             } else {
                 buttons.push(
                     <RoundButton
                         image={app.img.meeting_speach}
-                        key="1"
+                        key='1'
                         onPress={this.meetingBeginSpeak.bind(null, obj.userID)} />
                 );
             }
@@ -336,27 +335,27 @@ module.exports = React.createClass({
             buttons.push(
                 <RoundButton
                     image={app.img.meeting_exchange}
-                    key="2"
+                    key='2'
                     onPress={this.meetingChangeAdmin.bind(null, obj)} />
             );
             buttons.push(
                 <RoundButton
                     image={app.img.meeting_leave}
-                    key="3"
+                    key='3'
                     onPress={this.meetingKickUser.bind(null, obj)} />
             );
-            if (sectionID==0) {
+            if (sectionID == 0) {
                 buttons.push(
                     <RoundButton
                         image={app.img.meeting_hung_up}
-                        key="4"
+                        key='4'
                         onPress={this.meetingEndSpeak.bind(null, obj.userID)} />
                 );
             } else if (obj.meetChannelState == mgr.phone.meetChannelStates.MCAS_CHANNEL_MEET_STATE_APPLYSPEAKING) {
                 buttons.push(
                     <RoundButton
                         image={app.img.meeting_speach}
-                        key="4"
+                        key='4'
                         onPress={this.meetingBeginSpeak.bind(null, obj.userID)} />
                 );
             }
@@ -365,15 +364,15 @@ module.exports = React.createClass({
             <View style={styles.buttonContainer}>
                 {buttons}
             </View>
-        )
+        );
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <View style={styles.itemContainer}>
                 <DImage
                     resizeMode='cover'
                     defaultSource={app.img.personal_head}
-                    source={{uri:obj.userInfo.userImg||'undefined'}}
+                    source={{ uri:obj.userInfo.userImg || 'undefined' }}
                     style={styles.headImage} />
                 <View style={styles.nameContainer}>
                     <View style={styles.usernameContainer}>
@@ -381,16 +380,16 @@ module.exports = React.createClass({
                             {obj.userInfo.userName}
                         </Text>
                         {
-                            app.phoneMgr.adminUserID==obj.userID &&
-                            <View style={[styles.adminContainer, styles.adminContainerAdmin, {marginLeft: 10}]}>
+                            app.phoneMgr.adminUserID == obj.userID &&
+                            <View style={[styles.adminContainer, styles.adminContainerAdmin, { marginLeft: 10 }]}>
                                 <Text numberOfLines={1} style={styles.adminSeat}>
                                     管理员
                                 </Text>
                             </View>
                         }
                         {
-                            app.personal.info.userID==obj.userID &&
-                            <View style={[styles.adminContainer, styles.adminContainerMe, {marginLeft: 10}]}>
+                            app.personal.info.userID == obj.userID &&
+                            <View style={[styles.adminContainer, styles.adminContainerMe, { marginLeft: 10 }]}>
                                 <Text numberOfLines={1} style={styles.adminSeat}>
                                     我
                                 </Text>
@@ -402,22 +401,22 @@ module.exports = React.createClass({
                     </Text>
                 </View>
                 {
-                    (this.state.isApplying&&obj.userID==app.personal.userID) &&
+                    (this.state.isApplying && obj.userID == app.personal.userID) &&
                     <Text style={styles.username}>申请上麦...</Text>
                 }
                 {this.state.isAdmin && this.renderRowButton(obj, sectionID)}
             </View>
-        )
+        );
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
             <View
                 style={styles.separator}
-                key={sectionID+''+rowID}/>
+                key={sectionID + '' + rowID} />
         );
     },
-    renderSectionHeader(obj, sectionID) {
-        var text = sectionID==0?'麦上 ':'旁听 ';
+    renderSectionHeader (obj, sectionID) {
+        const text = sectionID == 0 ? '麦上 ' : '旁听 ';
         return (
             <View style={styles.sectionHeader}>
                 <Text style={styles.sectionHeaderText}>
@@ -429,39 +428,39 @@ module.exports = React.createClass({
             </View>
         );
     },
-    render() {
-        let speakers = this.state.speakers;
-        let cnt = this.state.speakers.length;
+    render () {
+        const speakers = this.state.speakers;
+        const cnt = this.state.speakers.length;
         return (
             <View style={styles.container}>
                 <Image
                     resizeMode='stretch'
                     source={app.img.meeting_background}
                     style={styles.headImgBack} />
-                  <View style={styles.headImgView}>
+                <View style={styles.headImgView}>
                     <Text numberOfLines={1} style={styles.speakerIng}>
-                      {cnt>0?'正在讲话...':''}
-                     </Text>
-                     {
-                       cnt>0 &&
-                         <DImage
-                          resizeMode='stretch'
-                          defaultSource={app.img.personal_head}
-                          source={cnt>0?{uri:speakers[0].userInfo.userImg||'undefined'}:app.img.personal_head}
-                          style={app.isandroid?styles.headImgTopAndroid:styles.headImgTopIos}/>
+                        {cnt > 0 ? '正在讲话...' : ''}
+                    </Text>
+                    {
+                       cnt > 0 &&
+                       <DImage
+                           resizeMode='cover'
+                           defaultSource={app.img.personal_head}
+                           source={cnt > 0 ? { uri:speakers[0].userInfo.userImg || 'undefined' } : app.img.personal_head}
+                           style={styles.headImgTopIos} />
                     }
                     {
-                      cnt>0 &&
-                        <View style={styles.headImgTopRed}/>
+                      cnt > 0 &&
+                      <View style={styles.headImgTopRed} />
                     }
                     <Text numberOfLines={1} style={styles.speakerName}>
-                      {cnt>0?speakers[0].userInfo.userName:''}
+                        {cnt > 0 ? speakers[0].userInfo.userName : ''}
                     </Text>
                     <Text numberOfLines={1} style={styles.speakerAlias}>
-                      {cnt>0?speakers[0].userInfo.userAlias:''}
+                        {cnt > 0 ? speakers[0].userInfo.userAlias : ''}
                     </Text>
-                  </View>
-                <ListView                    enableEmptySections={true}
+                </View>
+                <ListView                    enableEmptySections
                     style={styles.listView}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
@@ -473,12 +472,12 @@ module.exports = React.createClass({
                     style={styles.speakerOnContainer}
                     onPress={this.toggleSpeaker}>
                     {
-                        this.state.isSpeakerOn?
-                    <Image
-                        resizeMode='stretch'
-                        source={app.img.train_speaker_on}
-                        style={styles.speakerOn} />
-                    :<Image
+                        this.state.isSpeakerOn ?
+                            <Image
+                                resizeMode='stretch'
+                                source={app.img.train_speaker_on}
+                                style={styles.speakerOn} />
+                    : <Image
                         resizeMode='stretch'
                         source={app.img.train_speaker_off}
                         style={styles.speakerOff} />
@@ -487,65 +486,59 @@ module.exports = React.createClass({
                 {
                     this.state.showMessageBox &&
                     <MessageBox
-                        content="时间结束，请退出房间"
+                        content='时间结束，请退出房间'
                         doConfirm={this.goBack}
                         />
                 }
                 <ProgressHud
                     isVisible={this.state.is_hud_visible}
                     isDismissible={false}
-                    overlayColor="rgba(0, 0, 0, 0.6)"
+                    overlayColor='rgba(0, 0, 0, 0.6)'
                     color='#239FDB'
                     />
                 {
                     this.state.showPromptMessageBox &&
                     <PromptMessageBox
                         doConfirm={this.doPromptMessageBoxConfirm}
-                        doCancel={()=>this.setState({showPromptMessageBox: false})}
+                        doCancel={() => this.setState({ showPromptMessageBox: false })}
                         >
                         {this.state.promptMessageContent}
                     </PromptMessageBox>
                 }
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
     headImgBack:{
-      width:sr.w,
-      height:173,
-      position:'absolute',
-      left:0,
-      top:0,
+        width:sr.w,
+        height:173,
+        position:'absolute',
+        left:0,
+        top:0,
     },
     headImgView:{
-      width:sr.w,
-      height:173,
-      alignItems:'center',
-      justifyContent:'center',
+        width:sr.w,
+        height:173,
+        alignItems:'center',
+        justifyContent:'center',
     },
     headImgTopIos:{
-      width:  60,
-      height: 60,
-      borderRadius: 30,
+        width:  60,
+        height: 60,
+        borderRadius: 30,
     },
     headImgTopRed:{
-      marginTop:-14,
-      marginLeft:40,
-      width:12,
-      height:12,
-      borderRadius:6,
-      backgroundColor:'red',
-    },
-    headImgTopAndroid:{
-      width:  sr.rws(60),
-      height: sr.rws(60),
-      borderRadius: sr.rws(240),
+        marginTop:-14,
+        marginLeft:40,
+        width:12,
+        height:12,
+        borderRadius:6,
+        backgroundColor:'red',
     },
     speakerIng: {
         position: 'absolute',

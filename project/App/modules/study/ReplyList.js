@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     Image,
     ListView,
     TextInput,
@@ -14,22 +14,22 @@ var {
     Navigator,
 } = ReactNative;
 
-var Subscribable = require('Subscribable');
-var RefreshComments = require('../../manager/RefreshComments.js');
-var {Button, DImage} = COMPONENTS;
+const Subscribable = require('Subscribable');
+const RefreshComments = require('../../manager/RefreshComments.js');
+const { Button, DImage } = COMPONENTS;
 
-var SonCommentList = React.createClass({
-    render() {
-        var obj = this.props.obj;
-        var tempPublisherTime =app.utils.getJetlagString(obj.publisherTime);
+const SonCommentList = React.createClass({
+    render () {
+        const obj = this.props.obj;
+        const tempPublisherTime = app.utils.getJetlagString(obj.publisherTime);
         return (
             <View
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.itemContainer}>
                     <DImage
                         resizeMode='cover'
                         defaultSource={app.img.personal_head}
-                        source={{uri:obj.publisherImg}}
+                        source={{ uri:obj.publisherImg }}
                         style={styles.headerIcon} />
                     <View style={styles.titleStyle}>
                         <Text
@@ -54,8 +54,8 @@ var SonCommentList = React.createClass({
 
 module.exports = React.createClass({
     mixins: [Subscribable.Mixin],
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             userID:this.props.userID,
             videoID:this.props.videoID,
@@ -66,66 +66,66 @@ module.exports = React.createClass({
             listData: [],
         };
     },
-    componentWillMount() {
-        this.addListenerOn(RefreshComments, 'DO_REFRESH_COMMENTS', (param)=>{
+    componentWillMount () {
+        this.addListenerOn(RefreshComments, 'DO_REFRESH_COMMENTS', (param) => {
             this.getSonComment();
         });
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getSonComment();
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
             <View
                 style={styles.separator}
-                key={rowID}/>
+                key={rowID} />
         );
     },
-    getSonComment() {
-        var param = {
+    getSonComment () {
+        const param = {
             userID:this.state.userID,
             videoID:this.state.videoID,
             commentID:this.state.commentInfo.commentID,
         };
         POST(app.route.ROUTE_GET_SON_COMMENT, param, this.doGetSonCommentSuccess);
     },
-    doGetSonCommentSuccess(data) {
+    doGetSonCommentSuccess (data) {
         if (data.success) {
-            let commentList = data.context.commentList||[];
-            var commentLength = data.context.commentList.length;
-            this.setState({listData: commentList, dataSource: this.ds.cloneWithRows(commentList), commentLength: commentLength});
+            const commentList = data.context.commentList || [];
+            const commentLength = data.context.commentList.length;
+            this.setState({ listData: commentList, dataSource: this.ds.cloneWithRows(commentList), commentLength: commentLength });
         } else {
-            this.setState({commentLength: false});
+            this.setState({ commentLength: false });
         }
     },
-    renderComment(obj) {
+    renderComment (obj) {
         return (
-            <SonCommentList obj = {obj} />
-        )
+            <SonCommentList obj={obj} />
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.listContainer}>
                 <View style={styles.container}>
                     {
-                        this.state.commentLength?
-                        <ListView
-                            initialListSize={1}
-                            enableEmptySections={true}
-                            dataSource={this.state.dataSource}
-                            renderRow={this.renderComment}
-                            renderSeparator={this.renderSeparator}
+                        this.state.commentLength ?
+                            <ListView
+                                initialListSize={1}
+                                enableEmptySections
+                                dataSource={this.state.dataSource}
+                                renderRow={this.renderComment}
+                                renderSeparator={this.renderSeparator}
                             />
                         :
-                        <Text style={{alignSelf: 'center', marginBottom: 15}}>暂无评论回复!</Text>
+                            <Text style={{ alignSelf: 'center', marginBottom: 15 }}>暂无评论回复!</Text>
                     }
                 </View>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',
@@ -137,7 +137,7 @@ var styles = StyleSheet.create({
     },
     separator: {
         height: 1,
-        backgroundColor: '#EEEEEE'
+        backgroundColor: '#EEEEEE',
     },
     itemContainer: {
         marginTop: 10,
@@ -163,7 +163,7 @@ var styles = StyleSheet.create({
     },
     itemNameText: {
         fontSize: 14,
-        width: sr.w-110,
+        width: sr.w - 110,
         marginRight: 10,
     },
     headerIcon: {

@@ -1,23 +1,23 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
 } = ReactNative;
 
-var Native = require('../../native/index.js');
-var {Button} = COMPONENTS;
+const Native = require('../../native/index.js');
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    createWinCoinOrder() {
-        var param = {
-            userID: "56e656d10cf2b97fb6c3b779",
-            winCoinID: "56e6314c0cf2a703c3fe7346",
+    createWinCoinOrder () {
+        const param = {
+            userID: '56e656d10cf2b97fb6c3b779',
+            winCoinID: '56e6314c0cf2a703c3fe7346',
         };
         POST(app.route.ROUTE_CREATE_WIN_CONIN_ORDER, param, this.createWinCoinOrderSuccess);
     },
-    createWinCoinOrderSuccess(data) {
+    createWinCoinOrderSuccess (data) {
         if (data.success) {
             this.tradeNo = data.context.orderNo;
             this.getaliPayInfo();
@@ -25,17 +25,17 @@ module.exports = React.createClass({
             console.log(data.msg);
         }
     },
-    getaliPayInfo() {
-        var param = {
+    getaliPayInfo () {
+        const param = {
         };
         POST(app.route.ROUTE_GET_ALIPAY_INFO, param, this.getaliPayInfoSuccess);
     },
-    getaliPayInfoSuccess(data) {
+    getaliPayInfoSuccess (data) {
         if (data.success) {
-            var context = data.context;
+            const context = data.context;
             this.partner = context.alipayPID;
             this.seller = context.alipayName;
-            this.privateKey = context.alipayPrivateKey ;
+            this.privateKey = context.alipayPrivateKey;
             this.notifyUrl = context.callbackUrl;
             this.doPay();
         } else {
@@ -53,31 +53,30 @@ module.exports = React.createClass({
     * function(successResults){} 是成功之后的回调函数
     * function(errorResults){} 是失败之后的回调函数
     */
-    doPay() {
-        var obj = {
+    doPay () {
+        const obj = {
             partner: this.partner,
             seller: this.seller,
             privateKey: this.privateKey,
-        	tradeNo: this.tradeNo,
-        	subject: "购买赢销币",
-        	body: "我是测试内容",
-        	price: 0.01,
-        	notifyUrl: this.notifyUrl
+            tradeNo: this.tradeNo,
+            subject: '购买赢销币',
+            body: '我是测试内容',
+            price: 0.01,
+            notifyUrl: this.notifyUrl,
         };
         console.log(obj);
-        Native.Alipay.pay(obj, function(results){console.log('success:', results)}, function(results){'error:', console.log(results)});
+        Native.Alipay.pay(obj, (results) => { console.log('success:', results); }, (results) => { console.log('error:', results); });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <Button onPress={this.createWinCoinOrder}>支付宝支付</Button>
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',

@@ -205,7 +205,7 @@ public class UMengSharePlugin extends ReactContextBaseJavaModule  implements Act
     };
 
     @ReactMethod
-    public void ThirdPartyLogin(final String platfrom, final Callback callback) {
+    public void thirdPartyLogin(final String platfrom, final Callback callback) {
         mCallback = callback;
         activity.runOnUiThread(new Runnable() {
             @Override

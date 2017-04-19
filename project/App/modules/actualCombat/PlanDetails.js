@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     Easing,
     StyleSheet,
     View,
@@ -12,60 +12,59 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var Audio = require('@remobile/react-native-audio');
-var ScoresInfoView = require('./ScoresInfoView.js');
-var AidBigImage = require('./AidBigImage.js');
-var {Button,DImage} = COMPONENTS;
-
+const Audio = require('@remobile/react-native-audio');
+const ScoresInfoView = require('./ScoresInfoView.js');
+const AidBigImage = require('./AidBigImage.js');
+const { Button, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '方案详情',
-        leftButton: {handler: ()=>app.scene.goBack()},
+        leftButton: { handler: () => app.scene.goBack() },
     },
-    goBack() {
+    goBack () {
         this.props.doRefresh();
         app.navigator.pop();
     },
-    componentDidMount() {
+    componentDidMount () {
         app.phoneMgr.toggleSpeaker(true);
-        this.setState({isSpeakerOn:app.phoneMgr.isSpeakerOn});
+        this.setState({ isSpeakerOn:app.phoneMgr.isSpeakerOn });
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         this.stopSpeak();
     },
-    stopSpeak() {
+    stopSpeak () {
         if (this.player) {
             this.player.stop();
             this.player.release();
             this.player = null;
-            for (var i=0;i< this.isPlaying.length;i++) {
-                this.isPlaying[i]=false;
+            for (let i = 0; i < this.isPlaying.length; i++) {
+                this.isPlaying[i] = false;
             }
-            this.setState({isPlaying: this.isPlaying});
+            this.setState({ isPlaying: this.isPlaying });
         }
     },
-    componentWillMount() {
+    componentWillMount () {
         this.getList();
     },
-    getList() {
-        var param = {
+    getList () {
+        const param = {
             schemeID: this.props.schemeID,
             userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_GET_CASE_SCHEME_DETAIL, param, this.getListSuccess);
     },
-    getListSuccess(data) {
+    getListSuccess (data) {
         if (data.success) {
             this.isPlaying = _.fill(Array(data.context.audioArray.length), false);
-            this.setState({planDetail:data.context, isPlaying: this.isPlaying});
+            this.setState({ planDetail:data.context, isPlaying: this.isPlaying });
         } else {
             Toast(data.msg);
         }
     },
-    getInitialState() {
-      this.isPlaying = [];
+    getInitialState () {
+        this.isPlaying = [];
         return {
             content: '',
             planDetail:{},
@@ -75,8 +74,8 @@ module.exports = React.createClass({
             isTimeOut:'',
         };
     },
-    doReadVoice(url, index){
-        if (!url || url==='null') {
+    doReadVoice (url, index) {
+        if (!url || url === 'null') {
             Toast('音频地址为空');
             return;
         }
@@ -85,29 +84,29 @@ module.exports = React.createClass({
             this.player.release();
             this.player = null;
             this.isPlaying[index] = false;
-            this.setState({isPlaying: this.isPlaying});
+            this.setState({ isPlaying: this.isPlaying });
         } else {
-            var tempIsPlaying = _.find(this.isPlaying, (item)=>item==true);
+            const tempIsPlaying = _.find(this.isPlaying, (item) => item == true);
             if (tempIsPlaying && tempIsPlaying != null) {
-                if (this.player!=null) {
+                if (this.player != null) {
                     this.player.stop();
                     this.player.release();
                 }
                 this.player = null;
                 this.isPlaying[this.tempIndex] = false;
-                this.setState({isPlaying: this.isPlaying});
+                this.setState({ isPlaying: this.isPlaying });
                 this.player = new Audio(url, (error) => {
                     if (!error) {
                         this.isPlaying[index] = true;
-                        this.setState({isPlaying: this.isPlaying});
+                        this.setState({ isPlaying: this.isPlaying });
                         this.tempIndex = index;
-                        this.player!=null&&this.player.play(()=>{
+                        this.player != null && this.player.play(() => {
                             this.player.release();
                             this.player = null;
                             this.isPlaying[index] = false;
-                            this.setState({isPlaying: this.isPlaying});
+                            this.setState({ isPlaying: this.isPlaying });
                         });
-                    } else{
+                    } else {
                         Toast('播放失败');
                     }
                 });
@@ -115,102 +114,100 @@ module.exports = React.createClass({
                 this.player = new Audio(url, (error) => {
                     if (!error) {
                         this.isPlaying[index] = true;
-                        this.setState({isPlaying: this.isPlaying});
+                        this.setState({ isPlaying: this.isPlaying });
                         this.tempIndex = index;
-                        this.player!=null&&this.player.play(()=>{
+                        this.player != null && this.player.play(() => {
                             this.player.release();
                             this.player = null;
                             this.isPlaying[index] = false;
-                            this.setState({isPlaying: this.isPlaying});
+                            this.setState({ isPlaying: this.isPlaying });
                         });
-                    } else{
+                    } else {
                         Toast('播放失败');
                     }
                 });
             }
         }
     },
-    toggleSpeaker(){
+    toggleSpeaker () {
         app.phoneMgr.toggleSpeaker();
-        this.setState({isSpeakerOn:app.phoneMgr.isSpeakerOn});
+        this.setState({ isSpeakerOn:app.phoneMgr.isSpeakerOn });
         if (this.state.isSpeakerOn) {
             Toast('已经为你切换到扬声器');
         } else {
             Toast('已经为你切换到听筒');
         }
     },
-    _onPress() {
-            var param = {
-                userID: app.personal.info.userID,
-                kitID: this.props.schemeID,
-                type: this.props.tabIndex,
-            };
-            POST(app.route.ROUTE_PARISE_KITS, param, this.praiseKitsSuccess);
+    _onPress () {
+        const param = {
+            userID: app.personal.info.userID,
+            kitID: this.props.schemeID,
+            type: this.props.tabIndex,
+        };
+        POST(app.route.ROUTE_PARISE_KITS, param, this.praiseKitsSuccess);
     },
-    praiseKitsSuccess(data) {
+    praiseKitsSuccess (data) {
         if (data.success) {
             this.getList();
             if (this.state.planDetail.isPraise) {
-                this.setState({isTimeOut: "-1"});
+                this.setState({ isTimeOut: '-1' });
             } else {
-                this.setState({isTimeOut: "+1"});
+                this.setState({ isTimeOut: '+1' });
             }
         } else {
             Toast(data.msg);
         }
     },
-    showBigImage(imageArray, index) {
+    showBigImage (imageArray, index) {
         app.showModal(
             <AidBigImage
                 doImageClose={app.closeModal}
                 defaultIndex={index}
-                defaultImageArray={imageArray}>
-            </AidBigImage>
+                defaultImageArray={imageArray} />
         );
     },
-    goScore() {
+    goScore () {
         this.stopSpeak();
         app.navigator.push({
             component: ScoresInfoView,
             title:'打分',
-            passProps: {schemeID: this.props.schemeID, theme: this.state.schemeDetail.title},
+            passProps: { schemeID: this.props.schemeID, theme: this.state.schemeDetail.title },
         });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.contentstyle2}>
 
                     <View style={styles.lineupstyle}>
                         <View style={styles.themeStyle}>
-                            <Text style={styles.Textstyle} >{'主题：'+this.state.schemeDetail.title}</Text>
+                            <Text style={styles.Textstyle} >{'主题：' + this.state.schemeDetail.title}</Text>
                         </View>
-                        <View style={styles.linestyle}>
-                        </View>
+                        <View style={styles.linestyle} />
                     </View>
                     <View style={styles.linedownstyle}>
-                        <Text style={styles.TextstyleTime} >{'发布时间:'+this.state.schemeDetail.createTime}</Text>
+                        <Text style={styles.TextstyleTime} >{'发布时间:' + this.state.schemeDetail.createTime}</Text>
                     </View>
                 </View>
                 <View style={styles.iconstyle}>
-                    <DImage defaultSource={app.img.personal_head} source={{uri: this.state.schemeDetail.publisherImg}} style={styles.imageiconstyle} />
+                    <DImage defaultSource={app.img.personal_head} source={{ uri: this.state.schemeDetail.publisherImg }} style={styles.imageiconstyle} />
                     <Text numberOfLines={1} style={styles.Textstyle1} >{this.state.schemeDetail.publisherName}</Text>
                 </View>
                 <View style={styles.scrollImageStyle}>
-                    <ScrollView horizontal={true} style={styles.imageContainer}>
+                    <ScrollView horizontal style={styles.imageContainer}>
                         {
-                            this.state.planDetail.imageArray&&this.state.planDetail.imageArray.map((item, i)=>{
+                            this.state.planDetail.imageArray && this.state.planDetail.imageArray.map((item, i) => {
                                 return (
-                                    <TouchableHighlight key={i} underlayColor="rgba(0, 0, 0, 0)" onPress={this.showBigImage.bind(null, this.state.planDetail.imageArray, i)} style={styles.bigImageTouch}>
+                                    <TouchableHighlight key={i} underlayColor='rgba(0, 0, 0, 0)' onPress={this.showBigImage.bind(null, this.state.planDetail.imageArray, i)} style={styles.bigImageTouch}>
                                         <Image
-                                        key={i}
-                                        resizeMode='stretch'
-                                        defaultSource={app.img.common_default}
-                                        source={{uri: item}}
-                                        style={styles.imageStyle}
+                                            key={i}
+                                            resizeMode='stretch'
+                                            defaultSource={app.img.common_default}
+                                            source={{ uri: item }}
+                                            style={styles.imageStyle}
                                         />
                                     </TouchableHighlight>
-                                )
+                                );
                             })
                         }
                     </ScrollView>
@@ -218,26 +215,26 @@ module.exports = React.createClass({
                 <View style={styles.contentstyle1}>
                     <ScrollView style={styles.contentstyle2}>
                         {
-                            this.state.planDetail.audioArray&&this.state.planDetail.audioArray.map((item, i)=>{
+                            this.state.planDetail.audioArray && this.state.planDetail.audioArray.map((item, i) => {
                                 return (
                                     <View key={i} style={[styles.audioContainer]}>
                                         <Text style={styles.audioText} >
-                                            {item.whenLong+"''"}
+                                            {item.whenLong + "''"}
                                         </Text>
                                         <TouchableOpacity
-                                            onPress={this.doReadVoice.bind(null,item.recordPath,i)}
+                                            onPress={this.doReadVoice.bind(null, item.recordPath, i)}
                                             delayLongPress={1500}
-                                            onLongPress= {this.toggleSpeaker}
+                                            onLongPress={this.toggleSpeaker}
                                             style={styles.tabButton}>
                                             <View
                                                 style={styles.audioPlay}>
                                                 <Image
-                                                    source={this.state.isPlaying[i]?app.img.actualCombat_voice_playing:app.img.actualCombat_voice_play}
+                                                    source={this.state.isPlaying[i] ? app.img.actualCombat_voice_playing : app.img.actualCombat_voice_play}
                                                     style={styles.imagevoice} />
                                             </View>
                                         </TouchableOpacity>
                                     </View>
-                                )
+                                );
                             })
                         }
                     </ScrollView>
@@ -245,23 +242,23 @@ module.exports = React.createClass({
                 <View style={styles.tabContainer}>
                     <TouchableOpacity
                         onPress={this._onPress}
-                        style={[styles.tabButton1, {backgroundColor:'#FFFFFF'}]}>
-                        <Image source={this.state.planDetail.isPraise?app.img.actualCombat_heart:app.img.actualCombat_heart2} style={styles.imagesstyle} />
-                        <Text style={[styles.tabText,{color: CONSTANTS.THEME_COLOR}]} >{this.state.planDetail.praise}</Text>
+                        style={[styles.tabButton1, { backgroundColor:'#FFFFFF' }]}>
+                        <Image source={this.state.planDetail.isPraise ? app.img.actualCombat_heart : app.img.actualCombat_heart2} style={styles.imagesstyle} />
+                        <Text style={[styles.tabText, { color: CONSTANTS.THEME_COLOR }]} >{this.state.planDetail.praise}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={this.goScore}
-                        style={[styles.tabButton1, {backgroundColor: CONSTANTS.THEME_COLOR}]}>
+                        style={[styles.tabButton1, { backgroundColor: CONSTANTS.THEME_COLOR }]}>
                         <Image source={app.img.actualCombat_mark} style={styles.imagesstyle} />
-                        <Text style={[styles.tabText,{color:'#FFFFFF'}]} >去打分</Text>
+                        <Text style={[styles.tabText, { color:'#FFFFFF' }]} >去打分</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex:1,
         backgroundColor:'#EEEEEE',
@@ -319,7 +316,7 @@ var styles = StyleSheet.create({
     imageiconstyle:{
         width:30,
         height:30,
-        borderRadius: app.isandroid?30*4:15,
+        borderRadius: app.isandroid ? 30 * 4 : 15,
         borderWidth:1.5,
         borderColor:'#A60245',
     },
@@ -351,7 +348,7 @@ var styles = StyleSheet.create({
     linedownstyle:{
         height: 50,
         width:sr.w,
-        backgroundColor: '#EEEEEE'
+        backgroundColor: '#EEEEEE',
     },
     Textstyle: {
         fontSize: 16,

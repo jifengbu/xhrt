@@ -1,6 +1,6 @@
-#import "RCTBridge.h"
-#import "RCTUtils.h"
-#import "RCTEventDispatcher.h"
+#import <React/RCTBridge.h>
+#import <React/RCTUtils.h>
+#import <React/RCTEventDispatcher.h>
 #include "bear_interface_ios.h"
 
 #define EVENT_ON_JOIN_ROOM @"EVENT_ON_JOIN_ROOM"

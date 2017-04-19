@@ -1,0 +1,39 @@
+{
+    "success": true,
+    "msg": "获取数据成功",
+    "context": {
+        "dayplan": [
+            {
+                "id": "57e90cd8a5331",
+                "userId": "578edd94c9043",
+                "planId": "2016-09-2657890431",
+                "weekPlanId": "201609-35aa0cf2",
+                "submitDate": "2016-09-26 19:56",
+                "updateDate": "2016-09-28 14:42",
+                "content": "日计划测试",
+                "week": 1,
+                "weekIsDate": "2016-09-30",
+                "isOver": 1
+            }
+        ],
+        "daySummary": {
+            "id": "57e9dc432c91096a525d9273",
+            "userID": "578eddaa0cf2a4e1d94c9043",
+            "dayPlanId": "2016-09-27578e4e1d94c3",
+            "submitDate": "2016-09-27 10:41:07",
+            "updateDate": "2016-09-27 10:41:07",
+            "content": "测试日总结"
+        },
+        "actualWorks": {
+            "id": "43214refdsa",
+            "userID": "23kdjlkfds",
+            "workDate": "2016-10-31",
+            "contextList": [
+                {
+                    "content": "请老陈喝酒",
+                    "isOver": 0
+                }
+            ]
+        }
+    }
+}

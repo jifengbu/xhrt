@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -9,10 +9,10 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var Button = require('./Button.js');
+const Button = require('./Button.js');
 
 module.exports = React.createClass({
-    getDefaultProps: function() {
+    getDefaultProps: function () {
         return {
             title: '温馨提示',
             content: '确定要执行操作吗？',
@@ -20,42 +20,41 @@ module.exports = React.createClass({
             confirmText: '确定',
         };
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    doCancel() {
-        this.closeModal(()=>{
+    doCancel () {
+        this.closeModal(() => {
             this.props.doCancel();
         });
     },
-    doConfirm() {
-        this.closeModal(()=>{
+    doConfirm () {
+        this.closeModal(() => {
             this.props.doConfirm();
         });
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <Text style={styles.title}>{this.props.title}</Text>
-                    <Text style={styles.redLine}>
-                    </Text>
+                    <Text style={styles.redLine} />
                     <Text style={styles.content}>
                         {this.props.content}
                     </Text>
@@ -77,23 +76,23 @@ module.exports = React.createClass({
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     buttonViewStyle: {
         position:'absolute',
         bottom: 0,
         flexDirection: 'row',
-        width: sr.w-40,
+        width: sr.w - 40,
         height: 50,
         justifyContent:'space-between',
     },
     redLine: {
         marginTop: 10,
-        width: sr.w-40,
+        width: sr.w - 40,
         height: 1,
-        backgroundColor: '#A62045'
+        backgroundColor: '#A62045',
     },
     buttonStyleContain: {
         flex: 1,
@@ -111,15 +110,15 @@ var styles = StyleSheet.create({
     },
     buttonStyle: {
         fontSize: 20,
-        color: 'white'
+        color: 'white',
     },
     buttonStyleCannel: {
         fontSize: 20,
-        color: '#A62045'
+        color: '#A62045',
     },
     container: {
-        width:sr.w-40,
-        height:sr.h/3,
+        width:sr.w - 40,
+        height:sr.h / 3,
         alignItems:'center',
         backgroundColor:'#FFFFFF',
     },
@@ -143,6 +142,6 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
 });

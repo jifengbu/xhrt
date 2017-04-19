@@ -1,59 +1,55 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
     ListView,
 } = ReactNative;
 
-
-var AgentReturns = require('./AgentReturns.js');
-
+const AgentReturns = require('./AgentReturns.js');
 
 module.exports = React.createClass({
     statics: {
         title:'提现记录',
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             dataSource: this.ds.cloneWithRows([]),
             recordBool: null,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getCashRecode();
     },
-    getCashRecode() {
-        var param = {
-            userID: app.personal.info.userID
+    getCashRecode () {
+        const param = {
+            userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_CASH_RECORD, param, this.doGetCashRecodeSuccess);
     },
-    doGetCashRecodeSuccess(data) {
+    doGetCashRecodeSuccess (data) {
         if (data.success) {
-            let applyList = data.context.applyList||[];
-            this.setState({dataSource: this.ds.cloneWithRows(applyList),recordBool:applyList.length});
+            const applyList = data.context.applyList || [];
+            this.setState({ dataSource: this.ds.cloneWithRows(applyList), recordBool:applyList.length });
         }
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
             <View
                 style={styles.separator}
-                key={rowID}/>
+                key={rowID} />
         );
     },
-    renderRow(obj){
-        return(
-            <View style={{marginTop: 10,flexDirection: 'row'}}>
+    renderRow (obj) {
+        return (
+            <View style={{ marginTop: 10, flexDirection: 'row' }}>
                 <View style={styles.dateContainer}>
-                    <View style={styles.cicleContainer}>
-                    </View>
-                    <View style={styles.lineContainer}>
-                    </View>
+                    <View style={styles.cicleContainer} />
+                    <View style={styles.lineContainer} />
                 </View>
                 <View style={styles.timeContainer}>
                     <Text style={styles.textTitle}>
@@ -62,14 +58,14 @@ module.exports = React.createClass({
                     <ItemListView obj={obj} />
                 </View>
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <ListView
                     initialListSize={1}
-                    enableEmptySections={true}
+                    enableEmptySections
                     style={styles.list}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
@@ -77,52 +73,51 @@ module.exports = React.createClass({
                     />
             </View>
         );
-    }
+    },
 });
 
-var ItemListView = React.createClass({
-    render() {
-        var {obj} = this.props;
-        return(
+const ItemListView = React.createClass({
+    render () {
+        const { obj } = this.props;
+        return (
             <View style={styles.timeContainerChild}>
                 <View style={styles.viewContainer}>
                     <Text style={styles.textStyle}>
                         {'提出申请提现 '}
                     </Text>
                     <Text style={styles.textApply}>
-                        {'￥'+obj.value}
+                        {'￥' + obj.value}
                     </Text>
                 </View>
-                <View style={{marginTop: 15}}>
+                <View style={{ marginTop: 15 }}>
                     <Text style={styles.textTitle}>
                         {obj.playMoneyTime}
                     </Text>
                 </View>
                 {
-                    obj.Status == "0"?
-                    <Text style={styles.textStyle}>
+                    obj.Status == '0' ?
+                        <Text style={styles.textStyle}>
                         打款处理中...
                     </Text>
                     :
-                    <View style={styles.viewContainer}>
-                        <Text style={styles.textStyle}>
-                            {'成功提现'}
-                        </Text>
-                        <Text style={styles.textApply}>
-                            {' ￥'+obj.value}
-                        </Text>
-                        <Text style={styles.textStyle}>
-                            {',   当前账户余额￥'+obj.balance}
-                        </Text>
-                    </View>
+                        <View style={styles.viewContainer}>
+                            <Text style={styles.textStyle}>
+                                {'成功提现'}
+                            </Text>
+                            <Text style={styles.textApply}>
+                                {' ￥' + obj.value}
+                            </Text>
+                            <Text style={styles.textStyle}>
+                                {',   当前账户余额￥' + obj.balance}
+                            </Text>
+                        </View>
                 }
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -136,16 +131,16 @@ var styles = StyleSheet.create({
         borderRadius: 7,
         marginTop: 3,
         marginLeft: 25,
-        backgroundColor: '#A42346'
+        backgroundColor: '#A42346',
     },
     lineContainer: {
         width: 2,
         height: 80,
         marginLeft: 32,
-        backgroundColor: '#DDDDDD'
+        backgroundColor: '#DDDDDD',
     },
     timeContainer: {
-        width: sr.w-60,
+        width: sr.w - 60,
     },
     timeContainerChild: {
     },
@@ -155,12 +150,12 @@ var styles = StyleSheet.create({
     },
     textStyle: {
         fontSize: 14,
-        color: '#555555'
+        color: '#555555',
     },
     textTitle: {
         fontSize: 14,
         marginVertical: 3,
-        color: CONSTANTS.THEME_COLOR
+        color: CONSTANTS.THEME_COLOR,
     },
     textApply: {
         fontSize: 14,

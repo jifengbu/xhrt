@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>赢销截拳道</title>
+	<link rel="stylesheet" href="../../css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+</head>
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: #EEEEEE;
+	}
+	.header {
+		width: 100%;
+		height: 52px;
+		background-color: #a61f45;
+	}
+	.header .name {
+		padding-top: 20px;
+		text-align: center;
+		font-size: 16px;
+		color: #fff;
+		font-weight: 600;
+	}
+	.centent {
+		text-align: center;
+	}
+	.centent video{
+		margin-top: 80px;
+		text-align: center;
+	}
+	.videoInfo {
+		background-color: white;
+		height: 40px;
+		text-align: left;
+		padding-left: 5px;
+		padding-right: 5px;
+		border-radius: 3px;
+	}
+	.introduce .sliodTitle {
+		margin-top: 10px;
+		background: white;
+		font-size: 17px;
+		text-align: left;
+		padding-top: 15px;
+		padding-bottom: 15px;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+	.introduce .videoDesc {
+		margin-top: 3px;
+		background: white;
+		text-align: left;
+		padding: 15px 5px 10px 15px;
+	}
+	.videoInfo .detail {
+		float: right;
+		display: flex;
+	}
+	.detail img {
+		margin-top: 15px;
+		width: 20px;
+		height: 15px;
+	}
+	.detail p {
+		margin-top: 12px;
+		margin-left: 10px;
+		margin-right: 10px;
+		width: 80%;
+	}
+	.videoInfo .title {
+		float: left;
+		padding-top: 10px;
+		width: 70%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.rightBottom {
+		margin-top: 15px;
+		display: flex;
+	}
+	.mui-table-view-cell {
+		height: 102px;
+		text-align: left;
+	}
+	.rightBottom img{
+		width: 20px;
+		height: 15px;
+		margin-top: 2px;
+		float: left;
+	}
+	.rightBottom .text{
+		margin-left: 3px;
+		float: left;
+	}
+	.rightBottom .updateTime{
+		float: right;
+		width: 130px;
+		text-align: right;
+	}
+	.mui-table-view-cell .title{
+		font-size: 16px;
+		width: 160px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.mui-table-view-cell .desc{
+		font-size: 13px;
+		margin-top: 2px;
+		width: 160px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.mui-table-view-cell .leftImg{
+		float: left;
+		margin-right: 10px;
+		width: 120px;
+		height: 80px;
+		border-radius: 5px;
+	}
+	.relativeCourse {
+		height: 40px;
+		background-color: white;
+		margin-top: 10px;
+		padding-top: 10px;
+		padding-left: 20px;
+		margin-bottom: 3px;
+	}
+</style>
+<body>
+	<div class="centent">
+		<video id="video" width="100%" height="210" controls="controls"></video>
+		<div class="videoInfo">
+			<div class="title"></div>
+			<div class="detail">
+				<img src="../../img/eye.png"></img>
+				<p></p>
+			</div>
+		</div>
+		<div class="introduce">
+			<div class="sliodTitle">课程介绍</div>
+			<div class="videoDesc"></div>
+		</div>
+		<div class="relativeCourse">相关课程</div>
+		<ul class="mui-table-view" id="relativeCourseList"></ul>
+	</div>
+	<div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+		<button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button>
+		<div class="installTipCell">
+			<img src="../../img/logo.png"></img>
+			<div class="cellRight">
+				<div class="cellTitle">赢销截拳道</div>
+				<div class="cellContent">赢销截拳道人人都需要</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="../../js/thirdparty/mui.min.js"></script>
+<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script src="../../js/utils/regular.js"></script>
+<script src="../../js/thirdparty/crypto-js.js"></script>
+<script src="../../js/utils/app.js"></script>
+<script>
+	$(function(){
+		var userID = getParameter("userID");
+		var videoID = getParameter("videoID");
+		mui.os.ios?$('.installTipCell').append('<button class="downloadApp"><a href="https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8">下载APP</a></button>'):$('.installTipCell').append('<button class="downloadApp"><a href="market://details?id=com.yxjqd">下载APP</a></button>');
+		getData(userID,videoID);
+	});
+
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+	function getData(userID,videoID) {
+		var url = app.route.ROUTE_GET_RELEVANT_VIDEO;
+		var data = {
+			userID:userID,
+			videoID : videoID,
+		};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: getDataSuccess,
+		});
+	}
+	function getDataSuccess(data) {
+		if (data.success) {
+			var videoTitle = data.context.name;
+			var clicks = data.context.clicks;
+			var videoUrl = data.context.urlPlay;
+			var videoImg = data.context.urlImg;
+			var videoDesc = data.context.detail;
+			$(".videoInfo .title").html(videoTitle);
+			$(".introduce .videoDesc").html(videoDesc);
+			$(".videoInfo .detail p").html(clicks);
+			$(".centent video").html("<source src="+videoUrl+">")
+			$(".centent video").attr("poster",videoImg);
+			showList(data.context.videoList);
+		}
+	}
+	function showList(list) {
+		var html = '';
+		for (var i in list) {
+			html += getListItem(list[i]);
+		}
+		$('#relativeCourseList').html(html);
+	}
+	function getListItem(item,index) {
+		var html = '';
+		html += '<li class="mui-table-view-cell">'
+		html += 		'<img class="leftImg" src="'+item.urlImg+'">'
+		html += 		'<div class="rightInfo">'
+		html += 			'<div class="rightTop">'
+		html += 				'<div class="title">'+item.name+'</div>'
+		html += 				'<p class="desc">'+item.detail+'</p>'
+		html += 			'</div>'
+		html += 			'<div class="rightBottom">'
+		html += 				'<img src="../../img/eye.png">'
+		html += 				'<p class="text">'+item.clicks+'&nbsp&nbsp</p>'
+		html += 				'<img src="../../img/praise.png">'
+		html += 				'<p class="text">'+item.likes+'</p>'
+		html += 				'<p class="updateTime">'+item.createTime.slice(0,10)+'</p>'
+		html += 			'</div>'
+		html += 		'</div>'
+		html += '</li>'
+		return html;
+	}
+	function closeWarning () {
+		document.getElementById('warning').style.display='none';
+		document.getElementById('video').style.margin='0';
+	}
+</script>
+</html>

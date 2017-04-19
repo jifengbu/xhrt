@@ -1,16 +1,16 @@
-'use strict'
+'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     TouchableOpacity,
     Image,
-    View
+    View,
 } = ReactNative;
 
 module.exports = React.createClass({
-    render() {
+    render () {
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
@@ -19,17 +19,16 @@ module.exports = React.createClass({
                 <Image
                     resizeMode='stretch'
                     source={this.props.image}
-                    style={styles.imageStyle}>
-                </Image>
+                    style={styles.imageStyle} />
                 <Text style={[styles.buttonText, this.props.textStyle]}>
                     {this.props.children}
                 </Text>
             </TouchableOpacity>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     buttonText: {
         color: '#393939',
         fontSize: 14,
@@ -38,7 +37,7 @@ var styles = StyleSheet.create({
     },
     button: {
         height: 80,
-        width: sr.w/3,
+        width: sr.w / 3,
         borderColor: '#A1A2A3',
         alignItems: 'center',
         backgroundColor: '#FCFCFC',

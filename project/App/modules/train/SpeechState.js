@@ -1,6 +1,6 @@
-'use strict';var React = require('react');var ReactNative = require('react-native');
+'use strict';const React = require('react');const ReactNative = require('react-native');
 
-var {
+const {
     View,
     Text,
     StyleSheet,
@@ -10,36 +10,36 @@ var {
 } = ReactNative;
 
 const SPEECH_STATUS = [
-    {text: '等候演讲', color:'#a0d468'},
-    {text: '演讲中', color:'#ff3c30'},
-    {text: '演讲完毕', color:'#239fdb'},
-    {text: '退出', color:'gray'},
-    {text: "正在准备演讲", color:'#a0d468'},
-    {text: "等待评委打分", color:'#a0d468'},
-    {text: "正在打分", color:'#a0d468'},
-    {text: "打分完毕", color:'#a0d468'},
-    {text: "等待重新开始", color:'#a0d468'},
+    { text: '等候演讲', color:'#a0d468' },
+    { text: '演讲中', color:'#ff3c30' },
+    { text: '演讲完毕', color:'#239fdb' },
+    { text: '退出', color:'gray' },
+    { text: '正在准备演讲', color:'#a0d468' },
+    { text: '等待评委打分', color:'#a0d468' },
+    { text: '正在打分', color:'#a0d468' },
+    { text: '打分完毕', color:'#a0d468' },
+    { text: '等待重新开始', color:'#a0d468' },
 ];
 
-var DImage = COMPONENTS.DImage;
+const DImage = COMPONENTS.DImage;
 
-module.exports =  React.createClass({
-    showCardInfo(item) {
+module.exports = React.createClass({
+    showCardInfo (item) {
         console.log(item.userID);
         if (item.userInfo.isSpecialSoldier === 1) {
             this.props.onPress(item.userID);
         }
     },
-    render() {
-        var mgr = app.phoneMgr;
-        const {isAgent} = app.personal.info;
-        var showCardInfo = this.showCardInfo;
+    render () {
+        const mgr = app.phoneMgr;
+        const { isAgent } = app.personal.info;
+        const showCardInfo = this.showCardInfo;
         return (
             <View style={styles.main}>
-                {this.props.competitors.map(function(item, i){
-                    var isSpeech = item.channelState==mgr.phone.channelStates.MCAS_CHANNEL_STATE_SPEAKERING;
-                    var status = item.extraState?SPEECH_STATUS[item.extraState]:SPEECH_STATUS[item.channelState-1];
-                    var source = (typeof item.userInfo.userImg==='string') ? {uri:item.userInfo.userImg} : item.userInfo.userImg;
+                {this.props.competitors.map(function (item, i) {
+                    const isSpeech = item.channelState == mgr.phone.channelStates.MCAS_CHANNEL_STATE_SPEAKERING;
+                    const status = item.extraState ? SPEECH_STATUS[item.extraState] : SPEECH_STATUS[item.channelState - 1];
+                    const source = (typeof item.userInfo.userImg === 'string') ? { uri:item.userInfo.userImg } : item.userInfo.userImg;
                     return (
                         <View style={styles.container} key={i}>
                             <Text style={!isSpeech ? styles.stateTextStyle : styles.stateTextStyle2}>
@@ -47,47 +47,46 @@ module.exports =  React.createClass({
                             </Text>
                             <TouchableOpacity
                                 style={isSpeech ? styles.headViewStyleSpeak : styles.headViewStyle}
-                                onPress={showCardInfo.bind(null,item)}>
+                                onPress={showCardInfo.bind(null, item)}>
                                 <DImage
                                     resizeMode='cover'
                                     defaultSource={app.img.personal_head}
                                     source={source}
-                                    style={[!isSpeech ? styles.headImgStyle : styles.headImgStyle2,{borderColor:status.color}]}>
-                                </DImage>
+                                    style={[!isSpeech ? styles.headImgStyle : styles.headImgStyle2, { borderColor:status.color }]} />
                                 {
                                     item.userInfo.isSpecialSoldier === 1 &&
                                     <Image
                                         resizeMode='stretch'
                                         source={app.img.train_card}
-                                        style={isSpeech ? styles.cardStyleSpeak :styles.cardStyle} />
+                                        style={isSpeech ? styles.cardStyleSpeak : styles.cardStyle} />
                                 }
                             </TouchableOpacity>
                             <Text style={!isSpeech ? styles.nameStyle : styles.nameStyle2}>
                                 {item.userInfo.userName}
                             </Text>
-                            <View style={{flexDirection: 'row', alignSelf: 'center', marginTop: 3,}}>
+                            <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 3 }}>
                                 <Text style={!isSpeech ? styles.jobStyle : styles.jobStyle2}>
                                     {item.userInfo.userAlias}
                                 </Text>
                             </View>
                         </View>
-                    )
+                    );
                 })}
             </View>
         );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     main: {
-        width: sr.w-60,
+        width: sr.w - 60,
         flexDirection: 'row',
         alignItems:'center',
         justifyContent: 'space-around',
     },
     container: {
         flex: 1,
-        height: sr.h/5,
+        height: sr.h / 5,
         marginHorizontal: 5,
         marginTop: 10,
         flexDirection: 'column',
@@ -184,13 +183,13 @@ var styles = StyleSheet.create({
         color: '#FFFFFF',
         marginTop: 3,
         backgroundColor: 'transparent',
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
     nameStyle2: {
         fontSize: 14,
         color: '#FFFFFF',
         marginTop: 3,
         backgroundColor: 'transparent',
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
 });

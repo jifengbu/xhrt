@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     Image,
     ListView,
     Text,
@@ -11,79 +11,79 @@ var {
     View,
 } = ReactNative;
 
-var moment = require('moment');
+const moment = require('moment');
 
-var {Button, DImage} = COMPONENTS;
+const { Button, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             dataSource: this.ds.cloneWithRows([]),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         if (this.props.briefDisplay) {
-            this.setState({dataSource: this.ds.cloneWithRows(this.props.dataList)});
+            this.setState({ dataSource: this.ds.cloneWithRows(this.props.dataList) });
         } else {
             this.getRelevantVideo();
         }
     },
-    getRelevantVideo() {
-        var param = {
+    getRelevantVideo () {
+        const param = {
             userID:app.personal.info.userID,
             videoID: this.props.videoID,
         };
-        POST(app.route.ROUTE_RELEVANT_VIDEO, param, this.doRelevantVideoSuccess,true);
+        POST(app.route.ROUTE_RELEVANT_VIDEO, param, this.doRelevantVideoSuccess, true);
     },
-    doRelevantVideoSuccess(data) {
+    doRelevantVideoSuccess (data) {
         if (data.success) {
-            let list = data.context.videoList || [];
-            let listData = this.props.briefDisplay&&list.length>=4?(list.slice(0,4)||[]):list;
-            this.setState({dataSource: this.ds.cloneWithRows(listData)});
+            const list = data.context.videoList || [];
+            const listData = this.props.briefDisplay && list.length >= 4 ? (list.slice(0, 4) || []) : list;
+            this.setState({ dataSource: this.ds.cloneWithRows(listData) });
         }
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
-            <View style={styles.separator} key={rowID}/>
+            <View style={styles.separator} key={rowID} />
         );
     },
-    _onPressRow(obj) {
+    _onPressRow (obj) {
         this.props.doRestart(obj);
     },
-    renderRow(obj) {
-        var videoType = "";
+    renderRow (obj) {
+        let videoType = '';
         if (obj.videoType === 1) {
-            videoType = "精品课程:";
+            videoType = '精品课程:';
         } else if (obj.videoType === 2) {
-            videoType = "精彩案例:";
+            videoType = '精彩案例:';
         } else if (obj.videoType === 3) {
-            videoType = "编辑推荐:";
+            videoType = '编辑推荐:';
         } else if (obj.videoType === 4) {
-            videoType = "课程亮点:";
+            videoType = '课程亮点:';
         }
         return (
             <TouchableHighlight
                 onPress={this._onPressRow.bind(null, obj)}
                 style={styles.listViewItemContain}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.itemContainer}>
                     <DImage
                         resizeMode='stretch'
                         defaultSource={app.img.common_default}
-                        source={{uri: obj.videoListImg||obj.urlImg}}
+                        source={{ uri: obj.videoListImg || obj.urlImg }}
                         style={styles.videoImg} />
                     <View style={styles.titleStyle}>
                         <View style={styles.rowViewStyle}>
                             <Text
                                 numberOfLines={1}
                                 style={styles.nameTextStyles}>
-                                {videoType+obj.name}
+                                {videoType + obj.name}
                             </Text>
                             <Text
                                 numberOfLines={2}
                                 style={styles.detailTextStyles}>
-                                {videoType+obj.name}
+                                {obj.detail}
                             </Text>
                         </View>
                         <View style={styles.iconContainer}>
@@ -91,14 +91,14 @@ module.exports = React.createClass({
                                 <DImage
                                     resizeMode='contain'
                                     source={app.img.personal_eye}
-                                    style={styles.eyeIcon}/>
+                                    style={styles.eyeIcon} />
                                 <Text style={styles.textStyle}>
-                                    {obj.clicks*3+50}
+                                    {obj.clicks * 3 + 50}
                                 </Text>
                                 <DImage
                                     resizeMode='contain'
-                                    source={!obj.isPraise?app.img.personal_praise_pressed:app.img.personal_praise}
-                                    style={styles.iconStyle}/>
+                                    source={!obj.isPraise ? app.img.personal_praise_pressed : app.img.personal_praise}
+                                    style={styles.iconStyle} />
                                 <Text style={styles.textStyle}>
                                     {obj.likes}
                                 </Text>
@@ -110,28 +110,28 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 {
-                    !this.props.briefDisplay&&
-                    <View style={styles.line}/>
+                    !this.props.briefDisplay &&
+                    <View style={styles.line} />
                 }
                 <ListView
                     initialListSize={1}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
                     renderSeparator={this.renderSeparator}
                     />
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -153,7 +153,7 @@ var styles = StyleSheet.create({
     },
     itemContainer: {
         flexDirection: 'row',
-        width: sr.w-20,
+        width: sr.w - 20,
         margin: 10,
     },
     videoImg: {

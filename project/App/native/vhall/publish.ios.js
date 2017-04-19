@@ -1,10 +1,10 @@
-var React = require('react');
-var {
+const React = require('react');
+const {
     PropTypes,
     Component,
 } = React;
-var ReactNative = require('react-native');
-var {
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     requireNativeComponent,
     View,
@@ -29,10 +29,10 @@ class PublishView extends Component {
         // connectTimes:React.PropTypes.number,
         // orgiation:React.PropTypes.number, [0: portrait, 1:landSpaceRight, 2:landSpaceLeft]
     };
-    constructor(props, context) {
+    constructor (props, context) {
         super(props, context);
     }
-    render() {
+    render () {
         const nativeProps = Object.assign({
             isStart: true,
             isMute: false,
@@ -67,4 +67,4 @@ const RCTVhallPubllistView = requireNativeComponent('RCTVhallPublish', PublishVi
     },
 });
 
-module.exports =  PublishView;
+module.exports = PublishView;

@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -10,52 +10,52 @@ var {
     View,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    doUseLoudSpeaker() {
-        this.closeModal(()=>{
+    doUseLoudSpeaker () {
+        this.closeModal(() => {
             this.props.doUseLoudSpeaker();
         });
     },
-    doDelete() {
-        this.closeModal(()=>{
+    doDelete () {
+        this.closeModal(() => {
             this.props.doDelete();
         });
     },
-    doBack() {
-        this.closeModal(()=>{
+    doBack () {
+        this.closeModal(() => {
             this.props.doBack();
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <Button
                         onPress={this.doDelete}
                         textStyle={styles.btnText}
                         style={styles.selectButton}>删除</Button>
-                    <View style={styles.lineView}/>
+                    <View style={styles.lineView} />
                     <Button
                         onPress={this.doBack}
                         textStyle={styles.btnText}
@@ -63,11 +63,11 @@ module.exports = React.createClass({
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        width:sr.w*5/8,
+        width:sr.w * 5 / 8,
         alignItems:'center',
         justifyContent:'center',
         backgroundColor:'#FFFFFF',
@@ -79,13 +79,13 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     lineView: {
         marginVertical: 5,
-        width: sr.w*5/8,
+        width: sr.w * 5 / 8,
         height: 1,
-        backgroundColor: '#cccccc'
+        backgroundColor: '#cccccc',
     },
     btnText: {
         fontSize: 17,
@@ -94,10 +94,10 @@ var styles = StyleSheet.create({
     },
     selectButton: {
         height:45,
-        width: sr.w*5/8-50,
+        width: sr.w * 5 / 8 - 50,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'flex-start',
-        backgroundColor:'white'
+        backgroundColor:'white',
     },
 });

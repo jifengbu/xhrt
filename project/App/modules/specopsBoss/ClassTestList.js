@@ -12,28 +12,27 @@ import {
     InteractionManager,
 } from 'react-native';
 
-var moment = require('moment');
-var {Button, InputBox, DImage} = COMPONENTS;
-var CopyBox = require('../home/CopyBox.js');
+const moment = require('moment');
+const { Button, InputBox, DImage, Picker } = COMPONENTS;
+const CopyBox = require('../home/CopyBox.js');
 import Swiper from 'react-native-swiper2';
-import Picker from './Picker.js';
 
-var ClassTestBossList = require('./ClassTestBossList.js');
-var PieChart = require('./pieChart.js');
+const ClassTestBossList = require('./ClassTestBossList.js');
+const PieChart = require('./pieChart.js');
 
-const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
 
 module.exports = React.createClass({
     statics: {
         title: '随堂测试成绩列表页',
     },
-    onStartShouldSetResponderCapture(evt){
+    onStartShouldSetResponderCapture (evt) {
         app.touchPosition.x = evt.nativeEvent.pageX;
         app.touchPosition.y = evt.nativeEvent.pageY;
         return false;
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         this.pageNo = 1;
         this.monthData = [];
         return {
@@ -46,16 +45,19 @@ module.exports = React.createClass({
             numbers: [],
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.clearMonthData();
     },
-    clearMonthData() {
+    onWillHide() {
+        Picker.hide();
+    },
+    clearMonthData () {
         // generate year data
         this.currentYear = this.generateMyCurrentYearMonth().year;
         this.currentMonth = this.generateMyCurrentYearMonth().month;
 
         this.generateYearData(this.currentYear);
-        this.setState({haveData: true});
+        this.setState({ haveData: true });
 
         this.currentIndex = this.getMonthIndex(this.currentMonth);
         this.tabIndex = this.getCurrentWeekIndex(this.currentIndex);
@@ -65,15 +67,15 @@ module.exports = React.createClass({
         }
         this.getDayViewData(this.yearData[this.currentIndex][this.tabIndex]);
     },
-    generateYearData(year){
+    generateYearData (year) {
         this.yearData = [];
-        for (var i = 0; i < 12; i++) {
+        for (let i = 0; i < 12; i++) {
             this.yearData[i] = [];
         }
         // 需要判断进驻的时间，从进驻时间开始
         let startPos = 0;
-        // let joinYear = moment(app.personal.info.companyInfo.enterDate).year();
-        // let joinMonth = moment(app.personal.info.companyInfo.enterDate).month();
+        // const joinYear = moment(app.personal.info.companyInfo.enterDate).year();
+        // const joinMonth = moment(app.personal.info.companyInfo.enterDate).month();
         // if ( joinYear < year) {
         //     startPos = 0;
         // }
@@ -85,42 +87,42 @@ module.exports = React.createClass({
         //     return;
         // }
         // generateYearData
-        for (var i = startPos; i < 12; i++) {
+        for (let i = startPos; i < 12; i++) {
             this.generateMonthData(year, i);
         }
 
-        _.remove(this.yearData, (item)=>item.length===0);
+        _.remove(this.yearData, (item) => item.length === 0);
     },
-    generateMonthData(year, month){
+    generateMonthData (year, month) {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).set('month', month).set('year', year).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
         }
-        for (var i = 0; i < 6; i++) {
-            if (moment(firstMonday).add(7*i, 'd').month() === moment(firstMonday).month()) {
-                this.yearData[month].push(moment(firstMonday).add(7*i, 'd').format('YYYY-MM-DD'));
-            }else {
+        for (let i = 0; i < 6; i++) {
+            if (moment(firstMonday).add(7 * i, 'd').month() === moment(firstMonday).month()) {
+                this.yearData[month].push(moment(firstMonday).add(7 * i, 'd').format('YYYY-MM-DD'));
+            } else {
                 this.memWeekCount = i;
                 break;
             }
         }
     },
-    getMonthIndex(month) {
-        var index = 0;
-        for (var i = 0; i < this.yearData.length; i++) {
+    getMonthIndex (month) {
+        let index = 0;
+        for (let i = 0; i < this.yearData.length; i++) {
             if (moment(this.yearData[i][0]).month() === month) {
                 index = i;
                 break;
@@ -128,15 +130,15 @@ module.exports = React.createClass({
         }
         return index;
     },
-    getCurrentWeekIndex(monthIndex) {
-        var index = 0;
-        var strWeek = '';
+    getCurrentWeekIndex (monthIndex) {
+        let index = 0;
+        let strWeek = '';
         if (moment().day() === 0) {
             strWeek = moment().subtract(1, 'd').format('YYYY-MM-DD');
-        }else {
+        } else {
             strWeek = moment().format('YYYY-MM-DD');
         }
-        for (var i = 0; i < this.yearData[monthIndex].length; i++) {
+        for (let i = 0; i < this.yearData[monthIndex].length; i++) {
             if (moment(this.yearData[monthIndex][i]).week() === moment(strWeek).week()) {
                 index = i;
                 break;
@@ -144,28 +146,28 @@ module.exports = React.createClass({
         }
         return index;
     },
-    getWeekNum(time){
+    getWeekNum (time) {
         let currentWeek = moment(time).week();
-        let currentWeekday = moment(time).weekday();
-        if (currentWeekday===0) {
+        const currentWeekday = moment(time).weekday();
+        if (currentWeekday === 0) {
             currentWeek = currentWeek - 1;
         }
         return currentWeek;
     },
-    getCurrentMonthMonday(){
+    getCurrentMonthMonday () {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
@@ -176,10 +178,10 @@ module.exports = React.createClass({
             firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
             firstMonday = '';
             while (isFirstMonday === false) {
-                var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+                const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
                 if (isMonday === 1) {
                     isFirstMonday = true;
-                    firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                    firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                     break;
                 }
                 addPos++;
@@ -187,35 +189,35 @@ module.exports = React.createClass({
         }
         return firstMonday;
     },
-    isSameWeekWithCurrentTime(time) {
-        let currentWeek = this.getWeekNum(moment().format('YYYY-MM-DD'));
-        let selectWeek = this.getWeekNum(time);
+    isSameWeekWithCurrentTime (time) {
+        const currentWeek = this.getWeekNum(moment().format('YYYY-MM-DD'));
+        const selectWeek = this.getWeekNum(time);
         if (currentWeek === selectWeek) {
             return true;
-        }else {
+        } else {
             return false;
         }
     },
-    generateMyCurrentYearMonth(){
+    generateMyCurrentYearMonth () {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
         }
 
-        let ret = {};
+        const ret = {};
         ret.year = moment().year();
         ret.month = moment().month();
         if (moment(firstMonday).date() > moment().date()) {
@@ -228,80 +230,80 @@ module.exports = React.createClass({
         return ret;
     },
     // get time data
-    createTimeData(joinTime) {
-        let joinYear = moment(joinTime).year();
-        let joinMonth = moment(joinTime).month();
+    createTimeData (joinTime) {
+        const joinYear = moment(joinTime).year();
+        const joinMonth = moment(joinTime).month();
 
-        let date = {};
-        let currentYear = this.generateMyCurrentYearMonth().year;
-        let currentMonth = this.generateMyCurrentYearMonth().month;
+        const date = [];
+        const currentYear = this.generateMyCurrentYearMonth().year;
+        const currentMonth = this.generateMyCurrentYearMonth().month;
 
-        for (var i = joinYear; i <= currentYear; i++) {
-            let month = [];
-            for (var j = 1; j < 13; j++) {
+        for (let i = joinYear; i <= currentYear; i++) {
+            const month = [];
+            for (let j = 1; j < 13; j++) {
                 if (i == joinYear) {
                     if (j >= joinMonth) {
-                        month.push(j+'月');
+                        month.push(j + '月');
                     }
-                }else if (i == currentYear) {
+                } else if (i == currentYear) {
                     if (j <= currentMonth) {
-                        month.push(j+'月');
+                        month.push(j + '月');
                     }
-                }else {
-                    month.push(j+'月');
+                } else {
+                    month.push(j + '月');
                 }
             }
-            date[i+'年'] = month;
+            let _date = {};
+            _date[i + '年'] = month;
+            date.push(_date);
         }
 
         return date;
     },
-    onPressShowPicker(type) {
-        if (!this.picker.isPickerShow()) {
-            let date = moment();
-            let currentData = [date.year()+'年', (date.month()+1)+'月'];
-            this.setState({defaultSelectValue: currentData, pickerData: this.createTimeData(app.personal.info.companyInfo.enterDate)});
-            this.picker.show();
-        } else {
-            this.picker.hide();
-        }
+    onPressShowPicker (type) {
+        let date = moment();
+        let defaultSelectValue = [date.year() + '年', (date.month() + 1) + '月'];
+        let pickerData = this.createTimeData(app.personal.info.companyInfo.enterDate);
+        Picker(pickerData, defaultSelectValue, '').then((value)=>{
+            this.setChooseValue(value);
+        });
     },
-    getPersonalQuizzesDetailsData(weekDate) {
-        this.setState({quizzesDetailsData: null});//用于刷新成绩列表
-        var param = {
+    getPersonalQuizzesDetailsData (weekDate) {
+        this.setState({ quizzesDetailsData: null });// 用于刷新成绩列表
+        const param = {
             companyId: app.personal.info.companyInfo.companyId,
             userID: app.personal.info.userID,
             date: weekDate,
         };
         POST(app.route.ROUTE_GET_QUIZZES_DETAIL, param, this.getPersonalQuizzesDetailsDataSuccess, true);
     },
-    getPersonalQuizzesDetailsDataSuccess(data) {
+    getPersonalQuizzesDetailsDataSuccess (data) {
         if (data.success) {
-            let quizzesDetailsData = data.context;
-            let sections = [];
-            let radios = [];
-            let numbers = [];
+            const quizzesDetailsData = data.context;
+            const sections = [];
+            const radios = [];
+            const numbers = [];
             if (quizzesDetailsData) {
-                var quizzesSuccess = quizzesDetailsData.quizzesSuccess;
-                for (var i in quizzesSuccess) {
-                    sections.push(quizzesSuccess[i].title+'('+quizzesSuccess[i].sectionMax+'~'+quizzesSuccess[i].sectionMin+')');
-                    radios.push(quizzesSuccess[i].proportion+'%');
+                const quizzesSuccess = quizzesDetailsData.quizzesSuccess;
+                for (let i in quizzesSuccess) {
+                    sections.push(quizzesSuccess[i].title + '(' + quizzesSuccess[i].sectionMax + '~' + quizzesSuccess[i].sectionMin + ')');
+                    radios.push(quizzesSuccess[i].proportion + '%');
                     numbers.push(quizzesSuccess[i].number);
                 }
             }
-            this.setState({quizzesDetailsData: data.context, sections, radios, numbers});
+            this.setState({ quizzesDetailsData: data.context, sections, radios, numbers });
         } else {
             Toast(data.msg);
         }
     },
-    getDayViewData(weekDate){
+    getDayViewData (weekDate) {
         this.getPersonalQuizzesDetailsData(weekDate);
     },
-    changeTab(index, time){
+    changeTab (index, time) {
         this.tabIndex = index;
         this.getDayViewData(time);
     },
-    onChangePage(weekIndex){
+    onChangePage (weekIndex) {
         if (this.currentIndex == weekIndex) {
             return;
         }
@@ -313,9 +315,9 @@ module.exports = React.createClass({
         this.currentMonth = moment(this.yearData[this.currentIndex][this.tabIndex]).month();
         this.getDayViewData(this.yearData[this.currentIndex][this.tabIndex]);
     },
-    setChooseValue(value){
+    setChooseValue (value) {
         this.currentYear = parseInt(value[0]);
-        this.currentMonth = parseInt(value[1])-1;
+        this.currentMonth = parseInt(value[1]) - 1;
         this.generateYearData(this.currentYear);
 
         this.currentIndex = this.getMonthIndex(this.currentMonth);
@@ -325,138 +327,131 @@ module.exports = React.createClass({
 
         this.getDayViewData(this.yearData[this.currentIndex][this.tabIndex]);
 
-        this.setState({haveData: false});
-        setTimeout(()=>{
-            this.setState({haveData: true});
+        this.setState({ haveData: false });
+        setTimeout(() => {
+            this.setState({ haveData: true });
         }, 100);
     },
-    renderWeekView(dateArray) {
-        var menuAdminArray1 = ['第一周', '第二周', '第三周', '第四周'];
-        var menuAdminArray2 = ['第一周', '第二周', '第三周', '第四周', '第五周'];
-        var menuAdminArray = [];
+    renderWeekView (dateArray) {
+        const menuAdminArray1 = ['第一周', '第二周', '第三周', '第四周'];
+        const menuAdminArray2 = ['第一周', '第二周', '第三周', '第四周', '第五周'];
+        let menuAdminArray = [];
         if (dateArray.length > 4) {
             menuAdminArray = menuAdminArray2;
-        }else{
+        } else {
             menuAdminArray = menuAdminArray1;
         }
-        var monthStr = moment(dateArray[0]).format('M月');
-        var yearStr = moment(dateArray[0]).format('YYYY年');
+        const monthStr = moment(dateArray[0]).format('M月');
+        const yearStr = moment(dateArray[0]).format('YYYY年');
 
         return (
-                <View style={styles.tabContainer}>
-                    {
-                        menuAdminArray.map((item, i)=>{
-                            var time1 = moment(dateArray[i]);
-                            var time2 = moment(dateArray[i]).add(6, 'd');
-                            var strTime = '';
+            <View style={styles.tabContainer}>
+                {
+                        menuAdminArray.map((item, i) => {
+                            const time1 = moment(dateArray[i]);
+                            const time2 = moment(dateArray[i]).add(6, 'd');
+                            let strTime = '';
 
                             if (dateArray[i] != undefined) {
-                                strTime = time1.format('M.D')+'-'+time2.format('M.D');
+                                strTime = time1.format('M.D') + '-' + time2.format('M.D');
                             }
 
-                            var isCurrentWeek = this.isSameWeekWithCurrentTime(dateArray[i]);
+                            const isCurrentWeek = this.isSameWeekWithCurrentTime(dateArray[i]);
                             return (
-                                <View key={i} style={{flexDirection: 'row',flex: 1,alignItems: 'center'}}>
+                                <View key={i} style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
                                     <TouchableOpacity
                                         key={i}
                                         onPress={this.changeTab.bind(null, i, dateArray[i])}
-                                        style={[styles.tabButton, this.tabIndex===i?{borderTopWidth: 4, backgroundColor: '#FF8686', borderColor: '#FF6262'}:null]}>
-                                        <Text style={[styles.tabText, this.tabIndex===i?{marginTop: 2, color: '#FFFFFF'}:null]} >
-                                            {isCurrentWeek?'本周':item}
+                                        style={[styles.tabButton, this.tabIndex === i ? { borderTopWidth: 4, backgroundColor: '#FF8686', borderColor: '#FF6262' } : null]}>
+                                        <Text style={[styles.tabText, this.tabIndex === i ? { marginTop: 2, color: '#FFFFFF' } : null]} >
+                                            {isCurrentWeek ? '本周' : item}
                                         </Text>
-                                        <Text style={[styles.tabTextTime, this.tabIndex===i?{color: '#FFFFFF'}:null]} >
+                                        <Text style={[styles.tabTextTime, this.tabIndex === i ? { color: '#FFFFFF' } : null]} >
                                             {strTime}
                                         </Text>
                                     </TouchableOpacity>
                                     {
-                                        (i!==menuAdminArray.length-1 && this.tabIndex-1 !== i && this.tabIndex !== i) &&
-                                        <View style={styles.vline}/>
+                                        (i !== menuAdminArray.length - 1 && this.tabIndex - 1 !== i && this.tabIndex !== i) &&
+                                        <View style={styles.vline} />
                                     }
                                 </View>
-                            )
+                            );
                         })
                     }
-                </View>
-            )
+            </View>
+        );
     },
-    render() {
-        let {quizzesDetailsData, sections, radios, numbers} = this.state;
+    render () {
+        const { quizzesDetailsData, sections, radios, numbers } = this.state;
         return (
             <View style={styles.containerAll}
-                  onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
-                  <View style={styles.separator}/>
-                  <ScrollView>
-                      <View style={styles.container}>
-                          <TouchableOpacity
-                              onPress={this.onPressShowPicker}>
-                              <View style={styles.dataMonthView}>
-                                  <Text style={styles.dataMonthText}>
-                                      {(this.currentMonth+1)+'月'}
-                                  </Text>
-                                  <Text style={styles.dataMonthText}>
-                                      {this.currentYear+'年'}
-                                  </Text>
-                              </View>
-                          </TouchableOpacity>
-                          <View style={styles.vline}/>
-                          {
+                onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
+                <View style={styles.separator} />
+                <ScrollView>
+                    <View style={styles.container}>
+                        <TouchableOpacity
+                            onPress={this.onPressShowPicker}>
+                            <View style={styles.dataMonthView}>
+                                <Text style={styles.dataMonthText}>
+                                    {(this.currentMonth + 1) + '月'}
+                                </Text>
+                                <Text style={styles.dataMonthText}>
+                                    {this.currentYear + '年'}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                        <View style={styles.vline} />
+                        {
                               this.state.haveData &&
                               <View style={styles.bannerContainer}>
                                   <Swiper
                                       height={sr.ws(52)}
-                                      width={sr.ws(sr.w-56)}
+                                      width={sr.ws(sr.w - 56)}
                                       showsPagination={false}
                                       loop={false}
                                       onChangePage={this.onChangePage}
                                       index={this.currentIndex}
                                       >
                                       {
-                                          this.yearData.map((item, i)=>{
+                                          this.yearData.map((item, i) => {
                                               return (
                                                   <View key={i}>
                                                       {
                                                           this.renderWeekView(item)
                                                       }
                                                   </View>
-                                              )
+                                              );
                                           })
                                       }
                                   </Swiper>
                               </View>
                           }
-                      </View>
-                      {
-                          quizzesDetailsData?
-                          <View>
-                              <View style={[styles.lineDivision, {height: sr.ws(7)}]}/>
-                              <View style={styles.homeworkContainer}>
-                                  <View style={styles.separator}/>
-                                  {
-                                      <PieChart showUnitText={'人'} sections={sections} radios={radios} numbers={numbers}/>
+                    </View>
+                    {
+                          quizzesDetailsData ?
+                              <View>
+                                  <View style={[styles.lineDivision, { height: sr.ws(7) }]} />
+                                  <View style={styles.homeworkContainer}>
+                                      <View style={styles.separator} />
+                                      {
+                                          <PieChart showUnitText={'人'} sections={sections} radios={radios} numbers={numbers} />
                                   }
+                                  </View>
+                                  <ClassTestBossList quizzesDetailsData={quizzesDetailsData} />
                               </View>
-                              <ClassTestBossList quizzesDetailsData={quizzesDetailsData}/>
-                          </View>
                           :
-                          <View style={styles.listFooterContainer}>
-                              <Text style={styles.listFooter}>{'暂无成绩数据'}</Text>
-                          </View>
+                              <View style={styles.listFooterContainer}>
+                                  <Text style={styles.listFooter}>{'暂无成绩数据'}</Text>
+                              </View>
                       }
                 </ScrollView>
-                <Picker
-                    style={{height: sr.ws(298)}}
-                    ref={picker => this.picker = picker}
-                    selectedValue={this.state.defaultSelectValue}
-                    pickerData={this.state.pickerData}
-                    onPickerDone={(value) => this.setChooseValue(value)}
-                    />
             </View>
 
         );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     containerAll: {
         flex: 1,
         backgroundColor: 'transparent',
@@ -502,7 +497,7 @@ var styles = StyleSheet.create({
         fontFamily:'STHeitiSC-Medium',
     },
     tabContainer: {
-        width:sr.w-56,
+        width:sr.w - 56,
         height: 52,
         flexDirection: 'row',
         // backgroundColor: '#F4F4F4',

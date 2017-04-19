@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -9,21 +9,20 @@ var {
     StyleSheet,
 } = ReactNative;
 
-
-var {Button, PageList} = COMPONENTS;
+const { Button, PageList } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
         title: '任务记录',
     },
-    renderRow(obj,sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <View style={styles.row}>
                 <ItemListView obj={obj} rowID={rowID} />
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.container}>
@@ -46,90 +45,85 @@ module.exports = React.createClass({
                     </View>
                     <PageList
                         renderRow={this.renderRow}
-                        listParam={{userID: app.personal.info.userID}}
-                        listName="taskList"
-                        renderSeparator={()=>null}
+                        listParam={{ userID: app.personal.info.userID }}
+                        listName='taskList'
+                        renderSeparator={() => null}
                         listUrl={app.route.ROUTE_SUBMIT_GETMYTASKRECORD}
                         />
                 </ScrollView>
             </View>
 
-
-        )
+        );
     },
 });
 
-var Item = React.createClass({
-    render() {
-        return(
-            <View style={{flex: 2, flexDirection: 'row', marginTop: 5, marginBottom: 10}}>
+const Item = React.createClass({
+    render () {
+        return (
+            <View style={{ flex: 2, flexDirection: 'row', marginTop: 5, marginBottom: 10 }}>
                 <Text style={styles.myText}>
                     {this.props.children}
                 </Text>
             </View>
         );
-    }
+    },
 });
 
-
-var ItemListView = React.createClass({
-    render() {
-        var {obj} = this.props;
-        var modules = [
-            '分享了 '+obj.share+' 次',
-            '看完了 '+obj.wacthVedio+' 个视频',
-            '观看了 '+obj.cases+' 个优秀案例',
-            '发表了了 '+obj.publish+' 个精彩评论',
+const ItemListView = React.createClass({
+    render () {
+        const { obj } = this.props;
+        const modules = [
+            '分享了 ' + obj.share + ' 次',
+            '看完了 ' + obj.wacthVedio + ' 个视频',
+            '观看了 ' + obj.cases + ' 个优秀案例',
+            '发表了了 ' + obj.publish + ' 个精彩评论',
         ];
-        return(
-            <View style={{flexDirection: 'row',backgroundColor: '#FFFFFF'}}>
-                <View style={{flexDirection: 'column',backgroundColor: '#FFFFFF',width:60}}>
-                    <View style={[styles.lineStyle,{height: 12}]}>
-                    </View>
+        return (
+            <View style={{ flexDirection: 'row', backgroundColor: '#FFFFFF' }}>
+                <View style={{ flexDirection: 'column', backgroundColor: '#FFFFFF', width:60 }}>
+                    <View style={[styles.lineStyle, { height: 12 }]} />
                     <Image
                         resizeMode='contain'
-                        source={this.props.rowID==0?app.img.personal_time_1:this.props.rowID==1?app.img.personal_time_2:app.img.personal_time_3}
+                        source={this.props.rowID == 0 ? app.img.personal_time_1 : this.props.rowID == 1 ? app.img.personal_time_2 : app.img.personal_time_3}
                         style={styles.iconStyle} />
-                    <View style={[styles.lineStyle,{height: 120}]}>
-                    </View>
+                    <View style={[styles.lineStyle, { height: 120 }]} />
                 </View>
                 <View style={styles.container}>
                     <View style={styles.dateStyle}>
-                        <Text style={[styles.leftTime,this.props.rowID==0?{color: '#BDA066'}:this.props.rowID==1?{color: '#229573'}:{color: 'black'}]}>
+                        <Text style={[styles.leftTime, this.props.rowID == 0 ? { color: '#BDA066' } : this.props.rowID == 1 ? { color: '#229573' } : { color: 'black' }]}>
                             {this.props.obj.date}
                         </Text>
                     </View>
-                    <View style={{backgroundColor: '#FFFFFF'}}
+                    <View style={{ backgroundColor: '#FFFFFF' }}
                         >
                         {
-                            modules.map((item, i)=> {
+                            modules.map((item, i) => {
                                 return (
                                     <Item key={i}>
                                         {item}
                                     </Item>
-                                )
+                                );
                             })
                         }
                     </View>
                 </View>
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
     },
-   myText:{
-     flex: 1,
-      color: 'black',
-      marginRight: 10,
-      marginLeft: 5,
-      marginTop: -4,
-      fontSize:14,
+    myText:{
+        flex: 1,
+        color: 'black',
+        marginRight: 10,
+        marginLeft: 5,
+        marginTop: -4,
+        fontSize:14,
     },
     row: {
         flexDirection: 'row',
@@ -145,7 +139,7 @@ var styles = StyleSheet.create({
         height: 145,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     },
     textViewStyle: {
         width: sr.w,
@@ -155,7 +149,7 @@ var styles = StyleSheet.create({
     },
     dateStyle: {
         marginTop: 5,
-        width: sr.w-60,
+        width: sr.w - 60,
         height: 40,
         backgroundColor:'#FFFFFF',
         flexDirection: 'row',
@@ -198,10 +192,10 @@ var styles = StyleSheet.create({
         flex: 1,
     },
     text_title: {
-      flex: 1,
-      color: 'black',
-      marginRight: 10,
-      marginLeft: 5,
-      marginTop: -4,
-    }
+        flex: 1,
+        color: 'black',
+        marginRight: 10,
+        marginLeft: 5,
+        marginTop: -4,
+    },
 });

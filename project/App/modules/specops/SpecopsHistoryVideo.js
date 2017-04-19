@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     Image,
     ListView,
     Text,
@@ -10,121 +10,121 @@ var {
     View,
 } = ReactNative;
 
-var moment = require('moment');
+const moment = require('moment');
 
-var {Button, DImage} = COMPONENTS;
+const { Button, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        let videoList = this.props.videoList?this.props.videoList:[];
-        this.list = this.props.briefDisplay&&videoList.length>=4?(videoList.slice(0,4)||[]):videoList;
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        const videoList = this.props.videoList ? this.props.videoList : [];
+        this.list = this.props.briefDisplay && videoList.length >= 4 ? (videoList.slice(0, 4) || []) : videoList;
         return {
             dataSource: this.ds.cloneWithRows(this.list),
         };
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
-            <View style={styles.separator} key={rowID}/>
+            <View style={styles.separator} key={rowID} />
         );
     },
-    _onPressRow(obj, rowID) {
+    _onPressRow (obj, rowID) {
         this.props.doRestart(obj, rowID, this.props.routeIndex);
     },
-    renderRow(obj, sectionID, rowID) {
-        var videoType = "";
+    renderRow (obj, sectionID, rowID) {
+        let videoType = '';
         if (obj.videoType === 1) {
-            videoType = "精品课程: ";
+            videoType = '精品课程: ';
         } else if (obj.videoType === 2) {
-            videoType = "精彩案例: ";
+            videoType = '精彩案例: ';
         } else if (obj.videoType === 3) {
-            videoType = "编辑推荐: ";
+            videoType = '编辑推荐: ';
         } else if (obj.videoType === 4) {
-            videoType = "课程亮点: ";
+            videoType = '课程亮点: ';
         }
         return (
             <TouchableHighlight
                 onPress={this._onPressRow.bind(null, obj, rowID)}
                 style={styles.itemContainer}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.itemStyle}>
                     <DImage
                         resizeMode='stretch'
                         defaultSource={app.img.common_default}
-                        source={{uri: obj.videoListImg||obj.urlImg}}
+                        source={{ uri: obj.videoListImg || obj.urlImg }}
                         style={styles.videoImg} />
                     <View style={styles.titleStyle}>
                         <Text
                             numberOfLines={1}
-                            style={[styles.itemNameText, obj.isOver?{color: '#151515'}:{color: '#989898'}]}>
-                            {videoType+obj.name||app.login.list[0]}
+                            style={[styles.itemNameText, obj.isOver ? { color: '#151515' } : { color: '#989898' }]}>
+                            {videoType + obj.name || app.login.list[0]}
                         </Text>
                         <View style={styles.iconContainer}>
-                            <View style={[styles.praiseContainer, {marginLeft: 17}]}>
+                            <View style={[styles.praiseContainer, { marginLeft: 17 }]}>
                                 {
-                                    this.props.briefDisplay&&
+                                    this.props.briefDisplay &&
                                     <DImage
                                         resizeMode='contain'
-                                        source={!obj.isPraise?app.img.personal_praise_pressed:app.img.personal_praise}
-                                        style={styles.iconStyle}/>
+                                        source={!obj.isPraise ? app.img.personal_praise_pressed : app.img.personal_praise}
+                                        style={styles.iconStyle} />
                                 }
                                 {
-                                    this.props.briefDisplay&&
-                                    <Text style={[styles.textStyle, {marginLeft: 10,marginRight: 25}]}>
+                                    this.props.briefDisplay &&
+                                    <Text style={[styles.textStyle, { marginLeft: 10, marginRight: 25 }]}>
                                         {obj.likes}
                                     </Text>
                                 }
                                 <DImage
                                     resizeMode='contain'
                                     source={app.img.personal_eye}
-                                    style={styles.eyeIcon}/>
-                                <Text style={[styles.textStyle, {marginLeft: 10}]}>
-                                    {obj.clicks*3+50}
+                                    style={styles.eyeIcon} />
+                                <Text style={[styles.textStyle, { marginLeft: 10 }]}>
+                                    {obj.clicks * 3 + 50}
                                 </Text>
                             </View>
                             {
-                                this.props.briefDisplay?
-                                <Text style={styles.textStyle}>
-                                    {moment(obj.createTime).format('YYYY/MM/DD')}
-                                </Text>:
-                                <Text style={styles.textStyle}>
-                                    {moment(obj.createTime).format('YYYY.MM.DD')}
-                                </Text>
+                                this.props.briefDisplay ?
+                                    <Text style={styles.textStyle}>
+                                        {moment(obj.createTime).format('YYYY/MM/DD')}
+                                    </Text> :
+                                    <Text style={styles.textStyle}>
+                                        {moment(obj.createTime).format('YYYY.MM.DD')}
+                                    </Text>
                             }
                         </View>
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
-        let videoListLength = this.props.videoList&&this.props.videoList.length;
+    render () {
+        const videoListLength = this.props.videoList && this.props.videoList.length;
         return (
             <View style={styles.container}>
                 {
-                    !this.props.briefDisplay&&
-                    <View style={styles.lineView}/>
+                    !this.props.briefDisplay &&
+                    <View style={styles.lineView} />
                 }
                 {
-                    videoListLength?
-                    <ListView
-                        initialListSize={1}
-                        enableEmptySections={true}
-                        dataSource={this.state.dataSource}
-                        renderRow={this.renderRow}
-                        renderSeparator={this.renderSeparator}
+                    videoListLength ?
+                        <ListView
+                            initialListSize={1}
+                            enableEmptySections
+                            dataSource={this.state.dataSource}
+                            renderRow={this.renderRow}
+                            renderSeparator={this.renderSeparator}
                         />
-                    :<Text style={styles.promptText}>暂无更多视频</Text>
+                    : <Text style={styles.promptText}>暂无更多视频</Text>
                 }
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -136,7 +136,7 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
     },
     separator: {
-        width: sr.w-20,
+        width: sr.w - 20,
         marginLeft: 10,
         height: 1,
         backgroundColor: '#F1F1F1',
@@ -160,10 +160,10 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
     },
     itemNameText: {
-        width: sr.w-148,
+        width: sr.w - 148,
         fontSize: 16,
         marginLeft: 15,
-        fontFamily: 'STHeitiSC-Medium'
+        fontFamily: 'STHeitiSC-Medium',
     },
     iconContainer: {
         flexDirection: 'row',
@@ -191,6 +191,6 @@ var styles = StyleSheet.create({
     lineView: {
         height: 1,
         width: sr.w,
-        backgroundColor: '#EFEFEF'
+        backgroundColor: '#EFEFEF',
     },
 });

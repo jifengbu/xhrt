@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     Image,
     StyleSheet,
     Text,
@@ -9,18 +9,18 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
-            propList: this.props.propList||[],
+            propList: this.props.propList || [],
         };
     },
-    showPropsPrompt(propInfo) {
+    showPropsPrompt (propInfo) {
         if (!CONSTANTS.ISSUE_IOS) {
-            var personInfo = app.personal.info;
-            //0表示用积分购买1-用赢销币购买 发送成功后 减去相应的积分和营销币
+            const personInfo = app.personal.info;
+            // 0表示用积分购买1-用赢销币购买 发送成功后 减去相应的积分和营销币
             if (propInfo.propType == 1) {
                 if (personInfo.integral < propInfo.propValue) {
                     this.props.ShowBuyChange(0, propInfo.propValue);
@@ -37,20 +37,20 @@ module.exports = React.createClass({
             this.noticeShowPrompt(propInfo);
         }
     },
-    noticeShowPrompt(propInfo) {
-        this.show(()=>{
+    noticeShowPrompt (propInfo) {
+        this.show(() => {
             this.props.noticeShowPrompt(propInfo);
         });
     },
-    show(callback) {
+    show (callback) {
         return callback();
     },
-    render() {
+    render () {
         return (
             <View style={[styles.container, this.props.style]}>
                 <View style={styles.panelContainer}>
                     {
-                        this.state.propList.map((item, i)=>{
+                        this.state.propList.map((item, i) => {
                             return (
                                 <TouchableOpacity
                                     key={i}
@@ -60,25 +60,24 @@ module.exports = React.createClass({
                                         style={styles.chatImage}
                                         resizeMode='contain'
                                         defaultSource={app.img.common_default}
-                                        source={{uri:item.propImg}}>
-                                    </Image>
+                                        source={{ uri:item.propImg }} />
                                 </TouchableOpacity>
-                            )
+                            );
                         })
                     }
                 </View>
                 <View style={styles.currencyContainer}>
-                    <Text style={styles.currencyText}>{(CONSTANTS.ISSUE_IOS?'积分:':'赢销积分:') + app.personal.info.integral}</Text>
-                    {!CONSTANTS.ISSUE_IOS&&<Text style={styles.currencyText}>{'赢销币:' + app.personal.info.winCoin}</Text>}
+                    <Text style={styles.currencyText}>{(CONSTANTS.ISSUE_IOS ? '积分:' : '赢销积分:') + app.personal.info.integral}</Text>
+                    {!CONSTANTS.ISSUE_IOS && <Text style={styles.currencyText}>{'赢销币:' + app.personal.info.winCoin}</Text>}
                 </View>
             </View>
         );
-    }
+    },
 });
 
 // <View style={styles.separator}/>
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         // flex: 1,
         backgroundColor: '#1E1F20',
@@ -88,7 +87,7 @@ var styles = StyleSheet.create({
         marginLeft: 3,
         marginRight: 8,
         alignSelf: 'flex-start',
-        width:sr.w-11,
+        width:sr.w - 11,
         flexDirection: 'row',
     },
     propComtainer: {
@@ -118,6 +117,6 @@ var styles = StyleSheet.create({
     separator: {
         height: 1,
         width: sr.w,
-        backgroundColor: '#EEEEEE'
+        backgroundColor: '#EEEEEE',
     },
 });

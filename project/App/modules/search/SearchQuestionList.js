@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     View,
@@ -11,33 +11,33 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var QuestionDetail = require('../specops/QuestionDetail.js');
-var AidDetail = require('../actualCombat/AidDetail.js');
+const QuestionDetail = require('../specops/QuestionDetail.js');
+const AidDetail = require('../actualCombat/AidDetail.js');
 
-var {Button, PageList} = COMPONENTS;
-const {STATUS_TEXT_HIDE,  STATUS_ALL_LOADED} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+const { Button, PageList } = COMPONENTS;
+const { STATUS_TEXT_HIDE, STATUS_ALL_LOADED } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
 
 module.exports = React.createClass({
-    doShowSpecialSoldierDetail(obj) {
+    doShowSpecialSoldierDetail (obj) {
         app.navigator.push({
             title:'问答详情',
             component: QuestionDetail,
-            passProps: {obj: obj.specialSoldier, MyQuestionType:false},
+            passProps: { obj: obj.specialSoldier, MyQuestionType:false },
         });
     },
-    doShowKitsDetail(obj) {
+    doShowKitsDetail (obj) {
         app.navigator.push({
-            title: this.props.type===0?'求救包详情':'急救包详情',
+            title: this.props.type === 0 ? '求救包详情' : '急救包详情',
             component: AidDetail,
-            passProps: {kitInfo: obj.kits, tabIndex: obj.type, updateAidList: ()=>{}},
+            passProps: { kitInfo: obj.kits, tabIndex: obj.type, updateAidList: () => {} },
         });
     },
-    renderSpecialSoldierRow(obj, sectionID, rowID) {
-        const {specialSoldier} = obj;
+    renderSpecialSoldierRow (obj, sectionID, rowID) {
+        const { specialSoldier } = obj;
         return (
             <TouchableOpacity style={styles.itemContainer} onPress={this.doShowSpecialSoldierDetail.bind(null, obj)}>
                 <Text style={styles.contentRow}>
-                    {'特种兵：' +specialSoldier.questionContent}
+                    {'特种兵：' + specialSoldier.questionContent}
                 </Text>
                 <View style={styles.bottomStyle}>
                     <Text numberOfLines={1} style={styles.contextText}>
@@ -45,14 +45,14 @@ module.exports = React.createClass({
                     </Text>
                 </View>
             </TouchableOpacity>
-        )
+        );
     },
-    renderKitsRow(obj, sectionID, rowID) {
-        const {kits, type} = obj;
+    renderKitsRow (obj, sectionID, rowID) {
+        const { kits, type } = obj;
         return (
             <TouchableOpacity style={styles.itemContainer} onPress={this.doShowKitsDetail.bind(null, obj)}>
                 <Text style={styles.contentRow}>
-                    {'实战场'+(type==0?' - 求救包':' - 急救包')+'：' +kits.title}
+                    {'实战场' + (type == 0 ? ' - 求救包' : ' - 急救包') + '：' + kits.title}
                 </Text>
                 <View style={styles.bottomStyle}>
                     <Text numberOfLines={1} style={styles.contextText}>
@@ -60,28 +60,28 @@ module.exports = React.createClass({
                     </Text>
                 </View>
             </TouchableOpacity>
-        )
+        );
     },
-    renderRow(obj, sectionID, rowID) {
-        const {questionType} = obj;
-        if (questionType==1) {
+    renderRow (obj, sectionID, rowID) {
+        const { questionType } = obj;
+        if (questionType == 1) {
             return this.renderSpecialSoldierRow(obj, sectionID, rowID);
         } else {
             return this.renderKitsRow(obj, sectionID, rowID);
         }
     },
-    render() {
-        const {keyword, questionList} = this.props;
+    render () {
+        const { keyword, questionList } = this.props;
         return (
             <View style={styles.container}>
                 <Text style={styles.titleText}>问答</Text>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID, keyword}}
-                    listName="questionList"
+                    listParam={{ userID: app.personal.info.userID, keyword }}
+                    listName='questionList'
                     listUrl={app.route.ROUTE_SEARCH_QUESTION}
-                    refreshEnable={true}
+                    refreshEnable
                     autoLoad={false}
                     list={questionList}
                     pageNo={1}
@@ -89,11 +89,10 @@ module.exports = React.createClass({
                     />
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },

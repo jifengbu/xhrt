@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     TouchableOpacity,
@@ -9,14 +9,14 @@ var {
     Image,
 } = ReactNative;
 
-var {Button, PageList} = COMPONENTS;
-var Search = require('./Search.js');
-var CommodityDetail = require('../commodityDetail/index.js');
-var PersonInfo = require('../../person/PersonInfo.js');
-var MyOrderList = require('../order/MyOrderList.js');
+const { Button, PageList } = COMPONENTS;
+const Search = require('./Search.js');
+const CommodityDetail = require('../commodityDetail/index.js');
+const PersonInfo = require('../../person/PersonInfo.js');
+const MyOrderList = require('../order/MyOrderList.js');
 
-var Title = React.createClass({
-    render() {
+const Title = React.createClass({
+    render () {
         return (
             <TouchableOpacity
                 style={styles.txtInputSearch}
@@ -29,31 +29,31 @@ var Title = React.createClass({
                     输入商品关键字
                 </Text>
             </TouchableOpacity>
-        )
-    }
+        );
+    },
 });
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
-        title: <Title doSearch={()=>{app.scene.doSearch()}}/>,
-        leftButton: { image: app.img.home_personal, handler: ()=>{
+        title: <Title doSearch={() => { app.scene.doSearch(); }} />,
+        leftButton: { image: app.img.home_personal, handler: () => {
             app.navigator.push({
                 component: PersonInfo,
                 fromLeft: true,
             });
-        }},
-        rightButton: { image: app.img.mall_my_order_icon, handler: ()=>{
+        } },
+        rightButton: { image: app.img.mall_my_order_icon, handler: () => {
             app.navigator.push({
                 component: MyOrderList,
             });
-        }},
+        } },
     },
-    doSearch() {
+    doSearch () {
         app.navigator.push({
             component: Search,
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
             lineWidth: 0,
             lineHeight: 0,
@@ -62,23 +62,23 @@ module.exports = React.createClass({
     doBuyGoods (obj, type) {
         app.navigator.push({
             component: CommodityDetail,
-            passProps: {goodsID: obj.goodsID, buyType: type},
+            passProps: { goodsID: obj.goodsID, buyType: type },
         });
     },
-    _measureLineWidth(e) {
+    _measureLineWidth (e) {
         if (!this.state.lineWidth) {
-            var {width, height} = e.nativeEvent.layout;
-            this.setState({lineWidth: width, lineHeight: height});
+            const { width, height } = e.nativeEvent.layout;
+            this.setState({ lineWidth: width, lineHeight: height });
         }
     },
-    renderRow(obj) {
-        var lineHeight = this.state.lineHeight/2;
-        return(
+    renderRow (obj) {
+        const lineHeight = this.state.lineHeight / 2;
+        return (
             <View style={styles.rowViewStyle}>
                 <TouchableOpacity onPress={this.doBuyGoods.bind(null, obj, 0)}>
                     <Image
                         resizeMode='stretch'
-                        source={{uri:obj.goodsImg}}
+                        source={{ uri:obj.goodsImg }}
                         style={styles.commodityStyle} />
                 </TouchableOpacity>
                 <Image
@@ -92,37 +92,36 @@ module.exports = React.createClass({
                             </Text>
                         </View>
                         <View style={styles.detailContainer}>
-                            <View style={{flexDirection: 'row', marginTop: 5}}>
+                            <View style={{ flexDirection: 'row', marginTop: 5 }}>
                                 <Text
                                     numberOfLines={2}
                                     style={styles.commodityTitleText}>
                                     {obj.goodsDec}
                                 </Text>
                                 <Text style={styles.soldText}>
-                                    {'已售:'+obj.sales+'件'}
+                                    {'已售:' + obj.sales + '件'}
                                 </Text>
                             </View>
                             <View style={styles.priceContainer}>
-                                <View style={{width: (sr.w-165), flexDirection: 'row'}}>
+                                <View style={{ width: (sr.w - 165), flexDirection: 'row' }}>
                                     <Text style={styles.specialPriceLabel}>
                                         {'专享价:'}
                                     </Text>
                                     <Text style={styles.specialPrice}>
-                                        {'￥'+obj.goodsPrice}
+                                        {'￥' + obj.goodsPrice}
                                     </Text>
-                                    <View style={{marginLeft: 10, alignSelf: 'center'}}>
-                                        <View style={{flex: 1}}>
+                                    <View style={{ marginLeft: 10, alignSelf: 'center' }}>
+                                        <View style={{ flex: 1 }}>
                                             <Text
                                                 onLayout={this._measureLineWidth}
-                                                style={{textDecorationLine:'line-through', color: '#666666', fontSize: 9,marginRight:2}}>
-                                                {'原价:￥'+ obj.goodsSale}
+                                                style={{ textDecorationLine:'line-through', color: '#666666', fontSize: 9, marginRight:2 }}>
+                                                {'原价:￥' + obj.goodsSale}
                                             </Text>
-                                            <View style={{height: 1, width: this.state.lineWidth, backgroundColor: '#666666', position: 'absolute', bottom: lineHeight}}>
-                                            </View>
+                                            <View style={{ height: 1, width: this.state.lineWidth, backgroundColor: '#666666', position: 'absolute', bottom: lineHeight }} />
                                         </View>
                                     </View>
                                 </View>
-                                <View style={{flex: 1}}>
+                                <View style={{ flex: 1 }}>
                                     <Button
                                         onPress={this.doBuyGoods.bind(null, obj, 1)}
                                         style={styles.goPayBtn}
@@ -135,23 +134,23 @@ module.exports = React.createClass({
                     </View>
                 </Image>
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <PageList
                     renderRow={this.renderRow}
-                    listName="goodsList"
+                    listName='goodsList'
                     listUrl={app.route.ROUTE_GET_GOODS_INFO}
-                    refreshEnable={true}
+                    refreshEnable
                     />
             </View>
         );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingBottom: 60,
@@ -164,7 +163,7 @@ var styles = StyleSheet.create({
     },
     commodityStyle: {
         width: sr.w,
-        height: sr.w*2/5-10,
+        height: sr.w * 2 / 5 - 10,
     },
     commodityDetailStyle: {
         width: sr.w,
@@ -173,7 +172,7 @@ var styles = StyleSheet.create({
     },
     rowViewStyle: {
         flex: 1,
-        height:sr.w*2/3,
+        height:sr.w * 2 / 3,
         marginTop:2,
         borderRadius:15,
     },
@@ -231,7 +230,7 @@ var styles = StyleSheet.create({
         color: '#333333',
     },
     specificationsTitleText: {
-        width: (sr.w-75)/2,
+        width: (sr.w - 75) / 2,
         marginLeft: 8,
         fontSize: 18,
         color: '#333333',

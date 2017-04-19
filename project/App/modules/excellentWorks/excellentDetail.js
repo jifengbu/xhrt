@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -11,43 +11,43 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var {PageList} = COMPONENTS;
-var TaskDetail = require('./taskDetail.js');
+const { PageList } = COMPONENTS;
+const TaskDetail = require('./taskDetail.js');
 
 module.exports = React.createClass({
-    getInitialState (){
+    getInitialState () {
         return {
             rowHeight: 0,
             isFirst: 0,
         };
     },
-    _onPressRow(obj) {
+    _onPressRow (obj) {
         app.navigator.push({
             title: obj.authorName,
             component: TaskDetail,
-            passProps: {homeworkDetail: obj,courseObj:this.props.ProObj},
+            passProps: { homeworkDetail: obj, courseObj:this.props.ProObj },
         });
     },
-    renderSeparator(sectionID, rowID) {
-          return (
-              <View
-                  style={styles.separator}
-                  key={rowID}/>
-          );
-      },
-    renderRow(obj) {
+    renderSeparator (sectionID, rowID) {
+        return (
+            <View
+                style={styles.separator}
+                key={rowID} />
+        );
+    },
+    renderRow (obj) {
         return (
             <TouchableOpacity
                 style={styles.itemContainer}
                 onPress={this._onPressRow.bind(null, obj)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.itemTopContainer}>
                     <Text
                         style={styles.TextLeft}>
                         {obj.authorName}
                     </Text>
                     <View style={styles.companyView}>
-                        <Text numberOfLines={1} style={[styles.TextRight, {alignSelf: 'flex-end'}]}>
+                        <Text numberOfLines={1} style={[styles.TextRight, { alignSelf: 'flex-end' }]}>
                             {obj.authorCompany}
                         </Text>
                     </View>
@@ -56,7 +56,7 @@ module.exports = React.createClass({
                     style={styles.TextRight}>
                     {obj.authorPosition}
                 </Text>
-                <View style={styles.lineView}></View>
+                <View style={styles.lineView} />
                 <View style={styles.itemMidContainer}>
                     <Text
                         numberOfLines={3}
@@ -68,42 +68,40 @@ module.exports = React.createClass({
                     <View style={styles.itemBottomView}>
                         <Image
                             source={app.img.excellentWorks_timeto}
-                            style={styles.iconStyle}>
-                        </Image>
+                            style={styles.iconStyle} />
                         <Text style={styles.TextBottomLeft}>{obj.homeworkSubmitTime}</Text>
                     </View>
 
                     <View style={styles.itemBottomView}>
                         <Image
                             source={app.img.excellentWorks_praise_off}
-                            style={styles.iconStyle}>
-                        </Image>
+                            style={styles.iconStyle} />
                         <Text style={styles.TextBottomRight}>{obj.praise}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     style={styles.list}
                     renderRow={this.renderRow}
-                    listName="homeworkList"
+                    listName='homeworkList'
                     renderSeparator={this.renderSeparator}
-                    listParam={{courseId: this.props.ProObj.id,userID: app.personal.info.userID}}
+                    listParam={{ courseId: this.props.ProObj.id, userID: app.personal.info.userID }}
                     listUrl={app.route.ROUTE_GET_EXCELLENT_HOME_WORK_LIST}
-                    refreshEnable={true}
+                    refreshEnable
                     />
             </View>
-        )
-    }
+        );
+    },
 
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor:'#EEEEEE',
@@ -145,7 +143,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
     },
     itemMidContainer: {
-        width:sr.w-20,
+        width:sr.w - 20,
         marginTop: 10,
         marginHorizontal: 10,
     },
@@ -174,7 +172,7 @@ var styles = StyleSheet.create({
         textAlign: 'left',
     },
     companyView: {
-        width: sr.w*3/4,
+        width: sr.w * 3 / 4,
     },
     TextRight: {
         fontSize: 12,
@@ -183,7 +181,7 @@ var styles = StyleSheet.create({
         marginLeft: 10,
     },
     lineView: {
-        width: sr.w-20,
+        width: sr.w - 20,
         height: 1,
         alignSelf: 'center',
         marginTop: 5,
@@ -196,9 +194,9 @@ var styles = StyleSheet.create({
         textAlign: 'right',
     },
     separator: {
-          backgroundColor: '#EEEEEE',
-          height: 10,
-      },
+        backgroundColor: '#EEEEEE',
+        height: 10,
+    },
     iconStyle: {
         height: 15,
         width: 15,

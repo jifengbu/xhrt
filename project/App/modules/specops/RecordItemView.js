@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -10,35 +10,35 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var CopyBox = require('../home/CopyBox.js');
+const CopyBox = require('../home/CopyBox.js');
 
 module.exports = React.createClass({
-    componentDidMount() {
+    componentDidMount () {
     },
-    doComplete(){
+    doComplete () {
         this.props.doComplete();
     },
-    onLongPress(){
+    onLongPress () {
         // 显示复制按钮
         app.showModal(
             <CopyBox copyY={app.touchPosition.y}
-                    copyX={app.touchPosition.x}
-                    copyString={this.props.data.content}/>,
-                    {backgroundColor: 'transparent'}
+                copyX={app.touchPosition.x}
+                copyString={this.props.data.content} />,
+                    { backgroundColor: 'transparent' }
         );
     },
-    render() {
-        const {data, onPress, haveSerialNum,haveImage} = this.props;
+    render () {
+        const { data, onPress, haveSerialNum, haveImage } = this.props;
         let contentSyles = styles.textStyleOther;
         if (haveImage) {
             contentSyles = styles.textStyle;
-        }else if (haveSerialNum) {
+        } else if (haveSerialNum) {
             contentSyles = styles.textStyleAnother;
         }
 
         return (
             <TouchableOpacity onPress={onPress} onLongPress={this.onLongPress}>
-                <View style={[styles.rowContainer, {marginVertical: sr.ws(this.props.rowHeight)}]}>
+                <View style={[styles.rowContainer, { marginVertical: sr.ws(this.props.rowHeight) }]}>
                     {
                         haveSerialNum &&
                         <Text
@@ -54,36 +54,34 @@ module.exports = React.createClass({
                     {
                         haveImage &&
                         (
-                            this.props.data.isOver === 0?
-                            <TouchableOpacity
-                            onPress={this.doComplete}
-                            style={styles.btnStyle}>
+                            this.props.data.isOver === 0 ?
+                                <TouchableOpacity
+                                    onPress={this.doComplete}
+                                    style={styles.btnStyle}>
+                                    <Image
+                                        resizeMode='contain'
+                                        source={app.img.specops_cicle}
+                                        style={styles.iconBtnStyle} />
+                                </TouchableOpacity>
+                            :
                                 <Image
                                     resizeMode='contain'
-                                    source={app.img.specops_cicle}
-                                    style={styles.iconBtnStyle}>
-                                </Image>
-                            </TouchableOpacity>
-                            :
-                            <Image
-                                resizeMode='contain'
-                                source={app.img.specops_cicleTick}
-                                style={styles.iconStyle}>
-                            </Image>
+                                    source={app.img.specops_cicleTick}
+                                    style={styles.iconStyle} />
                         )
                     }
                 </View>
             </TouchableOpacity>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     textStyle: {
         fontSize: 14,
         color: '#2A2A2A',
         fontFamily:'STHeitiSC-Medium',
-        width: sr.w-94,
+        width: sr.w - 94,
         marginLeft: 23,
     },
     textStyleOther: {
@@ -91,13 +89,13 @@ var styles = StyleSheet.create({
         color: '#2A2A2A',
         marginLeft: 23,
         fontFamily:'STHeitiSC-Medium',
-        width: sr.w-46,
+        width: sr.w - 46,
     },
     textStyleAnother: {
         fontSize: 14,
         color: '#2A2A2A',
         fontFamily:'STHeitiSC-Medium',
-        width: sr.w-80,
+        width: sr.w - 80,
     },
     rowContainer: {
         alignItems: 'center',

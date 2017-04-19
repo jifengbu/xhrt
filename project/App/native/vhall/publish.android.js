@@ -1,11 +1,11 @@
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     NativeModules,
 } = ReactNative;
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         let {
             videoId,
             accessToken,
@@ -22,7 +22,7 @@ module.exports = React.createClass({
         if (videoResolution === undefined)videoResolution = 0;
         if (orgiation === undefined)orgiation = 0;
 
-        var param = JSON.stringify({
+        const param = JSON.stringify({
             videoId,
             accessToken,
             appKey,
@@ -32,14 +32,14 @@ module.exports = React.createClass({
             videoResolution,
             orgiation,
         });
-        NativeModules.UtilsModule.startChildApp("com.yxjqd.vhalllive", "com.yxjqd.vhalllive.BroadcastActivity", param, (error)=>{
+        NativeModules.UtilsModule.startChildApp('com.yxjqd.vhalllive', 'com.yxjqd.vhalllive.BroadcastActivity', param, (error) => {
             if (error) {
-                Toast("直播失败");
+                Toast('直播失败');
             }
             app.navigator.pop();
         });
     },
-    render() {
+    render () {
         return null;
-    }
+    },
 });

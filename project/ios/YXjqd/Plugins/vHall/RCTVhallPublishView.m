@@ -5,11 +5,11 @@
 //  Created by ghg on 16/9/20.
 //  Copyright © 2016年 Facebook. All rights reserved.
 //
-#import "RCTConvert.h"
+#import <React/RCTConvert.h>
 #import "RCTVhallPublishView.h"
-#import "RCTBridgeModule.h"
-#import "RCTEventDispatcher.h"
-#import "UIView+React.h"
+#import <React/RCTBridgeModule.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/UIView+React.h>
 #import "VHallLivePublish.h"
 
 @interface RCTVhallPublishView ()<CameraEngineRtmpDelegate> {

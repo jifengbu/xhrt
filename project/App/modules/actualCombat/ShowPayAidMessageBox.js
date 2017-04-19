@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -13,36 +13,36 @@ var {
 } = ReactNative;
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    doConfirm() {
-        this.closeModal(()=>{
+    doConfirm () {
+        this.closeModal(() => {
             this.props.doConfirm();
         });
     },
-    doCancle() {
-        this.closeModal(()=>{
+    doCancle () {
+        this.closeModal(() => {
             this.props.doCancle();
         });
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
-                toValue: 0,
-                duration: 500,
-            }).start(()=>{
-                callback();
-            });
+            toValue: 0,
+            duration: 500,
+        }).start(() => {
+            callback();
+        });
     },
-    render() {
+    render () {
         return (
             <Animated.View style={styles.overlayContainer}>
                 <View style={styles.container}>
@@ -69,39 +69,36 @@ module.exports = React.createClass({
                             </View>
                         </View>
                         <View style={styles.confirmside}>
-                          <TouchableOpacity
-                              onPress={this.doConfirm}
-                              style={styles.panelBtn}>
-                              <View style={[styles.makeup, {right:0,backgroundColor: CONSTANTS.THEME_COLOR}]}>
-                              </View>
-                              <Text style={styles.btnText} >确认打赏
+                            <TouchableOpacity
+                                onPress={this.doConfirm}
+                                style={styles.panelBtn}>
+                                <View style={[styles.makeup, { right:0, backgroundColor: CONSTANTS.THEME_COLOR }]} />
+                                <Text style={styles.btnText} >确认打赏
                               </Text>
-                          </TouchableOpacity>
+                            </TouchableOpacity>
                         </View>
 
                     </View>
                     <TouchableHighlight
                         onPress={this.doCancle}
-                        underlayColor="rgba(0, 0, 0, 0)"
+                        underlayColor='rgba(0, 0, 0, 0)'
                         style={[styles.touchableHighlight, this.props.style]}>
                         <Image
                             resizeMode='contain'
                             source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
+                            style={styles.closeIcon} />
                     </TouchableHighlight>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         paddingBottom: 75,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     imageStyle: {
         marginTop: 20,
@@ -114,7 +111,7 @@ var styles = StyleSheet.create({
         justifyContent:'center',
         paddingTop: 20,
         borderRadius: 6,
-        width:sr.w/5*4,
+        width:sr.w / 5 * 4,
         backgroundColor:'#EEEEEE',
     },
     overlayContainer: {
@@ -124,7 +121,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     btnText: {
         fontSize: 18,
@@ -153,7 +150,7 @@ var styles = StyleSheet.create({
     },
     panelBtn: {
         height: 45,
-        width:sr.w/5*4,
+        width:sr.w / 5 * 4,
         borderRadius: 6,
         backgroundColor: CONSTANTS.THEME_COLOR,
         alignItems:'center',
@@ -162,26 +159,26 @@ var styles = StyleSheet.create({
     makeup: {
         backgroundColor:'blue',
         top: 0,
-        width:sr.w/5*4,
+        width:sr.w / 5 * 4,
         height: 5,
-        position: 'absolute'
+        position: 'absolute',
     },
     touchableHighlight: {
         position:'absolute',
         top:0,
-        left:sr.w*4/5-24,
+        left:sr.w * 4 / 5 - 24,
         width: 38,
         height: 38,
         marginTop:-12,
     },
     closeIcon: {
         width: 38,
-        height: 38
+        height: 38,
     },
     confirmside: {
         height: 45,
         alignItems:'center',
         justifyContent:'center',
-        width:sr.w/5*4,
+        width:sr.w / 5 * 4,
     },
 });

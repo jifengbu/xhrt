@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -14,32 +14,32 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var RecordItemView = require('./BossRecordItem.js');
-var moment = require('moment');
-var {Button, InputBox, DImage} = COMPONENTS;
-var CopyBox = require('../home/CopyBox.js');
-var SpecopsPerson = require('./SpecopsPerson.js');
+const RecordItemView = require('./BossRecordItem.js');
+const moment = require('moment');
+const { Button, InputBox, DImage } = COMPONENTS;
+const CopyBox = require('../home/CopyBox.js');
+const SpecopsPerson = require('./SpecopsPerson.js');
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         this.dayData = {};
         this.dayData.plan = [];
         this.dayData.actual = [];
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             weekCount: 0,
             memWeekTime: [],
             haveData: false,
         };
     },
-    clearMonthData() {
+    clearMonthData () {
         this.dayData = {};
         this.dayData.plan = [];
         this.dayData.actual = [];
 
         // process data.
         if (this.props.planData) {
-            let {planData} = this.props;
+            const { planData } = this.props;
 
             this.userId = planData.userId;
             this.userHeadImage = planData.userImg;
@@ -56,20 +56,20 @@ module.exports = React.createClass({
             }
         }
 
-        setTimeout(()=>{
-            this.setState({haveData: true});
+        setTimeout(() => {
+            this.setState({ haveData: true });
         }, 600);
     },
-    componentDidMount() {
+    componentDidMount () {
         this.clearMonthData();
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
-            {
+                {
                 this.state.haveData &&
                 <View>
-                    <View style={styles.separator2}></View>
+                    <View style={styles.separator2} />
                     <this.monthPlanHead />
                     <this.monthPlanPurpose />
                 </View>
@@ -77,51 +77,51 @@ module.exports = React.createClass({
             </View>
         );
     },
-    toSpecopsPerson(userId) {
+    toSpecopsPerson (userId) {
         app.navigator.push({
             component: SpecopsPerson,
-            passProps: {userID: userId},
+            passProps: { userID: userId },
         });
     },
-    calculateStrLength(oldStr) {
+    calculateStrLength (oldStr) {
         let height = 0;
         let linesWidth = 0;
         if (oldStr) {
-            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/<\/?.+?>/g, /<\/?.+?>/g, '');
             oldStr = oldStr.replace(/[\r\n]/g, '|');
-            let StrArr = oldStr.split('|');
-            for (var i = 0; i < StrArr.length; i++) {
-                //计算字符串长度，一个汉字占2个字节
-                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            const StrArr = oldStr.split('|');
+            for (let i = 0; i < StrArr.length; i++) {
+                // 计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g, 'aa').length;
             }
             return linesWidth;
         }
     },
     // 头像view
-    monthPlanHead() {
-        let nameTemWidth = this.calculateStrLength(this.userHeadName);
-        let postTemWidth = this.calculateStrLength(this.userHeadJob);
-        let nameWidth = nameTemWidth*13+3;
-        let postWidth = postTemWidth*6+3;
-        let headUrl = this.userHeadImage?this.userHeadImage:this.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
+    monthPlanHead () {
+        const nameTemWidth = this.calculateStrLength(this.userHeadName);
+        const postTemWidth = this.calculateStrLength(this.userHeadJob);
+        const nameWidth = nameTemWidth * 13 + 3;
+        const postWidth = postTemWidth * 6 + 3;
+        const headUrl = this.userHeadImage ? this.userHeadImage : this.sex === 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
         return (
             <View style={styles.monthPlanHeadView}>
                 <View style={styles.monthPlanHeadView1}>
-                    <TouchableOpacity onPress={this.toSpecopsPerson.bind(null,this.userId)}>
-                    <DImage
-                        resizeMode='cover'
-                        defaultSource={app.img.personal_head}
-                        source={this.userHeadImage?{uri: headUrl}:headUrl}
-                        style={styles.HeadViewImage}  />
+                    <TouchableOpacity onPress={this.toSpecopsPerson.bind(null, this.userId)}>
+                        <DImage
+                            resizeMode='cover'
+                            defaultSource={app.img.personal_head}
+                            source={this.userHeadImage ? { uri: headUrl } : headUrl}
+                            style={styles.HeadViewImage} />
                     </TouchableOpacity>
-                    <View style={{marginLeft: 15,width: nameWidth>130?sr.ws(130):sr.ws(nameWidth)}}>
+                    <View style={{ marginLeft: 15, width: nameWidth > 130 ? sr.ws(130) : sr.ws(nameWidth) }}>
                         <Text numberOfLines={1} style={styles.HeadViewTextName}>
                             {this.userHeadName}
                         </Text>
                     </View>
                     {
                         this.userHeadJob != '' &&
-                        <View style={[styles.rowPosition,{width: postWidth>60?sr.ws(60):sr.ws(postWidth)}]}>
+                        <View style={[styles.rowPosition, { width: postWidth > 60 ? sr.ws(60) : sr.ws(postWidth) }]}>
                             <Text numberOfLines={1} style={styles.rowPositionText}>
                                 {this.userHeadJob}
                             </Text>
@@ -132,31 +132,31 @@ module.exports = React.createClass({
                     {moment(this.userHeadTime).format('M月D日 HH:mm')}
                 </Text>
             </View>
-        )
+        );
     },
-    //工作计划
-    monthPlanPurpose() {
+    // 工作计划
+    monthPlanPurpose () {
         return (
             <View style={styles.monthPlanPurposeViewStyle}>
-                <View style={styles.separator}></View>
+                <View style={styles.separator} />
                 <View style={styles.titleContainerWeek}>
                     <Text style={styles.headItemText}>
                         计划工作项
                     </Text>
                 </View>
-                <View style={styles.separator3}></View>
+                <View style={styles.separator3} />
                 {
-                    this.dayData.plan.map((item, i)=>{
+                    this.dayData.plan.map((item, i) => {
                         return (
                             <View key={i}>
                                 <RecordItemView
                                     data={item}
                                     rowHeight={5}
-                                    isWideStyle={true}
+                                    isWideStyle
                                     />
-                                <View style={styles.separator3}/>
+                                <View style={styles.separator3} />
                             </View>
-                        )
+                        );
                     })
                 }
                 <View style={styles.titleContainerWeek}>
@@ -164,29 +164,29 @@ module.exports = React.createClass({
                         实际工作项
                     </Text>
                 </View>
-                <View style={styles.separator3}></View>
+                <View style={styles.separator3} />
                 {
-                    this.dayData.actual.map((item, i)=>{
+                    this.dayData.actual.map((item, i) => {
                         return (
                             <View key={i}>
                                 <RecordItemView
-                                data={item}
-                                rowHeight={5}
-                                haveImage={true}
+                                    data={item}
+                                    rowHeight={5}
+                                    haveImage
                                 />
-                                <View style={styles.separator3}/>
+                                <View style={styles.separator3} />
                             </View>
-                        )
+                        );
                     })
                 }
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     monthPlanHeadView: {
         height: 50,
@@ -258,7 +258,7 @@ var styles = StyleSheet.create({
     },
     separator3: {
         marginLeft: 42,
-        width: sr.w-42,
+        width: sr.w - 42,
         height: 1,
         backgroundColor: '#F1F0F5',
     },

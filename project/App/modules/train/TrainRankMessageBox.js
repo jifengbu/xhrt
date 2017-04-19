@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -10,48 +10,48 @@ var {
     TouchableHighlight,
     Image,
 } = ReactNative;
-var {Button, DImage} = COMPONENTS;
+const { Button, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
-    doExit() {
-        this.closeModal(()=>{
+    doExit () {
+        this.closeModal(() => {
             this.props.doExit();
         });
     },
-    doRestart() {
-        this.closeModal(()=>{
+    doRestart () {
+        this.closeModal(() => {
             this.props.doRestart();
         });
     },
-    getInitialState() {
-        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             opacity: new Animated.Value(0),
             dataSource: ds.cloneWithRows(this.props.rankList),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    renderRow(obj) {
+    renderRow (obj) {
         return (
             <View style={styles.row}>
                 <View style={styles.rowLeft}>
                     <Image
                         resizeMode='cover'
                         defaultSource={app.img.personal_head}
-                        source={{uri:obj.userInfo.userImg}}
+                        source={{ uri:obj.userInfo.userImg }}
                         style={styles.icon} />
                 </View>
                 <View style={styles.rowRight}>
@@ -71,20 +71,20 @@ module.exports = React.createClass({
                     </Text>
                 </View>
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <View style={styles.headerView}>
                         <Text style={styles.title}>本轮排名</Text>
                     </View>
-                    <ListView                            initialListSize={1}
-                            enableEmptySections={true}
-                            style={styles.list}
-                            dataSource={this.state.dataSource}
-                            renderRow={this.renderRow}
+                    <ListView                        initialListSize={1}
+                        enableEmptySections
+                        style={styles.list}
+                        dataSource={this.state.dataSource}
+                        renderRow={this.renderRow}
                             />
                     <View style={styles.trainRankButtonView}>
                         <Button
@@ -98,19 +98,18 @@ module.exports = React.createClass({
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        width:sr.w*7/8,
+        width:sr.w * 7 / 8,
         alignItems:'center',
         justifyContent:'center',
         backgroundColor: 'white',
     },
     headerView: {
-        width:sr.w*7/8,
+        width:sr.w * 7 / 8,
         height:50,
         backgroundColor:'white',
         alignItems:'center',
@@ -123,7 +122,7 @@ var styles = StyleSheet.create({
         overflow: 'hidden',
     },
     list: {
-        width:sr.w*7/8,
+        width:sr.w * 7 / 8,
         backgroundColor:'white',
     },
     row: {
@@ -181,13 +180,13 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.ch,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     trainRankButtonView: {
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'white'
+        backgroundColor:'white',
     },
     trainRankButtonExit: {
         flex:1,

@@ -1,25 +1,25 @@
 'use strict';
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     AsyncStorage,
 } = ReactNative;
-var EventEmitter = require('EventEmitter');
+const EventEmitter = require('EventEmitter');
 
-const ITEM_NAME = "inputText";
+const ITEM_NAME = 'inputText';
 
 class InputTextMgr extends EventEmitter {
-  	constructor() {
-          super();
-          this.list = [];
-          this.get();
-  	}
-    get() {
-        return new Promise(async(resolve, reject)=>{
-            var list;
+    constructor () {
+        super();
+        this.list = [];
+        this.get();
+    }
+    get () {
+        return new Promise(async(resolve, reject) => {
+            let list;
             try {
-                var infoStr = await AsyncStorage.getItem(ITEM_NAME);
+                const infoStr = await AsyncStorage.getItem(ITEM_NAME);
                 list = JSON.parse(infoStr);
-            } catch(e) {
+            } catch (e) {
                 list = [];
             }
             this.list = list;
@@ -28,31 +28,31 @@ class InputTextMgr extends EventEmitter {
             }
         });
     }
-    set(list) {
-        return new Promise(async(resolve, reject)=>{
+    set (list) {
+        return new Promise(async(resolve, reject) => {
             this.list = list;
             await AsyncStorage.setItem(ITEM_NAME, JSON.stringify(list));
             resolve();
         });
     }
-    getTextContent(textID){
-        var text = _.find(this.list, (item)=>item.textID===textID);
-        return text?text.textContent: '';
+    getTextContent (textID) {
+        const text = _.find(this.list, (item) => item.textID === textID);
+        return text ? text.textContent : '';
     }
-    setTextContent(textID, textContent) {
-        var text = _.find(this.list, (item)=>item.textID===textID);
+    setTextContent (textID, textContent) {
+        const text = _.find(this.list, (item) => item.textID === textID);
         if (text) {
             text.textContent = textContent;
         } else {
-            this.list.push({textID, textContent});
+            this.list.push({ textID, textContent });
         }
         this.set(this.list);
     }
-    removeItem(textID){
-        _.remove(this.list, (item)=>item.textID===textID);
+    removeItem (textID) {
+        _.remove(this.list, (item) => item.textID === textID);
         this.set(this.list);
     }
-    clear() {
+    clear () {
         this.list = [];
         AsyncStorage.removeItem(ITEM_NAME);
     }

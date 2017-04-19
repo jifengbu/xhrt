@@ -11,7 +11,7 @@ if (app.serverType==0) {
 	SERVER = httpHead+'://test.gyyxjqd.com/app/api/';
 	appid = 'wx6f776c4a6e6d5ce5';
 }else if(app.serverType==2) {
-	SERVER = httpHead+'://localhost:3000/';
+	SERVER = httpHead+'://192.168.1.126:3000/';
 }
 var logoImgUrl = SERVER.replace('api/','www/img/logo.png');
 app.route = {
@@ -36,6 +36,9 @@ app.route = {
 	ROUTE_GET_HOT_AVTIVITY_DETAILED: SERVER + 'getHotActivityDetailed',//热门活动详情
 	ROUTE_SHARE_ENROLL: SERVER + 'shareEnroll',//热门活动分享报名
 	ROUTE_ARTICLE_Jsp: SERVER + 'articleJsp',//获取文章的html页面
+	ROUTE_GET_PLAN_SUMMARY: SERVER + 'getPlanSummary',//获取月、周、日计划,总结
+	ROUTE_GET_RELEVANT_VIDEO: SERVER + 'relevantVideo',//获取推荐视频详情
+	ROUTE_SHARE_INTRODUCE: SERVER + 'getIntroduceHtml5',
 };
 
 app.global = (function() {

@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     View,
@@ -10,45 +10,93 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 import Swiper from 'react-native-swiper2';
 
 module.exports = React.createClass({
-    finishGuide() {
+    getInitialState () {
+        return {
+            overlayImage1: true,
+            overlayImage2: false,
+            overlayImage3: false,
+            overlayImage4: false,
+        };
+    },
+    onPressImage1 () {
+        this.setState({
+            overlayImage1: false,
+            overlayImage2: true,
+        });
+    },
+    onPressImage2 () {
+        this.setState({
+            overlayImage2: false,
+            overlayImage3: true,
+        });
+    },
+    onPressImage3 () {
+        this.setState({
+            overlayImage3: false,
+            overlayImage4: true,
+        });
+    },
+    onPressImage4 () {
         app.closeModal();
     },
-    render() {
-        let images = [app.img.specops_guide1,app.img.specops_guide2,app.img.specops_guide3,app.img.specops_guide4];
+    render () {
+        const images = [app.img.specops_guide1, app.img.specops_guide2, app.img.specops_guide3, app.img.specops_guide4];
         return (
             <View style={styles.overlayContainer}>
-                <Swiper
-                    paginationStyle={styles.overlayBackgroundStyle}
-                    dot={<View style={{backgroundColor:'transparent'}} />}
-                    activeDot={<View style={{backgroundColor:'transparent'}} />}
-                    loop={false}>
-                    {
-                        images.map((item, i)=>{
-                            return (
-                                <Image
-                                    key={i}
-                                    resizeMode='stretch'
-                                    source={images[i]}
-                                    style={styles.overlayBackgroundStyle}>
-                                    <TouchableOpacity
-                                        onPress={this.finishGuide}
-                                        style={i!==3?styles.bannerTouch:styles.bannerOther}>
-                                    </TouchableOpacity>
-                                </Image>
-                            )
-                        })
-                    }
-                </Swiper>
+                {
+                    this.state.overlayImage1 &&
+                    <Image
+                        resizeMode='stretch'
+                        source={app.img.specops_guide1}
+                        style={styles.overlayBackgroundStyle}>
+                        <TouchableOpacity
+                            onPress={this.onPressImage1}
+                            style={styles.bannerTouch} />
+                    </Image>
+                }
+                {
+                    this.state.overlayImage2 &&
+                    <Image
+                        resizeMode='stretch'
+                        source={app.img.specops_guide2}
+                        style={styles.overlayBackgroundStyle}>
+                        <TouchableOpacity
+                            onPress={this.onPressImage2}
+                            style={styles.bannerTouch} />
+                    </Image>
+                }
+                {
+                    this.state.overlayImage3 &&
+                    <Image
+                        resizeMode='stretch'
+                        source={app.img.specops_guide3}
+                        style={styles.overlayBackgroundStyle}>
+                        <TouchableOpacity
+                            onPress={this.onPressImage3}
+                            style={styles.bannerTouch} />
+                    </Image>
+                }
+                {
+                    this.state.overlayImage4 &&
+                    <Image
+                        resizeMode='stretch'
+                        source={app.img.specops_guide4}
+                        style={styles.overlayBackgroundStyle}>
+                        <TouchableOpacity
+                            onPress={this.onPressImage4}
+                            style={styles.bannerOther} />
+                    </Image>
+                }
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     overlayContainer: {
         position:'absolute',
         top: 0,
@@ -63,10 +111,10 @@ var styles = StyleSheet.create({
     btnText: {
         color: '#FFFFFF',
         fontSize: 20,
-        fontFamily: 'STHeitiSC-Medium'
+        fontFamily: 'STHeitiSC-Medium',
     },
     bottomContainer: {
-        width: sr.w-60,
+        width: sr.w - 60,
         height: 80,
         alignItems: 'center',
         justifyContent: 'center',
@@ -78,7 +126,7 @@ var styles = StyleSheet.create({
         borderRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     },
     bannerOther: {
         width: 160,
@@ -87,6 +135,6 @@ var styles = StyleSheet.create({
         borderRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     },
 });

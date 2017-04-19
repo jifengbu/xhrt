@@ -6,6 +6,7 @@
 	<meta http-equiv="content-security-policy">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 	<title>赢销截拳道</title>
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
 </head>
 <style>
 	*,html,body {
@@ -29,15 +30,15 @@
 		background-color: #fff;
 		text-align: center;
 	}
-	.centent .logo {
+	.centent #logo {
 		position: absolute;
-		top: 120px;
+		top: 200px;
 		left: 50%;
 		margin-left: -45px;
 		width: 90px;
 		height: 90px;
 	}
-	.centent .logo img {
+	.centent #logo img {
 		width: 90px;
 		height: 90px;
 		-moz-border-radius: 45px;
@@ -83,13 +84,19 @@
 		width: 100%;
 		height: 43px;
 	}
+	#topView {
+		margin-top: 100px;
+	}
+	.downloadClose {
+		margin-right: 10px;
+	}
 </style>
 <body>
-	<div class="top">
+	<div class="top" id="topView">
 		<div id="name" class="name"><!--亲爱的特种兵罗欣同志！--></div>
 	</div>
 	<div class="centent">
-		<div class="logo"><img src="../../img/head.png" /></div>
+		<div id="logo"><img src="../../img/head.png" /></div>
 		<div class="percentage"><!--今天好棒哦！工作度完成80%--></div>
 		<div class="encourage"><!--加油！加油！！--></div>
 		<div class="prompt"></div>
@@ -97,8 +104,19 @@
 		<div class="introduce"><img src="../../img/button_2.png"></div>
 	</div>
 	<div class="footer"><img src="../../img/button_3.png" /></div>
+	<div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+		<button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button>
+		<div class="installTipCell">
+			<img src="../../img/logo.png"></img>
+			<div class="cellRight">
+				<div class="cellTitle">赢销截拳道</div>
+				<div class="cellContent">赢销截拳道人人都需要</div>
+			</div>
+		</div>
+	</div>
 </body>
 	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
 <script>
 
 	$(function(){
@@ -108,11 +126,11 @@
 		var encourage = getParameter("encourage");
 		$(".top .name").html(name);
 		if (logo != "null" && logo != "") {
-			$(".centent .logo").find("img").attr("src",logo);
+			$(".centent #logo").find("img").attr("src",logo);
 		}
 		$(".centent .percentage").html(percentage);
 		$(".centent .encourage").html(encourage);
-
+		mui.os.ios?$('.installTipCell').append('<button class="downloadApp"><a href="https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8">下载APP</a></button>'):$('.installTipCell').append('<button class="downloadApp"><a href="market://details?id=com.yxjqd">下载APP</a></button>');
 		/*var userID = getParameter("userID");
 		var workDate = getParameter("workDate");
 		if(userID == null || userID == ''){
@@ -170,6 +188,11 @@
 		var re = new RegExp("" + val + "=([^&?]*)", "ig");
 		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
 		return decodeURIComponent(str);
+	}
+	function closeWarning () {
+		document.getElementById('warning').style.display='none';
+		document.getElementById('topView').style.margin='0';
+		document.getElementById('logo').style.top ='120px';
 	}
 </script>
 </html>

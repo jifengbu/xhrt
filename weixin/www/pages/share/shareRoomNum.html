@@ -6,6 +6,7 @@
 	<meta http-equiv="content-security-policy">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 	<title>赢销截拳道</title>
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
 </head>
 <style>
 	body {
@@ -103,9 +104,12 @@
 		width: 100%;
 		height: 43px;
 	}
+	#topView {
+		margin-top: 90px;
+	}
 </style>
 <body>
-	<div class="header">
+	<div class="header" id="topView">
 		<div class="name">特种兵交流场房间</div>
 	</div>
 	<div class="centent">
@@ -114,7 +118,7 @@
 				房间号:
 				<span class="roomNum">(123)</span>
 			</div>
-			
+
 			<div class="company">
 				华为技术有限公司
 			</div>
@@ -133,8 +137,19 @@
 		<div class="introduce"><img src="../../img/button_2.png"></div>
 	</div>
 	<div class="footer"><img src="../../img/button_3.png" /></div>
+	<div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+		<button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button>
+		<div class="installTipCell">
+			<img src="../../img/logo.png"></img>
+			<div class="cellRight">
+				<div class="cellTitle">赢销截拳道</div>
+				<div class="cellContent">赢销截拳道人人都需要</div>
+			</div>
+		</div>
+	</div>
 </body>
 <script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script src="../../js/thirdparty/mui.min.js"></script>
 <script>
 	$(function(){
 		var roomNum = getParameter("roomNum");
@@ -143,8 +158,9 @@
 		$(".roomInfo .title .roomNum").html('('+roomNum+')');
 		$(".roomInfo .company").html(company);
 		$(".roomInfo .time").html('开始时间:'+startTime);
+		mui.os.ios?$('.installTipCell').append('<button class="downloadApp"><a href="https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8">下载APP</a></button>'):$('.installTipCell').append('<button class="downloadApp"><a href="market://details?id=com.yxjqd">下载APP</a></button>');
 	});
-	
+
 	$(".centent .button").on('click',function(){
 		window.location.href='../sign/download.html';
 	});
@@ -154,7 +170,7 @@
 	$(".footer").on('click',function(){
 		window.location.href='http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NDE5Mzg2MA==&hid=2&sn=100e29f2abd43662938ce2fd3a6c580e#wechat_redirect';
 	});
-	
+
 	/**
 	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
 	 * @param {Object} val要获取的参数名称
@@ -164,6 +180,10 @@
 		var re = new RegExp("" + val + "=([^&?]*)", "ig");
 		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
 		return decodeURIComponent(str);
+	}
+	function closeWarning () {
+		document.getElementById('warning').style.display='none';
+		document.getElementById('topView').style.margin='0';
 	}
 </script>
 </html>

@@ -1,36 +1,36 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
+const React = require('react');
+const ReactNative = require('react-native');
 
-var {
+const {
     StyleSheet,
     View,
     Text,
     Image,
 } = ReactNative;
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var Button = require('@remobile/react-native-simple-button');
-import  Swipeout  from 'react-native-swipe-out';
-var {QRCode} = COMPONENTS;
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const Button = require('@remobile/react-native-simple-button');
+import Swipeout from 'react-native-swipe-out';
+const { QRCode } = COMPONENTS;
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
-        setTimeout(()=>{
-            this.setState({a:"http://www.baidu.com"});
-        }, 2000)
-        setTimeout(()=>{
-            this.setState({b:"http://www.baidu.com"});
-        }, 4000)
+        setTimeout(() => {
+            this.setState({ a:'http://www.baidu.com' });
+        }, 2000);
+        setTimeout(() => {
+            this.setState({ b:'http://www.baidu.com' });
+        }, 4000);
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            a: '1'
+            a: '1',
         };
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <QRCode
@@ -43,13 +43,13 @@ module.exports = React.createClass({
                 </Text>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
 });

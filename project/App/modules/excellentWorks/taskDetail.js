@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -11,83 +11,82 @@ var {
     ScrollView,
 } = ReactNative;
 
-var PixelRatio = require('PixelRatio');
-var UmengMgr = require('../../manager/UmengMgr.js');
-var {PageList,RText} = COMPONENTS;
+const PixelRatio = require('PixelRatio');
+const UmengMgr = require('../../manager/UmengMgr.js');
+const { PageList, RText } = COMPONENTS;
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
-        rightButton: { image: app.img.excellentWorks_share, handler: ()=>{
+        rightButton: { image: app.img.excellentWorks_share, handler: () => {
             app.scene.toggleEdit();
-        }},
+        } },
     },
-    getInitialState (){
+    getInitialState () {
         return {
             homeworkDetail: '',
         };
     },
-    componentDidMount() {
-        var tmp1 = this.props.homeworkDetail.homeworkDetail.replace(/\r\n/g,"")
-        var tmp2 = tmp1.replace(/♖/g,"\n\n")
-		var detail = tmp2.replace(/♔/g,"\n\t");
-        this.setState({homeworkDetail:detail});
+    componentDidMount () {
+        const tmp1 = this.props.homeworkDetail.homeworkDetail.replace(/\r\n/g, '');
+        const tmp2 = tmp1.replace(/♖/g, '\n\n');
+        const detail = tmp2.replace(/♔/g, '\n\t');
+        this.setState({ homeworkDetail:detail });
     },
-    toggleEdit() {
+    toggleEdit () {
         this.doShare();
     },
-    doShare() {
-        var data = 'homeworkId='+this.props.homeworkDetail.homeworkId;
-        var desc =this.props.homeworkDetail.authorCompany+this.props.homeworkDetail.authorPosition+this.props.homeworkDetail.authorName+this.props.courseObj.courseName+'的作业'
-        var dataEncode = encodeURI(data);
-        UmengMgr.doActionSheetShare(CONSTANTS.SHARE_HOMEWORKDETAIL_SERVER+'homeworkDetail.html?'+dataEncode,this.props.courseObj.courseName,desc,'web',CONSTANTS.SHARE_IMGDIR_SERVER+'homework.png',this.doShareCallback);
+    doShare () {
+        const data = 'homeworkId=' + this.props.homeworkDetail.homeworkId;
+        const desc = this.props.homeworkDetail.authorCompany + this.props.homeworkDetail.authorPosition + this.props.homeworkDetail.authorName + this.props.courseObj.courseName + '的作业';
+        const dataEncode = encodeURI(data);
+        UmengMgr.doActionSheetShare(CONSTANTS.SHARE_HOMEWORKDETAIL_SERVER + 'homeworkDetail.html?' + dataEncode, this.props.courseObj.courseName, desc, 'web', CONSTANTS.SHARE_IMGDIR_SERVER + 'homework.png', this.doShareCallback);
     },
-    doShareCallback() {
-        //分享回调
+    doShareCallback () {
+        // 分享回调
     },
-    render() {
+    render () {
         return (
             <ScrollView style={styles.container}>
-                <View style={styles. messageContainer}>
-                    <View style={styles. messageContainer1}>
+                <View style={styles.messageContainer}>
+                    <View style={styles.messageContainer1}>
                         <View style={styles.container2}>
                             <Text style={styles.Textstyle}>
-                                {this.props.homeworkDetail.authorName?'姓名： '+this.props.homeworkDetail.authorName:'姓名： '}
+                                {this.props.homeworkDetail.authorName ? '姓名： ' + this.props.homeworkDetail.authorName : '姓名： '}
                             </Text>
                         </View>
                         <View style={styles.container2}>
                             <Text style={styles.Textstyle}>
-                                {this.props.homeworkDetail.authorPosition?'职位： '+this.props.homeworkDetail.authorPosition:'职位： '}
+                                {this.props.homeworkDetail.authorPosition ? '职位： ' + this.props.homeworkDetail.authorPosition : '职位： '}
                             </Text>
                         </View>
                     </View>
-                    <View style={styles. messageContainer1}>
-                        <Text numberOfLines={2} style={[styles.Textstyle, {width: sr.w-30}]}>
-                            {this.props.homeworkDetail.authorCompany?'公司： '+this.props.homeworkDetail.authorCompany:'公司： '}
+                    <View style={styles.messageContainer1}>
+                        <Text numberOfLines={2} style={[styles.Textstyle, { width: sr.w - 30 }]}>
+                            {this.props.homeworkDetail.authorCompany ? '公司： ' + this.props.homeworkDetail.authorCompany : '公司： '}
                         </Text>
                     </View>
                 </View>
-                <View style={styles. dateContainer}>
+                <View style={styles.dateContainer}>
                     <Image
                         source={app.img.excellentWorks_timeto}
-                        style={styles.iconStyle}>
-                    </Image>
+                        style={styles.iconStyle} />
                     <Text style={styles.TextstyleTime}>
                         {this.props.homeworkDetail.homeworkSubmitTime}
                     </Text>
                 </View>
-                <View style={styles. contentContainer}>
+                <View style={styles.contentContainer}>
                     <RText style={styles.TextstyleText}>
                         {this.state.homeworkDetail}
                     </RText>
                 </View>
             </ScrollView>
-        )
-    }
+        );
+    },
 
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
@@ -105,13 +104,13 @@ var styles = StyleSheet.create({
     messageContainer: {
         height: 72,
         margin: 10,
-        width: sr.w -20,
+        width: sr.w - 20,
         borderRadius: 6,
         backgroundColor: '#edeeef',
     },
     dateContainer: {
         marginHorizontal: 10,
-        width: sr.w -20,
+        width: sr.w - 20,
         alignItems: 'center',
         flexDirection: 'row',
     },

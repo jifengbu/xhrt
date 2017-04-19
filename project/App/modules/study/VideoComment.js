@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     Image,
     TextInput,
     Text,
@@ -11,47 +11,47 @@ var {
     Navigator,
 } = ReactNative;
 
-var moment = require('moment');
-var ReplyList = require('./ReplyList.js');
-var {Button, DImage, PageList} = COMPONENTS;
-var isShowReplyList = true;
+const moment = require('moment');
+const ReplyList = require('./ReplyList.js');
+const { Button, DImage, PageList } = COMPONENTS;
+let isShowReplyList = true;
 
-var CommentList = React.createClass({
-    getInitialState() {
+const CommentList = React.createClass({
+    getInitialState () {
         return {
             clickComment: false,
         };
     },
-    _onPressRowText(obj) {
+    _onPressRowText (obj) {
         this.props.noticePopup(obj.commentID, obj.publisherName);
     },
-    _onPressRow(obj) {
+    _onPressRow (obj) {
         isShowReplyList = true;
-        this.setState({clickComment: !this.state.clickComment});
+        this.setState({ clickComment: !this.state.clickComment });
     },
-    updateClickComment() {
-        this.setState({clickComment: !this.state.clickComment});
+    updateClickComment () {
+        this.setState({ clickComment: !this.state.clickComment });
     },
-    render() {
-        var obj = this.props.obj;
-        var tempPublisherTime =app.utils.getJetlagString(obj.publisherTime);
+    render () {
+        const obj = this.props.obj;
+        const tempPublisherTime = app.utils.getJetlagString(obj.publisherTime);
         return (
             <View
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <TouchableOpacity onPress={this._onPressRow.bind(null, obj)} style={styles.itemContainer}>
                     <DImage
                         resizeMode='cover'
                         defaultSource={app.img.personal_head}
-                        source={{uri:obj.publisherImg}}
+                        source={{ uri:obj.publisherImg }}
                         style={styles.headerIcon} />
                     <View style={styles.titleStyle}>
                         <View style={styles.topRow}>
                             {
-                                obj.publisherName?
-                                <Text
-                                    style={styles.nameText}>
-                                    {obj.publisherName+'    /'}
-                                </Text>:null
+                                obj.publisherName ?
+                                    <Text
+                                        style={styles.nameText}>
+                                        {obj.publisherName + '    /'}
+                                    </Text> : null
                             }
                             <Text
                                 style={styles.itemContentText}>
@@ -66,7 +66,7 @@ var CommentList = React.createClass({
                                 {tempPublisherTime}
                             </Text>
                             {
-                                obj.commentID!=0&&
+                                obj.commentID != 0 &&
                                 <TouchableOpacity
                                     onPress={this._onPressRowText.bind(null, obj)}
                                     style={styles.touchCommentContainer}>
@@ -77,13 +77,13 @@ var CommentList = React.createClass({
                     </View>
                 </TouchableOpacity>
                 {
-                    (this.state.clickComment&&isShowReplyList) &&
+                    (this.state.clickComment && isShowReplyList) &&
                     <View style={styles.container}>
                         <ReplyList
                             commentInfo={obj}
                             userID={app.personal.info.userID}
                             videoID={this.props.videoID}
-                            noticeShow={this.updateClickComment}/>
+                            noticeShow={this.updateClickComment} />
                     </View>
                 }
             </View>
@@ -92,54 +92,54 @@ var CommentList = React.createClass({
 });
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             isSendding: false,
         };
     },
-    noticePopup(commentID, publisherName) {
+    noticePopup (commentID, publisherName) {
         this.props.popupInputbox(commentID, publisherName);
     },
-    renderRow(obj) {
+    renderRow (obj) {
         return (
             <CommentList
-                obj = {obj}
+                obj={obj}
                 noticePopup={this.noticePopup}
-                videoID={this.props.data.videoID}/>
-        )
+                videoID={this.props.data.videoID} />
+        );
     },
-    show(callback) {
+    show (callback) {
         return callback();
     },
-    doRefresh(curComment) {
+    doRefresh (curComment) {
         isShowReplyList = false;
-        this.listView.updateList((list)=>{
+        this.listView.updateList((list) => {
             list.unshift(curComment);
             return list;
         });
     },
-    render() {
+    render () {
         return (
             <View style={styles.listContainer}>
                 <View style={styles.commentTitleContainer}>
                     <Text style={styles.titleTypeText}>学习感悟</Text>
                 </View>
-                <View style={styles.separator}></View>
+                <View style={styles.separator} />
                 <PageList
-                    ref={listView=>this.listView=listView}
-                    style={[styles.container, {paddingBottom: 35}]}
+                    ref={listView => { this.listView = listView; }}
+                    style={[styles.container, { paddingBottom: 35 }]}
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID, videoID: this.props.data.videoID,}}
-                    listName="commentList"
+                    listParam={{ userID: app.personal.info.userID, videoID: this.props.data.videoID }}
+                    listName='commentList'
                     listUrl={app.route.ROUTE_GET_COMMENT}
-                    ListFailedText="暂无数据!"
+                    ListFailedText='暂无数据!'
                     />
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',
@@ -164,7 +164,7 @@ var styles = StyleSheet.create({
     },
     separator: {
         height: 1,
-        backgroundColor: '#EEEEEE'
+        backgroundColor: '#EEEEEE',
     },
     headerIcon: {
         width: 32,
@@ -174,7 +174,7 @@ var styles = StyleSheet.create({
     },
     textInput: {
         marginLeft: 15,
-        width: sr.w-130,
+        width: sr.w - 130,
         height:40,
         fontSize: 16,
         backgroundColor: 'transparent',
@@ -196,7 +196,7 @@ var styles = StyleSheet.create({
     itemNameText: {
         fontSize: 14,
         marginTop: 5,
-        width: sr.w-60,
+        width: sr.w - 60,
         color: '#555555',
     },
     nameText: {

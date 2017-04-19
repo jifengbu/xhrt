@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     WebView,
@@ -11,22 +11,22 @@ var {
 module.exports = React.createClass({
     statics: {
         title: '积分说明',
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
     },
-    render() {
+    render () {
         return (
-          <View style={styles.container}>
-              <WebView
-                  style={styles.webview}
-                  source={{uri: CONSTANTS.INTEGRAL_EXPLAINDIR_SERVER}}
-                  scalesPageToFit={false}
+            <View style={styles.container}>
+                <WebView
+                    style={styles.webview}
+                    source={{ uri: CONSTANTS.INTEGRAL_EXPLAINDIR_SERVER }}
+                    scalesPageToFit={false}
                   />
-          </View>
+            </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         width:sr.w,
         height:sr.ch,

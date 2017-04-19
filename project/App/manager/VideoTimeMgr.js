@@ -1,25 +1,25 @@
 'use strict';
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     AsyncStorage,
 } = ReactNative;
-var EventEmitter = require('EventEmitter');
+const EventEmitter = require('EventEmitter');
 
-const ITEM_NAME = "videoTime";
+const ITEM_NAME = 'videoTime';
 
 class VideoTimeMgr extends EventEmitter {
-  	constructor() {
-          super();
-          this.list = [];
-          this.get();
-  	}
-    get() {
-        return new Promise(async(resolve, reject)=>{
-            var list;
+    constructor () {
+        super();
+        this.list = [];
+        this.get();
+    }
+    get () {
+        return new Promise(async(resolve, reject) => {
+            let list;
             try {
-                var infoStr = await AsyncStorage.getItem(ITEM_NAME);
+                const infoStr = await AsyncStorage.getItem(ITEM_NAME);
                 list = JSON.parse(infoStr);
-            } catch(e) {
+            } catch (e) {
                 list = [];
             }
             this.list = list;
@@ -28,32 +28,32 @@ class VideoTimeMgr extends EventEmitter {
             }
         });
     }
-    set(list) {
-        return new Promise(async(resolve, reject)=>{
+    set (list) {
+        return new Promise(async(resolve, reject) => {
             this.list = list;
             await AsyncStorage.setItem(ITEM_NAME, JSON.stringify(list));
             resolve();
         });
     }
-    getPlayTime(videoUrl){
-        var video = _.find(this.list, (item)=>item.videoUrl===videoUrl);
-        return video?video.videoTime: 0;
+    getPlayTime (videoUrl) {
+        const video = _.find(this.list, (item) => item.videoUrl === videoUrl);
+        return video ? video.videoTime : 0;
     }
-    setPlayTime(videoUrl, videoTime) {
-        var video = _.find(this.list, (item)=>item.videoUrl===videoUrl);
+    setPlayTime (videoUrl, videoTime) {
+        const video = _.find(this.list, (item) => item.videoUrl === videoUrl);
         if (video) {
             video.videoTime = videoTime;
         } else {
-            console.log(videoUrl+"-----"+videoTime);
-            this.list.push({videoUrl, videoTime});
+            console.log(videoUrl + '-----' + videoTime);
+            this.list.push({ videoUrl, videoTime });
         }
         this.set(this.list);
     }
-    removeItem(videoUrl){
-        _.remove(this.list, (item)=>item.videoUrl===videoUrl);
+    removeItem (videoUrl) {
+        _.remove(this.list, (item) => item.videoUrl === videoUrl);
         this.set(this.list);
     }
-    clear() {
+    clear () {
         this.list = [];
         AsyncStorage.removeItem(ITEM_NAME);
     }

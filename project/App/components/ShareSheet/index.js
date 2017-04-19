@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     TouchableOpacity,
     Image,
@@ -9,42 +9,38 @@ var {
     View,
 } = ReactNative;
 
-var Button = require('./button.js');
-var Overlay = require('./overlay.js');
-var Sheet = require('./sheet.js');
+const Button = require('./button.js');
+const Overlay = require('./overlay.js');
+const Sheet = require('./sheet.js');
 
-module.exports =  React.createClass({
-    render() {
+module.exports = React.createClass({
+    render () {
         return (
             <Overlay visible={this.props.visible}>
                 <View style={styles.actionSheetContainer}>
                     <TouchableOpacity
-                        style={{flex:1}}
-                        onPress={this.props.onCancel}>
-                    </TouchableOpacity>
+                        style={{ flex:1 }}
+                        onPress={this.props.onCancel} />
                     <Sheet visible={this.props.visible}>
                         <View style={styles.cancelView}>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.common_lightLeft}
-                                style={styles.imageStyle}>
-                            </Image>
+                                style={styles.imageStyle} />
                             <Text style={styles.buttonText}>
                                 {'  分享  '}
                             </Text>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.common_lightRight}
-                                style={styles.imageStyle}>
-                            </Image>
+                                style={styles.imageStyle} />
                             <TouchableOpacity
                                 style={styles.cancel}
                                 onPress={this.props.onCancel}>
                                 <Image
                                     resizeMode='stretch'
                                     source={app.img.common_cancel}
-                                    style={styles.cancelStyle}>
-                                </Image>
+                                    style={styles.cancelStyle} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.buttonContainer}>
@@ -58,10 +54,10 @@ module.exports =  React.createClass({
 });
 module.exports.Button = Button;
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     actionSheetContainer: {
         flex: 1,
-        justifyContent: "flex-end",
+        justifyContent: 'flex-end',
         backgroundColor: 'rgba(0, 0, 0, 0.2)',
     },
     cancelView: {

@@ -2,6 +2,7 @@ package com.yxjqd;
 
 import android.app.Application;
 
+import com.beefe.picker.PickerViewPackage;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -40,7 +41,7 @@ public class MainApplication extends Application implements ReactApplication {
 
     private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
         @Override
-        protected boolean getUseDeveloperSupport() {
+        public boolean getUseDeveloperSupport() {
             return BuildConfig.DEBUG;
         }
 
@@ -68,6 +69,7 @@ public class MainApplication extends Application implements ReactApplication {
                     new RCTCameraPackage(),
                     new RCTCapturePackage(),
                     new RCTImagePickerPackage(),
+                    new PickerViewPackage(),
                     new RCTVideoPackage(),
                     new RCTAudioPackage(),
                     new RCTFileTransferPackage(),

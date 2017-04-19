@@ -1,9 +1,9 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
+const React = require('react');
+const ReactNative = require('react-native');
 
-var {
+const {
     StyleSheet,
     View,
     Text,
@@ -15,34 +15,32 @@ var {
     UIManager,
 } = ReactNative;
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var Button = require('@remobile/react-native-simple-button');
-var ImageSelect = require('../home/ImageSelect');
-var moment = require('moment');
-var {DatePicker,} = COMPONENTS;
-
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const Button = require('@remobile/react-native-simple-button');
+const ImageSelect = require('../home/ImageSelect');
+const moment = require('moment');
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             gradeScore: 0,
         };
     },
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
         this.queryTime = moment();
     },
-    afterChange(gradeScore) {
-        this.setState({gradeScore});
+    afterChange (gradeScore) {
+        this.setState({ gradeScore });
     },
-    doSelect(i) {
-        console.log('=====d===',i);
+    doSelect (i) {
+        console.log('=====d===', i);
     },
-    getIndexPointX(index, arrLength){
+    getIndexPointX (index, arrLength) {
 
     },
-    render() {
-        const {gradeScore} = this.state;
+    render () {
+        const { gradeScore } = this.state;
         return (
             <View style={styles.container}>
                 <ImageSelect
@@ -51,28 +49,27 @@ module.exports = React.createClass({
                     afterChange={this.afterChange}
                     >
                     {
-                        [1, 2, 3, 4, 5].map((n, i)=>{
+                        [1, 2, 3, 4, 5].map((n, i) => {
                             return (
-                                <TouchableOpacity key={i} onPress={this.doSelect.bind(null,i)} style={styles.itemContainer} >
+                                <TouchableOpacity key={i} onPress={this.doSelect.bind(null, i)} style={styles.itemContainer} >
                                     <Image
                                         source={app.img.common_default}
-                                        style={gradeScore==i?styles.selectedScoreContainer:styles.scoreContainer}>
-                                        <View style={gradeScore==i?styles.bottomStyleMid:styles.bottomStyle}>
-                                            <Text numberOfLines={2} style={gradeScore==i?styles.textStyleMid:styles.textStyle}>{"贵阳赢销截拳道成立一周年活动"}</Text>
+                                        style={gradeScore == i ? styles.selectedScoreContainer : styles.scoreContainer}>
+                                        <View style={gradeScore == i ? styles.bottomStyleMid : styles.bottomStyle}>
+                                            <Text numberOfLines={2} style={gradeScore == i ? styles.textStyleMid : styles.textStyle}>{'贵阳赢销截拳道成立一周年活动'}</Text>
                                         </View>
                                     </Image>
                                 </TouchableOpacity>
-                            )
+                            );
                         })
                     }
                 </ImageSelect>
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: 30,
@@ -106,7 +103,7 @@ var styles = StyleSheet.create({
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.3)'
+        backgroundColor: 'rgba(0,0,0,0.3)',
     },
     bottomStyle: {
         position: 'absolute',
@@ -116,7 +113,7 @@ var styles = StyleSheet.create({
         height: 30,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0,0,0,0.3)'
+        backgroundColor: 'rgba(0,0,0,0.3)',
     },
     textStyleMid: {
         fontSize: 16,

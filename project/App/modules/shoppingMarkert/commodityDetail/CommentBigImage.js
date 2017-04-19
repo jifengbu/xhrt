@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -12,32 +12,32 @@ var {
 import Swiper from 'react-native-swiper2';
 
 module.exports = React.createClass({
-    doImageClose() {
+    doImageClose () {
         this.props.doImageClose();
     },
-    getInitialState() {
-        var tempImageArray=[];
-        var tempImageArray1=[];
-        this.props.defaultImageArray.map((item, i)=>{
+    getInitialState () {
+        const tempImageArray = [];
+        const tempImageArray1 = [];
+        this.props.defaultImageArray.map((item, i) => {
             if (i >= this.props.defaultIndex) {
                 tempImageArray1.push(item);
             } else {
                 tempImageArray.push(item);
             }
-        })
-        var imageArray = tempImageArray1.concat(tempImageArray);
+        });
+        const imageArray = tempImageArray1.concat(tempImageArray);
         return {
             imageArray: imageArray,
         };
     },
-    render() {
+    render () {
         return (
             <View style={styles.overlayContainer}>
-                  <Swiper
-                       paginationStyle={styles.paginationStyle}
-                       height={sr.th}>
-                       {
-                           this.state.imageArray.map((item, i)=>{
+                <Swiper
+                    paginationStyle={styles.paginationStyle}
+                    height={sr.th}>
+                    {
+                           this.state.imageArray.map((item, i) => {
                                return (
                                    <TouchableOpacity
                                        key={i}
@@ -46,20 +46,20 @@ module.exports = React.createClass({
                                        <Image
                                            resizeMode='stretch'
                                            defaultSource={app.img.common_default}
-                                           source={{uri: item}}
+                                           source={{ uri: item }}
                                            style={styles.bannerImage}
                                            />
                                    </TouchableOpacity>
-                               )
+                               );
                            })
                        }
-                   </Swiper>
+                </Swiper>
             </View>
         );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     overlayContainer: {
         alignItems:'center',
         justifyContent: 'center',
@@ -67,7 +67,7 @@ var styles = StyleSheet.create({
         height:sr.h,
         position:'absolute',
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 1)'
+        backgroundColor: 'rgba(0, 0, 0, 1)',
     },
     paginationStyle: {
         bottom: 30,
@@ -80,7 +80,7 @@ var styles = StyleSheet.create({
     },
     bannerImage: {
         alignSelf: 'center',
-        width: sr.w-10,
-        height: sr.h-40,
+        width: sr.w - 10,
+        height: sr.h - 40,
     },
 });

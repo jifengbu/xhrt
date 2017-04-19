@@ -1,7 +1,7 @@
 'use strict';
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     Image,
     StyleSheet,
     Text,
@@ -9,32 +9,32 @@ var {
     ScrollView,
 } = ReactNative;
 
-var moment = require('moment');
+const moment = require('moment');
 import Echarts from 'native-echarts';
 
 module.exports = React.createClass({
-    render() {
-        let {taskSubmitRateData} = this.props;
-        let monthPlanData = taskSubmitRateData.monthPlanRateList||[];
-        let dayPlanData = taskSubmitRateData.dayPlanRateList||[];
-        let daySummaryData = taskSubmitRateData.daySummaryRateList||[];
-        let rateDate = [];
-        let monthRateData = [];
-        let dayRateData = [];
-        let SummaryRateData = [];
-        for (var i in monthPlanData) {
+    render () {
+        const { taskSubmitRateData } = this.props;
+        const monthPlanData = taskSubmitRateData.monthPlanRateList || [];
+        const dayPlanData = taskSubmitRateData.dayPlanRateList || [];
+        const daySummaryData = taskSubmitRateData.daySummaryRateList || [];
+        const rateDate = [];
+        const monthRateData = [];
+        const dayRateData = [];
+        const SummaryRateData = [];
+        for (let i in monthPlanData) {
             monthRateData.push(monthPlanData[i].submitRate);
-            rateDate.push(moment(monthPlanData[i].monthNum).format('M')+'月');
+            rateDate.push(moment(monthPlanData[i].monthNum).format('M') + '月');
         }
-        for (var i in dayPlanData) {
+        for (let i in dayPlanData) {
             dayRateData.push(dayPlanData[i].submitRate);
         }
-        for (var i in daySummaryData) {
+        for (let i in daySummaryData) {
             SummaryRateData.push(daySummaryData[i].submitRate);
         }
-        var monthPlanRate = taskSubmitRateData.monthPlanRate||0;
-        var dayPlanRate = taskSubmitRateData.dayPlanRate||0;
-        var daySummaryRate = taskSubmitRateData.daySummaryRate||0;
+        const monthPlanRate = taskSubmitRateData.monthPlanRate || 0;
+        const dayPlanRate = taskSubmitRateData.dayPlanRate || 0;
+        const daySummaryRate = taskSubmitRateData.daySummaryRate || 0;
         const option = {
             xAxis: {
                 boundaryGap : false,
@@ -43,77 +43,77 @@ module.exports = React.createClass({
                 axisLine:{
                     lineStyle:{
                         color:'#DDDDDD',
-                    }
+                    },
                 },
                 axisLabel: {
                     textStyle: {
-                        color: '#AEAEAE'
-                    }
+                        color: '#AEAEAE',
+                    },
                 },
             },
             grid: {
                 left: '5%',
                 right: '6%',
                 bottom: '3%',
-                containLabel: true
+                containLabel: true,
             },
-            color:["#72D667", "#9BA0FF", "#F1582F"],
+            color:['#72D667', '#9BA0FF', '#F1582F'],
             yAxis: {
                 type: 'value',
                 name: '（平均提交率）',
                 axisLine:{
                     lineStyle:{
                         color:'#DDDDDD',
-                    }
+                    },
                 },
                 axisLabel: {
                     show: true,
                     interval: 'auto',
                     formatter: '{value} %',
                     textStyle: {
-                        color: '#AEAEAE'
+                        color: '#AEAEAE',
                     },
                 },
             },
             series: [
-                        {
-                            name: '目标提交率',
-                            type: 'line',
-                            symbol:'circle',
-                            symbolSize:5,
-                            data: monthRateData,
-                            markLine : {
-                                symbol:[],
-                                itemStyle: {
-                                     normal: {
-                                         color: '#d9d9d9',
-                                         label:{show: false},
-                                     },
-                                 },
-                                data : [
-                                   {xAxis:1},
-                                   {xAxis:2},
-                                   {xAxis:3},
-                                   {xAxis:4},
-                                   {xAxis:5},
-                                   {xAxis:6},
-                           ]},
+                {
+                    name: '目标提交率',
+                    type: 'line',
+                    symbol:'circle',
+                    symbolSize:5,
+                    data: monthRateData,
+                    markLine : {
+                        symbol:[],
+                        itemStyle: {
+                            normal: {
+                                color: '#d9d9d9',
+                                label:{ show: false },
+                            },
                         },
-                        {
-                            name: '计划提交率',
-                            type: 'line',
-                            symbol:'circle',
-                            symbolSize:5,
-                            data: dayRateData
-                        },
-                        {
-                            name: '总结提交率',
-                            type: 'line',
-                            symbol:'circle',
-                            symbolSize:5,
-                            data: SummaryRateData
-                        }
-                    ]
+                        data : [
+                                   { xAxis:1 },
+                                   { xAxis:2 },
+                                   { xAxis:3 },
+                                   { xAxis:4 },
+                                   { xAxis:5 },
+                                   { xAxis:6 },
+                        ] },
+                },
+                {
+                    name: '计划提交率',
+                    type: 'line',
+                    symbol:'circle',
+                    symbolSize:5,
+                    data: dayRateData,
+                },
+                {
+                    name: '总结提交率',
+                    type: 'line',
+                    symbol:'circle',
+                    symbolSize:5,
+                    data: SummaryRateData,
+                },
+            ],
         };
         return (
             <View style={styles.container}>
@@ -122,9 +122,9 @@ module.exports = React.createClass({
                     <View style={styles.titleDetailView}>
                         <View style={styles.itemView}>
                             <View style={styles.lineContainer}>
-                                <View style={[styles.dotView, {backgroundColor: '#72D667'}]}></View>
-                                <View style={[styles.lineView, {backgroundColor: '#72D667'}]}></View>
-                                <View style={[styles.dotView, {backgroundColor: '#72D667'}]}></View>
+                                <View style={[styles.dotView, { backgroundColor: '#72D667' }]} />
+                                <View style={[styles.lineView, { backgroundColor: '#72D667' }]} />
+                                <View style={[styles.dotView, { backgroundColor: '#72D667' }]} />
                             </View>
                             <View style={styles.lineContainer}>
                                 <Text style={styles.targetTitle}>{monthPlanRate}</Text>
@@ -134,24 +134,24 @@ module.exports = React.createClass({
                         </View>
                         <View style={styles.itemView}>
                             <View style={styles.lineContainer}>
-                                <View style={[styles.dotView, {backgroundColor: '#9BA0FF'}]}></View>
-                                <View style={[styles.lineView, {backgroundColor: '#9BA0FF'}]}></View>
-                                <View style={[styles.dotView, {backgroundColor: '#9BA0FF'}]}></View>
+                                <View style={[styles.dotView, { backgroundColor: '#9BA0FF' }]} />
+                                <View style={[styles.lineView, { backgroundColor: '#9BA0FF' }]} />
+                                <View style={[styles.dotView, { backgroundColor: '#9BA0FF' }]} />
                             </View>
                             <View style={styles.lineContainer}>
-                            <Text style={styles.targetTitle}>{dayPlanRate}</Text>
+                                <Text style={styles.targetTitle}>{dayPlanRate}</Text>
                                 <Text style={styles.percentText}>{'％'}</Text>
                             </View>
                             <Text style={styles.detailTitle}>计划提交率</Text>
                         </View>
                         <View style={styles.itemView}>
                             <View style={styles.lineContainer}>
-                                <View style={[styles.dotView, {backgroundColor: '#F1582F'}]}></View>
-                                <View style={[styles.lineView, {backgroundColor: '#F1582F'}]}></View>
-                                <View style={[styles.dotView, {backgroundColor: '#F1582F'}]}></View>
+                                <View style={[styles.dotView, { backgroundColor: '#F1582F' }]} />
+                                <View style={[styles.lineView, { backgroundColor: '#F1582F' }]} />
+                                <View style={[styles.dotView, { backgroundColor: '#F1582F' }]} />
                             </View>
                             <View style={styles.lineContainer}>
-                            <Text style={styles.targetTitle}>{daySummaryRate}</Text>
+                                <Text style={styles.targetTitle}>{daySummaryRate}</Text>
                                 <Text style={styles.percentText}>{'％'}</Text>
                             </View>
                             <Text style={styles.detailTitle}>总结提交率</Text>
@@ -161,16 +161,16 @@ module.exports = React.createClass({
                 <Echarts option={option} height={200} />
             </View>
         );
-      }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
     },
     chartTopView: {
         marginTop: 18,
-        width: sr.w-40,
+        width: sr.w - 40,
         marginHorizontal: 20,
     },
     chartTitle: {

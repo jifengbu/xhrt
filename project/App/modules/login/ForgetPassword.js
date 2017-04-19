@@ -1,21 +1,21 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     TextInput,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
         color: CONSTANTS.THEME_COLORS[1],
         title: '忘记密码',
-        leftButton: {color: CONSTANTS.THEME_COLORS[1], handler: ()=>{app.navigator.pop()}},
+        leftButton: { color: CONSTANTS.THEME_COLORS[1], handler: () => { app.navigator.pop(); } },
     },
-    doSubmit() {
+    doSubmit () {
         if (!app.utils.checkPassword(this.state.pwd)) {
             Toast('密码必须有6-20位的数字，字母，下划线组成');
             return;
@@ -24,15 +24,15 @@ module.exports = React.createClass({
             Toast('两次输入密码不一致，请确认后重新输入');
             return;
         }
-        var param = {
+        const param = {
             phone: this.props.phone,
             pwd:this.state.pwd,
-            pwdAgain:this.state.pwdAgain
+            pwdAgain:this.state.pwdAgain,
         };
         POST(app.route.ROUTE_UP_DATEPWD, param, this.doSubmitSuccess);
         app.navigator.popToTop();
     },
-    doSubmitSuccess(data) {
+    doSubmitSuccess (data) {
         if (data.success) {
             Toast(data.msg);
             app.navigator.popToTop();
@@ -40,30 +40,32 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.outsideContainer}>
-                      <TextInput
-                          placeholder="请输入您的新密码"
-                          style={styles.txtPassWord}
-                          secureTextEntry={true}
-                          onChangeText={(text) => this.setState({pwd: text})}
+                    <TextInput
+                        placeholder='请输入您的新密码'
+                        underlineColorAndroid='transparent'
+                        style={styles.txtPassWord}
+                        secureTextEntry
+                        onChangeText={(text) => this.setState({ pwd: text })}
                           />
-                      <TextInput
-                          placeholder="再次输入您的新密码"
-                          style={styles.txtPassWord}
-                          secureTextEntry={true}
-                          onChangeText={(text) => this.setState({pwdAgain: text})}
+                    <TextInput
+                        placeholder='再次输入您的新密码'
+                        underlineColorAndroid='transparent'
+                        style={styles.txtPassWord}
+                        secureTextEntry
+                        onChangeText={(text) => this.setState({ pwdAgain: text })}
                           />
-                      <Button onPress={this.doSubmit} style={styles.btnSubmit}>确定</Button>
+                    <Button onPress={this.doSubmit} style={styles.btnSubmit}>确定</Button>
                 </View>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',

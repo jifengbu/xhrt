@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     Image,
     Text,
     StyleSheet,
@@ -10,107 +10,106 @@ var {
     View,
     TouchableOpacity,
     ScrollView,
-    LayoutAnimation
+    LayoutAnimation,
 } = ReactNative;
 
-var dismissKeyboard = require('dismissKeyboard');
-var CityData = require('../../data/city.js');
-var moment = require('moment');
-var EditPosition = require('./EditPosition.js');
-var EditInformationBox = require('./EditInformationBox.js');
-var PersonalInfoMgr = require('../../manager/PersonalInfoMgr.js');
-import Picker from 'react-native-picker';
-var Subscribable = require('Subscribable');
-var Camera = require('@remobile/react-native-camera');
+const dismissKeyboard = require('dismissKeyboard');
+const CityData = require('../../data/city.js');
+const moment = require('moment');
+const EditPosition = require('./EditPosition.js');
+const EditInformationBox = require('./EditInformationBox.js');
+const PersonalInfoMgr = require('../../manager/PersonalInfoMgr.js');
+const Subscribable = require('Subscribable');
+const Camera = require('@remobile/react-native-camera');
 
-var {DImage,ActionSheet}=  COMPONENTS;
+const { DImage, ActionSheet, Picker } = COMPONENTS;
 
-var createAreaData = (area) => {
-    let data = {};
+const createAreaData = (area) => {
+    let data = [];
     let len = area.length;
     for(let i=0;i<len;i++){
-        let city = area[i]['city'];
-        let cityLen = city.length;
-        let ProvinceName = area[i]['name'];
-        data[ProvinceName] = {};
-        for(let j=0;j<cityLen;j++){
-            let area = city[j]['area'];
-            let cityName = city[j]['name'];
-            data[ProvinceName][cityName] = area;
+        let city = [];
+        for(let j=0,cityLen=area[i]['city'].length;j<cityLen;j++){
+            let _city = {};
+            _city[area[i]['city'][j]['name']] = area[i]['city'][j]['area'];
+            city.push(_city);
         }
+
+        let _data = {};
+        _data[area[i]['name']] = city;
+        data.push(_data);
     }
     return data;
 };
-var createTimeData = () => {
-    let data = app.utils.createBirthdayData(moment());
+const createTimeData = () => {
+    const data = app.utils.createDateDataPicker(moment());
     return data;
 };
-var getAddressFullName = (values) => {
+const getAddressFullName = (values) => {
     if (values[0] === values[1]) {
-        return values[0]+'市'+values[2];
+        return values[0] + '市' + values[2];
     }
-    return values[0]+'省'+values[1]+'市'+values[2];
+    return values[0] + '省' + values[1] + '市' + values[2];
 };
 const DATA = {
-    sex: ['男','女'],
+    sex: ['男', '女'],
     age: createTimeData(),
     city: createAreaData(CityData),
 };
 const DEFAULT_OPACITY = 0.5;
 
-var arrayTemp = [];
+const arrayTemp = [];
 
 module.exports = React.createClass({
     mixins: [Subscribable.Mixin, SceneMixin],
     statics: {
         title: '个人信息',
-        leftButton: {image: app.img.common_back2, handler: ()=>{app.scene.goBack()}},
-        rightButton: { title: '编辑', delayTime:1, handler: ()=>{app.scene.toggleEdit()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.scene.goBack(); } },
+        rightButton: { title: '编辑', delayTime:1, handler: () => { app.scene.toggleEdit(); } },
     },
-    componentWillMount() {
-        this.addListenerOn(PersonalInfoMgr, 'USER_HEAD_CHANGE_EVENT', (param)=>{
-            this.setState({headImgSource: {uri: param.head}});
+    componentWillMount () {
+        this.addListenerOn(PersonalInfoMgr, 'USER_HEAD_CHANGE_EVENT', (param) => {
+            this.setState({ headImgSource: { uri: param.head } });
         });
     },
-    goBack() {
+    goBack () {
         app.navigator.pop();
     },
-    toggleEdit() {
-        if (!this.picker.isPickerShow()) {
-            dismissKeyboard();
-            if (this.state.isEditStatus) {
-                var {headImg,name,email,sex,trade,company,post,city,birthday} = app.personal.info;
-                var ageText = this.state.ageText;
-                var birth = this.formatDateLoad(ageText);
-                var tempSex = 0;
-                if (this.state.sex[0] ==='男') {
-                    tempSex = 1;
-                } else {
-                    tempSex = 0;
-                }
-                if (name != this.state.name || sex != tempSex || email != this.state.email || headImg != this.state.headImgSource.uri || trade != this.state.trade || company != this.state.company || post != this.state.post || city != this.state.city || birthday != birth) {
-                    this.updatePersnalInfo();
-                } else {
-                    this.setState({isEditStatus: false});
-                    app.getCurrentRoute().leftButton = {image: app.img.common_back2, handler: ()=>{app.scene.goBack()}};
-                    app.getCurrentRoute().rightButton = { title: '编辑', delayTime:1, handler: ()=>{app.scene.toggleEdit()}};
-                    app.forceUpdateNavbar();
-                }
+    toggleEdit () {
+        Picker.hide();
+        dismissKeyboard();
+        if (this.state.isEditStatus) {
+            const { headImg, name, email, sex, trade, company, post, city, birthday } = app.personal.info;
+            const ageText = this.state.ageText;
+            const birth = this.formatDateLoad(ageText);
+            let tempSex = 0;
+            if (this.state.sex[0] === '男') {
+                tempSex = 1;
             } else {
-                this.setState({isEditStatus: true});
-                app.getCurrentRoute().leftButton = { title: '取消', delayTime:1, handler: ()=>{app.scene.showBox()}};
-                app.getCurrentRoute().rightButton = { title: '完成', delayTime:1, handler: ()=>{app.scene.toggleEdit()}};
+                tempSex = 0;
+            }
+            if (name != this.state.name || sex != tempSex || email != this.state.email || headImg != this.state.headImgSource.uri || trade != this.state.trade || company != this.state.company || post != this.state.post || city != this.state.city || birthday != birth) {
+                this.updatePersnalInfo();
+            } else {
+                this.setState({ isEditStatus: false });
+                app.getCurrentRoute().leftButton = { image: app.img.common_back2, handler: () => { app.scene.goBack(); } };
+                app.getCurrentRoute().rightButton = { title: '编辑', delayTime:1, handler: () => { app.scene.toggleEdit(); } };
                 app.forceUpdateNavbar();
             }
+        } else {
+            this.setState({ isEditStatus: true });
+            app.getCurrentRoute().leftButton = { title: '取消', delayTime:1, handler: () => { app.scene.showBox&&app.scene.showBox(); } };
+            app.getCurrentRoute().rightButton = { title: '完成', delayTime:1, handler: () => { app.scene.toggleEdit(); } };
+            app.forceUpdateNavbar();
         }
     },
-    showBox() {
+    showBox () {
         dismissKeyboard();
-        var {headImg,name,email,sex,trade,company,post,city,birthday} = app.personal.info;
-        var ageText = this.state.ageText;
-        var birth = this.formatDateLoad(ageText);
-        var tempSex = 0;
-        if (this.state.sex[0] ==='男') {
+        const { headImg, name, email, sex, trade, company, post, city, birthday } = app.personal.info;
+        const ageText = this.state.ageText;
+        const birth = this.formatDateLoad(ageText);
+        let tempSex = 0;
+        if (this.state.sex[0] === '男') {
             tempSex = 1;
         } else {
             tempSex = 0;
@@ -121,7 +120,7 @@ module.exports = React.createClass({
             app.navigator.pop();
         }
     },
-    showConfirmBox() {
+    showConfirmBox () {
         app.showModal(
             <EditInformationBox
                 doConfirm={this.doConfirm}
@@ -129,24 +128,24 @@ module.exports = React.createClass({
                 />
         );
     },
-    getStateFromPersonalInfo() {
-        var info = app.personal.info;
-        var post = info.post;
-        var trade = info.trade;
-        var company = info.company;
-        var email = info.email;
-        var name = info.name;
-        var city = info.city;
-        var birthday = info.birthday;
+    getStateFromPersonalInfo () {
+        const info = app.personal.info;
+        const post = info.post;
+        const trade = info.trade;
+        const company = info.company;
+        const email = info.email;
+        const name = info.name;
+        const city = info.city;
+        const birthday = info.birthday;
 
-        var sex = '男';
-        var ageText = this.restoreDate(birthday);
+        let sex = '男';
+        const ageText = this.restoreDate(birthday);
         if (info.sex === 0) {
             sex = '女';
         }
-        var headImgSource = info.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
+        let headImgSource = info.sex === 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
         if (info.headImg) {
-            headImgSource = {uri: info.headImg};
+            headImgSource = { uri: info.headImg };
         }
         return {
             sex: sex,
@@ -159,19 +158,20 @@ module.exports = React.createClass({
             ageText: ageText,
             actionSheetVisible: false,
             headImgSource: headImgSource,
-        }
+        };
     },
-    getInitialState() {
+    getInitialState () {
         return Object.assign({
             showSuccessToast: false,
             overlayShow: false,
             isEditStatus: false,
-            pickerData: ['男','女'],
-            defaultSelectValue: '男',
         }, this.getStateFromPersonalInfo());
     },
-    setPersonalInfo() {
-        var info = app.personal.info;
+    onWillHide() {
+        Picker.hide();
+    },
+    setPersonalInfo () {
+        const info = app.personal.info;
         info.sex = this.state.sex;
         info.post = this.state.post;
         info.trade = this.state.trade;
@@ -179,126 +179,127 @@ module.exports = React.createClass({
         info.email = this.state.email;
         info.name = this.state.name;
         info.city = this.state.city;
-        info.headImg = this.state.headImgSource.uri||'';
-        if (this.state.sex[0]==='男') {
+        info.headImg = this.state.headImgSource.uri || '';
+        if (this.state.sex[0] === '男') {
             info.sex = 1;
         } else {
             info.sex = 0;
         }
-        var ageText = this.state.ageText;
+        const ageText = this.state.ageText;
         info.birthday = this.formatDateLoad(ageText);
         app.personal.set(info);
     },
-    editPosition() {
-        this.picker.hide();
+    editPosition () {
+        Picker.hide();
         app.navigator.push({
             title: '职业',
             component: EditPosition,
-            passProps: {getPosition: this.getPosition}
+            passProps: { getPosition: this.getPosition },
         });
     },
-    getPosition(trade) {
-        this.setState({trade});
+    getPosition (trade) {
+        this.setState({ trade });
     },
-    _onPressHandle(type) {
-        if (!this.picker.isPickerShow()) {
-            this.pickerType = type;
-            var state = this.state;
-            var birthday = [''];
-            var {sex, ageText,city} = state;
-            if (city) {
-                city = city.split(/市|省/);
-                if (city.length === 2) {
-                    city =[city[0]].concat(city);
-                } else if (city.length === 1) {
-                    city = ['北京', '北京', '东城区'];
-                }
-            } else {
+    _onPressHandle (type) {
+        this.pickerType = type;
+        let birthday = [''];
+        let { sex, ageText, city } = this.state;
+        if (city) {
+            city = city.split(/市|省/);
+            if (city.length === 2) {
+                city = [city[0]].concat(city);
+            } else if (city.length === 1) {
                 city = ['北京', '北京', '东城区'];
             }
-            if (ageText.length !== 0) {
-                birthday = ageText;
-            } else {
-                var date = moment();
-                birthday = [date.year()+'年', (date.month()+1)+'月', date.date()+'日'];
-            }
-            if (type === 'sex') {
-                this.setState({defaultSelectValue: sex, pickerData: DATA.sex});
-            } else if (type === 'age') {
-                this.setState({defaultSelectValue: birthday, pickerData: DATA.age});
-            } else if (type === 'city') {
-                this.setState({defaultSelectValue:  city, pickerData: DATA.city});
-            }
-            this.picker.show();
         } else {
-            this.picker.hide();
+            city = ['北京', '北京', '东城区'];
         }
+        if (ageText.length !== 0) {
+            birthday = ageText;
+        } else {
+            const date = moment();
+            birthday = [date.year() + '年', (date.month() + 1) + '月', date.date() + '日'];
+        }
+        let defaultSelectValue, pickerData;
+        if (type === 'sex') {
+            defaultSelectValue = [sex];
+            pickerData = DATA.sex;
+        } else if (type === 'age') {
+            defaultSelectValue = birthday;
+            pickerData = DATA.age;
+        } else if (type === 'city') {
+            defaultSelectValue = city;
+            pickerData = DATA.city;
+        }
+        Picker(pickerData, defaultSelectValue, '').then((value)=>{
+            this.setChooseValue(value);
+        });
     },
-    setChooseValue(value) {
-        var type = this.pickerType;
+    setChooseValue (value) {
+        const type = this.pickerType;
         if (type === 'sex') {
             if (!this.state.headImgSource.uri) {
                 if (value[0] === '男') {
-                    this.setState({headImgSource: app.img.personal_sex_male});
+                    this.setState({ headImgSource: app.img.personal_sex_male });
                 } else {
-                    this.setState({headImgSource: app.img.personal_sex_female});
+                    this.setState({ headImgSource: app.img.personal_sex_female });
                 }
             }
-            this.setState({sex: value});
+            this.setState({ sex: value });
         } else if (type === 'age') {
-            this.setState({ageText: value});
+            this.setState({ ageText: value });
         } else if (type === 'city') {
-            this.setState({city: getAddressFullName(value)});
+            this.setState({ city: getAddressFullName(value) });
         }
     },
-    setEmailText(text) {
-        this.setState({email: text})
+    setEmailText (text) {
+        this.setState({ email: text });
     },
-    onTextInputFocus() {
-        this.picker.hide();
+    onTextInputFocus () {
+        Picker.hide();
     },
-    doConfirm() {
+    doConfirm () {
         app.navigator.pop();
     },
-    restoreDate(dateStr) {
+    restoreDate (dateStr) {
         let dateArr = [];
         let newArr = [];
         let newStr = '';
         if (dateStr) {
-            dateArr = dateStr.split("-");
-            dateArr.splice(1, 0, "年/");
-            dateArr.splice(3, 0, "月/");
-            dateArr.splice(5, 0, "日");
-            newStr = dateArr.join("");
-            newArr = newStr.split("/");
+            dateArr = dateStr.split('-');
+            dateArr.splice(1, 0, '年/');
+            dateArr.splice(3, 0, '月/');
+            dateArr.splice(5, 0, '日');
+            newStr = dateArr.join('');
+            newArr = newStr.split('/');
         }
         return newArr;
     },
-    formatDate(date) {
+    formatDate (date) {
         let dateStr = '';
         let dateArr = [];
         let newStr = '';
         if (date) {
-            dateStr = date.join("");
-            let str = dateStr.substring(0, dateStr.length - 1);
+            dateStr = date.join('');
+            const str = dateStr.substring(0, dateStr.length - 1);
             dateArr = str.split(/[年月]/);
-            newStr = dateArr.join("/");
+            newStr = dateArr.join('/');
         }
         return newStr;
     },
-    formatDateLoad(date) {
+    formatDateLoad (date) {
         let dateStr = '';
         let dateArr = [];
         let newStr = '';
         if (date) {
-            dateStr = date.join("");
-            let str = dateStr.substring(0, dateStr.length - 1);
+            dateStr = date.join('');
+            const str = dateStr.substring(0, dateStr.length - 1);
             dateArr = str.split(/[年月]/);
-            newStr = dateArr.join("-");
+            newStr = dateArr.join('-');
         }
         return newStr;
     },
-    formatCity(city) {
+    formatCity (city) {
         let cityStr = '';
         if (city) {
             cityStr = city.replace('市', '市-');
@@ -306,9 +307,9 @@ module.exports = React.createClass({
         }
         return cityStr;
     },
-    updatePersnalInfo() {
-        var detailsMap = this.setData();
-        var isEmail = app.utils.checkEmailCode(detailsMap.email);
+    updatePersnalInfo () {
+        const detailsMap = this.setData();
+        const isEmail = app.utils.checkEmailCode(detailsMap.email);
         if (!isEmail) {
             Toast('请输入正确的邮箱格式');
             return;
@@ -317,60 +318,60 @@ module.exports = React.createClass({
             Toast('名称不能为空');
             return;
         }
-        var param = {
+        const param = {
             userID: app.personal.info.userID,
             detail: detailsMap,
         };
         POST(app.route.ROUTE_UPDATE_PERSONAL_INFO, param, this.updatePersnalInfoSuccess, this.updatePersnalInfoError, true);
     },
-    updatePersnalInfoSuccess(data) {
+    updatePersnalInfoSuccess (data) {
         if (data.success) {
             this.setPersonalInfo();
-            this.setState({isEditStatus: false, showSuccessToast: true});
-            app.getCurrentRoute().leftButton = { handler: ()=>{app.scene.goBack()}};
-            app.getCurrentRoute().rightButton = { title: '编辑', handler: ()=>{app.scene.toggleEdit()}};
+            this.setState({ isEditStatus: false, showSuccessToast: true });
+            app.getCurrentRoute().leftButton = { handler: () => { app.scene.goBack(); } };
+            app.getCurrentRoute().rightButton = { title: '编辑', handler: () => { app.scene.toggleEdit(); } };
             app.forceUpdateNavbar();
-            setTimeout(()=>{
-                this.setState({showSuccessToast: false});
+            setTimeout(() => {
+                this.setState({ showSuccessToast: false });
             }, 2000);
         } else {
             Toast(data.msg);
         }
     },
-    updatePersnalInfoError(error) {
+    updatePersnalInfoError (error) {
     },
-    onFocus() {
-        this.picker.hide();
+    onFocus () {
+        Picker.hide();
     },
-    setData() {
-      var sexCode = 0;
-      var sexText = this.state.sex+'';
-      if (sexText === '男') {
-          sexCode = 1;
-      }
-      var ageGroup = 0;
-      var birthday = this.formatDateLoad(this.state.ageText);
-      var detailsMap = {};
-      detailsMap['name'] = this.state.name;
-      detailsMap['sex'] = sexCode;
-      detailsMap['city'] = this.state.city;
-      detailsMap['post'] = this.state.post;
-      detailsMap['trade'] = this.state.trade;
-      detailsMap['company'] = this.state.company;
-      detailsMap['email'] = this.state.email;
-      detailsMap['birthday'] = birthday;
-      detailsMap['headImg'] = this.state.headImgSource.uri||'';
-      return detailsMap;
+    setData () {
+        let sexCode = 0;
+        const sexText = this.state.sex + '';
+        if (sexText === '男') {
+            sexCode = 1;
+        }
+        let ageGroup = 0;
+        const birthday = this.formatDateLoad(this.state.ageText);
+        const detailsMap = {};
+        detailsMap['name'] = _.trim(this.state.name);
+        detailsMap['sex'] = sexCode;
+        detailsMap['city'] = this.state.city;
+        detailsMap['post'] = this.state.post;
+        detailsMap['trade'] = this.state.trade;
+        detailsMap['company'] = this.state.company;
+        detailsMap['email'] = this.state.email;
+        detailsMap['birthday'] = birthday;
+        detailsMap['headImg'] = this.state.headImgSource.uri || '';
+        return detailsMap;
     },
-    doCloseActionSheet() {
-        this.setState({actionSheetVisible:false});
+    doCloseActionSheet () {
+        this.setState({ actionSheetVisible:false });
     },
-    doShowActionSheet() {
-        this.setState({actionSheetVisible:true});
+    doShowActionSheet () {
+        this.setState({ actionSheetVisible:true });
     },
-    selectPicture() {
+    selectPicture () {
         this.doCloseActionSheet();
-        var options = {
+        const options = {
             quality: 30,
             targetWidth: 240,
             targetHeight: 240,
@@ -380,13 +381,13 @@ module.exports = React.createClass({
         };
         Camera.getPicture((filePath) => {
             this.uploadUserHead(filePath);
-        }, ()=>{
-            Toast("操作失败");
+        }, () => {
+            Toast('操作失败');
         }, options);
     },
-    takePicture() {
+    takePicture () {
         this.doCloseActionSheet();
-        var options = {
+        const options = {
             quality: 30,
             allowEdit: true,
             targetWidth: 240,
@@ -396,40 +397,40 @@ module.exports = React.createClass({
         };
         Camera.getPicture((filePath) => {
             this.uploadUserHead(filePath);
-        }, ()=>{
-            Toast("操作失败");
+        }, () => {
+            Toast('操作失败');
         }, options);
     },
-    uploadUserHead(filePath) {
-        this.setState({headImgSource: {uri: filePath}});
-        var options = {};
+    uploadUserHead (filePath) {
+        this.setState({ headImgSource: { uri: filePath } });
+        const options = {};
         options.fileKey = 'file';
-        options.fileName = filePath.substr(filePath.lastIndexOf('/')+1);
+        options.fileName = filePath.substr(filePath.lastIndexOf('/') + 1);
         options.mimeType = 'image/jpeg';
         options.params = {
-            userID:app.personal.info.userID
+            userID:app.personal.info.userID,
         };
         this.uploadOn = true;
         UPLOAD(filePath, app.route.ROUTE_UPDATE_FILE, options, (progress) => console.log(progress),
-            this.uploadSuccessCallback, this.uploadErrorCallback, true);
+        this.uploadSuccessCallback, this.uploadErrorCallback, true);
     },
-    uploadSuccessCallback(data) {
+    uploadSuccessCallback (data) {
         if (data.success) {
-            var context = data.context;
+            const context = data.context;
             app.personal.setUserHead(context.url);
         } else {
-            Toast("上传失败");
-            this.setState({headImgSource: {uri: app.personal.info.headImg}});
+            Toast('上传失败');
+            this.setState({ headImgSource: { uri: app.personal.info.headImg } });
         }
         this.uploadOn = false;
     },
-    uploadErrorCallback() {
+    uploadErrorCallback () {
         this.uploadOn = false;
-        this.setState({headImgSource: {uri: app.personal.info.headImg}});
+        this.setState({ headImgSource: { uri: app.personal.info.headImg } });
     },
-    render() {
+    render () {
         return (
-            <View style={{flex: 1,}}>
+            <View style={{ flex: 1 }}>
                 <ScrollView>
                     <View style={styles.containerStyle}>
                         <TouchableOpacity
@@ -437,29 +438,29 @@ module.exports = React.createClass({
                             activeOpacity={!this.state.isEditStatus ? 1 : DEFAULT_OPACITY}
                             style={styles.headStyle} >
                             <Text style={styles.headText}>{'头像'}</Text>
-                                <View style={styles.itemView}>
-                                    <DImage
-                                        resizeMode='cover'
-                                        defaultSource={app.img.personal_head}
-                                        source={this.state.headImgSource}
-                                        style={styles.headIcon}  />
-                                    {
-                                        this.state.isEditStatus&&
-                                        <Image
-                                            resizeMode='contain'
-                                            source={app.img.common_go}
-                                            style={styles.goIcon}  />
-                                    }
-                                </View>
+                            <View style={styles.itemView}>
+                                <DImage
+                                    resizeMode='cover'
+                                    defaultSource={app.img.personal_head}
+                                    source={this.state.headImgSource}
+                                    style={styles.headIcon} />
+                                {
+                                    this.state.isEditStatus &&
+                                    <Image
+                                        resizeMode='contain'
+                                        source={app.img.common_go}
+                                        style={styles.goIcon} />
+                                }
+                            </View>
                         </TouchableOpacity>
                         <Text style={styles.lowSeprator} />
                         <View style={styles.itemBgStyle} >
                             <Text style={styles.headText}>名称</Text>
                             { !this.state.isEditStatus ?
-                                <Text style={styles.contentText}>{this.state.name?this.state.name:'请输入您的名称'}</Text>
+                                <Text style={styles.contentText}>{this.state.name ? this.state.name : '请输入您的名称'}</Text>
                                 :
                                 <TextInput
-                                    onChangeText={(text) => this.setState({name: text})}
+                                    onChangeText={(text) => this.setState({ name: text })}
                                     onFocus={this.onTextInputFocus}
                                     underlineColorAndroid={'transparent'}
                                     defaultValue={this.state.name}
@@ -472,16 +473,16 @@ module.exports = React.createClass({
                         <View style={styles.itemBgStyle}>
                             <Text style={styles.headText}>邮箱</Text>
                             { !this.state.isEditStatus ?
-                                <Text style={styles.contentText}>{this.state.email?this.state.email:'请输入您的邮件'}</Text>
+                                <Text style={styles.contentText}>{this.state.email ? this.state.email : '请输入您的邮件'}</Text>
                                 :
                                 <TextInput
-                                        onChangeText={this.setEmailText}
-                                        onFocus={this.onTextInputFocus}
-                                        underlineColorAndroid={'transparent'}
-                                        defaultValue={this.state.email}
-                                        placeholderTextColor={'#BABABA'}
-                                        placeholder={'请输入您的邮箱'}
-                                        style={styles.text_input} />
+                                    onChangeText={this.setEmailText}
+                                    onFocus={this.onTextInputFocus}
+                                    underlineColorAndroid={'transparent'}
+                                    defaultValue={this.state.email}
+                                    placeholderTextColor={'#BABABA'}
+                                    placeholder={'请输入您的邮箱'}
+                                    style={styles.text_input} />
                             }
                         </View>
                         <Text style={styles.lowSeprator} />
@@ -495,11 +496,11 @@ module.exports = React.createClass({
                                         {this.state.sex}
                                     </Text>
                                     {
-                                        this.state.isEditStatus&&
+                                        this.state.isEditStatus &&
                                         <Image
                                             resizeMode='contain'
                                             source={app.img.common_go}
-                                            style={styles.goIcon}  />
+                                            style={styles.goIcon} />
                                     }
                                 </View>
                             </View>
@@ -512,14 +513,14 @@ module.exports = React.createClass({
                                 <Text style={styles.headText}>职业</Text>
                                 <View style={styles.itemView}>
                                     <Text style={styles.contentText}>
-                                        {this.state.trade?this.state.trade:'请选择您的当前职业'}
+                                        {this.state.trade ? this.state.trade : '请选择您的当前职业'}
                                     </Text>
                                     {
-                                        this.state.isEditStatus&&
+                                        this.state.isEditStatus &&
                                         <Image
                                             resizeMode='contain'
                                             source={app.img.common_go}
-                                            style={styles.goIcon}  />
+                                            style={styles.goIcon} />
                                     }
                                 </View>
                             </View>
@@ -528,10 +529,10 @@ module.exports = React.createClass({
                         <View style={styles.itemBgStyle} >
                             <Text style={styles.headText}>公司</Text>
                             { !this.state.isEditStatus ?
-                                <Text style={styles.contentText}>{this.state.company?this.state.company:'请填写您的公司'}</Text>
+                                <Text style={styles.contentText}>{this.state.company ? this.state.company : '请填写您的公司'}</Text>
                                 :
                                 <TextInput
-                                    onChangeText={(text) => this.setState({company: text})}
+                                    onChangeText={(text) => this.setState({ company: text })}
                                     onFocus={this.onTextInputFocus}
                                     underlineColorAndroid={'transparent'}
                                     defaultValue={this.state.company}
@@ -544,10 +545,10 @@ module.exports = React.createClass({
                         <View style={styles.itemBgStyle} >
                             <Text style={styles.headText}>职位</Text>
                             { !this.state.isEditStatus ?
-                                <Text style={styles.contentText}>{this.state.post?this.state.post:'请填写您的职位'}</Text>
+                                <Text style={styles.contentText}>{this.state.post ? this.state.post : '请填写您的职位'}</Text>
                                 :
                                 <TextInput
-                                    onChangeText={(text) => this.setState({post: text})}
+                                    onChangeText={(text) => this.setState({ post: text })}
                                     onFocus={this.onTextInputFocus}
                                     underlineColorAndroid={'transparent'}
                                     defaultValue={this.state.post}
@@ -564,14 +565,14 @@ module.exports = React.createClass({
                                 <Text style={styles.headText}>所在城市</Text>
                                 <View style={styles.itemView}>
                                     <Text numberOfLines={1} style={styles.contentText}>
-                                        {this.state.city?this.formatCity(this.state.city):'请选择您所在城市'}
+                                        {this.state.city ? this.formatCity(this.state.city) : '请选择您所在城市'}
                                     </Text>
                                     {
-                                        this.state.isEditStatus&&
+                                        this.state.isEditStatus &&
                                         <Image
                                             resizeMode='contain'
                                             source={app.img.common_go}
-                                            style={styles.goIcon}  />
+                                            style={styles.goIcon} />
                                     }
                                 </View>
                             </View>
@@ -579,19 +580,19 @@ module.exports = React.createClass({
                         <Text style={styles.lowSeprator} />
                         <TouchableOpacity
                             activeOpacity={!this.state.isEditStatus ? 1 : DEFAULT_OPACITY}
-                            onPress={this.state.isEditStatus ? this._onPressHandle.bind(this,'age') : null}>
+                            onPress={this.state.isEditStatus ? this._onPressHandle.bind(this, 'age') : null}>
                             <View style={styles.itemBgStyle}>
                                 <Text style={styles.headText}>生日</Text>
                                 <View style={styles.itemView}>
                                     <Text style={styles.contentText}>
-                                        {this.state.ageText.length !== 0?this.formatDate(this.state.ageText):'请选择您的生日'}
+                                        {this.state.ageText.length !== 0 ? this.formatDate(this.state.ageText) : '请选择您的生日'}
                                     </Text>
                                     {
-                                        this.state.isEditStatus&&
+                                        this.state.isEditStatus &&
                                         <Image
                                             resizeMode='contain'
                                             source={app.img.common_go}
-                                            style={styles.goIcon}  />
+                                            style={styles.goIcon} />
                                     }
                                 </View>
                             </View>
@@ -599,39 +600,27 @@ module.exports = React.createClass({
                         <Text style={styles.lowSeprator} />
                     </View>
                 </ScrollView>
-                <Picker
-                    style={{height: sr.th/3}}
-                    ref={picker => this.picker = picker}
-                    showDuration={300}
-                    showMask={false}
-                    hideCancelBtn={true}
-                    pickerBtnText={'完成'}
-                    selectedValue={this.state.defaultSelectValue}
-                    pickerData={this.state.pickerData}
-                    onPickerDone={(value) => this.setChooseValue(value)}
-                    />
-                    <ActionSheet
-                        visible={this.state.actionSheetVisible}
-                        cancelText="取  消"
-                        onCancel={this.doCloseActionSheet} >
-                        <ActionSheet.Button onPress={this.takePicture}>拍    照</ActionSheet.Button>
-                        <ActionSheet.Button onPress={this.selectPicture}>从相册选择照片</ActionSheet.Button>
-                    </ActionSheet>
-                    {
-                        this.state.showSuccessToast &&
-                        <View style={styles.successToastContainer}>
-                            <Text style={styles.successToastText}>修改成功</Text>
-                        </View>
-                    }
+                <ActionSheet
+                    visible={this.state.actionSheetVisible}
+                    cancelText='取  消'
+                    onCancel={this.doCloseActionSheet} >
+                    <ActionSheet.Button onPress={this.takePicture}>拍    照</ActionSheet.Button>
+                    <ActionSheet.Button onPress={this.selectPicture}>从相册选择照片</ActionSheet.Button>
+                </ActionSheet>
+                {
+                    this.state.showSuccessToast &&
+                    <View style={styles.successToastContainer}>
+                        <Text style={styles.successToastText}>修改成功</Text>
+                    </View>
+                }
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     containerStyle: {
-        height: sr.h-55,
+        height: sr.h - 55,
         width: sr.w,
         flexDirection: 'column',
         backgroundColor: '#F0EFF5',

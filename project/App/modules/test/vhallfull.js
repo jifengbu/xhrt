@@ -1,96 +1,96 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
   View,
   Text,
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet
+  StyleSheet,
 } = ReactNative;
 
-var TimerMixin = require('react-timer-mixin');
-var VhallPlayer = require('../../native/index.js').VhallPlayer;
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var Button = require('@remobile/react-native-simple-button');
+const TimerMixin = require('react-timer-mixin');
+const VhallPlayer = require('../../native/index.js').VhallPlayer;
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const Button = require('@remobile/react-native-simple-button');
 
 module.exports = React.createClass({
     mixins: [TimerMixin, HideStatusMixin],
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            status: 1, //1:IDLE 2:PREPARING 3:BUFFERING 4:READY 5:ENDED
+            status: 1, // 1:IDLE 2:PREPARING 3:BUFFERING 4:READY 5:ENDED
             isControlShow: false,
             statusBarHidden: true,
         };
     },
-    goBack() {
+    goBack () {
         // this.setState({statusBarHidden: false}, ()=>{
         //     app.navigator.pop();
         // });
-        Toast(123+'');
+        Toast(123 + '');
     },
-    toggleControlPanel() {
+    toggleControlPanel () {
         this.clearControlPanelTimeout();
         if (!this.state.isControlShow) {
-            this.setState({isControlShow: true});
+            this.setState({ isControlShow: true });
             this.startControlPanelTimeout();
         } else {
-            this.setState({isControlShow: false});
+            this.setState({ isControlShow: false });
         }
     },
-    startControlPanelTimeout() {
-        this.timeoutID = this.setTimeout(()=>{
+    startControlPanelTimeout () {
+        this.timeoutID = this.setTimeout(() => {
             this.timeoutID = null;
-            this.setState({isControlShow: false});
+            this.setState({ isControlShow: false });
         }, 5000);
     },
-    clearControlPanelTimeout() {
+    clearControlPanelTimeout () {
         if (this.timeoutID != null) {
             this.clearTimeout(this.timeoutID);
             this.timeoutID = null;
         }
     },
-    onDocFlash(e) {
-        var obj = e.nativeEvent;
+    onDocFlash (e) {
+        const obj = e.nativeEvent;
         console.log(obj);
     },
-    onStateChange(e) {
-        var obj = e.nativeEvent;
-        this.setState({status: obj.state});
+    onStateChange (e) {
+        const obj = e.nativeEvent;
+        this.setState({ status: obj.state });
     },
-    onPlayError(e) {
-        var obj = e.nativeEvent;
+    onPlayError (e) {
+        const obj = e.nativeEvent;
         console.log(obj);
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
-                <View style={app.isandroid?styles.playerFullAndroid:styles.playerFullIos}>
+                <View style={app.isandroid ? styles.playerFullAndroid : styles.playerFullIos}>
                     <VhallPlayer
-                        style={[{flex:1}, app.isandroid?{backgroundColor:'transparent'}:{backgroundColor:'black'}]}
+                        style={[{ flex:1 }, app.isandroid ? { backgroundColor:'transparent' } : { backgroundColor:'black' }]}
                         full={this.state.statusBarHidden}
-                        videoId="292309114"
-                        appKey="1349953300"
-                        appSecretKey="b4f69bd6dd0c37db138b2a613786f24f"
-                        name="fang"
-                        email="42550564@sina.com"
-                        password="123"
+                        videoId='292309114'
+                        appKey='1349953300'
+                        appSecretKey='b4f69bd6dd0c37db138b2a613786f24f'
+                        name='fang'
+                        email='42550564@sina.com'
+                        password='123'
                         onDocFlash={this.onDocFlash}
                         onStateChange={this.onStateChange}
                         onPlayError={this.onPlayError}
                         />
                     {
-                        this.state.status<4 &&
+                        this.state.status < 4 &&
                         <View style={[styles.touchLayer, {
-                                alignItems:'center',
-                                justifyContent: 'center',
-                            }]}>
-                            <ActivityIndicator size="large"/>
+                            alignItems:'center',
+                            justifyContent: 'center',
+                        }]}>
+                            <ActivityIndicator size='large' />
                         </View>
                     }
                     <TouchableOpacity
@@ -104,20 +104,20 @@ module.exports = React.createClass({
                                 <Image
                                     resizeMode='stretch'
                                     style={styles.closeButton}
-                                    source={app.img.live_exit}/>
+                                    source={app.img.live_exit} />
                             </TouchableOpacity>
                         }
                     </TouchableOpacity>
                 </View>
             </View>
         );
-    }
+    },
 });
 
-var NORMAL_WIDTH = sr.w;
-var NORMAL_HEIGHT = NORMAL_WIDTH*2/3;
-var FULL_WIDTH = sr.h;
-var FULL_HEIGHT = sr.w;
+const NORMAL_WIDTH = sr.w;
+const NORMAL_HEIGHT = NORMAL_WIDTH * 2 / 3;
+const FULL_WIDTH = sr.h;
+const FULL_HEIGHT = sr.w;
 
 const styles = StyleSheet.create({
     container: {
@@ -135,11 +135,11 @@ const styles = StyleSheet.create({
         height: FULL_HEIGHT,
     },
     playerFullIos: {
-        top: (FULL_WIDTH-FULL_HEIGHT)/2,
-        left: (FULL_HEIGHT-FULL_WIDTH-31)/2,
+        top: (FULL_WIDTH - FULL_HEIGHT) / 2,
+        left: (FULL_HEIGHT - FULL_WIDTH - 31) / 2,
         width: FULL_WIDTH,
         height: FULL_HEIGHT,
-        transform:[{rotate:'90deg'}],
+        transform:[{ rotate:'90deg' }],
     },
     closeButtonContainer: {
         width: 40,

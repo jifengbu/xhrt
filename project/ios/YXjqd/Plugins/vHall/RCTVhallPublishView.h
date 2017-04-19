@@ -6,7 +6,7 @@
 //  Copyright © 2016年 Facebook. All rights reserved.
 //
 
-#import "RCTView.h"
+#import <React/RCTView.h>
 #import <AVFoundation/AVFoundation.h>
 #import "AVKit/AVKit.h"
 #import "VHallLivePublish.h"

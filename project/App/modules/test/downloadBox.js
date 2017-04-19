@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -11,59 +11,58 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
+const SplashScreen = require('@remobile/react-native-splashscreen');
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    doCancel() {
-        this.closeModal(()=>{
+    doCancel () {
+        this.closeModal(() => {
             this.props.doCancel();
         });
     },
-    doConfirm() {
+    doConfirm () {
         // this.closeModal(()=>{
         //     this.props.doConfirm();
         // });
         if (!app.isandroid) {
             Linking.canOpenURL(app.route.ROUTE_APK_URL).then(
                 supported => {
-                  if (!supported) {
-                    console.log('不能打开链接: ' + app.route.ROUTE_APK_URL);
-                  } else {
-                    return Linking.openURL(app.route.ROUTE_APK_URL);
-                  }
-              }
-           ).catch(err => console.log('打开链接失败:'+app.route.ROUTE_APK_URL));
+                    if (!supported) {
+                        console.log('不能打开链接: ' + app.route.ROUTE_APK_URL);
+                    } else {
+                        return Linking.openURL(app.route.ROUTE_APK_URL);
+                    }
+                }
+           ).catch(err => console.log('打开链接失败:' + app.route.ROUTE_APK_URL));
         }
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <Text style={styles.title}>{'发现新版本(2.3.1)'}</Text>
-                    <Text style={styles.redLine}>
-                    </Text>
+                    <Text style={styles.redLine} />
                     <Text style={styles.content}>
                         {'更新内容：优化首页部分页面,更改部分已知'}
                     </Text>
@@ -83,21 +82,21 @@ module.exports = React.createClass({
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     buttonViewStyle: {
         flexDirection: 'row',
-        width: sr.w-40,
+        width: sr.w - 40,
         height: 60,
         justifyContent: 'center',
     },
     redLine: {
         marginTop: 15,
-        width: sr.w-60,
+        width: sr.w - 60,
         height: 1,
-        backgroundColor: '#F1F1F1'
+        backgroundColor: '#F1F1F1',
     },
     buttonStyleContain: {
         width: 120,
@@ -127,7 +126,7 @@ var styles = StyleSheet.create({
         fontFamily: 'STHeitiSC-Medium',
     },
     container: {
-        width:sr.w-60,
+        width:sr.w - 60,
         alignItems:'center',
         backgroundColor:'#FFFFFF',
     },
@@ -155,6 +154,6 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
 });

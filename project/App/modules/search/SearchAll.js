@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -11,50 +11,50 @@ var {
     ListView,
 } = ReactNative;
 
-var moment = require('moment');
-var VideoPlay = require('../study/VideoPlay.js');
-var ShowMealBox = require('../package/ShowMealBox.js');
-var PackageList = require('../package/PackageList.js');
-var MeetingRoom = require('../meeting/MeetingRoom.js');
-var QuestionDetail = require('../specops/QuestionDetail.js');
-var AidDetail = require('../actualCombat/AidDetail.js');
+const moment = require('moment');
+const VideoPlay = require('../study/VideoPlay.js');
+const ShowMealBox = require('../package/ShowMealBox.js');
+const PackageList = require('../package/PackageList.js');
+const MeetingRoom = require('../meeting/MeetingRoom.js');
+const QuestionDetail = require('../specops/QuestionDetail.js');
+const AidDetail = require('../actualCombat/AidDetail.js');
 
-var {PageList, Button} = COMPONENTS;
-const {STATUS_TEXT_HIDE,  STATUS_ALL_LOADED} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
-//备注：因为没有课程亮点标签，所以后台选的类型事课程亮点的话就显示特种兵
+const { PageList, Button } = COMPONENTS;
+const { STATUS_TEXT_HIDE, STATUS_ALL_LOADED } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+// 备注：因为没有课程亮点标签，所以后台选的类型事课程亮点的话就显示特种兵
 const LABEL_IMAGES = [
-     app.img.home_class,
-     app.img.study_mark_1,
-     app.img.study_mark_2,
-     app.img.study_mark_3,
-     app.img.study_mark_3,
+    app.img.home_class,
+    app.img.study_mark_1,
+    app.img.study_mark_2,
+    app.img.study_mark_3,
+    app.img.study_mark_3,
 ];
 
 module.exports = React.createClass({
-    getInitialState() {
-        const {videoList, questionList, roomList} = this.props;
+    getInitialState () {
+        const { videoList, questionList, roomList } = this.props;
         this.ds = new ListView.DataSource({
             rowHasChanged: (r1, r2) => r1 !== r2,
-            sectionHeaderHasChanged : (s1, s2) => s1 !== s2
+            sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
         });
         return {
-            dataSource: this.ds.cloneWithRowsAndSections({videoList, questionList, roomList}),
+            dataSource: this.ds.cloneWithRowsAndSections({ videoList, questionList, roomList }),
             ShowMealBox: false,
         };
     },
-    doCancle() {
-        this.setState({ShowMealBox: false});
+    doCancle () {
+        this.setState({ ShowMealBox: false });
     },
-    doPayConfirm() {
+    doPayConfirm () {
         app.navigator.push({
             title: '套餐',
             component: PackageList,
         });
-        this.setState({ShowMealBox: false});
+        this.setState({ ShowMealBox: false });
     },
-    updateClickOrLikeNum(clickNum) {
-        const {videoList, questionList, roomList} = this.props;
-        var video = _.find(videoList, (item)=>item.videoID==clickNum.videoID);
+    updateClickOrLikeNum (clickNum) {
+        const { videoList, questionList, roomList } = this.props;
+        const video = _.find(videoList, (item) => item.videoID == clickNum.videoID);
         if (video) {
             if (clickNum.type === 'click') {
                 video.clicks += 1;
@@ -62,52 +62,52 @@ module.exports = React.createClass({
                 video.likes += 1;
             }
             this.setState({
-                dataSource: this.ds.cloneWithRowsAndSections({videoList, questionList, roomList}),
+                dataSource: this.ds.cloneWithRowsAndSections({ videoList, questionList, roomList }),
             });
         }
     },
-    playVideo(obj) {
-        if (app.personal.info.userType == "0" && obj.isFree != 1) {
-            this.setState({ShowMealBox: true});
+    playVideo (obj) {
+        if (app.personal.info.userType == '0' && obj.isFree != 1) {
+            this.setState({ ShowMealBox: true });
             return;
         }
-        if (app.personal.info.userType == "1" && obj.isFree != 1) {
-            if (_.find(app.personal.info.validVideoList,(item)=>item==obj.videoID)) {
+        if (app.personal.info.userType == '1' && obj.isFree != 1) {
+            if (_.find(app.personal.info.validVideoList, (item) => item == obj.videoID)) {
                 app.navigator.push({
                     title: obj.name,
                     component: VideoPlay,
-                    passProps: {videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum},
+                    passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
                 });
                 return;
             }
-            this.setState({ShowMealBox: true});
+            this.setState({ ShowMealBox: true });
             return;
         }
         app.navigator.push({
             title: obj.name,
             component: VideoPlay,
-            passProps: {videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum},
+            passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
         });
     },
-    renderVideoRow(obj) {
+    renderVideoRow (obj) {
         return (
             <TouchableHighlight
                 onPress={this.playVideo.bind(null, obj)}
                 style={styles.renderStyle}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.row}>
                     <View style={styles.rowLeft}>
                         <Image
                             resizeMode='stretch'
                             defaultSource={app.img.common_default}
-                            source={{uri:obj.videoListImg||obj.urlImg}}
+                            source={{ uri:obj.videoListImg || obj.urlImg }}
                             style={styles.icon} />
                         <Image
                             resizeMode='stretch'
-                            source={LABEL_IMAGES[obj.videoType-1]}
+                            source={LABEL_IMAGES[obj.videoType - 1]}
                             style={styles.labelStyle} />
                         {
-                            obj.isFree == 1&&
+                            obj.isFree == 1 &&
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.study_free_video}
@@ -120,28 +120,28 @@ module.exports = React.createClass({
                         </Text>
                         <View style={styles.contentContainer}>
                             <Text style={styles.content} >
-                                {'主讲: '+obj.author}
+                                {'主讲: ' + obj.author}
                             </Text>
                         </View>
                         <View style={styles.contentContainer}>
                             <Text style={styles.content} >
-                                {'点击: '+(obj.clicks*3+50)}
+                                {'点击: ' + (obj.clicks * 3 + 50)}
                             </Text>
                             <Text style={styles.content} >
-                                {'    赞: '+obj.likes}
+                                {'    赞: ' + obj.likes}
                             </Text>
                         </View>
                         <View style={styles.buttonContainer}>
                             {
-                                obj.label.map((item, i)=>{
-                                    if (i<3) {
+                                obj.label.map((item, i) => {
+                                    if (i < 3) {
                                         return (
                                             <View key={i} style={styles.buttonTextContainer}>
                                                 <Text style={styles.button} >
                                                     {item.labelName}
                                                 </Text>
                                             </View>
-                                        )
+                                        );
                                     }
                                 })
                             }
@@ -149,28 +149,28 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    doShowSpecialSoldierDetail(obj) {
+    doShowSpecialSoldierDetail (obj) {
         app.navigator.push({
             title:'问答详情',
             component: QuestionDetail,
-            passProps: {obj: obj.specialSoldier, MyQuestionType:false},
+            passProps: { obj: obj.specialSoldier, MyQuestionType:false },
         });
     },
-    doShowKitsDetail(obj) {
+    doShowKitsDetail (obj) {
         app.navigator.push({
-            title: this.props.type===0?'求救包详情':'急救包详情',
+            title: this.props.type === 0 ? '求救包详情' : '急救包详情',
             component: AidDetail,
-            passProps: {kitInfo: obj.kits, tabIndex: obj.type, updateAidList: ()=>{}},
+            passProps: { kitInfo: obj.kits, tabIndex: obj.type, updateAidList: () => {} },
         });
     },
-    renderSpecialSoldierRow(obj, sectionID, rowID) {
-        const {specialSoldier} = obj;
+    renderSpecialSoldierRow (obj, sectionID, rowID) {
+        const { specialSoldier } = obj;
         return (
             <TouchableOpacity style={styles.itemContainer} onPress={this.doShowSpecialSoldierDetail.bind(null, obj)}>
                 <Text style={styles.contentRow}>
-                    {'特种兵：' +specialSoldier.questionContent}
+                    {'特种兵：' + specialSoldier.questionContent}
                 </Text>
                 <View style={styles.bottomStyle}>
                     <Text numberOfLines={1} style={styles.contextText}>
@@ -178,14 +178,14 @@ module.exports = React.createClass({
                     </Text>
                 </View>
             </TouchableOpacity>
-        )
+        );
     },
-    renderKitsRow(obj, sectionID, rowID) {
-        const {kits, type} = obj;
+    renderKitsRow (obj, sectionID, rowID) {
+        const { kits, type } = obj;
         return (
             <TouchableOpacity style={styles.itemContainer} onPress={this.doShowKitsDetail.bind(null, obj)}>
                 <Text style={styles.contentRow}>
-                    {'实战场'+(type==0?' - 求救包':' - 急救包')+'：' +kits.title}
+                    {'实战场' + (type == 0 ? ' - 求救包' : ' - 急救包') + '：' + kits.title}
                 </Text>
                 <View style={styles.bottomStyle}>
                     <Text numberOfLines={1} style={styles.contextText}>
@@ -193,24 +193,24 @@ module.exports = React.createClass({
                     </Text>
                 </View>
             </TouchableOpacity>
-        )
+        );
     },
-    renderQuestionRow(obj, sectionID, rowID) {
-        const {questionType} = obj;
-        if (questionType==1) {
+    renderQuestionRow (obj, sectionID, rowID) {
+        const { questionType } = obj;
+        if (questionType == 1) {
             return this.renderSpecialSoldierRow(obj, sectionID, rowID);
         } else {
             return this.renderKitsRow(obj, sectionID, rowID);
         }
     },
-    enterMeetingRoom(obj) {
+    enterMeetingRoom (obj) {
         app.navigator.push({
             title: obj.theme,
             component: MeetingRoom,
-            passProps: {roomInfo: obj},
+            passProps: { roomInfo: obj },
         });
     },
-    renderRoomRow(obj, sectionID, rowID) {
+    renderRoomRow (obj, sectionID, rowID) {
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.sectionContainer}>
@@ -222,7 +222,7 @@ module.exports = React.createClass({
                     <Text
                         numberOfLines={1}
                         style={styles.roomNo}>
-                        {'('+obj.roomNO+')'}
+                        {'(' + obj.roomNO + ')'}
                     </Text>
                 </View>
                 <View style={styles.sectionContainer}>
@@ -241,44 +241,44 @@ module.exports = React.createClass({
                     </Button>
                 </View>
             </View>
-        )
+        );
     },
-    renderRow(obj, sectionID, rowID) {
-        if (sectionID==='videoList') {
+    renderRow (obj, sectionID, rowID) {
+        if (sectionID === 'videoList') {
             return this.renderVideoRow(obj, sectionID, rowID);
-        } else if (sectionID==='questionList') {
+        } else if (sectionID === 'questionList') {
             return this.renderQuestionRow(obj, sectionID, rowID);
         } else {
             return this.renderRoomRow(obj, sectionID, rowID);
         }
     },
-    renderSectionHeader(obj, sectionID) {
-        var text = (sectionID==='videoList')?'学习':(sectionID==='questionList')?'问答':'房间';
+    renderSectionHeader (obj, sectionID) {
+        const text = (sectionID === 'videoList') ? '学习' : (sectionID === 'questionList') ? '问答' : '房间';
         return (
             <View style={styles.listHeaderContainer}>
-                {sectionID!=='videoList' && <View style={styles.listHeaderSeparator}/>}
+                {sectionID !== 'videoList' && <View style={styles.listHeaderSeparator} />}
                 <Text style={styles.titleText}>{text}</Text>
                 <View style={styles.separator} />
             </View>
         );
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
-            <View style={styles.separator} key={sectionID+''+rowID}/>
+            <View style={styles.separator} key={sectionID + '' + rowID} />
         );
     },
-    renderFooter() {
+    renderFooter () {
         return (
             <View style={styles.listFooterContainer} />
-        )
+        );
     },
-    render() {
-        const {dataSource} = this.state;
+    render () {
+        const { dataSource } = this.state;
         return (
             <View style={styles.container}>
                 <ListView
                     initialListSize={1}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={dataSource}
                     style={styles.list}
                     renderRow={this.renderRow}
@@ -290,16 +290,14 @@ module.exports = React.createClass({
                     this.state.ShowMealBox &&
                     <ShowMealBox
                         doConfirm={this.doPayConfirm}
-                        doCancle={this.doCancle}>
-                    </ShowMealBox>
+                        doCancle={this.doCancle} />
                 }
             </View>
         );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#EDEEEF',
@@ -307,7 +305,7 @@ var styles = StyleSheet.create({
     separator: {
         height:1,
         marginHorizontal: 10,
-        backgroundColor: '#CCC'
+        backgroundColor: '#CCC',
     },
     listHeaderContainer: {
         backgroundColor: '#FFFFFF',
@@ -354,7 +352,7 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
     },
     renderStyle: {
         height: 105,
@@ -402,7 +400,7 @@ var styles = StyleSheet.create({
     },
     button: {
         color:'#95999f',
-        fontSize: 12
+        fontSize: 12,
     },
     contentRow: {
         fontSize: 16,

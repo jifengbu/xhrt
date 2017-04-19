@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -17,14 +17,14 @@ var {
     Keyboard,
 } = ReactNative;
 
-var Subscribable = require('Subscribable');
-var CardBox = require('../shared/CardBox.js');
-var VhallPlayer = require('../../native/index.js').VhallPlayer;
+const Subscribable = require('Subscribable');
+const CardBox = require('../shared/CardBox.js');
+const VhallPlayer = require('../../native/index.js').VhallPlayer;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
-var RoundButton = React.createClass({
-    render() {
+const RoundButton = React.createClass({
+    render () {
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
@@ -36,24 +36,23 @@ var RoundButton = React.createClass({
                     style={styles.roundButton}
                     />
             </TouchableOpacity>
-        )
-    }
+        );
+    },
 });
-
 
 module.exports = React.createClass({
     mixins: [Subscribable.Mixin],
-    registerEvents(name) {
-        this.addListenerOn(app.chatMgr, name, (param)=>{
+    registerEvents (name) {
+        this.addListenerOn(app.chatMgr, name, (param) => {
             this[name](param);
         });
     },
-    UPDATE_MESSAGE_EVENT(result) {
+    UPDATE_MESSAGE_EVENT (result) {
         this.setState({
             dataSource: this.ds.cloneWithRows(app.chatMgr.list),
-        })
+        });
     },
-    componentWillMount() {
+    componentWillMount () {
         app.toggleNavigationBar(false);
         app.chatMgr.register(this.props.broadcastRoomID);
         this.registerEvents('UPDATE_MESSAGE_EVENT');
@@ -61,38 +60,38 @@ module.exports = React.createClass({
             onStartShouldSetPanResponder: this._handleStart,
             onMoveShouldSetPanResponder: this._handleStart,
             onPanResponderMove: Animated.event([null, {
-                dx: this.state.containerTranslateX
+                dx: this.state.containerTranslateX,
             }]),
             onPanResponderRelease: this._handlePanResponderEnd,
-            onPanResponderTerminate: this._handlePanResponderEnd
+            onPanResponderTerminate: this._handlePanResponderEnd,
         });
     },
-    componentDidMount() {
+    componentDidMount () {
         if (app.isandroid) {
             Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
             Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
         }
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         if (app.isandroid) {
             Keyboard.removeListener('keyboardDidShow', this.keyboardDidShow);
             Keyboard.removeListener('keyboardDidHide', this.keyboardDidHide);
         }
         app.chatMgr.unregister();
     },
-    goBack() {
+    goBack () {
         app.toggleNavigationBar(true);
         app.navigator.pop();
     },
-    keyboardDidShow() {
-        this.setState({showButtons: false});
+    keyboardDidShow () {
+        this.setState({ showButtons: false });
     },
-    keyboardDidHide() {
-        this.setState({showButtons: true});
+    keyboardDidHide () {
+        this.setState({ showButtons: true });
     },
-    _handleStart: function(event, gestureState) {
+    _handleStart: function (event, gestureState) {
         if (this.state.left === 0) {
-            let flag = Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && gestureState.dx > 10;
+            const flag = Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && gestureState.dx > 10;
             if (flag) {
                 this.hideInputPanel();
             }
@@ -101,32 +100,32 @@ module.exports = React.createClass({
             return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && gestureState.dx < -10;
         }
     },
-    _handlePanResponderEnd: function(e: Object, gestureState: Object) {
+    _handlePanResponderEnd: function (e: Object, gestureState: Object) {
         if (this.state.left === 0) {
             this.hideSubtitlePanelWithAnimated();
         } else {
             this.showSubtitlePanelWithAnimated();
         }
     },
-    hideSubtitlePanelWithAnimated() {
+    hideSubtitlePanelWithAnimated () {
         Animated.timing(this.state.containerTranslateX, {
             toValue: sr.tw,
             duration: 500,
-        }).start(()=>{
-            this.setState({left: sr.tw});
+        }).start(() => {
+            this.setState({ left: sr.tw });
         });
     },
-    showSubtitlePanelWithAnimated() {
+    showSubtitlePanelWithAnimated () {
         Animated.timing(this.state.containerTranslateX, {
             toValue: -sr.tw,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             this.state.containerTranslateX.setValue(0);
-            this.setState({left: 0});
+            this.setState({ left: 0 });
         });
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             tabIndex: 0,
             dataSource: this.ds.cloneWithRows([]),
@@ -139,56 +138,56 @@ module.exports = React.createClass({
             status: 3, //1:IDLE 2:PREPARING 3:BUFFERING 4:READY 5:ENDED
         };
     },
-    hideCard() {
-        this.setState({showCard: false});
+    hideCard () {
+        this.setState({ showCard: false });
     },
-    showCard() {
-        this.setState({showCard: true});
+    showCard () {
+        this.setState({ showCard: true });
     },
-    renderSpeaker() {
+    renderSpeaker () {
         return (
             <TouchableOpacity style={styles.speakerContainer} onPress={this.showCard}>
                 <Image
                     resizeMode='cover'
                     defaultSource={app.img.personal_head}
-                    source={{uri: '123'}}
-                    style={styles.headStyle}  />
+                    source={{ uri: '123' }}
+                    style={styles.headStyle} />
                 <View style={styles.speakerInfoContainer}>
                     <Text style={styles.speakerName}>王雩老师</Text>
                     <Text style={styles.levelLabel}>等级 <Text style={styles.levelNumber}> 10</Text></Text>
                 </View>
             </TouchableOpacity>
-        )
+        );
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <View style={styles.rowContainer}>
                 {
-                    obj.messageType===1?
-                    <View style={{flexDirection: 'row'}}>
-                        <Text
-                            style={[styles.itemNameText, obj.send && {color: '#9932CC'}]}>
-                            {obj.send ? '我' : obj.fromName}:
+                    obj.messageType === 1 ?
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text
+                                style={[styles.itemNameText, obj.send && { color: '#9932CC' }]}>
+                                {obj.send ? '我' : obj.fromName}:
                         </Text>
-                        <Text style={styles.itemChatText}>
-                            {obj.content}
-                        </Text>
-                    </View>
+                            <Text style={styles.itemChatText}>
+                                {obj.content}
+                            </Text>
+                        </View>
                     :
-                    <Text style={styles.itemPropText}>
-                        {obj.fromUserName}给了{obj.toUserName}一个大大的{obj.propName}
-                    </Text>
+                        <Text style={styles.itemPropText}>
+                            {obj.fromUserName}给了{obj.toUserName}一个大大的{obj.propName}
+                        </Text>
                 }
             </View>
-        )
+        );
     },
-    showInputPanel() {
-        this.setState({showButtons: false});
+    showInputPanel () {
+        this.setState({ showButtons: false });
     },
-    hideInputPanel() {
-        this.setState({showButtons: true});
+    hideInputPanel () {
+        this.setState({ showButtons: true });
     },
-    renderButtons() {
+    renderButtons () {
         return (
             <View style={styles.buttonsPanel}>
                 <RoundButton
@@ -200,27 +199,28 @@ module.exports = React.createClass({
                     image={app.img.live_back}
                     />
             </View>
-        )
+        );
     },
-    sendMessage() {
-        const {content} = this.state;
+    sendMessage () {
+        const { content } = this.state;
         if (!content) {
             Toast('不能发送空消息');
             return;
         }
         app.chatMgr.sendMessage(content);
-        this.setState({content: ''})
+        this.setState({ content: '' });
     },
-    renderInputBox() {
+    renderInputBox () {
         return (
             <View style={styles.inputPanel}>
                 <View style={styles.inputContainer}>
                     <TextInput
-                        ref={(ref)=>this.textInput=ref}
-                        autoFocus={true}
+                        ref={(ref) => { this.textInput = ref; }}
+                        autoFocus
                         defaultValue={this.state.content}
-                        onChangeText={(text) => this.setState({content: text})}
-                        placeholder="请输入内容"
+                        onChangeText={(text) => this.setState({ content: text })}
+                        placeholder='请输入内容'
+                        underlineColorAndroid='transparent'
                         onBlur={this.hideInputPanel}
                         style={styles.textInput}
                         />
@@ -232,65 +232,65 @@ module.exports = React.createClass({
                     发送
                 </Button>
             </View>
-        )
+        );
     },
-    renderChatPanel() {
-        const {showButtons} = this.state;
+    renderChatPanel () {
+        const { showButtons } = this.state;
         return (
             <View style={styles.chatPanel}>
                 <ListView
-                    ref={(listView)=>{this.listView=listView}}
-                    enableEmptySections={true}
+                    ref={(listView) => { this.listView = listView; }}
+                    enableEmptySections
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
                     />
                 {showButtons && <this.renderButtons /> || <this.renderInputBox />}
             </View>
-        )
+        );
     },
-    onDocFlash(e) {
-        var obj = e.nativeEvent;
+    onDocFlash (e) {
+        const obj = e.nativeEvent;
     },
-    onStateChange(e) {
-        var obj = e.nativeEvent;
-        this.setState({status: obj.state});
+    onStateChange (e) {
+        const obj = e.nativeEvent;
+        this.setState({ status: obj.state });
     },
-    onPlayError(e) {
-        var obj = e.nativeEvent;
+    onPlayError (e) {
+        const obj = e.nativeEvent;
         if (obj.content) {
-            Toast(obj.content+'');
+            Toast(obj.content + '');
         } else {
-            Toast("直播已经结束，请关注官方直播时间");
+            Toast('直播已经结束，请关注官方直播时间');
         }
         this.goBack();
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <VhallPlayer
-                    style={[{flex:1}, app.isandroid?{backgroundColor:'transparent'}:{backgroundColor:'black'}]}
+                    style={[{ flex:1 }, app.isandroid ? { backgroundColor:'transparent' } : { backgroundColor:'black' }]}
                     videoId={this.props.broadcastRoomID}
                     appKey={CONSTANTS.VHALL_APP_KEY}
                     appSecretKey={CONSTANTS.VHALL_APP_SECRECT_KEY}
-                    name={app.login.list[0]||'wangyu'}
-                    email="wangyu298632@sina.com"
-                    password=""
+                    name={app.login.list[0] || 'wangyu'}
+                    email='wangyu298632@sina.com'
+                    password=''
                     onDocFlash={this.onDocFlash}
                     onStateChange={this.onStateChange}
                     onPlayError={this.onPlayError}
                     />
                 {
-                    this.state.status<4 &&
+                    this.state.status < 4 &&
                     <View style={[styles.touchLayer, {
-                            alignItems:'center',
-                            justifyContent: 'center',
-                        }]}>
-                        <ActivityIndicator size="large"/>
+                        alignItems:'center',
+                        justifyContent: 'center',
+                    }]}>
+                        <ActivityIndicator size='large' />
                     </View>
                 }
-                <View style={[styles.touchLayer, {backgroundColor:'rgba(255, 255, 255, 0.1)'}]} {...this._panResponder.panHandlers}>
-                    <Animated.View style={[styles.subtitlePanel, {left: this.state.left, transform: [{translateX: this.state.containerTranslateX}]}]}>
-                        {/*<this.renderSpeaker />*/}
+                <View style={[styles.touchLayer, { backgroundColor:'rgba(255, 255, 255, 0.1)' }]} {...this._panResponder.panHandlers}>
+                    <Animated.View style={[styles.subtitlePanel, { left: this.state.left, transform: [{ translateX: this.state.containerTranslateX }] }]}>
+                        {/* <this.renderSpeaker /> */}
                         <this.renderChatPanel />
                     </Animated.View>
                 </View>
@@ -303,7 +303,7 @@ module.exports = React.createClass({
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },

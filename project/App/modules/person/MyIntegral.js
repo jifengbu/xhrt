@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -11,44 +11,44 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var IntegralExplain = require('./IntegralExplain.js');
+const IntegralExplain = require('./IntegralExplain.js');
 
-var {PageList, DImage} = COMPONENTS;
+const { PageList, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
         title: '我的积分',
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
     },
-    renderRow(obj, sectionID, rowID, onRowHighlighted) {
+    renderRow (obj, sectionID, rowID, onRowHighlighted) {
         return (
             <View style={styles.itemContainer}>
                 <Text style={styles.contextText}>{obj.taskName}</Text>
                 <View style={styles.rightRowView}>
-                    <Text style={[styles.contextText, {marginBottom: 2}]}>{'+'}</Text>
+                    <Text style={[styles.contextText, { marginBottom: 2 }]}>{'+'}</Text>
                     <Text style={styles.contextText}>{obj.integration}</Text>
                 </View>
             </View>
-        )
+        );
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
-            <View style={styles.separator} key={sectionID+'_'+rowID}/>
+            <View style={styles.separator} key={sectionID + '_' + rowID} />
         );
     },
     goBack () {
         app.navigator.pop();
         app.toggleNavigationBar(true);
     },
-    goIntegralExplain() {
+    goIntegralExplain () {
         app.navigator.push({
             component: IntegralExplain,
             sceneConfig: {
-                ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null
-            }
+                ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null,
+            },
         });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.topViewContainer}>
@@ -64,30 +64,29 @@ module.exports = React.createClass({
                         <DImage
                             resizeMode='contain'
                             style={styles.iconImage}
-                            source={app.img.personal_explain}/>
+                            source={app.img.personal_explain} />
                         <Text style={styles.explainText}>积分说明</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.divisionContainer}>
-                    <View style={[styles.divisionLine, {marginLeft :10, marginRight: 22}]}/>
+                    <View style={[styles.divisionLine, { marginLeft :10, marginRight: 22 }]} />
                     <Text style={styles.contextText}>当日积分明细</Text>
-                    <View style={[styles.divisionLine, {marginLeft: 22, marginRight: 10}]}/>
+                    <View style={[styles.divisionLine, { marginLeft: 22, marginRight: 10 }]} />
                 </View>
-                <View style={styles.pageListView}>
-                    <PageList
-                        renderRow={this.renderRow}
-                        renderSeparator={this.renderSeparator}
-                        listParam={{userID: app.personal.info.userID}}
-                        listName="IntegralDetailList"
-                        listUrl={app.route.ROUTE_GET_INTEGRAL_DETAIL}
-                        />
-                </View>
+                <PageList
+                    renderRow={this.renderRow}
+                    style={styles.pageListView}
+                    renderSeparator={this.renderSeparator}
+                    listParam={{ userID: app.personal.info.userID }}
+                    listName='IntegralDetailList'
+                    listUrl={app.route.ROUTE_GET_INTEGRAL_DETAIL}
+                    />
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -116,11 +115,11 @@ var styles = StyleSheet.create({
         fontSize: 42,
         color: '#FFFFFF',
         fontFamily: 'STHeitiSC-Medium',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     },
     explainStyle: {
         height: 30,
-        left: sr.w/2+74,
+        left: sr.w / 2 + 74,
         top: 39,
         position: 'absolute',
         alignItems: 'center',
@@ -156,8 +155,7 @@ var styles = StyleSheet.create({
         marginTop: 24,
     },
     itemContainer: {
-        width: sr.w-53,
-        height: 16,
+        width: sr.w - 53,
         marginRight: 22,
         marginLeft: 31,
         flexDirection: 'row',

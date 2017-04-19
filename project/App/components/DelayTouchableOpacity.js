@@ -1,34 +1,34 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     TouchableOpacity,
 } = ReactNative;
 
-var TimerMixin = require('react-timer-mixin');
+const TimerMixin = require('react-timer-mixin');
 
 module.exports = React.createClass({
     mixins: [TimerMixin],
-    componentWillMount() {
+    componentWillMount () {
         this.enable = true;
-        this.onPress = (e) =>{
+        this.onPress = (e) => {
             if (this.enable) {
                 this.enable = false;
                 this.props.onPress(e);
-                this.setTimeout(()=>{this.enable=true}, this.props.delayTime||1000);
+                this.setTimeout(() => { this.enable = true; }, this.props.delayTime || 1000);
             }
         };
     },
-    render() {
+    render () {
         return (
             <TouchableOpacity
                 {...this.props}
-                delayPressOut={this.props.delayTime||1000}
+                delayPressOut={this.props.delayTime || 1000}
                 onPress={this.onPress}
                 >
                 {this.props.children}
             </TouchableOpacity>
-        )
-    }
+        );
+    },
 });

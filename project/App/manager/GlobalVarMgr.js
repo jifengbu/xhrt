@@ -1,25 +1,25 @@
 'use strict';
-var React = require('react');var ReactNative = require('react-native');
+const React = require('react');const ReactNative = require('react-native');
 
-var globalVar = {};
+let globallet = {};
 
-class GlobalVarMgr{
-  	constructor() {
-          globalVar = {};
-          globalVar.isFullScreen = false;
-  	}
-    getItem(key) {
-        return _.get(globalVar, key);
+class GloballetMgr {
+    constructor () {
+        globallet = {};
+        globallet.isFullScreen = false;
     }
-    setItem(key, value) {
-        _.set(globalVar, key, value);
+    getItem (key) {
+        return _.get(globallet, key);
     }
-    removeItem(key){
-        _.set(globalVar, key, undefined);
+    setItem (key, value) {
+        _.set(globallet, key, value);
     }
-    clear() {
-        globalVar = {};
+    removeItem (key) {
+        _.set(globallet, key, undefined);
+    }
+    clear () {
+        globallet = {};
     }
 }
 
-module.exports = new GlobalVarMgr();
+module.exports = new GloballetMgr();

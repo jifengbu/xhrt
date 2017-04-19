@@ -7,7 +7,7 @@
 //
 
 
-#import "RCTBridgeModule.h"
+#import <React/RCTBridgeModule.h>
 #import "UMSocial.h"
 
 #define UmengAppkey @"56da534be0f55ac3ad0008c4"

@@ -1,15 +1,15 @@
 'use strict';
-var ReactNative = require('react-native');
-var {
+const ReactNative = require('react-native');
+const {
     AsyncStorage,
 } = ReactNative;
-var EventEmitter = require('EventEmitter');
+const EventEmitter = require('EventEmitter');
 
 class Manager extends EventEmitter {
-	constructor() {
+    constructor () {
         super();
-	}
-    doRefreshComments() {
+    }
+    doRefreshComments () {
         this.emit('DO_REFRESH_COMMENTS', null);
     }
 }

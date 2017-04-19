@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -11,65 +11,65 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var Button = require('../../components/Button.js');
+const Button = require('../../components/Button.js');
 import Swiper from 'react-native-swiper2';
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    componentWillMount(){
+    componentWillMount () {
         app.toggleNavigationBar(false);
     },
-    onWillHide() {
+    onWillHide () {
         app.toggleNavigationBar(true);
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    enterNextPage() {
-       app.navigator.pop();
+    enterNextPage () {
+        app.navigator.pop();
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
-              <Swiper
-                  paginationStyle={styles.paginationStyle}
-                  dot={<View style={{backgroundColor:'#FFFFFF', width: 8, height: 8,borderRadius: 4, marginLeft: 8, marginRight: 8,}} />}
-                  height={sr.th}
-                  loop={false}>
-                  {
-                      [1,2,3,4].map((i)=>{
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
+                <Swiper
+                    paginationStyle={styles.paginationStyle}
+                    dot={<View style={{ backgroundColor:'#FFFFFF', width: 8, height: 8, borderRadius: 4, marginLeft: 8, marginRight: 8 }} />}
+                    height={sr.th}
+                    loop={false}>
+                    {
+                      [1, 2, 3, 4].map((i) => {
                           return (
                               <Image
                                   key={i}
                                   resizeMode='stretch'
-                                  source={app.img["splash_splash"+i]}
+                                  source={app.img['splash_splash' + i]}
                                   style={styles.bannerImage}>
                                   {
-                                      i===4 &&
+                                      i === 4 &&
                                       <TouchableOpacity
                                           style={styles.enterButtonContainer}
                                           onPress={this.enterNextPage}>
                                           <Image resizeMode='stretch' style={styles.enterButton} source={app.img.splash_known} />
-                                     </TouchableOpacity>
+                                      </TouchableOpacity>
                                   }
                               </Image>
-                          )
+                          );
                       })
                   }
-              </Swiper>
+                </Swiper>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     overlayContainer: {
         position:'absolute',
         bottom: 0,
@@ -77,7 +77,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     paginationStyle: {
         bottom: 30,
@@ -90,7 +90,7 @@ var styles = StyleSheet.create({
         position: 'absolute',
         width: 165,
         height: 40,
-        left: (sr.w-165)/2,
+        left: (sr.w - 165) / 2,
         bottom: 110,
         alignItems:'center',
         justifyContent: 'center',

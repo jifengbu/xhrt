@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -9,50 +9,50 @@ var {
     View,
     TouchableHighlight,
 } = ReactNative;
-var {Button, DImage} = COMPONENTS;
+const { Button, DImage } = COMPONENTS;
 module.exports = React.createClass({
-    doDraw() {
-        this.closeModal(()=>{
+    doDraw () {
+        this.closeModal(() => {
             this.props.doDraw();
         });
     },
-    doShare() {
-        this.closeModal(()=>{
+    doShare () {
+        this.closeModal(() => {
             this.props.doShare(this.props.makePoint);
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
             opacity: new Animated.Value(0),
             info: app.personal.info,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    doClose() {
-        this.closeModal(()=>{
+    doClose () {
+        this.closeModal(() => {
             this.props.doClose();
         });
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
-        var showMakePoint = true;
+    render () {
+        let showMakePoint = true;
         if (this.props.makePoint == 0) {
             showMakePoint = false;
         }
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <View
                         resizeMode='stretch'
@@ -71,16 +71,15 @@ module.exports = React.createClass({
                             <DImage
                                 resizeMode='cover'
                                 defaultSource={app.img.personal_head}
-                                source={{uri: this.state.info.headImg}}
-                                style={styles.studyAwardHeadImage}>
-                            </DImage>
+                                source={{ uri: this.state.info.headImg }}
+                                style={styles.studyAwardHeadImage} />
                         </Image>
                         <View style={styles.bottomView}>
                             <Text style={styles.levelText}>等级：{this.state.info.level}{'  '}{this.state.info.alias}</Text>
                             {
                                 showMakePoint ?
-                                <Text style={{color:'#777777',fontSize:13}}>获得赢销积分：+{this.props.makePoint}分</Text>
-                                :<View style={{marginVertical: 3}}></View>
+                                    <Text style={{ color:'#777777', fontSize:13 }}>获得赢销积分：+{this.props.makePoint}分</Text>
+                                : <View style={{ marginVertical: 3 }} />
                             }
                             <Text style={styles.pointText}>获得一次抽奖机会!</Text>
                             <Button
@@ -95,25 +94,24 @@ module.exports = React.createClass({
                     </View>
                     <TouchableHighlight
                         onPress={this.doClose}
-                        underlayColor="rgba(0, 0, 0, 0)"
+                        underlayColor='rgba(0, 0, 0, 0)'
                         style={styles.touchableHighlight}>
                         <Image
                             resizeMode='contain'
                             source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
+                            style={styles.closeIcon} />
                     </TouchableHighlight>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         paddingBottom: 55,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     studyAwardTitle: {
         color: '#FFFFFF',
@@ -126,35 +124,35 @@ var styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     studyAwardBackgroundImage: {
-        width:sr.w*5/6,
-        height:sr.w*12/13+10,
+        width:sr.w * 5 / 6,
+        height:sr.w * 12 / 13 + 10,
         alignItems:'center',
         borderRadius: 4,
         backgroundColor: '#FFFFFF',
     },
     overheadImage: {
-        width:sr.w*5/6,
-        height: (sr.w*3/4-25)/2,
+        width:sr.w * 5 / 6,
+        height: (sr.w * 3 / 4 - 25) / 2,
     },
     studyAwardBalloonImage: {
         position: 'absolute',
-        left: sr.w*5/12-sr.w/6,
+        left: sr.w * 5 / 12 - sr.w / 6,
         top: 30,
-        width:sr.w/3,
-        height:sr.w/3,
+        width:sr.w / 3,
+        height:sr.w / 3,
         marginVertical: 10,
         alignItems: 'center',
         justifyContent: 'flex-end',
     },
     studyAwardHeadImage: {
-        width:sr.w*5/24,
-        height:sr.w*5/24,
-        borderRadius: sr.w*5/48,
+        width:sr.w * 5 / 24,
+        height:sr.w * 5 / 24,
+        borderRadius: sr.w * 5 / 48,
     },
     bottomView: {
         flex: 1,
         position: 'absolute',
-        left: sr.w*5/12-sr.w/6,
+        left: sr.w * 5 / 12 - sr.w / 6,
         bottom: 20,
         alignItems: 'center',
     },
@@ -201,17 +199,17 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     touchableHighlight: {
         position:'absolute',
         top:-12,
-        left:sr.w*5/6-24,
+        left:sr.w * 5 / 6 - 24,
         width: 38,
         height: 38,
     },
     closeIcon: {
         width: 38,
-        height: 38
+        height: 38,
     },
 });

@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -12,14 +12,14 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var BuyPlan = require('./BuyPlan.js');
-var ShowMealBox = require('./ShowMealBox.js');
-var VideoPlay = require('../study/VideoPlay.js');
+const BuyPlan = require('./BuyPlan.js');
+const ShowMealBox = require('./ShowMealBox.js');
+const VideoPlay = require('../study/VideoPlay.js');
 
-var {PageList} = COMPONENTS;
+const { PageList } = COMPONENTS;
 module.exports = React.createClass({
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             dataSource: this.ds.cloneWithRows([]),
             tabIndex: 0,
@@ -27,77 +27,77 @@ module.exports = React.createClass({
             overlayShowBuyPromptMessageBox: false,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getPackageItem();
     },
-    getPackageItem() {
-        var param = {
+    getPackageItem () {
+        const param = {
             userID: app.personal.info.userID,
             packageID: this.props.packageData.packageID,
             typeCode: this.props.packageData.typeCode,
         };
         POST(app.route.ROUTE_GET_PACKAGE_ITEM, param, this.getPackageItemSuccess, true);
     },
-    getPackageItemSuccess(data) {
+    getPackageItemSuccess (data) {
         if (data.success) {
-            var context = data.context;
-            let packageVideoList = data.context.packageVideoList||[];
-            this.setState({packageContext: context, dataSource: this.ds.cloneWithRows(CONSTANTS.ISSUE_IOS?[_.first(packageVideoList)]:packageVideoList)});
+            const context = data.context;
+            const packageVideoList = data.context.packageVideoList || [];
+            this.setState({ packageContext: context, dataSource: this.ds.cloneWithRows(CONSTANTS.ISSUE_IOS ? [_.first(packageVideoList)] : packageVideoList) });
         } else {
             Toast(data.msg);
         }
     },
-    //更新视频的播放和点赞数量
-    updateClickOrLikeNum(clickNum) {
-        var video = _.find(this.state.packageContext.packageVideoList, (item)=>item.videoID==clickNum.videoID);
+    // 更新视频的播放和点赞数量
+    updateClickOrLikeNum (clickNum) {
+        const video = _.find(this.state.packageContext.packageVideoList, (item) => item.videoID == clickNum.videoID);
         if (video) {
             if (clickNum.type === 'click') {
                 video.clicks += 1;
             } else if (clickNum.type === 'heart') {
                 video.likes += 1;
             }
-            this.setState({dataSource: this.ds.cloneWithRows(this.state.packageContext.packageVideoList)})
+            this.setState({ dataSource: this.ds.cloneWithRows(this.state.packageContext.packageVideoList) });
         }
     },
-    _onPressRow(obj) {
-        if (app.personal.info.userType == "0") {
-            this.setState({overlayShowBuyPromptMessageBox: true});
+    _onPressRow (obj) {
+        if (app.personal.info.userType == '0') {
+            this.setState({ overlayShowBuyPromptMessageBox: true });
             return;
         }
-        if (app.personal.info.userType == "1") {
-            if (_.find(app.personal.info.validVideoList,(item)=>item==obj.videoID)) {
+        if (app.personal.info.userType == '1') {
+            if (_.find(app.personal.info.validVideoList, (item) => item == obj.videoID)) {
                 app.navigator.push({
                     title: obj.name,
                     component: VideoPlay,
-                    passProps: {videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum},
+                    passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
                 });
                 return;
             }
-            this.setState({overlayShowBuyPromptMessageBox: true});
+            this.setState({ overlayShowBuyPromptMessageBox: true });
             return;
         }
         app.navigator.push({
             title: obj.name,
             component: VideoPlay,
-            passProps: {videoInfo: obj},
+            passProps: { videoInfo: obj },
         });
     },
-    renderRow(obj) {
+    renderRow (obj) {
         return (
             <TouchableHighlight
                 onPress={this._onPressRow.bind(null, obj)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.row}>
                     <View style={styles.rowLeft}>
                         <Image
                             resizeMode='stretch'
                             defaultSource={app.img.common_default}
-                            source={{uri:obj.videoListImg||obj.urlImg}}
+                            source={{ uri:obj.videoListImg || obj.urlImg }}
                             style={styles.icon} />
                         <Image
-                             resizeMode='stretch'
-                             source={app.img.home_boutique_curriculum}
-                             style={styles.labelStyle} />
+                            resizeMode='stretch'
+                            source={app.img.home_boutique_curriculum}
+                            style={styles.labelStyle} />
                     </View>
                     <View style={styles.rowRight}>
                         <Text style={styles.title} >
@@ -105,143 +105,141 @@ module.exports = React.createClass({
                         </Text>
                         <View style={styles.contentContainer}>
                             <Text style={styles.content} >
-                                {'主讲: '+obj.author}
+                                {'主讲: ' + obj.author}
                             </Text>
                         </View>
                         <View style={styles.contentContainer}>
                             <Text style={styles.content} >
-                                {'播放: '+(obj.clicks*3+50)}
+                                {'播放: ' + (obj.clicks * 3 + 50)}
                             </Text>
                             <Text style={styles.content} >
-                                {'    赞: '+obj.likes}
+                                {'    赞: ' + obj.likes}
                             </Text>
                         </View>
                         <View style={styles.buttonContainer}>
                             {
-                                obj.label.map((item, i)=>{
+                                obj.label.map((item, i) => {
                                     return (
-                                        i<3 &&
+                                        i < 3 &&
                                         <View key={i} style={styles.buttonTextContainer}>
                                             <Text style={styles.button} >
                                                 {item.labelName}
                                             </Text>
                                         </View>
-                                    )
+                                    );
                                 })
                             }
                         </View>
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
             <View
                 style={styles.separator}
-                key={rowID}/>
+                key={rowID} />
         );
     },
-    CourseList() {
+    CourseList () {
         return (
-            <View style={this.state.tabIndex===0?{left:-sr.tw, top:0, position:'absolute'}:{flex:1}}>
+            <View style={this.state.tabIndex === 0 ? { left:-sr.tw, top:0, position:'absolute' } : { flex:1 }}>
                 <View style={styles.panelContainer}>
                     <ListView
                         initialListSize={1}
-                        enableEmptySections={true}
+                        enableEmptySections
                         dataSource={this.state.dataSource}
                         renderRow={this.renderRow}
                         renderSeparator={this.renderSeparator}
                         />
                     {
-                        app.personal.info.userType == '0'||app.personal.info.userType == '1'?
-                        <View
-                            style={styles.doTrainStyle}>
-                            <Text style={styles.doTrainText}>{'剩余'+this.state.packageContext.packageTime+'/'+this.state.packageContext.packageTimeAll+'次  '+this.state.packageContext.packageTitle+'  训练机会'}</Text>
-                        </View>:null
+                        app.personal.info.userType == '0' || app.personal.info.userType == '1' ?
+                            <View
+                                style={styles.doTrainStyle}>
+                                <Text style={styles.doTrainText}>{'剩余' + this.state.packageContext.packageTime + '/' + this.state.packageContext.packageTimeAll + '次  ' + this.state.packageContext.packageTitle + '  训练机会'}</Text>
+                            </View> : null
                     }
                 </View>
                 {
                     this.state.overlayShowBuyPromptMessageBox &&
                     <ShowMealBox
                         doCancle={this.doCancle}
-                        doConfirm={this.doConfirm}>
-                    </ShowMealBox>
+                        doConfirm={this.doConfirm} />
                 }
             </View>
-        )
+        );
     },
-    PackageDetail() {
-        var arrayList = [];
+    PackageDetail () {
+        let arrayList = [];
         if (this.state.packageContext.packageContent != undefined) {
             arrayList = this.state.packageContext.packageContent.split('_');
         }
         return (
-            <View style={this.state.tabIndex===0?{flex:1}:{left:-sr.tw, top:0, position:'absolute'}}>
+            <View style={this.state.tabIndex === 0 ? { flex:1 } : { left:-sr.tw, top:0, position:'absolute' }}>
                 <View style={styles.panelContainer}>
                     <Text style={styles.titleStyle}>
                         {this.state.packageContext.packageTitle}
                     </Text>
                     {
-                        arrayList.map((item, i)=>{
+                        arrayList.map((item, i) => {
                             return (
                                 <View key={i} style={styles.detailContainer}>
-                                    <View style={styles.dotStyle}>
-                                    </View>
+                                    <View style={styles.dotStyle} />
                                     <Text style={styles.textStyle}>
                                         {item}
                                     </Text>
                                 </View>
-                            )
+                            );
                         })
                     }
                 </View>
             </View>
-        )
+        );
     },
-    changeTab(tabIndex) {
-        this.setState({tabIndex});
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
     },
-    doConfirm() {
-        this.setState({overlayShowBuyPromptMessageBox: false});
+    doConfirm () {
+        this.setState({ overlayShowBuyPromptMessageBox: false });
         app.navigator.push({
             component: BuyPlan,
-            passProps: {packageData: this.props.packageData, packageContext: this.state.packageContext},
+            passProps: { packageData: this.props.packageData, packageContext: this.state.packageContext },
         });
     },
-    doCancle() {
-        this.setState({overlayShowBuyPromptMessageBox: false});
+    doCancle () {
+        this.setState({ overlayShowBuyPromptMessageBox: false });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.changeTabContainer}>
-                     <TouchableOpacity
-                         onPress={this.changeTab.bind(null, 0)}
-                         style={styles.tabButtonLeft}>
-                         <Text style={[styles.tabText, this.state.tabIndex===0?{color:'#239fdb'}:null]} >套餐详情</Text>
-                         <View style={[styles.tabLine, this.state.tabIndex===0?{backgroundColor: '#239fdb'}:null]}></View>
-                     </TouchableOpacity>
-                     <TouchableOpacity
-                         onPress={this.changeTab.bind(null, 1)}
-                         style={styles.tabButtonCenter}>
-                         <Text style={[styles.tabText, this.state.tabIndex===1?{color:'#239fdb'}:null]} >课程目录</Text>
-                         <View style={[styles.tabLine, this.state.tabIndex===1?{backgroundColor: '#239fdb'}:null]}></View>
-                     </TouchableOpacity>
-                 </View>
-                 <this.PackageDetail />
-                 <this.CourseList />
+                    <TouchableOpacity
+                        onPress={this.changeTab.bind(null, 0)}
+                        style={styles.tabButtonLeft}>
+                        <Text style={[styles.tabText, this.state.tabIndex === 0 ? { color:'#239fdb' } : null]} >套餐详情</Text>
+                        <View style={[styles.tabLine, this.state.tabIndex === 0 ? { backgroundColor: '#239fdb' } : null]} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={this.changeTab.bind(null, 1)}
+                        style={styles.tabButtonCenter}>
+                        <Text style={[styles.tabText, this.state.tabIndex === 1 ? { color:'#239fdb' } : null]} >课程目录</Text>
+                        <View style={[styles.tabLine, this.state.tabIndex === 1 ? { backgroundColor: '#239fdb' } : null]} />
+                    </TouchableOpacity>
+                </View>
+                <this.PackageDetail />
+                <this.CourseList />
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
     list: {
-        alignSelf:'stretch'
+        alignSelf:'stretch',
     },
     changeTabContainer: {
         height: 40,
@@ -359,11 +357,11 @@ var styles = StyleSheet.create({
     },
     button: {
         color:'#95999f',
-        fontSize: 14
+        fontSize: 14,
     },
     separator: {
         height:5,
-        backgroundColor: '#CCC'
+        backgroundColor: '#CCC',
     },
     doTrainStyle: {
         width: sr.w,

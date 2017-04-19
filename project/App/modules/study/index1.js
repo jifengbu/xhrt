@@ -1,9 +1,9 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
+const React = require('react');
+const ReactNative = require('react-native');
 
-var {
+const {
     StyleSheet,
     Text,
     View,
@@ -12,129 +12,126 @@ var {
     ScrollView,
 } = ReactNative;
 
-var VideoList = require('./VideoList1.js');
-var TaskMessageBox = require('./TaskMessageBox.js');
-var PersonInfo = require('../person/PersonInfo.js');
+const VideoList = require('./VideoList1.js');
+const TaskMessageBox = require('./TaskMessageBox.js');
+const PersonInfo = require('../person/PersonInfo.js');
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '学习场',
-        leftButton: { image: app.img.personal_entrance, handler: ()=>{
+        leftButton: { image: app.img.personal_entrance, handler: () => {
             app.navigator.push({
                 component: PersonInfo,
                 fromLeft: true,
             });
-        }},
-        rightButton: { image: app.img.study_label_button, handler: ()=>{app.scene.toggleMenuPanel();app.closeSpecopsPlayer&&app.closeSpecopsPlayer();}},
+        } },
+        rightButton: { image: app.img.study_label_button, handler: () => { app.scene.toggleMenuPanel(); app.closeSpecopsPlayer && app.closeSpecopsPlayer(); } },
     },
-    getInitialState() {
+    getInitialState () {
         return {
             tabIndex: 0,
         };
     },
-    onWillFocus() {
+    onWillFocus () {
         if (this.state.tabIndex === 0) {
             this.aidList0.checkFirstPageList();
         } else if (this.state.tabIndex === 0) {
             this.aidList1.checkFirstPageList();
         } else {
-          this.aidList2.checkFirstPageList();
+            this.aidList2.checkFirstPageList();
         }
     },
-    changeTab(tabIndex) {
-      this.setState({tabIndex});
-          if (tabIndex===0) {
-              this.aidList0.checkFirstPageList();
-          } else if (tabIndex===1) {
-              this.aidList1.checkFirstPageList();
-          } else {
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
+        if (tabIndex === 0) {
+            this.aidList0.checkFirstPageList();
+        } else if (tabIndex === 1) {
+            this.aidList1.checkFirstPageList();
+        } else {
             this.aidList2.checkFirstPageList();
-          }
+        }
     },
-    toggleMenuPanel() {
+    toggleMenuPanel () {
         if (!this.state.overlayShowTask) {
-            var param = {
+            const param = {
                 userID: app.personal.info.userID,
             };
             POST(app.route.ROUTE_GET_TASK_INTEGRATION, param, this.doGetTaskIntegrationSuccess, true);
         }
     },
-    doGetTaskIntegrationSuccess(data) {
+    doGetTaskIntegrationSuccess (data) {
         if (data.success) {
-            let taskList = data.context.taskList||[];
-            this.setState({taskList: taskList, overlayShowTask:true});
+            const taskList = data.context.taskList || [];
+            this.setState({ taskList: taskList, overlayShowTask:true });
         } else {
             Toast(data.msg);
         }
     },
-    doCloseTask() {
-        this.setState({overlayShowTask:false});
+    doCloseTask () {
+        this.setState({ overlayShowTask:false });
     },
-    render() {
-        var {tabIndex} = this.state;
-        var menuAdminArray = ['精品课程', '精彩案例'];
+    render () {
+        const { tabIndex } = this.state;
+        const menuAdminArray = ['精品课程', '精彩案例'];
         if (CONSTANTS.ISSUE_IOS) {
-            _.remove(menuAdminArray, (o, i)=>i===2);
+            _.remove(menuAdminArray, (o, i) => i === 2);
         }
         return (
             <View style={styles.container}>
                 <View style={styles.tabContainer}>
                     {
                         !app.GlobalVarMgr.getItem('isFullScreen') &&
-                        menuAdminArray.map((item, i)=>{
+                        menuAdminArray.map((item, i) => {
                             return (
                                 <TouchableHighlight
                                     key={i}
-                                    underlayColor="rgba(0, 0, 0, 0)"
+                                    underlayColor='rgba(0, 0, 0, 0)'
                                     onPress={this.changeTab.bind(null, i)}
                                     style={styles.touchTab}>
                                     <View style={styles.tabButton}>
-                                        <Text style={[styles.tabText, this.state.tabIndex===i?{color:'#A62045'}:{color:'#666666'}]} >
+                                        <Text style={[styles.tabText, this.state.tabIndex === i ? { color:'#A62045' } : { color:'#666666' }]} >
                                             {item}
                                         </Text>
-                                        <View style={[styles.tabLine, this.state.tabIndex===i?{backgroundColor: '#A62045'}:null]}>
-                                        </View>
+                                        <View style={[styles.tabLine, this.state.tabIndex === i ? { backgroundColor: '#A62045' } : null]} />
                                     </View>
                                 </TouchableHighlight>
-                            )
+                            );
                         })
                     }
                 </View>
-                <View style={{flex:1}}>
+                <View style={{ flex:1 }}>
                     <VideoList
-                        ref={(ref)=>this.aidList0 = ref}
-                        disable={tabIndex!==0}
+                        ref={(ref) => { this.aidList0 = ref; }}
+                        disable={tabIndex !== 0}
                         type={1}
-                        style={tabIndex===0?{flex:1}:{left:-sr.tw, top:0, position:'absolute'}}/>
+                        style={tabIndex === 0 ? { flex:1 } : { left:-sr.tw, top:0, position:'absolute' }} />
                     <VideoList
-                        ref={(ref)=>this.aidList1 = ref}
-                        disable={tabIndex!==1}
+                        ref={(ref) => { this.aidList1 = ref; }}
+                        disable={tabIndex !== 1}
                         type={2}
-                        style={tabIndex===1?{flex:1}:{left:-sr.tw, top:0, position:'absolute'}}/>
+                        style={tabIndex === 1 ? { flex:1 } : { left:-sr.tw, top:0, position:'absolute' }} />
                     <VideoList
-                        ref={(ref)=>this.aidList2 = ref}
-                        disable={tabIndex!==2}
+                        ref={(ref) => { this.aidList2 = ref; }}
+                        disable={tabIndex !== 2}
                         type={3}
-                        style={tabIndex===2?{flex:1}:{left:-sr.tw, top:0, position:'absolute'}}/>
+                        style={tabIndex === 2 ? { flex:1 } : { left:-sr.tw, top:0, position:'absolute' }} />
                 </View>
                 {
-                    typeof(this.state.taskList) != 'undefined'&&this.state.overlayShowTask &&
+                    typeof (this.state.taskList) != 'undefined' && this.state.overlayShowTask &&
                     <TaskMessageBox
                         style={styles.overlayContainer}
                         taskList={this.state.taskList}
                         doCloseTask={this.doCloseTask}
                         doDraw={this.doDraw}
-                        doShare={this.doShare}>
-                    </TaskMessageBox>
+                        doShare={this.doShare} />
                 }
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -167,7 +164,7 @@ var styles = StyleSheet.create({
         fontSize: 13,
     },
     tabLine: {
-        width: sr.w/4,
+        width: sr.w / 4,
         height: 2,
         marginTop: 10,
         alignSelf: 'center',
@@ -177,6 +174,6 @@ var styles = StyleSheet.create({
         top: 0,
         width: 10,
         height: 50,
-        position: 'absolute'
+        position: 'absolute',
     },
 });

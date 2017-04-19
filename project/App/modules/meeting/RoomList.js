@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     View,
@@ -10,48 +10,48 @@ var {
     Image,
 } = ReactNative;
 
-var moment = require('moment');
-var ApplyRoom = require('./ApplyRoom.js');
-var MeetingRoom = require('./MeetingRoom.js');
-var PasswordInputBox = require('./PasswordInputBox.js');
+const moment = require('moment');
+const ApplyRoom = require('./ApplyRoom.js');
+const MeetingRoom = require('./MeetingRoom.js');
+const PasswordInputBox = require('./PasswordInputBox.js');
 
-var {Button, PageList} = COMPONENTS;
+const { Button, PageList } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
         title: '特种兵交流场',
         guideLayer: require('../guide/ApplyField.js'),
     },
-    getInitialState() {
+    getInitialState () {
         return {
             searchText: '',
         };
     },
-    doSearch() {
+    doSearch () {
         if (this.listView.isRefreshing()) {
-            Toast("请求太频繁，请稍后再试");
+            Toast('请求太频繁，请稍后再试');
             return;
         }
         this.listView.refresh();
-        this.setState({searchText:''});
+        this.setState({ searchText:'' });
     },
-    refresh() {
+    refresh () {
         this.listView.refresh();
     },
-    doShowApplyView() {
+    doShowApplyView () {
         app.navigator.push({
             component: ApplyRoom,
-            passProps: {refresh: this.refresh},
+            passProps: { refresh: this.refresh },
         });
     },
-    enterMeetingRoom(obj) {
+    enterMeetingRoom (obj) {
         app.navigator.push({
             title: obj.theme,
             component: MeetingRoom,
-            passProps: {roomInfo: obj},
+            passProps: { roomInfo: obj },
         });
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.itemInnerContainer}>
@@ -64,7 +64,7 @@ module.exports = React.createClass({
                         <Text
                             numberOfLines={1}
                             style={styles.roomNo}>
-                            {'('+obj.roomNO+')'}
+                            {'(' + obj.roomNO + ')'}
                         </Text>
                     </View>
                     <View style={styles.sectionContainer}>
@@ -85,9 +85,9 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.searchContainer}>
@@ -103,10 +103,11 @@ module.exports = React.createClass({
                             source={app.img.train_search}
                             style={styles.txtInputImage}
                             />
-                        <View style={styles.txtInputTView}/>
+                        <View style={styles.txtInputTView} />
                         <TextInput
-                            placeholder="输入房间代号"
-                            onChangeText={(text) => this.setState({searchText: text})}
+                            placeholder='输入房间代号'
+                            underlineColorAndroid='transparent'
+                            onChangeText={(text) => this.setState({ searchText: text })}
                             defaultValue={this.state.searchText}
                             style={styles.txtInputSearch}
                             />
@@ -119,20 +120,19 @@ module.exports = React.createClass({
                     </Button>
                 </View>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID, keyword: this.state.searchText,}}
-                    listName="roomList"
+                    listParam={{ userID: app.personal.info.userID, keyword: this.state.searchText }}
+                    listName='roomList'
                     listUrl={app.route.ROUTE_SEARCH_ROOM}
-                    refreshEnable={true}
+                    refreshEnable
                     />
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -148,7 +148,7 @@ var styles = StyleSheet.create({
         borderRadius: 3,
         height: 30,
         marginRight: 6,
-        width: 100
+        width: 100,
     },
     btnApplyText: {
         fontSize: 16,
@@ -225,7 +225,7 @@ var styles = StyleSheet.create({
         color: '#939495',
         fontSize: 15,
         backgroundColor: 'transparent',
-        width: sr.w-40,
+        width: sr.w - 40,
     },
     time: {
         color: '#939495',

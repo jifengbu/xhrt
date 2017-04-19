@@ -1,113 +1,113 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Navigator,
     Text,
     Image,
 } = ReactNative;
-var fs = require('react-native-fs');
-var TimerMixin = require('react-timer-mixin');
-var TrainSpeakerAngleView = require('./TrainSpeakerAngleView.js');
-var SpeechState = require('./SpeechState.js');
-var ProgressBar = require('./ProgressBar.js');
-var RecordList = require('./RecordList.js');
-var AudioRecorder = require('../../native/index.js').AudioRecorder;
-var virtualUsers = require('../../data/virtualUsers.js');
-var VideoNameInputBox= require('./VideoNameInputBox.js');
+const fs = require('react-native-fs');
+const TimerMixin = require('react-timer-mixin');
+const TrainSpeakerAngleView = require('./TrainSpeakerAngleView.js');
+const SpeechState = require('./SpeechState.js');
+const ProgressBar = require('./ProgressBar.js');
+const RecordList = require('./RecordList.js');
+const AudioRecorder = require('../../native/index.js').AudioRecorder;
+const virtualUsers = require('../../data/virtualUsers.js');
+const VideoNameInputBox = require('./VideoNameInputBox.js');
 
-var MessageBox =  COMPONENTS.MessageBox;
+const MessageBox = COMPONENTS.MessageBox;
 
 module.exports = React.createClass({
     mixins: [TimerMixin, SceneMixin],
     statics: {
         title: '自我训练场',
-        rightButton: {image: app.img.common_record, handler: ()=>{app.scene.showRecordList()} },
-        leftButton: {handler: ()=>app.scene.goBack()},
+        rightButton: { image: app.img.common_record, handler: () => { app.scene.showRecordList(); } },
+        leftButton: { handler: () => app.scene.goBack() },
     },
-    componentWillMount() {
+    componentWillMount () {
         this.roundTime = CONSTANTS.TRAIN_TYPES[this.props.trainingCode].roundTime;
         this.competitors = this.getCompetitors();
         this.propIndex = 0;
     },
-    doStartSpeach() {
+    doStartSpeach () {
         if (this.recordOn) {
             return;
         }
-        var time = Date.now();
-        var name = app.audioFileMgr.getFileNameFromTime(time);
-        var filepath = app.audioFileMgr.getFilePathFromName(name);
+        const time = Date.now();
+        const name = app.audioFileMgr.getFileNameFromTime(time);
+        const filepath = app.audioFileMgr.getFilePathFromName(name);
         this.fileInfo = {
             time: time,
             name: name,
             filepath: filepath,
-            type: this.props.trainingCode
+            type: this.props.trainingCode,
         };
 
         this.recordOn = true;
-        AudioRecorder.record((result)=>{
-            this.setState({start: true});
-            this.setTimeout(()=>{
-                this.setState({showStopBtn: true});
-            }, this.roundTime*3/4);
-        }, (error)=>{
+        AudioRecorder.record((result) => {
+            this.setState({ start: true });
+            this.setTimeout(() => {
+                this.setState({ showStopBtn: true });
+            }, this.roundTime * 3 / 4);
+        }, (error) => {
             Toast('录制音频文件失败，请稍后再试');
         }, filepath);
     },
-    doConfirm(name) {
+    doConfirm (name) {
         this.fileInfo.name = name;
         app.audioFileMgr.saveRecordFile(this.fileInfo);
-        this.setState({showVideoNameInputBox: false,});
+        this.setState({ showVideoNameInputBox: false });
     },
-    doCancelCustomMessageBox() {
-        this.setState({showCustomMessageBox: false,});
+    doCancelCustomMessageBox () {
+        this.setState({ showCustomMessageBox: false });
     },
-    doConfirmCustomMessageBox() {
+    doConfirmCustomMessageBox () {
         this.recordOn = false;
         if (this.routeType === 1) {
-            this.setState({showCustomMessageBox: false, showVideoNameInputBox: false, showStopBtn: false, start: false,});
+            this.setState({ showCustomMessageBox: false, showVideoNameInputBox: false, showStopBtn: false, start: false });
             this.showRecordList();
         } else {
             app.navigator.pop();
         }
-        AudioRecorder.stop((result)=>{
+        AudioRecorder.stop((result) => {
             fs.unlink(this.fileInfo.filepath);
-        }, (error)=>{
+        }, (error) => {
         });
     },
-    goBack() {
+    goBack () {
         if (this.recordOn) {
             this.routeType = 0;
-            this.setState({showCustomMessageBox: true,});
+            this.setState({ showCustomMessageBox: true });
             return;
         }
         app.navigator.pop();
     },
-    doStopSpeach() {
-        this.setState({showCustomMessageBox: false, showVideoNameInputBox: true, showStopBtn: false, start: false,});
-        AudioRecorder.stop((result)=>{
+    doStopSpeach () {
+        this.setState({ showCustomMessageBox: false, showVideoNameInputBox: true, showStopBtn: false, start: false });
+        AudioRecorder.stop((result) => {
             this.recordOn = false;
-        }, (error)=>{
+        }, (error) => {
             Toast('录制音频文件失败，请稍后再试');
         });
     },
-    showRecordList() {
+    showRecordList () {
         if (this.recordOn) {
             this.routeType = 1;
-            this.setState({showCustomMessageBox: true,});
+            this.setState({ showCustomMessageBox: true });
             return;
         }
         app.navigator.push({
             component: RecordList,
             passProps: {
                 trainingCode: this.props.trainingCode,
-            }
+            },
         });
     },
-    onProgress(progress) {
-        var val = Math.floor(progress*100);
+    onProgress (progress) {
+        const val = Math.floor(progress * 100);
         if ((val === 95 ||
             val === 94 ||
             val === 50 ||
@@ -119,10 +119,10 @@ module.exports = React.createClass({
             this.showGif();
         }
     },
-    onEnd() {
+    onEnd () {
         this.doStopSpeach();
     },
-    getInitialState() {
+    getInitialState () {
         return {
             start: false,
             showStopBtn: false,
@@ -131,26 +131,26 @@ module.exports = React.createClass({
             propItem: {},
         };
     },
-    showGif() {
-        var tPropCode = _.random(1, 8);
+    showGif () {
+        let tPropCode = _.random(1, 8);
         if (tPropCode === 5 || tPropCode === 6 || tPropCode === 8) {
             tPropCode = 3;
         }
         this.setState({
             propItem: {
-                propCode: '00'+tPropCode,
+                propCode: '00' + tPropCode,
                 propIndex: this.propIndex++,
-            }
+            },
         });
     },
-    getCompetitors() {
-        var info = [];
-        var virtualNum = [];
-        var length = virtualUsers.length;
+    getCompetitors () {
+        const info = [];
+        const virtualNum = [];
+        const length = virtualUsers.length;
 
-        var personInfo = app.personal.info;
-        var personInfoMap = {};
-        var userInfo = {};
+        const personInfo = app.personal.info;
+        const personInfoMap = {};
+        const userInfo = {};
         personInfoMap['userID'] = personInfo.userID;
         personInfoMap['channelState'] = app.phoneMgr.phone.channelStates.MCAS_CHANNEL_STATE_SPEAKERING;
         userInfo['sex'] = personInfo.sex;
@@ -161,22 +161,22 @@ module.exports = React.createClass({
         personInfoMap['userInfo'] = userInfo;
         info.push(personInfoMap);
 
-        virtualNum.push(_.random(length-1));
+        virtualNum.push(_.random(length - 1));
         while (virtualNum.length < 3) {
-            var num = _.random(length-1);
+            let num = _.random(length - 1);
             while (_.includes(virtualNum, num)) {
-                num = _.random(length-1);
+                num = _.random(length - 1);
             }
             virtualNum.push(num);
         }
 
-        _.forEach(virtualNum, (i)=>{
+        _.forEach(virtualNum, (i) => {
             info.push(virtualUsers[i]);
         });
 
         return info;
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <TrainSpeakerAngleView
@@ -185,16 +185,16 @@ module.exports = React.createClass({
                     doStartSpeach={this.doStartSpeach}
                     doStopSpeach={this.doStopSpeach}
                     showStartBtn={!this.state.start}
-                    showStopBtn={this.state.showStopBtn}/>
+                    showStopBtn={this.state.showStopBtn} />
                 <View style={styles.propBottomView}>
                     {
-                        this.state.start && <View style={{height: 280}}>
+                        this.state.start && <View style={{ height: 280 }}>
                             <ProgressBar
-                                autoStart={true}
+                                autoStart
                                 time={this.roundTime}
                                 onProgress={this.onProgress}
-                                onEnd={this.onEnd}/>
-                            <View style={{marginTop: 5, height: 250}}>
+                                onEnd={this.onEnd} />
+                            <View style={{ marginTop: 5, height: 250 }}>
                                 <Text style={styles.text}>
                                     {'     '}点击结束按钮可以结束训练.
                                 </Text>
@@ -205,7 +205,7 @@ module.exports = React.createClass({
                         </View>
                     }
                     {
-                        !this.state.start && <View style={{height: 120}}>
+                        !this.state.start && <View style={{ height: 120 }}>
                             <Text style={styles.text}>
                                 {'     '}亲，你好，这里是自我训练场，请点击开始按钮自我训练.
                             </Text>
@@ -225,7 +225,7 @@ module.exports = React.createClass({
                     <MessageBox
                         doCancel={this.doCancelCustomMessageBox}
                         doConfirm={this.doConfirmCustomMessageBox}
-                        content="你确定要放弃该次训练吗?"
+                        content='你确定要放弃该次训练吗?'
                         />
                 }
                 {
@@ -236,18 +236,17 @@ module.exports = React.createClass({
                         />
                 }
             </View>
-        )
-    }
+        );
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         width:sr.w,
         height:sr.h,
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor: 'black'
+        backgroundColor: 'black',
     },
     propBottomView: {
         marginTop: -120,

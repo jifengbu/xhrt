@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     WebView,
@@ -9,50 +9,50 @@ var {
     Image,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
         title: '商家介绍',
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            detaiContext: null
+            detaiContext: null,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getShopInfo();
     },
-    getShopInfo() {
-        var param = {
+    getShopInfo () {
+        const param = {
             shopID: this.props.shopID,
         };
         POST(app.route.ROUTE_GET_SHOP_INFO, param, this.getShopInfoSuccess);
     },
-    getShopInfoSuccess(data) {
+    getShopInfoSuccess (data) {
         if (data.success) {
             if (data.context.detaiList == [] || data.context.detaiList.length <= 0) {
                 return;
             }
-            this.setState({detaiContext: data.context});
+            this.setState({ detaiContext: data.context });
         } else {
             Toast(data.msg);
         }
     },
-    render() {
-        var index = 1;
-        var str = "";
+    render () {
+        let index = 1;
+        let str = '';
         if (this.state.detaiContext != null) {
-            for (var item in this.state.detaiContext.detaiList) {
-                str += "<div style='font-weight: bold;width: auto;'>0"+index+"."+"<span style='font-size:16px;font-weight: normal'>"+this.state.detaiContext.detaiList[item].title + "<span></div>"
+            for (let item in this.state.detaiContext.detaiList) {
+                str += "<div style='font-weight: bold;width: auto;'>0" + index + '.' + "<span style='font-size:16px;font-weight: normal'>" + this.state.detaiContext.detaiList[item].title + '<span></div>';
                 str += "<div style='background: -webkit-linear-gradient(left, #239fdb , white); height: 1px; width: 95%'> </div></br>";
                 str += this.state.detaiContext.detaiList[item].content;
                 index++;
             }
         }
         return (
-              <View style={styles.container}>
-                  {
+            <View style={styles.container}>
+                {
                       (this.state.detaiContext == null) ?
                       null
                       :
@@ -60,35 +60,34 @@ module.exports = React.createClass({
                           <Image
                               resizeMode='stretch'
                               defaultSource={app.img.mall_picture}
-                              source={{uri: this.state.detaiContext.shopImage}}
-                              style={styles.pictureStyle}>
-                          </Image>
+                              source={{ uri: this.state.detaiContext.shopImage }}
+                              style={styles.pictureStyle} />
                           <WebView
                               style={styles.webview}
-                              source={{html:str}}
+                              source={{ html:str }}
                               scalesPageToFit={false}
                               />
                       </View>
                   }
-              </View>
+            </View>
         );
     },
 });
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#E1E4E9',
     },
     pictureStyle: {
         marginTop: 10,
-        width: sr.w-16,
+        width: sr.w - 16,
         height: 200,
         alignSelf: 'center',
     },
     titleContainer: {
         marginTop: 20,
         marginLeft: 25,
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
     },
     titleText: {
         fontSize: 14,
@@ -102,17 +101,17 @@ var styles = StyleSheet.create({
     },
     splitLine: {
         height: 1,
-        width: sr.w-100,
+        width: sr.w - 100,
         marginBottom: 20,
     },
     detailText: {
         marginTop: 10,
-        width: sr.w-50,
+        width: sr.w - 50,
         fontSize: 12,
         color: '#666666',
     },
     list: {
-        alignSelf:'stretch'
+        alignSelf:'stretch',
     },
     titleStyle: {
         backgroundColor: 'white',
@@ -120,7 +119,7 @@ var styles = StyleSheet.create({
     },
     webview: {
         alignSelf: 'center',
-        width: sr.w-16,
-        height: sr.h-200,
+        width: sr.w - 16,
+        height: sr.h - 200,
     },
 });

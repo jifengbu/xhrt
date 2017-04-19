@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -9,8 +9,8 @@ var {
 } = ReactNative;
 
 module.exports = React.createClass({
-    render() {
-        const {img, children, style, textStyle} = this.props;
+    render () {
+        const { img, children, style, textStyle } = this.props;
         return (
             <View style={[styles.labelContainer, style]}>
                 {!!img && <Image resizeMode='stretch' source={img} style={styles.labelIcon} />}
@@ -20,7 +20,7 @@ module.exports = React.createClass({
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     labelContainer: {
         marginTop: 10,
         marginBottom: 6,

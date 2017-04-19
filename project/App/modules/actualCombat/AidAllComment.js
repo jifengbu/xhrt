@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     Image,
     TextInput,
     Text,
@@ -11,43 +11,43 @@ var {
     View,
 } = ReactNative;
 
-var dismissKeyboard = require('dismissKeyboard');
-var ReplyList = require('./ReplyList.js');
+const dismissKeyboard = require('dismissKeyboard');
+const ReplyList = require('./ReplyList.js');
 
-var {Button, DImage, PageList} = COMPONENTS;
+const { Button, DImage, PageList } = COMPONENTS;
 
-var CommentList = React.createClass({
-    getInitialState() {
+const CommentList = React.createClass({
+    getInitialState () {
         return {
             clickComment: false,
         };
     },
-    _onPressRowText(obj) {
+    _onPressRowText (obj) {
         this.props.noticePopup(obj.commentID, obj.publisherName);
     },
-    _onPressRow(obj) {
-        this.setState({clickComment: !this.state.clickComment});
+    _onPressRow (obj) {
+        this.setState({ clickComment: !this.state.clickComment });
     },
-    render() {
-        var obj = this.props.obj;
-        var tempPublisherTime =app.utils.getJetlagString(obj.publisherTime);
+    render () {
+        const obj = this.props.obj;
+        const tempPublisherTime = app.utils.getJetlagString(obj.publisherTime);
         return (
             <View
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <TouchableOpacity onPress={this._onPressRow.bind(null, obj)} style={styles.itemContainer}>
                     <DImage
                         resizeMode='cover'
                         defaultSource={app.img.personal_head}
-                        source={{uri:obj.publisherImg}}
+                        source={{ uri:obj.publisherImg }}
                         style={styles.headerIcon} />
                     <View style={styles.titleStyle}>
-                        <View style={{flexDirection: 'row'}}>
+                        <View style={{ flexDirection: 'row' }}>
                             {
-                                obj.publisherName?
-                                <Text
-                                    style={styles.itemContentText}>
-                                    {obj.publisherName+'    /'}
-                                </Text>:null
+                                obj.publisherName ?
+                                    <Text
+                                        style={styles.itemContentText}>
+                                        {obj.publisherName + '    /'}
+                                    </Text> : null
                             }
                             <Text
                                 style={styles.itemContentText}>
@@ -62,7 +62,7 @@ var CommentList = React.createClass({
                                 {tempPublisherTime}
                             </Text>
                             {
-                                obj.commentID!=0&&
+                                obj.commentID != 0 &&
                                 <TouchableOpacity
                                     onPress={this._onPressRowText.bind(null, obj)}
                                     style={styles.touchCommentContainer}>
@@ -73,13 +73,13 @@ var CommentList = React.createClass({
                     </View>
                 </TouchableOpacity>
                 {
-                    this.state.clickComment&&
+                    this.state.clickComment &&
                     <View style={styles.container}>
                         <ReplyList
                             commentInfo={obj}
                             tabIndex={this.props.tabIndex}
                             userID={app.personal.info.userID}
-                            kitID={this.props.kitID}/>
+                            kitID={this.props.kitID} />
                     </View>
                 }
             </View>
@@ -91,7 +91,7 @@ module.exports = React.createClass({
     statics: {
         title: '全部评论',
     },
-    getInitialState() {
+    getInitialState () {
         return {
             clickPrompt: false,
             isSendding: false,
@@ -102,10 +102,10 @@ module.exports = React.createClass({
             commentContent: '',
         };
     },
-    _onPressPrompt() {
-        this.setState({clickPrompt: !this.state.clickPrompt});
+    _onPressPrompt () {
+        this.setState({ clickPrompt: !this.state.clickPrompt });
     },
-    noticePopup(commentID, publisherName) {
+    noticePopup (commentID, publisherName) {
         // this.props.popupInputbox(commentID, publisherName);
         this.setState({
             tempCommentID: commentID,
@@ -114,16 +114,16 @@ module.exports = React.createClass({
         });
         this.commentInput.focus();
     },
-    renderRow(obj) {
+    renderRow (obj) {
         return (
             <CommentList
-                obj = {obj}
+                obj={obj}
                 noticePopup={this.noticePopup}
                 tabIndex={this.props.tabIndex}
-                kitID={this.props.kitID}/>
-        )
+                kitID={this.props.kitID} />
+        );
     },
-    onBlur() {
+    onBlur () {
         if (this.state.commentContent === '') {
             this.setState({
                 tempCommentID: 0,
@@ -132,7 +132,7 @@ module.exports = React.createClass({
             });
         }
     },
-    doSubmitComment() {
+    doSubmitComment () {
         dismissKeyboard();
         if (this.state.commentContent === '') {
             Toast('请提交评论信息');
@@ -140,10 +140,10 @@ module.exports = React.createClass({
         }
         if (!this.state.isSendding) {
             Toast('正在发送评论...');
-            this.setState({isSendding: true});
-            //为true子评论，为false评论
+            this.setState({ isSendding: true });
+            // 为true子评论，为false评论
             if (this.state.isChildComment) {
-                var param = {
+                const param = {
                     userID:app.personal.info.userID,
                     kitID:this.props.kitID,
                     commentID:this.state.tempCommentID,
@@ -152,7 +152,7 @@ module.exports = React.createClass({
                 };
                 POST(app.route.ROUTE_SUBMIT_SONKIDS_COMMENT, param, this.doSubmitSonCommentSuccess);
             } else {
-                var param = {
+                const param = {
                     type:this.props.tabIndex,
                     userID: app.personal.info.userID,
                     kitID:this.props.kitID,
@@ -162,32 +162,32 @@ module.exports = React.createClass({
             }
         }
     },
-    doSubmitSonCommentSuccess(data) {
+    doSubmitSonCommentSuccess (data) {
         if (data.success) {
             Toast('回复成功');
             app.refreshComments.doRefreshComments();
-            this.setState({commentContent: '', isSendding: false, isChildComment: false});
+            this.setState({ commentContent: '', isSendding: false, isChildComment: false });
         } else {
             Toast(data.msg);
         }
     },
-    submitCommentSuccess(data) {
-        this.setState({isSendding: false});
+    submitCommentSuccess (data) {
+        this.setState({ isSendding: false });
         if (data.success) {
-            var info = app.personal.info;
-            var curComment = {
+            const info = app.personal.info;
+            const curComment = {
                 commentID: 0,
                 publisherImg: info.headImg,
                 publisherName: info.name,
                 publisherTime: app.utils.getCurrentTimeString(),
                 publisherAlias: info.alias,
                 comment: this.state.commentContent,
-            }
-            this.listView.updateList((list)=>{
+            };
+            this.listView.updateList((list) => {
                 list.unshift(curComment);
                 this.setState({
                     clickPrompt: !this.state.clickPrompt,
-                    commentContent: ''
+                    commentContent: '',
                 });
                 return list;
             });
@@ -197,32 +197,32 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    render() {
+    render () {
         return (
             <View style={styles.listContainer}>
                 <View style={styles.commentTitleContainer}>
                     <Text style={styles.titleTypeStyle}>热门评论</Text>
                 </View>
-                <View style={styles.separator}/>
+                <View style={styles.separator} />
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     style={styles.container}
                     renderRow={this.renderRow}
-                    listParam={{type: this.props.tabIndex, kitID: this.props.kitID}}
-                    listName="commentList"
+                    listParam={{ type: this.props.tabIndex, kitID: this.props.kitID }}
+                    listName='commentList'
                     listUrl={app.route.ROUTE_GET_ITEM_KIT_COMMENT}
-                    ListFailedText="暂无评论!"
+                    ListFailedText='暂无评论!'
                     />
                 <View style={styles.inputContainer}>
                     <View style={styles.bottomInput}>
                         <View style={styles.inputView}>
                             <TextInput
-                                ref={(ref)=>this.commentInput = ref}
+                                ref={(ref) => { this.commentInput = ref; }}
                                 onBlur={this.onBlur}
-                                onChangeText={(text) => this.setState({commentContent: text})}
+                                onChangeText={(text) => this.setState({ commentContent: text })}
                                 defaultValue={this.state.commentContent}
-                                placeholder={this.state.isChildComment?("回复"+this.state.tempPublisherName+"："):"有什么感想快来说说吧"}
-                                style={styles.textInput}/>
+                                placeholder={this.state.isChildComment ? ('回复' + this.state.tempPublisherName + '：') : '有什么感想快来说说吧'}
+                                style={styles.textInput} />
                         </View>
                         <Button
                             onPress={this.doSubmitComment}
@@ -233,11 +233,11 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',
@@ -248,7 +248,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     list: {
-        alignSelf:'stretch'
+        alignSelf:'stretch',
     },
     listFooterContainer: {
         alignItems: 'center',
@@ -262,7 +262,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor :'#FFFFFF'
+        backgroundColor :'#FFFFFF',
     },
     titleTypeStyle: {
         fontSize: 15,
@@ -284,7 +284,7 @@ var styles = StyleSheet.create({
     },
     separator: {
         height: 1,
-        backgroundColor: '#EEEEEE'
+        backgroundColor: '#EEEEEE',
     },
     inputContainer: {
         width: sr.w,
@@ -302,7 +302,7 @@ var styles = StyleSheet.create({
     },
     inputView: {
         marginLeft: 15,
-        width: sr.w-90,
+        width: sr.w - 90,
         borderRadius: 4,
         backgroundColor: '#FFFFFF',
     },
@@ -320,7 +320,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
     },
     textInput: {
-        width: sr.w-96,
+        width: sr.w - 96,
         height:30,
         fontSize: 16,
         paddingVertical: -3,
@@ -335,7 +335,7 @@ var styles = StyleSheet.create({
     textStylePlace: {
         marginLeft: 15,
         fontSize: 16,
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     },
     itemContainer: {
         paddingVertical: 10,
@@ -349,7 +349,7 @@ var styles = StyleSheet.create({
     itemNameText: {
         fontSize: 14,
         marginTop: 5,
-        width: sr.w-60,
+        width: sr.w - 60,
         color: '#555555',
     },
     itemContentText: {
@@ -389,6 +389,6 @@ var styles = StyleSheet.create({
         height: 15,
         marginLeft: 10,
         marginTop: 5,
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
 });

@@ -1,18 +1,18 @@
-var exec = require('@remobile/react-native-cordova').exec;
+const exec = require('@remobile/react-native-cordova').exec;
 
-var AudioRecorder = {
-    record(successCallback, errorCallback, file) {
-        exec(successCallback, errorCallback, "AudioRecorder", "record", [file||'']);
+const AudioRecorder = {
+    record (successCallback, errorCallback, file) {
+        exec(successCallback, errorCallback, 'AudioRecorder', 'record', [file || '']);
     },
-    stop(successCallback, errorCallback) {
-        exec(successCallback, errorCallback, "AudioRecorder", "stop", []);
+    stop (successCallback, errorCallback) {
+        exec(successCallback, errorCallback, 'AudioRecorder', 'stop', []);
     },
-    play(file, successCallback, errorCallback) {
-        exec(successCallback, errorCallback, "AudioRecorder", "playback", [file]);
+    play (file, successCallback, errorCallback) {
+        exec(successCallback, errorCallback, 'AudioRecorder', 'playback', [file]);
     },
-    playStop() {
-        exec(null, null, "AudioRecorder", "playStop", []);
+    playStop () {
+        exec(null, null, 'AudioRecorder', 'playStop', []);
     },
-}
+};
 
 module.exports = AudioRecorder;

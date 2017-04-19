@@ -1,22 +1,22 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     WebView,
 } = ReactNative;
 
-var Button = require('./Button.js');
+const Button = require('./Button.js');
 
 module.exports = React.createClass({
-    render() {
+    render () {
         return (
             <View style={styles.overlayContainer}>
                 <View style={styles.container}>
                     <WebView
                         style={styles.webview}
-                        source={{uri:this.props.webAddress}}
+                        source={{ uri:this.props.webAddress }}
                         scalesPageToFit={false}
                         />
                     <View style={styles.contentView}>
@@ -27,10 +27,10 @@ module.exports = React.createClass({
                 </View>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     overlayContainer: {
         position:'absolute',
         top: 0,
@@ -42,29 +42,29 @@ var styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     container: {
-        width:sr.w*5/6,
-        height:sr.h*4/5,
-        top: sr.totalNavHeight+7,
+        width:sr.w * 5 / 6,
+        height:sr.h * 4 / 5,
+        top: sr.totalNavHeight + 7,
         alignItems:'center',
         justifyContent:'center',
         backgroundColor: 'white',
         borderRadius:8,
         position: 'absolute',
-        left: sr.w*1/12,
+        left: sr.w * 1 / 12,
     },
     webview: {
         marginTop: 5,
-        width:sr.w*5/6,
-        height:sr.h*4/5-50,
+        width:sr.w * 5 / 6,
+        height:sr.h * 4 / 5 - 50,
     },
     contentView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:49,
         borderRadius: 6,
         backgroundColor:'#A62045',
     },
     contentButton: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:44,
         borderRadius: 0,
         marginBottom: 5,

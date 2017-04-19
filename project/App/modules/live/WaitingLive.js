@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -12,38 +12,38 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var moment = require('moment');
-var TimerMixin = require('react-timer-mixin');
-var ShowGoPayMessageBox = require('./ShowGoPayMessageBox.js');
-var LivePlayer = require('./LivePlayer.js');
+const moment = require('moment');
+const TimerMixin = require('react-timer-mixin');
+const ShowGoPayMessageBox = require('./ShowGoPayMessageBox.js');
+const LivePlayer = require('./LivePlayer.js');
 
 module.exports = React.createClass({
     mixins: [TimerMixin],
     statics: {
         title: '课堂直播',
     },
-    getCountdownTime() {
-        var startMoment = moment(this.props.broadcastLiveStartTime),  nowMoment = moment();
-        var sec = Math.floor(startMoment.diff(nowMoment)/1000);
-        var diff = sec;
-        var day = Math.floor(sec/86400);
-        sec -= 86400*day;
-        var hour = Math.floor(sec/3600);
-        sec -= 3600*hour;
-        var minute = Math.floor(sec/60);
-        sec -= 60*minute;
+    getCountdownTime () {
+        const startMoment = moment(this.props.broadcastLiveStartTime), nowMoment = moment();
+        let sec = Math.floor(startMoment.diff(nowMoment) / 1000);
+        const diff = sec;
+        const day = Math.floor(sec / 86400);
+        sec -= 86400 * day;
+        const hour = Math.floor(sec / 3600);
+        sec -= 3600 * hour;
+        const minute = Math.floor(sec / 60);
+        sec -= 60 * minute;
         return {
             leftDay: day,
             leftTime: app.utils.timeFormat(hour, minute, sec),
             diff: diff,
         };
     },
-    getInitialState() {
+    getInitialState () {
         return this.getCountdownTime();
     },
-    componentDidMount() {
-        var intervalID = this.setInterval(()=>{
-            var obj = this.getCountdownTime();
+    componentDidMount () {
+        let intervalID = this.setInterval(() => {
+            const obj = this.getCountdownTime();
             if (intervalID != null && obj.diff <= 0) {
                 this.clearInterval(intervalID);
                 intervalID = null;
@@ -53,29 +53,28 @@ module.exports = React.createClass({
                         broadcastRoomID: this.props.broadcastRoomID,
                         broadcastLiveName:this.props.broadcastLiveName,
                         broadcastLiveStartTime:this.props.broadcastLiveStartTime,
-                    }
+                    },
                 });
             } else {
                 this.setState(obj);
             }
         }, 1000);
     },
-    render() {
-        var {leftDay, leftTime} = this.state;
+    render () {
+        const { leftDay, leftTime } = this.state;
         return (
             <View style={styles.container}>
                 <View style={styles.bannerContainer}>
                     <Image
                         resizeMode='stretch'
                         defaultSource={app.img.common_default}
-                        source={{uri:this.props.broadcastLiveImg}}
+                        source={{ uri:this.props.broadcastLiveImg }}
                         style={styles.bannerImage}
                         />
                     <View style={styles.bannerTextContainer}>
-                        <Text style={styles.bannerTextLine}>
-                        </Text>
+                        <Text style={styles.bannerTextLine} />
                         <Text numberOfLines={1} style={styles.bannerText}>
-                          {'赢销截拳道直播'}
+                            {'赢销截拳道直播'}
                         </Text>
                     </View>
                 </View>
@@ -88,7 +87,7 @@ module.exports = React.createClass({
                             <Text style={styles.countdownText}>{'直播倒计时'}</Text>
                         </View>
                         <View style={styles.countdownStyle}>
-                            {leftDay>0 && <Text style={styles.countdownText}>{leftDay+'天'}</Text>}
+                            {leftDay > 0 && <Text style={styles.countdownText}>{leftDay + '天'}</Text>}
                             <Image
                                 resizeMode='stretch'
                                 defaultSource={app.img.live_time}
@@ -99,17 +98,17 @@ module.exports = React.createClass({
                         </View>
                         <View style={styles.countdownDetail}>
                             <View>
-                                <View style={{flexDirection: 'row'}}>
-                                    <Text style={[styles.countdownDetailText, {color: CONSTANTS.THEME_COLOR}]}>{'课程名称：'}</Text>
-                                    <Text style={[styles.countdownDetailText, {color: 'grey'}]}>{this.props.broadcastLiveName}</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={[styles.countdownDetailText, { color: CONSTANTS.THEME_COLOR }]}>{'课程名称：'}</Text>
+                                    <Text style={[styles.countdownDetailText, { color: 'grey' }]}>{this.props.broadcastLiveName}</Text>
                                 </View>
-                                <View style={{flexDirection: 'row'}}>
-                                    <Text style={[styles.countdownDetailText, {color: CONSTANTS.THEME_COLOR}]}>{'讲师：'}</Text>
-                                    <Text style={[styles.countdownDetailText, {color: 'grey'}]}>{this.props.broadcastLiveAuthor}</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={[styles.countdownDetailText, { color: CONSTANTS.THEME_COLOR }]}>{'讲师：'}</Text>
+                                    <Text style={[styles.countdownDetailText, { color: 'grey' }]}>{this.props.broadcastLiveAuthor}</Text>
                                 </View>
-                                <View style={{flexDirection: 'row'}}>
-                                    <Text style={[styles.countdownDetailText, {color: CONSTANTS.THEME_COLOR}]}>{'开课时间：'}</Text>
-                                    <Text style={[styles.countdownDetailText, {color: 'grey'}]}>{this.props.broadcastLiveStartTime}</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={[styles.countdownDetailText, { color: CONSTANTS.THEME_COLOR }]}>{'开课时间：'}</Text>
+                                    <Text style={[styles.countdownDetailText, { color: 'grey' }]}>{this.props.broadcastLiveStartTime}</Text>
                                 </View>
                             </View>
                         </View>
@@ -117,10 +116,10 @@ module.exports = React.createClass({
                 </View>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -141,7 +140,7 @@ var styles = StyleSheet.create({
     bannerText: {
         marginLeft: 10,
         fontSize: 15,
-        color: '#FFFFFF'
+        color: '#FFFFFF',
     },
     bannerTextLine: {
         width: sr.w,
@@ -161,8 +160,8 @@ var styles = StyleSheet.create({
     },
     waitingStyle: {
         marginVertical: 10,
-        height: sr.ch-220,
-        width: sr.w-20,
+        height: sr.ch - 220,
+        width: sr.w - 20,
         alignSelf: 'center',
     },
     countdownTitle: {
@@ -194,7 +193,7 @@ var styles = StyleSheet.create({
         height: 70,
         marginLeft: 15,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     countdownTime: {
         fontSize: 45,

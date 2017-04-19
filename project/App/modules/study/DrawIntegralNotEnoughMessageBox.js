@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -9,55 +9,55 @@ var {
     View,
     TouchableHighlight,
 } = ReactNative;
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 module.exports = React.createClass({
-    doBuyIntegral() {
-        this.closeModal(()=>{
+    doBuyIntegral () {
+        this.closeModal(() => {
             this.props.doBuyIntegral();
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    doClose() {
-        this.closeModal(()=>{
+    doClose () {
+        this.closeModal(() => {
             this.props.doClose();
         });
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <View style={styles.panelContainer}>
                         <View style={styles.promptTitleView}>
                             <Text style={styles.title}>需要消耗</Text>
-                            <Text style={[styles.title, {color: CONSTANTS.THEME_COLOR}]}>{this.props.costCoin}</Text>
-                            <Text style={styles.title}>{this.props.costType===0?'积分':'赢销币'}</Text>
+                            <Text style={[styles.title, { color: CONSTANTS.THEME_COLOR }]}>{this.props.costCoin}</Text>
+                            <Text style={styles.title}>{this.props.costType === 0 ? '积分' : '赢销币'}</Text>
                         </View>
-                        <View style={{flexDirection: 'row'}}>
+                        <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.title}>{'您当前的'}</Text>
-                            <Text style={styles.title}>{this.props.costType===0?'积分不足':'赢销币不足'}</Text>
+                            <Text style={styles.title}>{this.props.costType === 0 ? '积分不足' : '赢销币不足'}</Text>
                         </View>
                         <View style={styles.divisionContainer}>
-                            <View style={[styles.lineView, {marginRight: 20}]}/>
+                            <View style={[styles.lineView, { marginRight: 20 }]} />
                             <Text style={styles.promptText}>是否选择充值</Text>
-                            <View style={[styles.lineView, {marginLeft: 20}]}/>
+                            <View style={[styles.lineView, { marginLeft: 20 }]} />
                         </View>
                         <View style={styles.btnContainer}>
                             <Button
@@ -66,34 +66,32 @@ module.exports = React.createClass({
                                 style={styles.drawButton}>是</Button>
                             <Button
                                 onPress={this.doClose}
-                                textStyle={[styles.btnText, {color: CONSTANTS.THEME_COLOR}]}
-                                style={[styles.drawButton, {backgroundColor: '#FFFFFF', borderColor: CONSTANTS.THEME_COLOR, borderWidth: 1,}]}>否</Button>
+                                textStyle={[styles.btnText, { color: CONSTANTS.THEME_COLOR }]}
+                                style={[styles.drawButton, { backgroundColor: '#FFFFFF', borderColor: CONSTANTS.THEME_COLOR, borderWidth: 1 }]}>否</Button>
                         </View>
                     </View>
                     <TouchableHighlight
                         onPress={this.doClose}
-                        underlayColor="rgba(0, 0, 0, 0)"
+                        underlayColor='rgba(0, 0, 0, 0)'
                         style={styles.touchableHighlight}>
                         <Image
                             resizeMode='contain'
                             source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
+                            style={styles.closeIcon} />
                     </TouchableHighlight>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     panelContainer: {
-        width:sr.w*6/7,
+        width:sr.w * 6 / 7,
         marginBottom: 15,
         borderRadius: 6,
         alignItems:'center',
@@ -121,7 +119,7 @@ var styles = StyleSheet.create({
         flex: 1,
         height: 1,
         marginVertical: 5,
-        backgroundColor: '#cccccc'
+        backgroundColor: '#cccccc',
     },
     promptText: {
         fontSize: 12,
@@ -153,12 +151,12 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     touchableHighlight: {
         position:'absolute',
         top:-12,
-        left:sr.w*6/7-24,
+        left:sr.w * 6 / 7 - 24,
         width: 38,
         height: 38,
     },

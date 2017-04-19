@@ -1,57 +1,55 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
 } = ReactNative;
-var Unauthorized = require('./UnauthorizedMainPage.js');
-var MainPage = require('./MainPage.js');
-var PersonInfo = require('../person/PersonInfo.js');
-// var Search = require('../search/index.js');
+const Unauthorized = require('./UnauthorizedMainPage.js');
+const MainPage = require('./MainPage.js');
+const PersonInfo = require('../person/PersonInfo.js');
+// const Search = require('../search/index.js');
 
 module.exports = React.createClass({
     statics: {
         title: '赢销特种兵',
-        leftButton: { image: app.img.personal_entrance, handler: ()=>{
+        leftButton: { image: app.img.personal_entrance, handler: () => {
             app.navigator.push({
                 component: PersonInfo,
                 fromLeft: true,
             });
-        }},
+        } },
     },
-    getInitialState() {
-        const {isAgent, isSpecialSoldier} = app.personal.info;
+    getInitialState () {
+        const { isAgent, isSpecialSoldier } = app.personal.info;
         return {
-            authorized: isAgent||isSpecialSoldier, //是否是特种兵1—是  0—不是
+            authorized: isAgent || isSpecialSoldier, //是否是特种兵1—是  0—不是
         };
     },
-    onWillFocus(flag) {
-        const {isAgent, isSpecialSoldier} = app.personal.info;
-        var authorized = isAgent||isSpecialSoldier;
-        if (authorized) {
-            setTimeout(()=>{
-                if (this.mainPage) {
-                    this.mainPage.onWillFocus(flag);
-                }
-            }, 200);
-        }
-        this.setState({authorized});
+    onWillFocus (flag) {
+        const { isAgent, isSpecialSoldier } = app.personal.info;
+        const authorized = isAgent || isSpecialSoldier;
+        setTimeout(() => {
+            if (this.mainPage) {
+                this.mainPage.onWillFocus();
+            }
+        }, 200);
+        this.setState({ authorized });
     },
-    setAuthorized() {
+    setAuthorized () {
         app.personal.setSpecialSoldier(true);
-        this.setState({authorized: true});
+        this.setState({ authorized: true });
     },
-    render() {
-        const {authorized} = this.state;
+    render () {
+        const { authorized } = this.state;
         if (!authorized) {
             return (
-                <Unauthorized setAuthorized={this.setAuthorized}/>
-            )
+                <MainPage setEditFlag={this.props.setEditFlag} ref={(ref) => { this.mainPage = ref; }} isSpecialSoldier={authorized} setAuthorized={this.setAuthorized} />
+            );
         } else {
             return (
-                <MainPage setEditFlag={this.props.setEditFlag} ref={(ref)=>{this.mainPage=ref}}/>
-            )
+                <MainPage setEditFlag={this.props.setEditFlag} ref={(ref) => { this.mainPage = ref; }} isSpecialSoldier={authorized} setAuthorized={this.setAuthorized} />
+            );
         }
     },
 });

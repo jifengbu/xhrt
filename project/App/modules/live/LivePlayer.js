@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
   View,
   Text,
   Image,
@@ -12,69 +12,69 @@ var {
   StatusBar,
   AppState,
   NativeModules,
-  StyleSheet
+  StyleSheet,
 } = ReactNative;
 
-var moment = require('moment');
-var TimerMixin = require('react-timer-mixin');
-var PackageList = require('../package/PackageList.js');
-var VhallPlayer = require('../../native/index.js').VhallPlayer;
-var {MessageBox} =  COMPONENTS;
+const moment = require('moment');
+const TimerMixin = require('react-timer-mixin');
+const PackageList = require('../package/PackageList.js');
+const VhallPlayer = require('../../native/index.js').VhallPlayer;
+const { MessageBox } = COMPONENTS;
 
 module.exports = React.createClass({
     mixins: [TimerMixin, SceneMixin],
     statics: {
         title: '课堂直播',
-        leftButton: {handler: ()=>app.scene.goBack()},
+        leftButton: { handler: () => app.scene.goBack() },
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            status: 3, //1:IDLE 2:PREPARING 3:BUFFERING 4:READY 5:ENDED
+            status: 3, // 1:IDLE 2:PREPARING 3:BUFFERING 4:READY 5:ENDED
             isControlShow: false,
             statusBarHidden: true,
             showPayMessageBox: false,
             videoEnable: true,
         };
     },
-    componentWillMount() {
+    componentWillMount () {
         app.toggleNavigationBar(false);
     },
-    componentDidMount() {
+    componentDidMount () {
         AppState.addEventListener('change', this._handleAppStateChange);
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         AppState.removeEventListener('change', this._handleAppStateChange);
     },
-    _handleAppStateChange(currentAppState) {
+    _handleAppStateChange (currentAppState) {
         if (currentAppState === 'background') {
-            this.setState({videoEnable: false});
+            this.setState({ videoEnable: false });
         } else if (currentAppState === 'active') {
-            this.setState({videoEnable: true});
+            this.setState({ videoEnable: true });
         }
     },
-    toggleControlPanel() {
+    toggleControlPanel () {
         this.clearControlPanelTimeout();
         if (!this.state.isControlShow) {
-            this.setState({isControlShow: true});
+            this.setState({ isControlShow: true });
             this.startControlPanelTimeout();
         } else {
-            this.setState({isControlShow: false});
+            this.setState({ isControlShow: false });
         }
     },
-    startControlPanelTimeout() {
-        this.timeoutID = this.setTimeout(()=>{
+    startControlPanelTimeout () {
+        this.timeoutID = this.setTimeout(() => {
             this.timeoutID = null;
-            this.setState({isControlShow: false});
+            this.setState({ isControlShow: false });
         }, 5000);
     },
-    clearControlPanelTimeout() {
+    clearControlPanelTimeout () {
         if (this.timeoutID != null) {
             this.clearTimeout(this.timeoutID);
             this.timeoutID = null;
         }
     },
-    doBuyYearMembership() {
-        this.setState({showPayMessageBox: false, statusBarHidden: false}, ()=>{
+    doBuyYearMembership () {
+        this.setState({ showPayMessageBox: false, statusBarHidden: false }, () => {
             app.toggleNavigationBar(true);
             app.navigator.replace({
                 title: '套餐',
@@ -82,29 +82,29 @@ module.exports = React.createClass({
             });
         });
     },
-    goBack() {
-        this.setState({statusBarHidden: false}, ()=>{
+    goBack () {
+        this.setState({ statusBarHidden: false }, () => {
             app.navigator.pop();
             app.toggleNavigationBar(true);
         });
     },
-    onDocFlash(e) {
-        var obj = e.nativeEvent;
+    onDocFlash (e) {
+        const obj = e.nativeEvent;
     },
-    onStateChange(e) {
-        var obj = e.nativeEvent;
-        this.setState({status: obj.state});
+    onStateChange (e) {
+        const obj = e.nativeEvent;
+        this.setState({ status: obj.state });
     },
-    onPlayError(e) {
-        var obj = e.nativeEvent;
+    onPlayError (e) {
+        const obj = e.nativeEvent;
         if (obj.content) {
-            Toast(obj.content+'');
+            Toast(obj.content + '');
         } else {
-            Toast("直播已经结束，请关注官方直播时间");
+            Toast('直播已经结束，请关注官方直播时间');
         }
         this.goBack();
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={this.state.statusBarHidden} />
@@ -112,42 +112,42 @@ module.exports = React.createClass({
                     this.state.videoEnable &&
                     <View style={styles.playerFull}>
                         <VhallPlayer
-                        style={[{flex:1, backgroundColor:'black'}]}
-                        videoId={this.props.broadcastRoomID}
-                        appKey={CONSTANTS.VHALL_APP_KEY}
-                        appSecretKey={CONSTANTS.VHALL_APP_SECRECT_KEY}
-                        name={app.login.list[0]}
-                        email="wangyu298632@sina.com"
-                        password=""
-                        onDocFlash={this.onDocFlash}
-                        onStateChange={this.onStateChange}
-                        onPlayError={this.onPlayError}
+                            style={[{ flex:1, backgroundColor:'black' }]}
+                            videoId={this.props.broadcastRoomID}
+                            appKey={CONSTANTS.VHALL_APP_KEY}
+                            appSecretKey={CONSTANTS.VHALL_APP_SECRECT_KEY}
+                            name={app.login.list[0]}
+                            email='wangyu298632@sina.com'
+                            password=''
+                            onDocFlash={this.onDocFlash}
+                            onStateChange={this.onStateChange}
+                            onPlayError={this.onPlayError}
                         />
                         {
-                            this.state.status<4 &&
+                            this.state.status < 4 &&
                             <View style={[styles.touchLayer, {
-                                    alignItems:'center',
-                                    justifyContent: 'center',
-                                }]}>
-                                <ActivityIndicator size="large"/>
+                                alignItems:'center',
+                                justifyContent: 'center',
+                            }]}>
+                                <ActivityIndicator size='large' />
                             </View>
                         }
 
                         <TouchableHighlight
                             style={styles.touchLayer}
-                            underlayColor="rgba(0, 0, 0, 0)"
+                            underlayColor='rgba(0, 0, 0, 0)'
                             onPress={this.toggleControlPanel}>
                             <View>
-                            {
+                                {
                                 this.state.isControlShow &&
                                 <TouchableHighlight
-                                    underlayColor="rgba(0, 0, 0, 0.5)"
+                                    underlayColor='rgba(0, 0, 0, 0.5)'
                                     style={styles.closeButtonContainer}
                                     onPress={this.goBack}>
                                     <Image
                                         resizeMode='stretch'
                                         style={styles.closeButton}
-                                        source={app.img.common_back}/>
+                                        source={app.img.common_back} />
                                 </TouchableHighlight>
                             }
                             </View>
@@ -157,12 +157,12 @@ module.exports = React.createClass({
                 }
             </View>
         );
-    }
+    },
 });
-var NORMAL_WIDTH = sr.w;
-var NORMAL_HEIGHT = NORMAL_WIDTH*2/3;
-var FULL_WIDTH = sr.fh;
-var FULL_HEIGHT = sr.w;
+const NORMAL_WIDTH = sr.w;
+const NORMAL_HEIGHT = NORMAL_WIDTH * 2 / 3;
+const FULL_WIDTH = sr.fh;
+const FULL_HEIGHT = sr.w;
 
 const styles = StyleSheet.create({
     container: {
@@ -180,11 +180,11 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
     playerFull: {
-        top: (FULL_WIDTH-FULL_HEIGHT)/2,
-        left: (FULL_HEIGHT-FULL_WIDTH)/2,
+        top: (FULL_WIDTH - FULL_HEIGHT) / 2,
+        left: (FULL_HEIGHT - FULL_WIDTH) / 2,
         width: FULL_WIDTH,
         height: FULL_HEIGHT,
-        transform:[{rotate:'90deg'}],
+        transform:[{ rotate:'90deg' }],
     },
     closeButtonContainer: {
         width: 40,

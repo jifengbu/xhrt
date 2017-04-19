@@ -1,41 +1,41 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
     WebView,
 } = ReactNative;
 
-var {DImage} = COMPONENTS;
+const Update = require('@remobile/react-native-update');
+
+const { DImage } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
         title: '关于',
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
     },
-    render() {
-        //备注：为防止测试版不拉取版本号数据 所以默认一个版本号
-        let appVersionName = app.appVersionName==undefined?(app.isandroid ? '2.3.0' : '2.1.0'):app.appVersionName;
+    render () {
         return (
-          <View style={styles.container}>
-              <View style={styles.versionView}>
-                  <DImage resizeMode='contain' source={app.img.login_logo} style={styles.logoImage}></DImage>
-                  <Text style={styles.versionText}>{'版本号:' + appVersionName}</Text>
-              </View>
-              <WebView
-                  style={styles.webview}
-                  source={{uri:app.route.ROUTE_ABOUT_PAGE}}
-                  scalesPageToFit={false}
+            <View style={styles.container}>
+                <View style={styles.versionView}>
+                    <DImage resizeMode='contain' source={app.img.login_logo} style={styles.logoImage} />
+                    <Text style={styles.versionText}>{'版本号:' + Update.getVersion()}</Text>
+                </View>
+                <WebView
+                    style={styles.webview}
+                    source={{ uri:app.route.ROUTE_ABOUT_PAGE }}
+                    scalesPageToFit={false}
                   />
-          </View>
+            </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         width:sr.w,
         height:sr.ch,
@@ -51,7 +51,7 @@ var styles = StyleSheet.create({
     },
     logoImage: {
         width: 50,
-        height: 50
+        height: 50,
     },
     versionText: {
         fontSize: 14,
@@ -59,6 +59,6 @@ var styles = StyleSheet.create({
         marginTop: 10,
     },
     webview: {
-        width:sr.w-40,
+        width:sr.w - 40,
     },
 });

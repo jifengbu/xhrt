@@ -7,7 +7,7 @@ module.exports = [
             userAlias: '赢销宗师',
             userImg: app.img.train_man_1,
             sex: 1,
-        }
+        },
     },
     {
         channelState: 1,
@@ -17,7 +17,7 @@ module.exports = [
             userAlias: '赢销宗师',
             userImg: app.img.train_man_2,
             sex: 1,
-        }
+        },
     },
     {
         channelState: 1,
@@ -27,7 +27,7 @@ module.exports = [
             userAlias: '赢销宗师',
             userImg: app.img.train_woman,
             sex: 0,
-        }
+        },
     },
     {
         channelState: 1,
@@ -37,7 +37,7 @@ module.exports = [
             userAlias: '赢销宗师',
             userImg: app.img.train_man_3,
             sex: 1,
-        }
+        },
     },
     {
         channelState: 1,
@@ -47,7 +47,7 @@ module.exports = [
             userAlias: '赢销宗师',
             userImg: app.img.train_man_4,
             sex: 1,
-        }
+        },
     },
     {
         channelState: 1,
@@ -57,6 +57,6 @@ module.exports = [
             userAlias: '赢销宗师',
             userImg: app.img.train_man_5,
             sex: 1,
-        }
+        },
     },
 ];

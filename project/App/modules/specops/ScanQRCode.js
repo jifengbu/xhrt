@@ -8,36 +8,36 @@ import {
 } from 'react-native';
 
 import BarcodeScanner from 'react-native-barcode-scanner-universal';
-var Camera = require('@remobile/react-native-camera');
-var QRCode = require('@remobile/react-native-qrcode-local-image');
+const Camera = require('@remobile/react-native-camera');
+const QRCode = require('@remobile/react-native-qrcode-local-image');
 
 module.exports = React.createClass({
-    onCode(code) {
+    onCode (code) {
         this.props.onCode(code);
     },
-    onBarCodeRead(code) {
+    onBarCodeRead (code) {
         if (!this.hasReadCode) {
             this.hasReadCode = true;
             this.props.onCode(code.data);
         }
     },
-    selectLocalImage() {
-        var options = {
+    selectLocalImage () {
+        const options = {
             quality: 100,
             allowEdit: false,
             destinationType: Camera.DestinationType.FILE_URI,
             sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
         };
         Camera.getPicture((filePath) => {
-            QRCode.decode(filePath, (error, result)=>{
+            QRCode.decode(filePath, (error, result) => {
                 if (error) {
-                    Toast("请选择二维码图片");
+                    Toast('请选择二维码图片');
                 } else {
                     this.props.onCode(result);
                 }
             });
-        }, ()=>{
-            Toast("请选择二维码图片");
+        }, () => {
+            Toast('请选择二维码图片');
         }, options);
     },
     render () {
@@ -74,13 +74,13 @@ module.exports = React.createClass({
                     </Text>
                 </TouchableOpacity>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var OVERLAY = 'rgba(0, 0, 0, 0.2)';
-var BORDER = 2;
-var styles = StyleSheet.create({
+const OVERLAY = 'rgba(0, 0, 0, 0.2)';
+const BORDER = 2;
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },

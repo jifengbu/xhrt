@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
+const React = require('react');const ReactNative = require('react-native');
 
-var {
+const {
     AppState,
     Image,
     StyleSheet,
@@ -13,47 +13,47 @@ var {
     Linking,
 } = ReactNative;
 
-var moment = require('moment');
-var WebView = require('react-native-webview-bridge');
-var CommentBox = require('./CommentBox.js');
-var ReadingDetailComment = require('./ReadingDetailComment.js');
-var UmengMgr = require('../../manager/UmengMgr.js');
-var InputTextMgr = require('../../manager/InputTextMgr.js');
-var {DImage, PageList} = COMPONENTS;
+const moment = require('moment');
+const WebView = require('react-native-webview-bridge');
+const CommentBox = require('./CommentBox.js');
+const ReadingDetailComment = require('./ReadingDetailComment.js');
+const UmengMgr = require('../../manager/UmengMgr.js');
+const InputTextMgr = require('../../manager/InputTextMgr.js');
+const { DImage, PageList } = COMPONENTS;
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             articleInfo: null,
-        }
+        };
     },
-    componentDidMount() {
+    componentDidMount () {
         app.showProgressHUD();
         this.getArticleInfo();
         this.doWatchLog();
         AppState.addEventListener('change', this._handleAppStateChange);
     },
-    componentWillUnmount() {
+    componentWillUnmount () {
         AppState.removeEventListener('change', this._handleAppStateChange);
     },
-    _handleAppStateChange: function(currentAppState) {
-        this.setState({currentAppState});
+    _handleAppStateChange: function (currentAppState) {
+        this.setState({ currentAppState });
         if (currentAppState === 'active') {
             // this.playerPlay && this.playerPlay.stopPlayVideo();
         } else {
             this.refs.webviewbridge.reload();// 重新加载webview 让视频播放暂停
         }
     },
-    getArticleInfo() {
-        var param = {
+    getArticleInfo () {
+        const param = {
             userID: app.personal.info.userID,
             articleID: this.props.articleId,
         };
         POST(app.route.ROUTE_ARTICLE_INFO, param, this.getArticleInfoSuccess);
     },
-    getArticleInfoSuccess(data) {
+    getArticleInfoSuccess (data) {
         if (data.success) {
-            this.setState({articleInfo: data.context});
+            this.setState({ articleInfo: data.context });
 
             // if (!app.isandroid) {
             //     if (data.context.type == 1) {
@@ -76,30 +76,30 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    doWatchLog() {
-        var param = {
+    doWatchLog () {
+        const param = {
             userID:app.personal.info.userID,
             watchType:0,
             objID: this.props.articleId,
         };
         // POST(app.route.ROUTE_WATCH_LOG, param, this.doWatchLogSuccess);
-        POST(app.route.ROUTE_WATCH_LOG, param, (data)=>{
+        POST(app.route.ROUTE_WATCH_LOG, param, (data) => {
             if (data.success) {
-                //点击阅读返回成功后通知列表更新阅读数
-                this.props.updateClickAndLikeNum && this.props.updateClickAndLikeNum({articleId: this.props.articleId, type: 'reads'});
+                // 点击阅读返回成功后通知列表更新阅读数
+                this.props.updateClickAndLikeNum && this.props.updateClickAndLikeNum({ articleId: this.props.articleId, type: 'reads' });
             }
         });
     },
-    modifyComment(context, textID) {
-        var param = {
+    modifyComment (context, textID) {
+        const param = {
             userID:app.personal.info.userID,
             articleID: this.props.articleId,
             content: context,
         };
-        POST(app.route.ROUTE_COMMENT_ARTICLE, param, (data)=>{
+        POST(app.route.ROUTE_COMMENT_ARTICLE, param, (data) => {
             if (data.success) {
-                var info = app.personal.info;
-                var curComment = {
+                const info = app.personal.info;
+                const curComment = {
                     commentID: data.context.id,
                     content: context,
                     createTime: app.utils.getCurrentTimeString(),
@@ -107,7 +107,7 @@ module.exports = React.createClass({
                     userLogo: info.headImg,
                     praises:0,
                     userName: info.name,
-                }
+                };
                 this.commentList.doRefresh(curComment);
                 InputTextMgr.removeItem(textID);
                 Toast(data.msg);
@@ -116,13 +116,13 @@ module.exports = React.createClass({
             }
         });
     },
-    doShareCallback() {
-        var param = {
+    doShareCallback () {
+        const param = {
             userID:app.personal.info.userID,
-            shareType: 2, //0-分享视频 1-分享作业 2-分享推荐阅读
+            shareType: 2, // 0-分享视频 1-分享作业 2-分享推荐阅读
             objID: this.props.articleId,
         };
-        POST(app.route.ROUTE_SHARE_LOG, param, (data)=>{
+        POST(app.route.ROUTE_SHARE_LOG, param, (data) => {
             if (data.success) {
                 this.getArticleInfo();
                 // Toast(data.msg);
@@ -131,19 +131,19 @@ module.exports = React.createClass({
             }
         });
     },
-    onPressMenu(index) {
-        //0 分享 1评论 2收藏 3点赞
-        var {articleInfo} = this.state;
+    onPressMenu (index) {
+        // 0 分享 1评论 2收藏 3点赞
+        const { articleInfo } = this.state;
         switch (index) {
             case 0:
                 if (articleInfo) {
-                    let linkUrl = CONSTANTS.SHARE_SHAREDIR_SERVER+'shareArticle.html?userID='+app.personal.info.userID+'&articleID='+this.props.articleId;
-                    UmengMgr.doActionSheetShare(linkUrl, '赢销截拳道', articleInfo.describe, 'web', articleInfo.imgUrl, this.doShareCallback);
+                    const linkUrl = CONSTANTS.SHARE_SHAREDIR_SERVER + 'shareArticle.html?userID=' + app.personal.info.userID + '&articleID=' + this.props.articleId;
+                    UmengMgr.doActionSheetShare(linkUrl, articleInfo.title, articleInfo.describe, 'web', articleInfo.imgUrl, this.doShareCallback);
                 }
                 break;
             case 1:
-                var textID = 'specops_readingDetail1';
-                var textContent = InputTextMgr.getTextContent(textID);
+                const textID = 'specops_readingDetail1';
+                const textContent = InputTextMgr.getTextContent(textID);
                 app.showModal(
                     <CommentBox
                         doConfirm={this.modifyComment}
@@ -151,37 +151,37 @@ module.exports = React.createClass({
                         inputText={textContent}
                         doCancel={app.closeModal}
                         />
-                )
+                );
                 break;
             case 2:
-                if(this.doCollection) return;
-                this.doCollection = true
+                if (this.doCollection) return;
+                this.doCollection = true;
                 if (articleInfo.isCollection == 1) {
-                    var param = {
+                    const param = {
                         userID:app.personal.info.userID,
-                        collectionType: 0, //推荐阅读收藏
+                        collectionType: 0, // 推荐阅读收藏
                         objID: this.props.articleId,
                     };
-                    POST(app.route.ROUTE_CANCEL_COLLECTION_LOG, param, (data)=>{
+                    POST(app.route.ROUTE_CANCEL_COLLECTION_LOG, param, (data) => {
                         if (data.success) {
-                            articleInfo.isCollection=0;
-                            this.setState({articleInfo});
+                            articleInfo.isCollection = 0;
+                            this.setState({ articleInfo });
                             Toast('取消收藏成功');
                         } else {
                             Toast('取消收藏失败');
                         }
                         this.doCollection = false;
                     });
-                }else {
-                    var param = {
+                } else {
+                    const param = {
                         userID:app.personal.info.userID,
-                        collectionType: 0, //推荐阅读收藏
+                        collectionType: 0, // 推荐阅读收藏
                         objID: this.props.articleId,
                     };
-                    POST(app.route.ROUTE_COLLECTION_LOG, param, (data)=>{
+                    POST(app.route.ROUTE_COLLECTION_LOG, param, (data) => {
                         if (data.success) {
-                            articleInfo.isCollection=1;
-                            this.setState({articleInfo});
+                            articleInfo.isCollection = 1;
+                            this.setState({ articleInfo });
                             Toast('收藏成功');
                         } else {
                             Toast('收藏失败');
@@ -191,32 +191,32 @@ module.exports = React.createClass({
                 }
                 break;
             case 3:
-                if(this.doPraise) return;
-                this.doPraise = true
-                var param = {
+                if (this.doPraise) return;
+                this.doPraise = true;
+                const param = {
                     userID:app.personal.info.userID,
-                    praiseType: 0, //0：推荐阅读点赞，1：阅读评论点赞
+                    praiseType: 0, // 0：推荐阅读点赞，1：阅读评论点赞
                     objID: this.props.articleId,
                 };
                 if (articleInfo.isPraise == 1) {
-                    POST(app.route.ROUTE_CANCEL_PRAISE_LOG, param, (data)=>{
+                    POST(app.route.ROUTE_CANCEL_PRAISE_LOG, param, (data) => {
                         if (data.success) {
-                            this.props.updateClickAndLikeNum && this.props.updateClickAndLikeNum({articleId: this.props.articleId, type: 'subPraise'});
-                            articleInfo.isPraise=0;
-                            articleInfo.likes-=1;
-                            this.setState({articleInfo});
+                            this.props.updateClickAndLikeNum && this.props.updateClickAndLikeNum({ articleId: this.props.articleId, type: 'subPraise' });
+                            articleInfo.isPraise = 0;
+                            articleInfo.likes -= 1;
+                            this.setState({ articleInfo });
                         } else {
                             Toast('取消点赞失败');
                         }
                         this.doPraise = false;
                     });
-                }else {
-                    POST(app.route.ROUTE_PRAISE_LOG, param, (data)=>{
+                } else {
+                    POST(app.route.ROUTE_PRAISE_LOG, param, (data) => {
                         if (data.success) {
-                            this.props.updateClickAndLikeNum && this.props.updateClickAndLikeNum({articleId: this.props.articleId, type: 'addPraise'});
-                            articleInfo.isPraise=1;
-                            articleInfo.likes+=1;
-                            this.setState({articleInfo});
+                            this.props.updateClickAndLikeNum && this.props.updateClickAndLikeNum({ articleId: this.props.articleId, type: 'addPraise' });
+                            articleInfo.isPraise = 1;
+                            articleInfo.likes += 1;
+                            this.setState({ articleInfo });
                         } else {
                             Toast('点赞失败');
                         }
@@ -228,51 +228,51 @@ module.exports = React.createClass({
 
         }
     },
-    onLoadEnd() {
+    onLoadEnd () {
         app.dismissProgressHUD();
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
             <View
                 style={styles.separator}
-                key={rowID}/>
+                key={rowID} />
         );
     },
-    onBridgeMessage(message){
+    onBridgeMessage (message) {
         const { webviewbridge } = this.refs;
         let type, data;
         try {
-            let result = JSON.parse(message);
+            const result = JSON.parse(message);
             type = result.type;
             data = result.data;
         } catch (e) {}
         switch (type) {
-            case "heightChange":
-                this.setState({webHeight: data});
-            break;
+            case 'heightChange':
+                this.setState({ webHeight: data });
+                break;
         }
     },
-    render() {
-        var {articleInfo} = this.state;
-        var {shareList = []} = articleInfo||{};
-        shareList = shareList.slice(0,6);
-        let linkUrl = app.route.ROUTE_ARTICLE_PAGE+'?userID='+app.personal.info.userID+'&articleID='+this.props.articleId;
+    render () {
+        const { articleInfo } = this.state;
+        let { shareList = [] } = articleInfo || {};
+        shareList = shareList.slice(0, 6);
+        let linkUrl = app.route.ROUTE_ARTICLE_PAGE + '?userID=' + app.personal.info.userID + '&articleID=' + this.props.articleId;
         if (articleInfo) {
-            linkUrl = articleInfo.type == 1?articleInfo.linkUrl: app.route.ROUTE_ARTICLE_PAGE+'?userID='+app.personal.info.userID+'&articleID='+this.props.articleId;
+            linkUrl = articleInfo.type == 1 ? articleInfo.linkUrl : app.route.ROUTE_ARTICLE_PAGE + '?userID=' + app.personal.info.userID + '&articleID=' + this.props.articleId;
         }
         const injectScript = `
         (function () {
-            var height = document.body.offsetHeight;
+            const height = document.body.offsetHeight;
             WebViewBridge.send(JSON.stringify({
                 type:'heightChange',
                 data: height,
             }));
           }());`;
         return (
-            <View style={{flex: 1}}>
-                <View style={styles.divisionLine}/>
+            <View style={{ flex: 1 }}>
+                <View style={styles.divisionLine} />
                 {
-                    articleInfo&&
+                    articleInfo &&
                     <ScrollView style={styles.container}>
                         {
                             // articleInfo.type == 0&&
@@ -287,21 +287,21 @@ module.exports = React.createClass({
                                     {moment(articleInfo.createTime).format('YYYY.MM.DD')}
                                 </Text>
                             }
-                            <View style={[styles.praiseContainer, {marginLeft: articleInfo.type == 0?30:0}]}>
+                            <View style={[styles.praiseContainer, { marginLeft: articleInfo.type == 0 ? 30 : 0 }]}>
                                 <DImage
                                     resizeMode='contain'
                                     source={app.img.personal_eye}
-                                    style={styles.eyeIcon}/>
-                                <Text style={[styles.textStyle, {marginLeft: 10}]}>
+                                    style={styles.eyeIcon} />
+                                <Text style={[styles.textStyle, { marginLeft: 10 }]}>
                                     {articleInfo.reads}
                                 </Text>
                             </View>
-                            <View style={[styles.praiseContainer, {marginLeft: 21}]}>
+                            <View style={[styles.praiseContainer, { marginLeft: 21 }]}>
                                 <DImage
                                     resizeMode='contain'
                                     source={app.img.personal_praise}
-                                    style={styles.iconStyle}/>
-                                <Text style={[styles.textStyle, {marginLeft: 10}]}>
+                                    style={styles.iconStyle} />
+                                <Text style={[styles.textStyle, { marginLeft: 10 }]}>
                                     {articleInfo.likes}
                                 </Text>
                             </View>
@@ -310,47 +310,47 @@ module.exports = React.createClass({
                             !!articleInfo &&
                             <View style={styles.midView}>
                                 <WebView
-                                    style={[styles.webview,{height: this.state.webHeight+30}]}
-                                    ref="webviewbridge"
-                                    startInLoadingState={true}
+                                    style={[styles.webview, { height: this.state.webHeight + 30 }]}
+                                    ref='webviewbridge'
+                                    startInLoadingState
                                     onLoadEnd={this.onLoadEnd}
                                     onBridgeMessage={this.onBridgeMessage}
                                     injectedJavaScript={injectScript}
                                     scrollEnabled={false}
-                                    source={{uri: linkUrl}}
+                                    source={{ uri: linkUrl }}
                                     scalesPageToFit={false}
                                     />
                             </View>
                         }
                         {
-                            shareList.length != 0&&
+                            shareList.length != 0 &&
                             <View style={styles.sharedPersonStyle}>
-                                <View style={styles.divisionLine}></View>
+                                <View style={styles.divisionLine} />
                                 <View style={styles.contentStyle}>
                                     <Text style={styles.contentText}>分享过的学员：</Text>
                                     {
-                                        shareList.map((item, i)=>{
+                                        shareList.map((item, i) => {
                                             return (
                                                 <DImage
                                                     key={i}
                                                     resizeMode='cover'
                                                     defaultSource={app.img.personal_head}
-                                                    source={{uri: item.userLogo}}
-                                                    style={[styles.headerIcon, {marginLeft: 13}]} />
-                                            )
+                                                    source={{ uri: item.userLogo }}
+                                                    style={[styles.headerIcon, { marginLeft: 13 }]} />
+                                            );
                                         })
                                     }
                                 </View>
-                                <View style={styles.divisionLine}></View>
+                                <View style={styles.divisionLine} />
                             </View>
                         }
-                        <ReadingDetailComment ref={(ref)=>this.commentList = ref} articleId={this.props.articleId}/>
+                        <ReadingDetailComment ref={(ref) => { this.commentList = ref; }} articleId={this.props.articleId} />
                     </ScrollView>
                 }
                 {
-                    articleInfo&&
+                    articleInfo &&
                     <View style={styles.bottomMenuStyle}>
-                        <View style={styles.divisionLine}></View>
+                        <View style={styles.divisionLine} />
                         <View style={styles.touchViewContainer}>
                             <View style={styles.touchView}>
                                 <TouchableOpacity
@@ -359,12 +359,12 @@ module.exports = React.createClass({
                                     <DImage
                                         resizeMode='contain'
                                         source={app.img.home_share_icon}
-                                        style={styles.iconStyle}/>
+                                        style={styles.iconStyle} />
                                     <Text style={styles.tabText} >
                                         {'分享'}
                                     </Text>
                                 </TouchableOpacity>
-                                <View style={styles.vline}/>
+                                <View style={styles.vline} />
                             </View>
                             <View style={styles.touchView}>
                                 <TouchableOpacity
@@ -373,12 +373,12 @@ module.exports = React.createClass({
                                     <DImage
                                         resizeMode='contain'
                                         source={app.img.home_comment_icon}
-                                        style={styles.iconStyle}/>
+                                        style={styles.iconStyle} />
                                     <Text style={styles.tabText} >
                                         {'评论'}
                                     </Text>
                                 </TouchableOpacity>
-                                <View style={styles.vline}/>
+                                <View style={styles.vline} />
                             </View>
                             <View style={styles.touchView}>
                                 <TouchableOpacity
@@ -386,13 +386,13 @@ module.exports = React.createClass({
                                     style={styles.tabButton}>
                                     <DImage
                                         resizeMode='contain'
-                                        source={articleInfo.isCollection==1?app.img.personal_collect_pressed:app.img.personal_collect}
-                                        style={styles.iconStyle}/>
+                                        source={articleInfo.isCollection == 1 ? app.img.personal_collect_pressed : app.img.personal_collect}
+                                        style={styles.iconStyle} />
                                     <Text style={styles.tabText} >
-                                        {articleInfo.isCollection==1?'已收藏':'收藏'}
+                                        {articleInfo.isCollection == 1 ? '已收藏' : '收藏'}
                                     </Text>
                                 </TouchableOpacity>
-                                <View style={styles.vline}/>
+                                <View style={styles.vline} />
                             </View>
                             <View style={styles.touchView}>
                                 <TouchableOpacity
@@ -400,10 +400,10 @@ module.exports = React.createClass({
                                     style={styles.tabButton}>
                                     <DImage
                                         resizeMode='contain'
-                                        source={articleInfo.isPraise?app.img.personal_praise_pressed:app.img.personal_praise}
-                                        style={styles.iconStyle}/>
+                                        source={articleInfo.isPraise ? app.img.personal_praise_pressed : app.img.personal_praise}
+                                        style={styles.iconStyle} />
                                     <Text style={styles.tabText} >
-                                        {articleInfo.isPraise?'已赞':'点赞'}
+                                        {articleInfo.isPraise ? '已赞' : '点赞'}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -412,10 +412,10 @@ module.exports = React.createClass({
                 }
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -491,9 +491,9 @@ var styles = StyleSheet.create({
     },
     separator: {
         height: 1,
-        width: sr.w-34,
+        width: sr.w - 34,
         alignSelf: 'center',
-        backgroundColor: '#F5F5F5'
+        backgroundColor: '#F5F5F5',
     },
     bottomMenuStyle: {
         position: 'absolute',

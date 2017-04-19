@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -10,39 +10,39 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var {DImage} = COMPONENTS;
+const { DImage } = COMPONENTS;
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             opacity: new Animated.Value(0),
         };
     },
-    doClose() {
-          this.closeModal(()=>{
-              this.props.doClose();
-          });
+    doClose () {
+        this.closeModal(() => {
+            this.props.doClose();
+        });
     },
-    doConfirm() {
-          this.closeModal(()=>{
-              this.props.doConfirm();
-          });
+    doConfirm () {
+        this.closeModal(() => {
+            this.props.doConfirm();
+        });
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
+    render () {
         return (
             <Animated.View style={styles.container}>
                 <DImage
@@ -64,10 +64,10 @@ module.exports = React.createClass({
                 </DImage>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         width: sr.w,
         height:250,
@@ -108,7 +108,7 @@ var styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     touchStyle: {
-        width: sr.w-40,
+        width: sr.w - 40,
         height: 50,
         bottom: 20,
         left: 20,

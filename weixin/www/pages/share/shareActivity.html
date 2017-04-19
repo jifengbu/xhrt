@@ -7,6 +7,7 @@
 	<meta http-equiv="content-security-policy">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 	<link rel="stylesheet" href="../../css/mui.css">
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
 </head>
 <style>
 	iframe {
@@ -20,6 +21,7 @@
     }
     #topContainer {
         flex-direction: column;
+		margin-top: 80px;
     }
     #iframeContainer {
 		flex-direction: column;
@@ -85,7 +87,7 @@
         align-items: center;
     }
     .icon {
-		widows: 16px;
+		width: 16px;
 		height: 16px;
 		margin-right: 14px;
     }
@@ -99,9 +101,12 @@
     .contentRight {
 		font-size: 12px;
 		color: #343434;
-		display:block;
 		margin-left: 14px;
 		white-space:normal;
+	 	text-overflow: ellipsis;
+	 	display: -webkit-inline-box;
+	 	-webkit-line-clamp: 2;
+	 	-webkit-box-orient: vertical;
     }
     .contentRightPrice {
 		font-size: 12px;
@@ -156,10 +161,9 @@
 	    overflow: hidden;
     }
     .labelImage {
-		width: 28px;
+    		width: 28px;
 		height: 28px;
 		position: absolute;
-		top: 0px;
 		right: 0px;
     }
     #listContainer {
@@ -177,10 +181,11 @@
         padding: 0px 10px;
     }
     .table-cell {
-		padding-top: 12px;
-		padding-bottom: 12px;
 		display: flex;
-		align-items: center;
+    }
+    .item-content {
+    		padding-top: 12px;
+		padding-bottom: 12px;
     }
     .itemImg {
 		float: left;
@@ -238,6 +243,16 @@
 			<button class="signUpBtn" onclick="submitSignData()" type="button" id="submitSignData">立即报名</button>
 		</div>
 	</div>
+	<div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+		<button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button>
+		<div class="installTipCell">
+			<img src="../../img/logo.png"></img>
+			<div class="cellRight">
+				<div class="cellTitle">赢销截拳道</div>
+				<div class="cellContent">赢销截拳道人人都需要</div>
+			</div>
+		</div>
+	</div>
 </body>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
@@ -251,16 +266,23 @@
 		var params = app.router.getParameter();
 		var activeityId = params.activeityId;
 		var userID = params.userID;
+		mui.os.ios?$('.installTipCell').append('<button class="downloadApp"><a href="https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8">下载APP</a></button>'):$('.installTipCell').append('<button class="downloadApp"><a href="market://details?id=com.yxjqd">下载APP</a></button>');
 		getActiveityInfo(userID, activeityId);
 	});
 	function reinitIframe() {
 	    var iframe = document.getElementById("iframe");
 	    try{
 	        var bHeight = iframe.contentWindow.document.body.scrollHeight;
-	        var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+            var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
 	        iframe.height = Math.max(bHeight, dHeight);
+			var tables = iframe.contentWindow.document.getElementsByTagName("table");
+			for(var i=0; i<tables.length; i++){
+				var table = tables[i];
+				table.width='';
+				table.style.width='';
+			}
 	    }catch (ex){
-	        iframe.height = 30;
+	        iframe.height = 50;
 	    }
 	}
 	function setTopContainer(data) {
@@ -321,11 +343,13 @@
 	            des = item.mainTeacher?'主讲人：'+item.mainTeacher:'';
 	        }
 	        html += '<li class="table-cell"  onclick="replacePage(/'+activeityId+'/)">';
-		    html += '  <img class="itemImg" src="' + item.minImage + '"/>';
+	        html += '  <div class="item-content">'
+		    html += '  <img class="itemImg" onerror=this.src="../../img/default.png" src="' + item.minImage + '"/>';
 		    html += '  <div class="mui-media-body">';
 		    html += '    <span class="itemTitle">'+item.title+'</span> <br />';
 		    html += '    <span class="itemName">'+des+'</span> <br />';
 		    html += '    <span class="itemName">时间：'+item.startDate+'</span>';
+		    html += '  </div>';
 		    html += '  </div>';
 		    if (item.mode == 1) {
 		    		html += '  <img class="labelImage" src="../../img/offline.png"/>';
@@ -359,7 +383,8 @@
 	    var url = context.introduceHtml5;
 	    var videoUrl = context.activityVideo;
 	    if (url != '') {
-	    	 	$('#iframeContainer').html('<iframe src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
+			url = 'http://192.168.1.126:3000/1.html';//pp.route.ROUTE_SHARE_INTRODUCE+"?activeityId="+context.detailedId;
+	    	 $('#iframeContainer').html('<iframe style="margin:0;padding:0;overflow:hidden" scroll="no" src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
 	    }
 	    setTopContainer(context);
 	    if (videoUrl !='') {
@@ -404,6 +429,10 @@
 			userID: app.router.getParameter().userID,
 		}
 		app.router.showView('./shareActivityEnroll.html', params, saved);
+	}
+	function closeWarning () {
+		document.getElementById('warning').style.display='none';
+		document.getElementById('topContainer').style.margin='0';
 	}
 	</script>
 </html>

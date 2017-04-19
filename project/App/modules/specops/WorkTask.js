@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -10,64 +10,64 @@ var {
     StyleSheet,
 } = ReactNative;
 
-var moment = require('moment');
-var NextWeekPlan = require('./NextWeekPlan.js');
-var MonthPlan = require('./MonthPlan.js');
-var WeekPlan = require('./WeekPlan.js');
+const moment = require('moment');
+const NextWeekPlan = require('./NextWeekPlan.js');
+const MonthPlan = require('./MonthPlan.js');
+const WeekPlan = require('./WeekPlan.js');
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             memWeekTime: [],
             memDayTime: [],
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.currentMonthNum = this.getCurrentMonth();
-        this.processWeekTime(this.currentMonthNum-1);
+        this.processWeekTime(this.currentMonthNum - 1);
         this.processDayTime(moment().format('YYYY-MM-DD'));
         this.currentWeekSeq = this.getCurrentTimeWeekSeq();
     },
-    toNextWeekPlan() {
+    toNextWeekPlan () {
         app.navigator.push({
             component: NextWeekPlan,
         });
     },
-    onMonthPlan(){
+    onMonthPlan () {
         app.navigator.push({
             component: MonthPlan,
         });
     },
-    processDayTime(time){
+    processDayTime (time) {
         //  current time get day data.
-        var dayStr = '';
-        var day = moment(time).day();
+        let dayStr = '';
+        const day = moment(time).day();
         if (day === 0) {
             dayStr = moment(time).subtract(1, 'd').format('YYYY-MM-DD');
-        }else {
+        } else {
             dayStr = moment(time).format('YYYY-MM-DD');
         }
         if (this.state.isNextWeek) {
             dayStr = moment(dayStr).add(7, 'd').format('YYYY-MM-DD');
         }
-        for (var i = 0; i < 7; i++) {
-            this.state.memDayTime[i] = moment(dayStr).startOf('week').add(1+i, 'd').format('YYYY-MM-DD');
+        for (let i = 0; i < 7; i++) {
+            this.state.memDayTime[i] = moment(dayStr).startOf('week').add(1 + i, 'd').format('YYYY-MM-DD');
         }
     },
-    getCurrentMonthMonday(){
+    getCurrentMonthMonday () {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
@@ -78,10 +78,10 @@ module.exports = React.createClass({
             firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
             firstMonday = '';
             while (isFirstMonday === false) {
-                var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+                const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
                 if (isMonday === 1) {
                     isFirstMonday = true;
-                    firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                    firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                     break;
                 }
                 addPos++;
@@ -89,29 +89,29 @@ module.exports = React.createClass({
         }
         return firstMonday;
     },
-    getCurrentMonth(){
-        var strFirstMonday = this.getCurrentMonthMonday();
-        var monthNum = 0;
+    getCurrentMonth () {
+        const strFirstMonday = this.getCurrentMonthMonday();
+        let monthNum = 0;
         if (moment().date() < moment(strFirstMonday).date()) {
             return moment().month();
-        }else {
-            return moment().month()+1;
+        } else {
+            return moment().month() + 1;
         }
     },
-    processWeekTime(month){
+    processWeekTime (month) {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).set('month', month).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
@@ -122,176 +122,178 @@ module.exports = React.createClass({
             firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
             firstMonday = '';
             while (isFirstMonday === false) {
-                var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+                const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
                 if (isMonday === 1) {
                     isFirstMonday = true;
-                    firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                    firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                     break;
                 }
                 addPos++;
             }
         }
         // get week date
-        for (var i = 0; i < 6; i++) {
-            if (moment(firstMonday).add(7*i, 'd').month() === moment(firstMonday).month()) {
-                this.state.memWeekTime[i] = moment(firstMonday).add(7*i, 'd').format('YYYY-MM-DD');
-            }else {
-                this.setState({weekCount: i});
+        for (let i = 0; i < 6; i++) {
+            if (moment(firstMonday).add(7 * i, 'd').month() === moment(firstMonday).month()) {
+                this.state.memWeekTime[i] = moment(firstMonday).add(7 * i, 'd').format('YYYY-MM-DD');
+            } else {
+                this.setState({ weekCount: i });
                 this.memWeekCount = i;
                 break;
             }
         }
     },
-    getCurrentTimeWeekSeq(){
-        var curWeekNum = this.getWeekNum(moment().format('YYYY-MM-DD'));
-        for (var i = 0; i < this.state.memWeekTime.length; i++) {
-            var weekNum = this.getWeekNum(this.state.memWeekTime[i]);
+    getCurrentTimeWeekSeq () {
+        const curWeekNum = this.getWeekNum(moment().format('YYYY-MM-DD'));
+        for (let i = 0; i < this.state.memWeekTime.length; i++) {
+            const weekNum = this.getWeekNum(this.state.memWeekTime[i]);
             if (curWeekNum == weekNum) {
-                return (i+1);
+                return (i + 1);
             }
         }
         return 0;
     },
-    getWeekNum(time){
+    getWeekNum (time) {
         let currentWeek = moment(time).week();
-        let currentWeekday = moment(time).weekday();
-        if (currentWeekday===0) {
+        const currentWeekday = moment(time).weekday();
+        if (currentWeekday === 0) {
             currentWeek = currentWeek - 1;
         }
         return currentWeek;
     },
-    getWeekDay(i) {
+    getWeekDay (i) {
         switch (parseInt(i)) {
             case 0:
-                return "周日";
+                return '周日';
             case 1:
-                return "周一";
+                return '周一';
             case 2:
-                return "周二";
+                return '周二';
             case 3:
-                return "周三";
+                return '周三';
             case 4:
-                return "周四";
+                return '周四';
             case 5:
-                return "周五";
+                return '周五';
             case 6:
-                return "周六";
+                return '周六';
             default:
                 console.log('week param fail');
         }
     },
-    onPressItem(week){
+    onPressItem (week) {
         app.navigator.push({
             component: WeekPlan,
             passProps: {
                 doWeek: week,
-            }
+            },
         });
     },
-    render() {
-        let monthPlan = this.props.allPlanDetail && this.props.allPlanDetail.monthPlan||[];
-        let weekPlan = this.props.allPlanDetail && this.props.allPlanDetail.weekPlan||[];
-        let dayPlan = this.props.allPlanDetail && this.props.allPlanDetail.dayPlan||[];
-        let currentTime = moment().format('YYYY-MM-DD');
-        var strTime = '';
+    render () {
+        const { isAgent, isSpecialSoldier } = app.personal.info;
+        const authorized = isAgent || isSpecialSoldier;
+        const monthPlan = this.props.allPlanDetail && this.props.allPlanDetail.monthPlan || [];
+        const weekPlan = this.props.allPlanDetail && this.props.allPlanDetail.weekPlan || [];
+        const dayPlan = this.props.allPlanDetail && this.props.allPlanDetail.dayPlan || [];
+        const currentTime = moment().format('YYYY-MM-DD');
+        let strTime = '';
         if (this.state.memDayTime.length > 0) {
-            var time1 = moment(this.state.memDayTime[0]);
-            var time2 = moment(this.state.memDayTime[0]).add(6, 'd');
+            const time1 = moment(this.state.memDayTime[0]);
+            const time2 = moment(this.state.memDayTime[0]).add(6, 'd');
 
             if (this.state.memDayTime[0] != undefined) {
-                strTime = time1.format('MM.DD')+'-'+time2.format('MM.DD');
+                strTime = time1.format('MM.DD') + '-' + time2.format('MM.DD');
             }
         }
         return (
             <View style={this.props.style}>
                 <View style={styles.titleContainer}>
                     <View style={styles.leftTitleStyle}>
-                        <View style={styles.taskView}></View>
+                        <View style={styles.taskView} />
                         <Text style={styles.nameText}>工作任务</Text>
-                        <Text style={styles.dateText}>{'第'+this.currentWeekSeq+'周'+ ' '+ '（'+strTime+'）'}</Text>
+                        <Text style={styles.dateText}>{'第' + this.currentWeekSeq + '周' + ' ' + '（' + strTime + '）'}</Text>
                     </View>
                     <TouchableOpacity style={styles.rightTitleStyle}
-                        onPress={this.onMonthPlan}>
+                        onPress={authorized ? this.onMonthPlan : this.props.openSpecops}>
                         <Text style={styles.targetText}>工作目标</Text>
-                        <Image resizeMode='contain' source={app.img.specops_go_white} style={styles.goImage}></Image>
+                        <Image resizeMode='contain' source={app.img.specops_go_white} style={styles.goImage} />
                     </TouchableOpacity>
                 </View>
-                <View style={[styles.divisionLine, {width: sr.w}]}></View>
+                <View style={[styles.divisionLine, { width: sr.w }]} />
                 <View style={styles.contextContainer}>
                     <View style={styles.goalStyle}>
-                        <View style={styles.verticalLine}></View>
+                        <View style={styles.verticalLine} />
                         <Text style={styles.goalText}>月工作目标</Text>
                     </View>
-                    <View style={[styles.divisionLine, {width: sr.w-54, alignSelf: 'center'}]}></View>
+                    <View style={[styles.divisionLine, { width: sr.w - 54, alignSelf: 'center' }]} />
                     {
-                        monthPlan.map((item, i)=>{
+                        monthPlan.map((item, i) => {
                             return (
                                 <View key={i} style={styles.contextContainer}>
                                     <View style={styles.goalContextStyle}>
-                                        <View style={styles.dotStyle}></View>
+                                        <View style={styles.dotStyle} />
                                         <Text style={styles.goalContextText}>{item.content}</Text>
                                     </View>
-                                    <View style={[styles.divisionLine, {width: sr.w-54, alignSelf: 'center'}]}></View>
+                                    <View style={[styles.divisionLine, { width: sr.w - 54, alignSelf: 'center' }]} />
                                 </View>
-                            )
+                            );
                         })
                     }
                     <View style={styles.goalStyle}>
-                        <View style={styles.verticalLine}></View>
+                        <View style={styles.verticalLine} />
                         <Text style={styles.goalText}>周工作目标</Text>
                     </View>
-                    <View style={[styles.divisionLine, {width: sr.w-54, alignSelf: 'center'}]}></View>
+                    <View style={[styles.divisionLine, { width: sr.w - 54, alignSelf: 'center' }]} />
                     {
-                        weekPlan.map((item, i)=>{
+                        weekPlan.map((item, i) => {
                             return (
                                 <View key={i} style={styles.contextContainer}>
                                     <View style={styles.goalContextStyle}>
-                                        <View style={styles.dotStyle}></View>
+                                        <View style={styles.dotStyle} />
                                         <Text style={styles.goalContextText}>{item.content}</Text>
                                     </View>
                                     {
-                                        i!=weekPlan.length-1&&
-                                        <View style={[styles.divisionLine, {width: sr.w-54, alignSelf: 'center'}]}></View>
+                                        i != weekPlan.length - 1 &&
+                                        <View style={[styles.divisionLine, { width: sr.w - 54, alignSelf: 'center' }]} />
                                     }
                                 </View>
-                            )
+                            );
                         })
                     }
                 </View>
                 <View style={styles.weekPlanDetailStyle}>
                     {
-                        dayPlan.map((item, i)=>{
+                        dayPlan.map((item, i) => {
                             return (
-                                <TouchableOpacity key={i} onPress={this.onPressItem.bind(null, item.week)}
-                                style={[styles.planDetailStyle, currentTime === item.weekIsDate?{borderColor: '#FF6363'}:{borderColor: '#F1F1F1'}]}>
-                                    <View style={[styles.leftPlanStyle, currentTime === item.weekIsDate?{backgroundColor: '#FF6363', }:{backgroundColor: '#F1F1F1'}]}>
-                                        <Text style={[styles.planWeekText, currentTime === item.weekIsDate?{color: '#FFFFFF', marginTop: 8}:{color: '#404040', marginTop: 8}]}>{this.getWeekDay(item.week)}</Text>
-                                        <Text style={[styles.planDateText, currentTime === item.weekIsDate?{color: '#FFFFFF', marginBottom: 8}:{color: '#404040', marginBottom: 8}]}>{moment(item.weekIsDate).format('MM.DD')}</Text>
+                                <TouchableOpacity key={i} onPress={authorized ? this.onPressItem.bind(null, item.week) : this.props.openSpecops}
+                                    style={[styles.planDetailStyle, currentTime === item.weekIsDate ? { borderColor: '#FF6363' } : { borderColor: '#F1F1F1' }]}>
+                                    <View style={[styles.leftPlanStyle, currentTime === item.weekIsDate ? { backgroundColor: '#FF6363' } : { backgroundColor: '#F1F1F1' }]}>
+                                        <Text style={[styles.planWeekText, currentTime === item.weekIsDate ? { color: '#FFFFFF', marginTop: 8 } : { color: '#404040', marginTop: 8 }]}>{this.getWeekDay(item.week)}</Text>
+                                        <Text style={[styles.planDateText, currentTime === item.weekIsDate ? { color: '#FFFFFF', marginBottom: 8 } : { color: '#404040', marginBottom: 8 }]}>{moment(item.weekIsDate).format('MM.DD')}</Text>
                                     </View>
                                     <View style={styles.rightPlanStyle}>
                                         <View style={styles.planContentContainer}>
                                             {
-                                                item.detailPlan&&item.detailPlan.map((itemInfo, j)=>{
+                                                item.detailPlan && item.detailPlan.map((itemInfo, j) => {
                                                     return (
-                                                        <View key={j} style={[styles.planContentStyle, j===0&&{marginTop: 8}]}>
-                                                            <Text style={[styles.planContenText, !itemInfo.isOver&&{opacity: 0.6}]}>{j+1+`、${itemInfo.content}`}</Text>
+                                                        <View key={j} style={[styles.planContentStyle, j === 0 && { marginTop: 8 }]}>
+                                                            <Text style={[styles.planContenText, !itemInfo.isOver && { opacity: 0.6 }]}>{j + 1 + `、${itemInfo.content}`}</Text>
                                                             {
-                                                                itemInfo.isOver===1&&<Image resizeMode='contain' source={app.img.specops_check} style={styles.checkImage}></Image>
+                                                                itemInfo.isOver === 1 && <Image resizeMode='contain' source={app.img.specops_check} style={styles.checkImage} />
                                                             }
                                                         </View>
-                                                    )
+                                                    );
                                                 })
                                             }
                                         </View>
-                                        <Image resizeMode='contain' source={app.img.specops_untask_go} style={styles.goPlanImage}></Image>
+                                        <Image resizeMode='contain' source={app.img.specops_untask_go} style={styles.goPlanImage} />
                                     </View>
                                 </TouchableOpacity>
-                            )
+                            );
                         })
                     }
                 </View>
                 <TouchableOpacity
-                    onPress={this.toNextWeekPlan}
+                    onPress={authorized ? this.toNextWeekPlan : this.props.openSpecops}
                     style={styles.touchNextStyle}>
                     <Text style={styles.touchNextText}>填写下周计划</Text>
                 </TouchableOpacity>
@@ -300,7 +302,7 @@ module.exports = React.createClass({
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         width: sr.w,
         marginTop: 5,
@@ -390,7 +392,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#FF6363',
     },
     goalContextText: {
-        width: sr.w-74,
+        width: sr.w - 74,
         fontSize: 12,
         color: '#3A3A3A',
         lineHeight: 15,
@@ -401,7 +403,7 @@ var styles = StyleSheet.create({
         flexDirection: 'column',
     },
     planDetailStyle: {
-        width: sr.w-34,
+        width: sr.w - 34,
         marginBottom: 7,
         borderRadius: 2,
         borderWidth: 1,
@@ -425,7 +427,7 @@ var styles = StyleSheet.create({
         fontFamily: 'STHeitiSC-Medium',
     },
     rightPlanStyle: {
-        width: sr.w-108,
+        width: sr.w - 108,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -434,14 +436,14 @@ var styles = StyleSheet.create({
         flexDirection: 'column',
     },
     planContentStyle: {
-        width: sr.w-136,
+        width: sr.w - 136,
         marginBottom: 8,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
     },
     planContenText: {
-        width: sr.w-185,
+        width: sr.w - 185,
         fontSize: 12,
         color: '#3A3A3A',
         lineHeight: 17,
@@ -459,7 +461,7 @@ var styles = StyleSheet.create({
         marginRight: 10,
     },
     touchNextStyle: {
-        width: sr.w-36,
+        width: sr.w - 36,
         height: 31,
         marginTop: 11,
         marginBottom: 18,

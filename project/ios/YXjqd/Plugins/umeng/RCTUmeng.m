@@ -1,7 +1,7 @@
 #import "RCTUmeng.h"
 
-#import "RCTBridge.h"
-#import "RCTUtils.h"
+#import <React/RCTBridge.h>
+#import <React/RCTUtils.h>
 
 #import "WXApi.h"
 
@@ -205,11 +205,11 @@ RCT_EXPORT_METHOD(shareSingle:(NSString *)platfrom data:(NSDictionary *)data cal
         });
 }
 
-RCT_EXPORT_METHOD(ThirdPartyLogin:(NSString *)platfrom callback:(RCTResponseSenderBlock) callback) {
-    [self ThirdLogin:platfrom callback:callback];
+RCT_EXPORT_METHOD(thirdPartyLogin:(NSString *)platfrom callback:(RCTResponseSenderBlock) callback) {
+    [self thirdLogin:platfrom callback:callback];
 }
 
--(void) ThirdLogin:(NSString *) platfrom callback:(RCTResponseSenderBlock)callback{
+-(void) thirdLogin:(NSString *) platfrom callback:(RCTResponseSenderBlock)callback{
   
   self.callback = callback;
   dispatch_async(dispatch_get_main_queue(), ^{

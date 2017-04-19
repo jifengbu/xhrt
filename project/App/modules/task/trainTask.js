@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -10,32 +10,31 @@ var {
     ScrollView,
     RefreshControl,
 } = ReactNative;
-var Button = require('@remobile/react-native-simple-button');
+const Button = require('@remobile/react-native-simple-button');
 
 const TaskItem = React.createClass({
-    render() {
-        const {title, flagDate, msg, isOver, doStartTrain} = this.props;
+    render () {
+        const { title, flagDate, msg, isOver, doStartTrain } = this.props;
         return (
             <View style={styles.item}>
                 <View style={styles.itemTop}>
                     <Image
                         resizeMode='contain'
                         source={app.img.task_train_icon}
-                        style={styles.itemIcon}>
-                    </Image>
+                        style={styles.itemIcon} />
                     <View style={styles.itemRight}>
                         <Text style={styles.title}>{title}</Text>
                         <Text style={styles.time}>{flagDate}</Text>
                     </View>
                 </View>
-                <View  style={styles.line} />
+                <View style={styles.line} />
                 <View style={styles.itemBottom}>
                     <Text style={styles.label}>{msg}</Text>
                 </View>
                 {
                     !isOver &&
                     <View>
-                        <View  style={styles.line} />
+                        <View style={styles.line} />
                         <View style={styles.button}>
                             <Button textStyle={styles.buttonTextStyle} onPress={doStartTrain}>开始训练</Button>
                         </View>
@@ -47,47 +46,47 @@ const TaskItem = React.createClass({
 });
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             taskList: [],
             showNoData:false,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getTaskList();
     },
-    insertCurrentTaskLog(timingTaskID,week) {
-            var param = {
-                userID: app.personal.info.userID,
-                timingTaskID: timingTaskID,
-                week:week,
-                type: 2,
-            };
-            POST(app.route.ROUTE_INSERT_CURRENT_TASK_LOG, param,this.insertCurrentTaskLogSuccess);
+    insertCurrentTaskLog (timingTaskID, week) {
+        const param = {
+            userID: app.personal.info.userID,
+            timingTaskID: timingTaskID,
+            week:week,
+            type: 2,
+        };
+        POST(app.route.ROUTE_INSERT_CURRENT_TASK_LOG, param, this.insertCurrentTaskLogSuccess);
     },
-    insertCurrentTaskLogSuccess(data){
+    insertCurrentTaskLogSuccess (data) {
         app.navigator.popToTop();
         app.personal.setIndexTab(3);
     },
-    getTaskList() {
-		var param = {
-			userID: app.personal.info.userID,
-		};
-		POST(app.route.ROUTE_GET_TRAIN_TASK, param, this.getTaskListSuccess, true);
-	},
-	getTaskListSuccess(data) {
-		if (data.success) {
-			this.setState({taskList: data.context.trainTask||[]});
-            data.context.trainTask.length==0?this.setState({showNoData: true}):this.setState({showNoData: false})
-		} else {
-			Toast(data.msg);
-		}
-	},
-    doStartTrain(timingTaskID,week) {
-        this.insertCurrentTaskLog(timingTaskID,week);
+    getTaskList () {
+        const param = {
+            userID: app.personal.info.userID,
+        };
+        POST(app.route.ROUTE_GET_TRAIN_TASK, param, this.getTaskListSuccess, true);
     },
-    render() {
-        const {taskList,showNoData} = this.state;
+    getTaskListSuccess (data) {
+        if (data.success) {
+            this.setState({ taskList: data.context.trainTask || [] });
+            data.context.trainTask.length == 0 ? this.setState({ showNoData: true }) : this.setState({ showNoData: false });
+        } else {
+            Toast(data.msg);
+        }
+    },
+    doStartTrain (timingTaskID, week) {
+        this.insertCurrentTaskLog(timingTaskID, week);
+    },
+    render () {
+        const { taskList, showNoData } = this.state;
         return (
             <ScrollView style={styles.container} refreshControl={
                 <RefreshControl
@@ -96,17 +95,17 @@ module.exports = React.createClass({
                     }}
                     refreshing={false}
                     onRefresh={this.getTaskList}
-                    title="正在刷新..."/> }>
-                {taskList.map((item, i)=>(
-                    <TaskItem {...item} key={i} doStartTrain={this.doStartTrain.bind(null,item.timingTaskID,item.week)}/>
+                    title='正在刷新...' />}>
+                {taskList.map((item, i) => (
+                    <TaskItem {...item} key={i} doStartTrain={this.doStartTrain.bind(null, item.timingTaskID, item.week)} />
                 ))}
-                {showNoData&&<Text style={{color: 'gray',fontSize: 14,textAlign:'center',marginTop:20}}>{'暂无数据！'}</Text>}
+                {showNoData && <Text style={{ color: 'gray', fontSize: 14, textAlign:'center', marginTop:20 }}>{'暂无数据！'}</Text>}
             </ScrollView>
         );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F1F1F1',
@@ -149,7 +148,7 @@ var styles = StyleSheet.create({
     },
     label: {
         fontSize: 16,
-        textAlign:'center'
+        textAlign:'center',
     },
     button: {
         height: 40,

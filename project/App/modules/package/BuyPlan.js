@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     AppState,
     StyleSheet,
     View,
@@ -13,80 +13,80 @@ var {
     ScrollView,
 } = ReactNative;
 
-var Subscribable = require('Subscribable');
-var TimerMixin = require('react-timer-mixin');
-var AlipayMgr = require('../../manager/AlipayMgr.js');
-var WXpayMgr = require('../../manager/WXpayMgr.js');
+const Subscribable = require('Subscribable');
+const TimerMixin = require('react-timer-mixin');
+const AlipayMgr = require('../../manager/AlipayMgr.js');
+const WXpayMgr = require('../../manager/WXpayMgr.js');
 
-var WXpayOrderNo = 0;
-var AlipayOrderNo = 0;
+let WXpayOrderNo = 0;
+let AlipayOrderNo = 0;
 
 module.exports = React.createClass({
     mixins: [Subscribable.Mixin, TimerMixin],
     statics: {
         title: '套餐购买',
     },
-    componentWillMount() {
-        this.addListenerOn(WXpayMgr, 'WXIPAY_RESULTS', (param)=>{
-            this.setState({payWXStatus:false});
+    componentWillMount () {
+        this.addListenerOn(WXpayMgr, 'WXIPAY_RESULTS', (param) => {
+            this.setState({ payWXStatus:false });
             if (param.state == 'success') {
                 this.wechatPayConfirm(param.orderNo);
             } else {
                 Toast(param.message);
             }
         });
-        this.addListenerOn(AlipayMgr, 'ALIPAY_RESULTS', (param)=>{
+        this.addListenerOn(AlipayMgr, 'ALIPAY_RESULTS', (param) => {
             if (param.state == 'success') {
-                this.aliPayConfirm(param.orderNo,param.price);
+                this.aliPayConfirm(param.orderNo, param.price);
             } else {
                 Toast('支付宝支付失败');
             }
         });
     },
-    componentDidMount: function() {
-      AppState.addEventListener('change', this._handleAppStateChange);
+    componentDidMount: function () {
+        AppState.addEventListener('change', this._handleAppStateChange);
     },
-    componentWillUnmount: function() {
-      AppState.removeEventListener('change', this._handleAppStateChange);
+    componentWillUnmount: function () {
+        AppState.removeEventListener('change', this._handleAppStateChange);
     },
-    _handleAppStateChange: function(currentAppState) {
-      this.setState({ currentAppState, });
-      console.log(this.state.currentAppState);
-      if (this.state.currentAppState == 'active' && this.state.payWXStatus == true) {
-          this.setState({payWXStatus:false});
-          WXpayMgr.checkPayResult();
-      }
+    _handleAppStateChange: function (currentAppState) {
+        this.setState({ currentAppState });
+        console.log(this.state.currentAppState);
+        if (this.state.currentAppState == 'active' && this.state.payWXStatus == true) {
+            this.setState({ payWXStatus:false });
+            WXpayMgr.checkPayResult();
+        }
     },
-    aliPayConfirm(tradeNo,price) {
-        var param = {
+    aliPayConfirm (tradeNo, price) {
+        const param = {
             orderNo: tradeNo,
             price: price,
         };
         POST(app.route.ROUTE_ALIPAY_CONFIRM, param, this.onPaySuccess);
     },
-    wechatPayConfirm(tradeNo) {
-        var param = {
+    wechatPayConfirm (tradeNo) {
+        const param = {
             orderNo: tradeNo,
         };
         POST(app.route.ROUTE_WECHATPAY_CONFIRM, param, this.onPaySuccess);
     },
-    onPaySuccess(data) {
-        const {packageData, packageContext} = this.props;
-        const {typeCode} = packageData;
+    onPaySuccess (data) {
+        const { packageData, packageContext } = this.props;
+        const { typeCode } = packageData;
         if (data.success) {
-            var personInfo = app.personal.info;
-            personInfo.userType = typeCode==='10004'?'2':'1';
+            const personInfo = app.personal.info;
+            personInfo.userType = typeCode === '10004' ? '2' : '1';
             if (typeCode != '10004') {
-                packageContext.packageVideoList.map((item, i)=>{
+                packageContext.packageVideoList.map((item, i) => {
                     personInfo.validVideoList.push(item.videoID);
-                })
+                });
                 // app.leftTimesMgr.addLeftTimes(typeCode, packageContext.packageTimeAll);
             }
             app.personal.set(personInfo);
             app.navigator.pop();
         }
     },
-    getInitialState() {
+    getInitialState () {
         return {
             checkedType: 1,
             currentAppState: AppState.currentState,
@@ -94,39 +94,38 @@ module.exports = React.createClass({
             winCoinList: [],
         };
     },
-    doCheckedPay(index) {
-        this.setState({checkedType: index});
+    doCheckedPay (index) {
+        this.setState({ checkedType: index });
     },
-    doConfirm() {
-        if (this.state.checkedType===1) {
-            AlipayMgr.createWinCoinOrder(this.props.packageData.packageID, this.props.packageData.packagePrice.toFixed(2), this.props.packageData.typeCode==='10004'?2:1);
-        } else if (this.state.checkedType===0) {
-            this.setState({payWXStatus:true});
-            WXpayMgr.createWinCoinOrder(this.props.packageData.packageID, this.props.packageData.typeCode==='10004'?2:1);
+    doConfirm () {
+        if (this.state.checkedType === 1) {
+            AlipayMgr.createWinCoinOrder(this.props.packageData.packageID, this.props.packageData.packagePrice.toFixed(2), this.props.packageData.typeCode === '10004' ? 2 : 1);
+        } else if (this.state.checkedType === 0) {
+            this.setState({ payWXStatus:true });
+            WXpayMgr.createWinCoinOrder(this.props.packageData.packageID, this.props.packageData.typeCode === '10004' ? 2 : 1);
         }
     },
-    getVideoPackageSuccess(data) {
+    getVideoPackageSuccess (data) {
         if (data.success) {
-            if (this.state.checkedType===1) {
+            if (this.state.checkedType === 1) {
                 AlipayOrderNo = data.context.orderNo;
-                AlipayMgr.getaliPayInfo("购买商品",data.context.orderNo,this.props.packageData.packagePrice.toFixed(2));
-            } else if (this.state.checkedType===0) {
+                AlipayMgr.getaliPayInfo('购买商品', data.context.orderNo, this.props.packageData.packagePrice.toFixed(2));
+            } else if (this.state.checkedType === 0) {
                 WXpayOrderNo = data.context.orderNo;
-                this.setState({payWXStatus:true});
-                WXpayMgr.getWXPayInfo(app.personal.info.userID,data.context.orderNo);
+                this.setState({ payWXStatus:true });
+                WXpayMgr.getWXPayInfo(app.personal.info.userID, data.context.orderNo);
             }
         } else {
             Toast(data.msg);
         }
     },
-    render (){
+    render () {
         return (
             <View style={styles.container}>
                 <Image
                     resizeMode='stretch'
                     source={app.img.package_VIP}
-                    style={styles.bannerImage}>
-                </Image>
+                    style={styles.bannerImage} />
                 <View style={styles.viewStyle}>
                     <View style={styles.priceContainer}>
                         <Text style={styles.describeText}>{'价格: '}</Text>
@@ -135,10 +134,9 @@ module.exports = React.createClass({
                         </Text>
                         <Text style={styles.describeText}>{' 元'}</Text>
                     </View>
-                    <Text style={[styles.textStyle1, {marginLeft: 30, marginRight: 30}]}>{this.props.packageData.packageIntroduction}</Text>
+                    <Text style={[styles.textStyle1, { marginLeft: 30, marginRight: 30 }]}>{this.props.packageData.packageIntroduction}</Text>
                 </View>
-                <View style={styles.lineStyle}>
-                </View>
+                <View style={styles.lineStyle} />
                 <View style={styles.viewStyle}>
                     <Text style={styles.textStyle}> 请选择你的支付方式:
                     </Text>
@@ -147,19 +145,17 @@ module.exports = React.createClass({
                     <View style={styles.imageViewStyle}>
                         <TouchableOpacity
                             onPress={this.doCheckedPay.bind(null, 0)}
-                            underlayColor="rgba(0, 0, 0, 0)">
+                            underlayColor='rgba(0, 0, 0, 0)'>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.login_weixin_button}
-                                style={styles.imageStyle}>
-                            </Image>
+                                style={styles.imageStyle} />
                             {
-                                this.state.checkedType===0&&
+                                this.state.checkedType === 0 &&
                                 <Image
                                     resizeMode='contain'
                                     source={app.img.common_check}
-                                    style={styles.bannerImage1}>
-                                </Image>
+                                    style={styles.bannerImage1} />
                             }
                         </TouchableOpacity>
                         <Text style={styles.textStyle1}> 微信支付
@@ -168,19 +164,17 @@ module.exports = React.createClass({
                     <View style={styles.imageViewStyle}>
                         <TouchableOpacity
                             onPress={this.doCheckedPay.bind(null, 1)}
-                            underlayColor="rgba(0, 0, 0, 0)">
+                            underlayColor='rgba(0, 0, 0, 0)'>
                             <Image
                                 resizeMode='stretch'
                                 source={app.img.login_alipay_button}
-                                style={styles.imageStyle}>
-                            </Image>
+                                style={styles.imageStyle} />
                             {
-                                this.state.checkedType===1&&
+                                this.state.checkedType === 1 &&
                                 <Image
                                     resizeMode='contain'
                                     source={app.img.common_check}
-                                    style={styles.bannerImage1}>
-                                </Image>
+                                    style={styles.bannerImage1} />
                             }
                         </TouchableOpacity>
                         <Text style={styles.textStyle1}> 支付宝支付
@@ -190,21 +184,20 @@ module.exports = React.createClass({
                 <View style={styles.touchContainer}>
                     <TouchableOpacity
                         onPress={this.doConfirm}
-                        style={[styles.tabButton, {backgroundColor:'#4FC1E9'}]}>
+                        style={[styles.tabButton, { backgroundColor:'#4FC1E9' }]}>
                         <Text style={styles.textcenter} >
                             确    定
                         </Text>
-                        <View style={styles.makeup}>
-                        </View>
+                        <View style={styles.makeup} />
                     </TouchableOpacity>
                 </View>
             </View>
         );
-    }
+    },
 
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex:1,
         backgroundColor: '#feffff',
@@ -222,7 +215,7 @@ var styles = StyleSheet.create({
         justifyContent:'center',
     },
     lineStyle: {
-        width: sr.w-20,
+        width: sr.w - 20,
         height: 1,
         alignSelf: 'center',
         marginTop:20,

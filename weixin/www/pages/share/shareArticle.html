@@ -6,6 +6,7 @@
 	<meta http-equiv="Access-Control-Allow-Origin" content="*">
 	<meta http-equiv="content-security-policy">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
 </head>
 <style>
 iframe {
@@ -13,9 +14,18 @@ iframe {
         margin:0 0 1em;
         border:0;
     }
+	body{
+		margin: 0;
+	}
+	a:-webkit-any-link {
+	    text-decoration:none;;
+	}
     #topContainer {
         flex-direction: column;
-        padding: 20px 10px;
+		padding-top: 20px;
+		padding-right: 10px;
+		padding-left: 10px;
+		margin-top: 80px;
     }
     #bottomContainer {
         width: 100%;
@@ -23,7 +33,7 @@ iframe {
     .title {
         font-size: 22px;
         font-weight: 400;
-        margin-bottom: 20px;
+        margin-bottom: 5px;
     }
     .source {
         font-size: 16px;
@@ -47,7 +57,7 @@ iframe {
     }
     .text {
         font-size: 14px;
-        margin-bottom: 10px;
+        margin-top: 10px;
         color: #949494;
         display: flex;
         align-items: center;
@@ -78,7 +88,7 @@ iframe {
         background-color: #F7F8F9;
     }
     #listContainer {
-        padding: 20px 10px;
+        padding: 10px;
     }
     .listTitle {
         font-size: 26px;
@@ -93,7 +103,7 @@ iframe {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 20px 0 20px 10px;
+        padding: 10px 0 10px 10px;
     }
     .headContainer {
         display: flex;
@@ -114,14 +124,17 @@ iframe {
         font-size: 20px;
         font-weight: 200;
         margin-left: 55px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
     .itemFooter {
         margin-left: 55px;
         color: gray;
         font-size: 12px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
+	.downloadClose {
+		margin-right: 15px;
+	}
 </style>
 <body>
     <div id="topContainer">
@@ -134,6 +147,16 @@ iframe {
     <div class="line"></div>
     <div id="listContainer">
     </div>
+	<div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+		<button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button>
+		<div class="installTipCell">
+			<img src="../../img/logo.png"></img>
+			<div class="cellRight">
+				<div class="cellTitle">赢销截拳道</div>
+				<div class="cellContent">赢销截拳道人人都需要</div>
+			</div>
+		</div>
+	</div>
 </body>
 	<script type="text/javascript" src="../../js/thirdparty/jquery-1.11.1.js" ></script>
 	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -141,12 +164,14 @@ iframe {
 	<script src="../../js/utils/regular.js"></script>
 	<script src="../../js/thirdparty/crypto-js.js"></script>
 	<script src="../../js/utils/app.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
 	<script>
 	$(function(){
 		var articleID = getParameter("articleID");
 		var userID = getParameter("userID");
 //		var url = 'http://test.gyyxjqd.com/app/api/articleJsp?userID='+userID+'&articleID='+articleID;
 //		$('#iframeContainer').html('<iframe src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
+		mui.os.ios?$('.installTipCell').append('<button class="downloadApp"><a href="https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8">下载APP</a></button>'):$('.installTipCell').append('<button class="downloadApp"><a href="market://details?id=com.yxjqd">下载APP</a></button>');
 		getArticleInfo(articleID,userID);
 		getConmmentArticleList(articleID,userID);
 	});
@@ -236,7 +261,7 @@ iframe {
 	    var articleID = getParameter("articleID");
 		var userID = getParameter("userID");
 //	    var share_link = context.type == 1 ?context.linkUrl : 'http://test.gyyxjqd.com/app/api/articleJsp?userID='+userID+'&articleID='+articleID;
-	    var share_link = context.type == 1 ?context.linkUrl : app.route.ROUTE_ARTICLE_Jsp+'?userID='+userID+'&articleID='+articleID;
+	    var share_link = context.type == 1 ?context.linkUrl.replace(/http[s]{0,1}/,httpHead): app.route.ROUTE_ARTICLE_Jsp+'?userID='+userID+'&articleID='+articleID;
 	    $('#iframeContainer').html('<iframe src="'+share_link+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
 	    $.ajaxPrefilter( function (options) {
 	  	if (options.crossDomain && jQuery.support.cors) {
@@ -248,13 +273,13 @@ iframe {
 //			share_link,
 //			function (response) {
 //			    var html = response;
-//			    html=html.replace(/data-src/g, "src"); 
+//			    html=html.replace(/data-src/g, "src");
 //			    var html_src = 'data:text/html;charset=utf-8,' + html;
 //			    $("iframe").attr("src" , html_src);
 ////				$('#iframeContainer').html('<iframe src="'+html_src+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
 //			}
 //		);
-	    
+
 //	    $('#iframeContainer').html('<iframe src="'+url+'" rameborder="0" id="iframe" onload="reinitIframe()"></iframe>');
 	    setTopContainer(context);
 	    setBottomContainer(context);
@@ -279,6 +304,9 @@ iframe {
 	    var commentList = ((data || {}).context || {}).CommentArticleList||[];
 	    setListContainer(commentList);
 	}
-
+	function closeWarning () {
+		document.getElementById('warning').style.display='none';
+		document.getElementById('topContainer').style.margin='0';
+	}
 	</script>
 </html>

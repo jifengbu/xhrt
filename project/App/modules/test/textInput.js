@@ -1,30 +1,30 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
+const React = require('react');
+const ReactNative = require('react-native');
 
-var {
+const {
     StyleSheet,
     View,
     TextInput,
     Image,
 } = ReactNative;
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var Button = require('@remobile/react-native-simple-button');
-const {AutogrowInput} = COMPONENTS;
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const Button = require('@remobile/react-native-simple-button');
+const { AutogrowInput } = COMPONENTS;
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             title: '',
             height: sr.ws(30),
         };
     },
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.innercontainer}>
@@ -35,11 +35,11 @@ module.exports = React.createClass({
                         />
                 </View>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
@@ -47,13 +47,13 @@ var styles = StyleSheet.create({
         paddingTop: 50,
     },
     innercontainer: {
-        width: sr.w-20,
+        width: sr.w - 20,
         height: 300,
         backgroundColor: 'white',
     },
     themeStyle:{
         fontSize:14,
-        width: sr.w-20,
+        width: sr.w - 20,
         height: 30,
         padding: 2,
         backgroundColor: 'white',

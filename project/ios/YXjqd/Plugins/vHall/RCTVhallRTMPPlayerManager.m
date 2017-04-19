@@ -1,6 +1,6 @@
 #import "RCTVhallRTMPPlayerManager.h"
 #import "RCTVhallPlayerView.h"
-#import "RCTBridge.h"
+#import <React/RCTBridge.h>
 #import <AVFoundation/AVFoundation.h>
 
 @implementation RCTVhallRTMPPlayerManager

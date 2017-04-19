@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     ScrollView,
@@ -11,131 +11,127 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var Player = require('./Player.js');
-var {DImage, Button, PageList} = COMPONENTS;
+const Player = require('./Player.js');
+const { DImage, Button, PageList } = COMPONENTS;
 
-var PlayerItem = React.createClass({
-    render() {
-        var {video, img} = this.props.data;
+const PlayerItem = React.createClass({
+    render () {
+        const { video, img } = this.props.data;
         return (
             this.props.playing ?
-            <Player uri={video} />
+                <Player uri={video} />
             :
-            <DImage
-                resizeMode='stretch'
-                defaultSource={app.img.common_default}
-                source={{uri: img}}
-                style={styles.playerContainer}>
-                <TouchableOpacity
-                    style={styles.video_icon_container}
-                    onPress={this.props.onPress}>
-                    <Image
-                        resizeMode='stretch'
-                        source={app.img.play_play}
-                        style={styles.video_icon}>
-                    </Image>
-                </TouchableOpacity>
-            </DImage>
-        )
-    }
+                <DImage
+                    resizeMode='stretch'
+                    defaultSource={app.img.common_default}
+                    source={{ uri: img }}
+                    style={styles.playerContainer}>
+                    <TouchableOpacity
+                        style={styles.video_icon_container}
+                        onPress={this.props.onPress}>
+                        <Image
+                            resizeMode='stretch'
+                            source={app.img.play_play}
+                            style={styles.video_icon} />
+                    </TouchableOpacity>
+                </DImage>
+        );
+    },
 });
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             tabIndex: 0,
-            commentDetail: {favorableRate: 0, totalComment:0},
+            commentDetail: { favorableRate: 0, totalComment:0 },
             playingIndex: -1,
-        }
+        };
     },
-    changeTab(tabIndex) {
-        this.setState({tabIndex});
+    changeTab (tabIndex) {
+        this.setState({ tabIndex });
     },
-    GoodsIntroduce() {
-        var {videoArray, infoImageArray} = this.props.goodsDetail;
-        var {videoDesc, videoRecommend} = videoArray;
+    GoodsIntroduce () {
+        const { videoArray, infoImageArray } = this.props.goodsDetail;
+        const { videoDesc, videoRecommend } = videoArray;
         return (
             <View style={styles.container}>
                 {
                     !!videoDesc.video && [
                         <PlayerItem
                             key={1}
-                            playing={this.state.playingIndex===0}
-                            onPress={()=>{this.setState({playingIndex: 0})}}
-                            data={videoDesc}/>
-                        ,
-                        <View key={2} style={styles.separator}/>
+                            playing={this.state.playingIndex === 0}
+                            onPress={() => { this.setState({ playingIndex: 0 }); }}
+                            data={videoDesc} />,
+                        <View key={2} style={styles.separator} />,
                     ]
                 }
                 {
                     !!videoRecommend.video && [
                         <PlayerItem
                             key={1}
-                            playing={this.state.playingIndex===1}
-                            onPress={()=>{this.setState({playingIndex: 1})}}
-                            data={videoRecommend}/>
-                        ,
-                        <View key={2} style={styles.separator}/>
+                            playing={this.state.playingIndex === 1}
+                            onPress={() => { this.setState({ playingIndex: 1 }); }}
+                            data={videoRecommend} />,
+                        <View key={2} style={styles.separator} />,
                     ]
                 }
                 {
-                    infoImageArray.map((item, i)=>{
+                    infoImageArray.map((item, i) => {
                         return (
                             <Image
                                 key={i}
                                 resizeMode='stretch'
-                                source={{uri: item}}
+                                source={{ uri: item }}
                                 defaultSource={app.img.common_default}
-                                style={styles.pictureStyle}>
-                            </Image>
-                        )
+                                style={styles.pictureStyle} />
+                        );
                     })
                 }
             </View>
-        )
+        );
     },
-    onGetList(data, pageNo) {
-        if (data.success && pageNo===1) {
-            this.setState({commentDetail: data.context,});
+    onGetList (data, pageNo) {
+        if (data.success && pageNo === 1) {
+            this.setState({ commentDetail: data.context });
         }
     },
-    GoodsComment() {
-        var {commentDetail} = this.state;
+    GoodsComment () {
+        const { commentDetail } = this.state;
         return (
             <View style={styles.container}>
                 <View style={styles.container}>
                     <View style={styles.commentContainer}>
-                        <Text style={[styles.titleText, {color: '#666666'}]}>
+                        <Text style={[styles.titleText, { color: '#666666' }]}>
                             {'好评度'}
                         </Text>
-                        <Text style={[styles.titleText, {color:'#ff3c30'}]}>
+                        <Text style={[styles.titleText, { color:'#ff3c30' }]}>
                             {commentDetail.favorableRate}
                         </Text>
-                        <Text style={[styles.titleText, {color: '#666666'}]}>
-                            {'共'+commentDetail.totalComment+'条评论'}
+                        <Text style={[styles.titleText, { color: '#666666' }]}>
+                            {'共' + commentDetail.totalComment + '条评论'}
                         </Text>
                     </View>
                     <PageList
                         renderRow={this.renderRow}
-                        listParam={{goodsID: this.props.goodsID,}}
-                        listName="commentList"
+                        listParam={{ goodsID: this.props.goodsID }}
+                        listName='commentList'
                         listUrl={app.route.ROUTE_GET_GOODS_COMMENT}
-                        ListFailedText="暂无评论!"
+                        ListFailedText='暂无评论!'
                         onGetList={this.onGetList}
                         />
                 </View>
             </View>
-        )
+        );
     },
-    renderRow(obj) {
-        var startNum = Math.round(obj.startNum);
-        var starImage = _.fill(Array(startNum), app.img.mall_commodity_review_icon);
+    renderRow (obj) {
+        const startNum = Math.round(obj.startNum);
+        const starImage = _.fill(Array(startNum), app.img.mall_commodity_review_icon);
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.topContainer}>
                     <View style={styles.scoreSytle}>
                         {
-                            starImage.map((item, i)=>{
+                            starImage.map((item, i) => {
                                 return (
                                     <Image
                                         key={i}
@@ -143,7 +139,7 @@ module.exports = React.createClass({
                                         source={item}
                                         style={styles.starImageStyle}
                                         />
-                                )
+                                );
                             })
                         }
                     </View>
@@ -152,7 +148,7 @@ module.exports = React.createClass({
                             style={styles.textStyle}>
                             {obj.userName}
                         </Text>
-                        <Text style={[styles.textStyle, {marginLeft: 10}]}>
+                        <Text style={[styles.textStyle, { marginLeft: 10 }]}>
                             {obj.commentTime}
                         </Text>
                     </View>
@@ -161,42 +157,40 @@ module.exports = React.createClass({
                     style={styles.contentTextStyle}>
                     {obj.comment}
                 </Text>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                     {
-                        obj.imageArray.map((item, i)=>{
+                        obj.imageArray.map((item, i) => {
                             return (
-                                <TouchableHighlight key={i} underlayColor="rgba(0, 0, 0, 0)" onPress={this.props.noticeShow.bind(null, obj.imageArray, i)} style={styles.bigImageTouch}>
+                                <TouchableHighlight key={i} underlayColor='rgba(0, 0, 0, 0)' onPress={this.props.noticeShow.bind(null, obj.imageArray, i)} style={styles.bigImageTouch}>
                                     <Image
                                         resizeMode='contain'
                                         defaultSource={app.img.common_default}
-                                        source={{uri:item}}
-                                        style={styles.commentImageStyle}>
-                                    </Image>
+                                        source={{ uri:item }}
+                                        style={styles.commentImageStyle} />
                                 </TouchableHighlight>
-                            )
+                            );
                         })
                     }
                 </View>
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 {
-                    this.props.tabIndex===1?
-                    <this.GoodsComment /> :
-                    <this.GoodsIntroduce />
+                    this.props.tabIndex === 1 ?
+                        <this.GoodsComment /> :
+                        <this.GoodsIntroduce />
                 }
             </View>
         );
     },
 });
 
-
-var NORMAL_WIDTH = sr.w;
-var NORMAL_HEIGHT = NORMAL_WIDTH*2/3;
-var styles = StyleSheet.create({
+const NORMAL_WIDTH = sr.w;
+const NORMAL_HEIGHT = NORMAL_WIDTH * 2 / 3;
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',
@@ -247,10 +241,10 @@ var styles = StyleSheet.create({
         height: 1,
         width: sr.w,
         marginVertical: 5,
-        backgroundColor: '#b4b4b4'
+        backgroundColor: '#b4b4b4',
     },
     commentContainer: {
-        width: sr.w-16,
+        width: sr.w - 16,
         flexDirection: 'row',
         alignItems: 'center',
     },

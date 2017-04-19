@@ -1,10 +1,10 @@
-var React = require('react');
-var {
+const React = require('react');
+const {
     PropTypes,
     Component,
 } = React;
-var ReactNative = require('react-native');
-var {
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     requireNativeComponent,
     View,
@@ -21,10 +21,10 @@ class PlayerView extends Component {
         email: React.PropTypes.string,
         password: React.PropTypes.string,
     };
-    constructor(props, context) {
+    constructor (props, context) {
         super(props, context);
     }
-    render() {
+    render () {
         const nativeProps = Object.assign({}, this.props);
         return (
             <RCTVhallPlayerView
@@ -42,4 +42,4 @@ const RCTVhallPlayerView = requireNativeComponent('RCTVhallRTMPPlayer', PlayerVi
     },
 });
 
-module.exports =  PlayerView;
+module.exports = PlayerView;

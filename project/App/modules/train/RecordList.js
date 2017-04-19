@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -11,69 +11,69 @@ var {
     TouchableOpacity,
 } = ReactNative;
 
-var moment = require('moment');
-var fs = require('react-native-fs');
-var TrainSelfPlay = require('./TrainSelfPlay.js');
-var {MessageBox} =  COMPONENTS;
+const moment = require('moment');
+const fs = require('react-native-fs');
+const TrainSelfPlay = require('./TrainSelfPlay.js');
+const { MessageBox } = COMPONENTS;
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '历史记录',
-        rightButton: {image: app.img.common_delete, handler: ()=>{app.scene.toggleDeletePanel()} },
+        rightButton: { image: app.img.common_delete, handler: () => { app.scene.toggleDeletePanel(); } },
     },
-    getInitialState: function() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.list = app.audioFileMgr.list[this.props.trainingCode]||[];
+    getInitialState: function () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        this.list = app.audioFileMgr.list[this.props.trainingCode] || [];
         this.selects = [false];
-        this.list.reverse() // 倒序排列
+        this.list.reverse(); // 倒序排列
         return {
             dataSource: this.ds.cloneWithRows(this.list),
             showDeleteMessageBox: false,
             showDeletePanel: false,
         };
     },
-    toggleDeletePanel() {
-        var showDeletePanel = !this.state.showDeletePanel;
+    toggleDeletePanel () {
+        const showDeletePanel = !this.state.showDeletePanel;
         this.setState({
             dataSource: this.ds.cloneWithRows(this.list),
             showDeletePanel: showDeletePanel,
         });
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
             <View
                 style={styles.separator}
-                key={rowID}/>
+                key={rowID} />
         );
     },
-    selectDelete(sectionID, rowID) {
+    selectDelete (sectionID, rowID) {
         this.selects[rowID] = !this.selects[rowID];
         this.setState({
             dataSource: this.ds.cloneWithRows(this.list),
         });
     },
-    selectAll() {
-        var flag = _.every(this.selects, (i)=>!!i);
-        this.selects = this.list.map(()=>!flag),
+    selectAll () {
+        const flag = _.every(this.selects, (i) => !!i);
+        this.selects = this.list.map(() => !flag);
         this.setState({
             dataSource: this.ds.cloneWithRows(this.list),
         });
     },
-    doCancel() {
-        this.setState({showDeleteMessageBox: false});
+    doCancel () {
+        this.setState({ showDeleteMessageBox: false });
     },
-    doDelete() {
-        var flag = _.every(this.selects, (i)=>!i);
+    doDelete () {
+        const flag = _.every(this.selects, (i) => !i);
         if (flag) {
             Toast('请选择需要删除的记录');
         } else {
-            this.setState({showDeleteMessageBox: true});
+            this.setState({ showDeleteMessageBox: true });
         }
     },
-    doConfirmDelete() {
-        var deleteList = _.filter(this.list, (o, i)=>this.selects[i]);
-        this.list = _.reject(this.list, (o, i)=>this.selects[i]);
+    doConfirmDelete () {
+        const deleteList = _.filter(this.list, (o, i) => this.selects[i]);
+        this.list = _.reject(this.list, (o, i) => this.selects[i]);
         app.audioFileMgr.list[this.props.trainingCode] = this.list;
         app.audioFileMgr.set(app.audioFileMgr.list);
         this.selects = [false];
@@ -81,11 +81,11 @@ module.exports = React.createClass({
             dataSource: this.ds.cloneWithRows(this.list),
             showDeleteMessageBox: false,
         });
-        _.forEach(deleteList, async(item)=> {
+        _.forEach(deleteList, async(item) => {
             fs.unlink(item.filepath);
         });
     },
-    playRecord(obj, sectionID, rowID) {
+    playRecord (obj, sectionID, rowID) {
         if (this.state.showDeletePanel) {
             this.selects[rowID] = !this.selects[rowID];
             this.setState({
@@ -94,40 +94,40 @@ module.exports = React.createClass({
         } else {
             app.navigator.push({
                 component: TrainSelfPlay,
-                passProps: {filepath: obj.filepath}
+                passProps: { filepath: obj.filepath },
             });
         }
     },
-    renderFooter() {
-          var status = null;
-          if (this.list.length === 0) {
+    renderFooter () {
+        let status = null;
+        if (this.list.length === 0) {
             status = '暂无数据';
-          } else {
+        } else {
             status = '没有更多数据';
-          }
-          return (
-              <View style={styles.listFooterContainer}>
-                  <Text style={styles.listFooter}>{status}
-                  </Text>
-              </View>
-          )
-      },
-    renderRow(obj, sectionID, rowID, onRowHighlighted) {
+        }
+        return (
+            <View style={styles.listFooterContainer}>
+                <Text style={styles.listFooter}>{status}
+                </Text>
+            </View>
+        );
+    },
+    renderRow (obj, sectionID, rowID, onRowHighlighted) {
         return (
             <TouchableHighlight
                 onPress={this.playRecord.bind(null, obj, sectionID, rowID)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.row}>
-                    {this.state.showDeletePanel&&
+                    {this.state.showDeletePanel &&
                         <TouchableOpacity
                             onPress={this.selectDelete.bind(null, sectionID, rowID)}>
                             <Image
                                 resizeMode='stretch'
-                                source={this.selects[rowID]?app.img.common_delete:app.img.common_no_delete}
+                                source={this.selects[rowID] ? app.img.common_delete : app.img.common_no_delete}
                                 style={styles.deleteStyle} />
                         </TouchableOpacity>
                     }
-                    <Text style={this.state.showDeletePanel?styles.title1:styles.title} >
+                    <Text style={this.state.showDeletePanel ? styles.title1 : styles.title} >
                         {obj.name}
                     </Text>
                     <Text style={styles.time} >
@@ -148,13 +148,13 @@ module.exports = React.createClass({
                     }
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render: function() {
+    render: function () {
         return (
             <View style={styles.container}>
                 <ListView                    initialListSize={1}
-                    enableEmptySections={true}
+                    enableEmptySections
                     style={this.state.showDeletePanel ? styles.listWithMarginBottom : styles.list}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
@@ -162,42 +162,40 @@ module.exports = React.createClass({
                     renderSeparator={this.renderSeparator}
                     />
                 <View style={this.state.showDeletePanel ? styles.bottomStyle : styles.bottomStyle2}>
-                    <Text style={styles.bottomLine}>
-                    </Text>
+                    <Text style={styles.bottomLine} />
                     <View style={styles.bottomChildStyle}>
                         <TouchableHighlight
                             onPress={this.selectAll}
-                            underlayColor="#a0d468"
+                            underlayColor='#a0d468'
                             style={styles.bottomSelectAllStyle}>
                             <Text style={styles.bottomSelectAllText}>全选</Text>
                         </TouchableHighlight>
                         <TouchableHighlight
                             onPress={this.doDelete}
                             style={styles.bottomDeleteStyle}
-                            underlayColor="#A62045">
-                            <Text style={{color:'#FFFFFF'}}>删除</Text>
+                            underlayColor='#A62045'>
+                            <Text style={{ color:'#FFFFFF' }}>删除</Text>
                         </TouchableHighlight>
                     </View>
                 </View>
                 {
                     this.state.showDeleteMessageBox &&
                     <MessageBox
-                        content="是否删除已选中项?"
+                        content='是否删除已选中项?'
                         doCancel={this.doCancel}
                         doConfirm={this.doConfirmDelete}
                         />
                 }
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     row: {
         height:60,
@@ -224,7 +222,7 @@ var styles = StyleSheet.create({
     },
     separator: {
         height: 1,
-        backgroundColor: '#CCC'
+        backgroundColor: '#CCC',
     },
     arrow: {
     },
@@ -290,11 +288,11 @@ var styles = StyleSheet.create({
         left:2,
     },
     listFooter: {
-          color: 'gray',
-          fontSize: 14,
-      },
-      listFooterContainer: {
-          height: 60,
-          alignItems: 'center',
-      },
+        color: 'gray',
+        fontSize: 14,
+    },
+    listFooterContainer: {
+        height: 60,
+        alignItems: 'center',
+    },
 });

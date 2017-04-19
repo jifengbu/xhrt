@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -9,42 +9,41 @@ var {
     StyleSheet,
 } = ReactNative;
 
-
-var {Button, PageList} = COMPONENTS;
+const { Button, PageList } = COMPONENTS;
 
 module.exports = React.createClass({
     statics: {
         title: '我的收益',
     },
-    getInitialState() {
+    getInitialState () {
         return {
             info: {
                 userName: '',
                 InviteCode: '',
-                totalProfit: 0
-            }
+                totalProfit: 0,
+            },
         };
     },
-    onGetList(data, pageNo) {
+    onGetList (data, pageNo) {
         if (data.success && pageNo === 1) {
-            var context = data.context;
+            const context = data.context;
             this.setState({
                 info: {
                     userName: context.name,
-                    InviteCode: context.InviteCode||'',
-                    totalProfit: Math.round(context.totalProfit*15)/100
-                }
+                    InviteCode: context.InviteCode || '',
+                    totalProfit: Math.round(context.totalProfit * 15) / 100,
+                },
             });
         }
     },
-    renderRow(obj) {
+    renderRow (obj) {
         return (
             <View style={styles.right_Container}>
                 <ItemListView obj={obj} />
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.mainContian}>
                 <View style={styles.mainContianTwo}>
@@ -62,12 +61,11 @@ module.exports = React.createClass({
                             </Text>
                         </View>
                     </View>
-                    <Text style={styles.newsLine}>
-                    </Text>
+                    <Text style={styles.newsLine} />
                     <PageList
                         renderRow={this.renderRow}
-                        listParam={{userID: app.personal.info.userID}}
-                        listName="dateList"
+                        listParam={{ userID: app.personal.info.userID }}
+                        listName='dateList'
                         listUrl={app.route.ROUTE_SUBMIT_GETMYPROFIT}
                         onGetList={this.onGetList}
                         renderSeparator={null}
@@ -88,34 +86,34 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </View>
-        )
+        );
     },
 });
 
-var date = '';
-var ItemListView = React.createClass({
-    getInitialState() {
-        var obj = this.props.obj;
+let date = '';
+const ItemListView = React.createClass({
+    getInitialState () {
+        const obj = this.props.obj;
         date = obj.date;
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             lineHeight: 10,
             tastContentData: this.ds.cloneWithRows(obj.content),
         };
     },
-    _measureLineHeight(e) {
+    _measureLineHeight (e) {
         if (!this.state.lineHeight) {
-            this.setState({lineHeight: e.nativeEvent.layout.height+10});
+            this.setState({ lineHeight: e.nativeEvent.layout.height + 10 });
         }
     },
-    renderRow(obj) {
-        var time = obj.time;
-        var name = obj.name;
-        var thing = obj.thing;
-        var cost = parseFloat(obj.cost);
-        var myProfit = cost * 0.15;
-        var strContent = '您的好朋友 '+ name+' 在"'+thing+'"中消费了';
-        return(
+    renderRow (obj) {
+        const time = obj.time;
+        const name = obj.name;
+        const thing = obj.thing;
+        const cost = parseFloat(obj.cost);
+        const myProfit = cost * 0.15;
+        const strContent = '您的好朋友 ' + name + ' 在"' + thing + '"中消费了';
+        return (
             <View style={styles.detailsListVeiw}>
                 <View style={styles.detailsTime_HS}>
                     <Image
@@ -131,15 +129,14 @@ var ItemListView = React.createClass({
                     <Text style={styles.costStyle}>￥{cost}</Text>
                 </Text>
                 <View style={styles.priceContainer}>
-                    <Text style={styles.priceLine}>
-                    </Text>
+                    <Text style={styles.priceLine} />
                     <Text style={styles.priceText}>￥{myProfit}</Text>
                 </View>
             </View>
         );
     },
-    render() {
-        return(
+    render () {
+        return (
             <View style={styles.rowViewStyle}>
                 <View style={styles.columnViewStyle}>
                     <Image
@@ -149,31 +146,30 @@ var ItemListView = React.createClass({
                     <Image
                         resizeMode='stretch'
                         source={app.img.task_axis_1}
-                        style={{alignSelf: 'center', width: 8, height: this.state.lineHeight}} />
+                        style={{ alignSelf: 'center', width: 8, height: this.state.lineHeight }} />
                 </View>
                 <View style={styles.columnFlexViewStyle}>
                     <Text style={styles.leftTime}>
                         {date}
                     </Text>
                     <ListView                        initialListSize={1}
-                        enableEmptySections={true}
+                        enableEmptySections
                         onLayout={this._measureLineHeight}
-                        style={{marginTop: 5, marginLeft: -8,}}
+                        style={{ marginTop: 5, marginLeft: -8 }}
                         dataSource={this.state.tastContentData}
                         renderRow={this.renderRow}
                         />
                 </View>
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     mainContian: {
         flex: 1,
         flexDirection: 'column',
-        height: sr.h
+        height: sr.h,
     },
     mainContianTwo: {
         flex: 1,
@@ -256,7 +252,7 @@ var styles = StyleSheet.create({
     },
     newsLine: {
         marginTop: 4,
-        width: sr.w-4,
+        width: sr.w - 4,
         height: 2,
         marginLeft: 2,
         marginRight: 2,
@@ -270,7 +266,7 @@ var styles = StyleSheet.create({
     },
     bottomColorStyle: {
         flexDirection: 'row',
-        backgroundColor: '#a0d468'
+        backgroundColor: '#a0d468',
     },
     bottomTextStyle: {
         justifyContent: 'flex-end',

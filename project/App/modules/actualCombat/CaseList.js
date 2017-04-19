@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Image,
     View,
@@ -10,81 +10,78 @@ var {
     Text,
 } = ReactNative;
 
-var PlanDetails = require('./PlanDetails');
+const PlanDetails = require('./PlanDetails');
 
-var {PageList, StarBar} = COMPONENTS;
+const { PageList, StarBar } = COMPONENTS;
 
 module.exports = React.createClass({
-    _onPressRow(obj) {
+    _onPressRow (obj) {
         console.log(obj);
         app.navigator.push({
             title: '方案详情',
             component: PlanDetails,
-            passProps: {schemeID: obj.id, schemeDetail: obj, tabIndex:0,doRefresh:this.doRefresh},
+            passProps: { schemeID: obj.id, schemeDetail: obj, tabIndex:0, doRefresh:this.doRefresh },
         });
     },
-    doRefresh() {
+    doRefresh () {
         this.listView.refresh();
     },
-    renderRow(obj) {
-        var img_win;
-        if (obj.isWin==1) {
-            img_win = app.img.actualCombat_no_0;
-        };
+    renderRow (obj) {
+        const img_win = app.img.actualCombat_no_0;
         return (
             <TouchableHighlight
                 style={styles.itemContainer}
                 onPress={this._onPressRow.bind(null, obj)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.titleContainer}>
                     <View style={styles.titleView}>
                         {
-                            obj.isWin==1?
-                            <Image
-                                resizeMode='stretch'
-                                style={styles.headerIcon}
-                                source={img_win}/>
+                            obj.isWin == 1 ?
+                                <Image
+                                    resizeMode='stretch'
+                                    style={styles.headerIcon}
+                                    source={img_win} />
                             :
-                            <View style={styles.headerIcon}/>
+                                <View style={styles.headerIcon} />
                         }
                         <View style={styles.titleStyle}>
                             <Text numberOfLines={1} style={styles.titleText}>
                                 {obj.title}
                             </Text>
-                            <Text  style={styles.timeText}>
+                            <Text style={styles.timeText}>
                                 {obj.createTime}
                             </Text>
                         </View>
                     </View>
                     <View style={styles.userInfoStyle}>
-                        <StarBar value={obj.score} style={styles.scoreIconStyle} starStyle={styles.scoreIcon}/>
+                        <StarBar value={obj.score} style={styles.scoreIconStyle} starStyle={styles.scoreIcon} />
                         <Image
                             resizeMode='stretch'
                             source={app.img.common_go}
-                            style={styles.iconGo}  />
+                            style={styles.iconGo} />
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={this.props.style}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     disable={this.props.disable}
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID}}
-                    listName="kitList"
+                    listParam={{ userID: app.personal.info.userID }}
+                    listName='kitList'
                     listUrl={app.route.ROUTE_MY_JOIN_KIT}
-                    refreshEnable={true}
+                    refreshEnable
                     />
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     itemContainer: {
         paddingVertical: 10,
         width:sr.w,
@@ -110,7 +107,7 @@ var styles = StyleSheet.create({
     },
     userInfoStyle: {
         flexDirection: 'row',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     headerIcon: {
         marginHorizontal:10,

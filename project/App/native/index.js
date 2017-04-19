@@ -1,10 +1,10 @@
-var Umeng = require('./umeng/index.js');
-var Alipay = require('./alipay/index.js');
-var WeixinPay = require('./wxpay/index.js');
-var Phone = require('./phone/index.js');
-var AudioRecorder = require('./audioRecorder/index.js');
-var VhallPlayer = require('./vhall/index.js');
-var VhallPublish = require('./vhall/publish');
+const Umeng = require('./umeng/index.js');
+const Alipay = require('./alipay/index.js');
+const WeixinPay = require('./wxpay/index.js');
+const Phone = require('./phone/index.js');
+const AudioRecorder = require('./audioRecorder/index.js');
+const VhallPlayer = require('./vhall/index.js');
+const VhallPublish = require('./vhall/publish');
 
 module.exports = {
     Umeng: Umeng,

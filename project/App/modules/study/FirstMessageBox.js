@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -10,43 +10,43 @@ var {
     View,
     TouchableHighlight,
 } = ReactNative;
-var {Button, DImage} = COMPONENTS;
+const { Button, DImage } = COMPONENTS;
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             opacity: new Animated.Value(0),
             info: app.personal.info,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    doCloseFirst() {
-        this.closeModal(()=>{
+    doCloseFirst () {
+        this.closeModal(() => {
             this.props.doCloseFirst();
         });
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <View style={styles.studyAwardBackgroundImage}>
                         <Image
                             resizeMode='stretch'
                             style={styles.overheadImage}
                             source={app.img.study_overhead}>
-                            <Text style={styles.studyAwardTitle}>{'恭喜你完成一次'+this.props.title+'获得奖励'}</Text>
+                            <Text style={styles.studyAwardTitle}>{'恭喜你完成一次' + this.props.title + '获得奖励'}</Text>
                         </Image>
                         <Image
                             resizeMode='stretch'
@@ -55,9 +55,8 @@ module.exports = React.createClass({
                             <DImage
                                 resizeMode='cover'
                                 defaultSource={app.img.personal_head}
-                                source={{uri: this.state.info.headImg}}
-                                style={styles.studyAwardHeadImage}>
-                            </DImage>
+                                source={{ uri: this.state.info.headImg }}
+                                style={styles.studyAwardHeadImage} />
                         </Image>
                         <View style={styles.bottomView}>
                             <Text style={styles.levelText}>等级：{this.state.info.level}{'  '}{this.state.info.alias}</Text>
@@ -66,25 +65,24 @@ module.exports = React.createClass({
                     </View>
                     <TouchableHighlight
                         onPress={this.doCloseFirst}
-                        underlayColor="rgba(0, 0, 0, 0)"
+                        underlayColor='rgba(0, 0, 0, 0)'
                         style={styles.touchableHighlight}>
                         <Image
                             resizeMode='contain'
                             source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
+                            style={styles.closeIcon} />
                     </TouchableHighlight>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         paddingBottom: 60,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     studyAwardTitle: {
         color: '#FFFFFF',
@@ -97,35 +95,35 @@ var styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     studyAwardBackgroundImage: {
-        width:sr.w*5/6,
-        height:sr.w*3/4-25,
+        width:sr.w * 5 / 6,
+        height:sr.w * 3 / 4 - 25,
         borderRadius: 4,
         alignItems:'center',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     overheadImage: {
-        width:sr.w*5/6,
-        height: (sr.w*3/4-25)/2,
+        width:sr.w * 5 / 6,
+        height: (sr.w * 3 / 4 - 25) / 2,
     },
     studyAwardBalloonImage: {
         position: 'absolute',
-        left: sr.w*5/12-sr.w/6,
+        left: sr.w * 5 / 12 - sr.w / 6,
         top: 30,
-        width:sr.w/3,
-        height:sr.w/3,
+        width:sr.w / 3,
+        height:sr.w / 3,
         marginVertical: 10,
         alignItems: 'center',
         justifyContent: 'flex-end',
     },
     studyAwardHeadImage: {
-        width:sr.w*5/24,
-        height:sr.w*5/24,
-        borderRadius: sr.w*5/48,
+        width:sr.w * 5 / 24,
+        height:sr.w * 5 / 24,
+        borderRadius: sr.w * 5 / 48,
     },
     bottomView: {
         flex: 1,
         position: 'absolute',
-        left: sr.w*5/12-sr.w/6,
+        left: sr.w * 5 / 12 - sr.w / 6,
         bottom: 35,
         alignItems: 'center',
     },
@@ -157,17 +155,17 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     touchableHighlight: {
         position:'absolute',
         top:-12,
-        left:sr.w*5/6-24,
+        left:sr.w * 5 / 6 - 24,
         width: 38,
         height: 38,
     },
     closeIcon: {
         width: 38,
-        height: 38
+        height: 38,
     },
 });

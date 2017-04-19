@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     View,
@@ -12,69 +12,68 @@ var {
 
 module.exports = React.createClass({
     statics: {
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.list = this.props.list||[];
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        this.list = this.props.list || [];
         return {
             dataSource: this.ds.cloneWithRows(this.list),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getList();
     },
-    selectPosition(obj) {
+    selectPosition (obj) {
         this.props.getPosition(obj.industryName);
         app.navigator.pop();
     },
-    getList(){
-        var param = {
+    getList () {
+        const param = {
             userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_GET_INDUSTRY, param, this.getListSuccess);
     },
-    getListSuccess(data) {
+    getListSuccess (data) {
         if (data.success) {
-            var list = data.context.industryAll;
+            const list = data.context.industryAll;
             this.list = this.list.concat(list);
             this.setState({
                 dataSource: this.ds.cloneWithRows(this.list),
             });
         }
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <TouchableHighlight
                 style={styles.itemContainer}
                 onPress={this.selectPosition.bind(null, obj)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.rowContainer}>
-                    <Text style={[styles.labelText,{backgroundColor: obj.colorCode}]}>{obj.industryType}</Text>
+                    <Text style={[styles.labelText, { backgroundColor: obj.colorCode }]}>{obj.industryType}</Text>
                     <View style={styles.textContainer}>
                         <Text style={styles.textStyle}>{obj.industryName}</Text>
                     </View>
-                    <View style={styles.lineContainer}>
-                    </View>
+                    <View style={styles.lineContainer} />
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <ListView
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
-                    enableEmptySections={true}
+                    enableEmptySections
                     dataSource={this.state.dataSource}
                     />
             </View>
-        )
-    }
+        );
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },

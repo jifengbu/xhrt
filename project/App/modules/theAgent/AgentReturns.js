@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     TouchableOpacity,
@@ -10,48 +10,47 @@ var {
     navigator,
 } = ReactNative;
 
-var {PageList} = COMPONENTS;
-var ApplyCash = require('./ApplyCash.js');
+const { PageList } = COMPONENTS;
+const ApplyCash = require('./ApplyCash.js');
 
 module.exports = React.createClass({
     statics: {
         title:'我的收益',
     },
-    getInitialState() {
+    getInitialState () {
         return {
             info: {
                 userName: '',
                 InviteCode: '',
                 totalProfit: 0,
-                leftBrokerage: 0
-            }
+                leftBrokerage: 0,
+            },
         };
     },
-    _onPressApply() {
+    _onPressApply () {
         app.navigator.push({
             component: ApplyCash,
         });
     },
-    onGetList(data) {
+    onGetList (data) {
         if (data.success) {
-            var context = data.context;
+            const context = data.context;
             this.setState({
                 info: {
                     userName: context.name,
-                    InviteCode: context.InviteCode||'',
+                    InviteCode: context.InviteCode || '',
                     totalProfit: context.totalProfit,
-                    leftBrokerage: context.leftBrokerage
-                }
+                    leftBrokerage: context.leftBrokerage,
+                },
             });
         }
     },
-    renderRow(obj){
-        var array = obj.content;
-        return(
+    renderRow (obj) {
+        const array = obj.content;
+        return (
             <View style={styles.itemContainer}>
                 <View style={styles.dateContainer}>
-                    <View style={styles.viewContainer}>
-                    </View>
+                    <View style={styles.viewContainer} />
                     <Text style={styles.dateTextTitle}>
                         {obj.month}
                     </Text>
@@ -62,66 +61,66 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.themeContainer}>
                     <Text
                         style={styles.textTitle}>
-                        {'用户名：'+this.state.info.userName}
+                        {'用户名：' + this.state.info.userName}
                     </Text>
                     <Text
                         style={styles.detailTitle}>
                         {'收益详情'}
                     </Text>
                 </View>
-                <View  style={styles.imageView} />
+                <View style={styles.imageView} />
                 <PageList
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID}}
-                    listName={"dateList"}
-                    renderSeparator={()=>null}
+                    listParam={{ userID: app.personal.info.userID }}
+                    listName={'dateList'}
+                    renderSeparator={() => null}
                     listUrl={app.route.ROUTE_GET_MY_PROFIT}
                     onGetList={this.onGetList}
-                    refreshEnable={true}
+                    refreshEnable
                     />
-                    <View style={styles.incomeContainer}>
-                        <View style={styles.textTitleContainer}>
-                            <Text style={styles.profitStyle}>
-                                {'当前收益合计'}
-                            </Text>
-                        </View>
-                        <View style={styles.priceContainer}>
-                            <Text style={styles.moneyTitle}>
-                                {'￥'+this.state.info.totalProfit.toFixed(2)}
-                            </Text>
-                        </View>
+                <View style={styles.incomeContainer}>
+                    <View style={styles.textTitleContainer}>
+                        <Text style={styles.profitStyle}>
+                            {'当前收益合计'}
+                        </Text>
                     </View>
-                    <TouchableOpacity
-                        onPress={this._onPressApply}
-                        style={styles.btnContainer}>
-                        <Text style={styles.btnStyle}>
+                    <View style={styles.priceContainer}>
+                        <Text style={styles.moneyTitle}>
+                            {'￥' + this.state.info.totalProfit.toFixed(2)}
+                        </Text>
+                    </View>
+                </View>
+                <TouchableOpacity
+                    onPress={this._onPressApply}
+                    style={styles.btnContainer}>
+                    <Text style={styles.btnStyle}>
                              申 请 提 现
                         </Text>
-                    </TouchableOpacity>
+                </TouchableOpacity>
             </View>
         );
-    }
+    },
 });
 
-var ItemListView = React.createClass({
-    render() {
-        var {obj} = this.props;
-        var array = obj.content;
+const ItemListView = React.createClass({
+    render () {
+        const { obj } = this.props;
+        const array = obj.content;
         array.concat(obj.content);
-        return(
-            <View style={{marginLeft: 2,backgroundColor: '#FFFFFF'}}>
+        return (
+            <View style={{ marginLeft: 2, backgroundColor: '#FFFFFF' }}>
                 {
-                    array.map((item, i)=> {
+                    array.map((item, i) => {
                         return (
-                            <View style={[styles.timeContainerChild,{marginBottom: i != array.length-1 ?10:0}]} key={i}>
+                            <View style={[styles.timeContainerChild, { marginBottom: i != array.length - 1 ? 10 : 0 }]} key={i}>
                                 <Text style={styles.timeTitle}>
                                     {item.time}
                                 </Text>
@@ -129,38 +128,38 @@ var ItemListView = React.createClass({
                                     <Text
                                         numberOfLines={2}
                                         style={styles.nameTitle}>
-                                        {item.name+'    '+item.thing}
+                                        {item.name + '    ' + item.thing}
                                     </Text>
                                 </View>
                                 <View style={styles.divisionContainer}>
-                                    <Text style={[styles.textFont,{color: '#555555'}]}>
-                                        {'￥'+item.cost}
+                                    <Text style={[styles.textFont, { color: '#555555' }]}>
+                                        {'￥' + item.cost}
                                     </Text>
-                                    <View style={styles.separator}/>
-                                    <Text style={[styles.textFont,{color: '#BC9451'}]}>
-                                        {'返利 ￥'+item.returnValue.toFixed(2)}
+                                    <View style={styles.separator} />
+                                    <Text style={[styles.textFont, { color: '#BC9451' }]}>
+                                        {'返利 ￥' + item.returnValue.toFixed(2)}
                                     </Text>
                                 </View>
                             </View>
-                        )
+                        );
                     })
                 }
             </View>
-        )
+        );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
     },
     textFont:{
-      fontSize:16,
+        fontSize:16,
     },
     divisionContainer: {
         flexDirection: 'row',
-        width: sr.w-65,
+        width: sr.w - 65,
     },
     separator: {
         height: 1.5,
@@ -190,7 +189,7 @@ var styles = StyleSheet.create({
         height: 16,
         borderRadius: 8,
         marginLeft: 25,
-        backgroundColor: '#A42346'
+        backgroundColor: '#A42346',
     },
     rightContainer: {
         backgroundColor: '#FFFFFF',
@@ -211,7 +210,7 @@ var styles = StyleSheet.create({
     },
     textTitle: {
         fontSize: 13,
-        color: '#555555'
+        color: '#555555',
     },
     detailTitle: {
         fontSize: 14,
@@ -224,12 +223,12 @@ var styles = StyleSheet.create({
     },
     nameTitle: {
         fontSize: 14,
-        width: sr.w-65,
+        width: sr.w - 65,
         color: '#555555',
     },
     nameStyle: {
         marginVertical: 6,
-        width: sr.w-65,
+        width: sr.w - 65,
         flexDirection: 'row',
         alignItems:'center',
     },
@@ -267,7 +266,7 @@ var styles = StyleSheet.create({
     },
     moneyTitle: {
         fontSize: 20,
-        color:'#555555'
+        color:'#555555',
     },
     textTitleContainer: {
         flex: 2,
@@ -275,7 +274,7 @@ var styles = StyleSheet.create({
     imageView: {
         height: 1.5,
         marginTop: 1.5,
-        width:sr.w-20,
+        width:sr.w - 20,
         marginHorizontal:10,
         marginBottom:10,
         backgroundColor:'#CFD0D1',

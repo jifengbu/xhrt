@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -10,48 +10,46 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    doConfirm() {
+    doConfirm () {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             this.props.doConfirm(this.state.fileName);
-            Toast('保存成功,可以点击右上角查看噢')
+            Toast('保存成功,可以点击右上角查看噢');
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
             fileName: this.props.fileName,
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <Text style={styles.title}>提示</Text>
-                    <Text style={styles.redLine}>
-                    </Text>
+                    <Text style={styles.redLine} />
                     <Text style={styles.content}>请输入文件名以保存当前录音</Text>
                     <TextInput
-                        onChangeText={(text) => this.setState({fileName: text})}
+                        onChangeText={(text) => this.setState({ fileName: text })}
                         defaultValue={this.state.fileName}
-                        underlineColorAndroid = {'transparent'}
+                        underlineColorAndroid={'transparent'}
                         style={styles.text_input} />
-                    <Text style={styles.H_Line}>
-                    </Text>
+                    <Text style={styles.H_Line} />
                     <View style={styles.buttonViewStyle}>
                         <TouchableHighlight
-                            underlayColor="rgba(0, 0, 0, 0)"
+                            underlayColor='rgba(0, 0, 0, 0)'
                             onPress={this.doConfirm}
                             style={styles.buttonStyleContain}>
                             <Text style={styles.buttonStyle} >确定</Text>
@@ -60,31 +58,31 @@ module.exports = React.createClass({
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     buttonViewStyle: {
         flexDirection: 'row',
-        width: sr.w*5/6-20,
+        width: sr.w * 5 / 6 - 20,
         height: 40,
     },
     H_Line: {
         marginTop: 5,
-        width: sr.w*5/6,
+        width: sr.w * 5 / 6,
         height: 1,
-        backgroundColor: '#b4b4b4'
+        backgroundColor: '#b4b4b4',
     },
     redLine: {
         marginTop: 10,
-        width: sr.w-110,
+        width: sr.w - 110,
         height: 1,
-        backgroundColor: '#ff3c30'
+        backgroundColor: '#ff3c30',
     },
     line: {
         width: 1,
         height: 50,
-        backgroundColor: '#b4b4b4'
+        backgroundColor: '#b4b4b4',
     },
     buttonStyleContain: {
         height: 50,
@@ -94,10 +92,10 @@ var styles = StyleSheet.create({
     },
     buttonStyle: {
         fontSize: 15,
-        color: '#000000'
+        color: '#000000',
     },
     container: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:210,
         marginTop: -80,
         alignItems:'center',
@@ -119,7 +117,7 @@ var styles = StyleSheet.create({
     },
     text_input: {
         paddingVertical: -5,
-        width:sr.w*5/6-20,
+        width:sr.w * 5 / 6 - 20,
         marginTop: 5,
         paddingLeft: 20,
         height: 35,
@@ -130,7 +128,7 @@ var styles = StyleSheet.create({
         alignItems:'center',
         justifyContent: 'center',
         width:sr.w,
-        height:sr.h-84,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        height:sr.h - 84,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
 });

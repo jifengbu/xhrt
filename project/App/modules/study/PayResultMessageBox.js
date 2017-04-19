@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -9,46 +9,46 @@ var {
     View,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
 module.exports = React.createClass({
-    doCancel() {
-        this.closeModal(()=>{
+    doCancel () {
+        this.closeModal(() => {
             this.props.doCancel();
         });
     },
-    doConfirm() {
-        this.closeModal(()=>{
+    doConfirm () {
+        this.closeModal(() => {
             this.props.doConfirm();
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
-        var buyIsSuccess = false;
-        var contentStr = this.props.contentText;
-        if(contentStr.indexOf("成功") >= 0) {
+    render () {
+        let buyIsSuccess = false;
+        const contentStr = this.props.contentText;
+        if (contentStr.indexOf('成功') >= 0) {
             buyIsSuccess = true;
         }
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <Image
                         resizeMode='stretch'
@@ -70,23 +70,20 @@ module.exports = React.createClass({
                 <View style={styles.topContainer}>
                     {
                         buyIsSuccess ?
-                        <Image
-                            resizeMode='stretch'
-                            source={app.img.draw_congratulations}
-                            style={styles.drawCongratulationsImage}>
-                        </Image>
+                            <Image
+                                resizeMode='stretch'
+                                source={app.img.draw_congratulations}
+                                style={styles.drawCongratulationsImage} />
                         :
-                        <Text>
-                        </Text>
+                            <Text />
                     }
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     textStyle: {
         fontSize: 25,
         alignSelf:'center',
@@ -94,26 +91,26 @@ var styles = StyleSheet.create({
         marginTop: 35,
     },
     container: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
     },
     topContainer: {
         position:'absolute',
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         alignItems:'center',
         top:210,
         right:30,
     },
     topCompleteContainer: {
         position:'absolute',
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         alignItems:'center',
         top:130,
         right:30,
     },
     drawCongratulationsHeaderImage: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:120,
         alignItems:'center',
         justifyContent:'center',
@@ -124,38 +121,38 @@ var styles = StyleSheet.create({
         alignSelf:'center',
     },
     drawCongratulationsButtonView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:80,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'peachpuff'
+        backgroundColor:'peachpuff',
     },
     drawCongratulationsCompleteButtonView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:60,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'peachpuff'
+        backgroundColor:'peachpuff',
     },
     drawCongratulationsButtonRight: {
-        width:sr.w*5/18,
-        height:50,
-        marginHorizontal:20
-    },
-    drawCongratulationsButtonLeft: {
-        width:sr.w*5/18,
+        width:sr.w * 5 / 18,
         height:50,
         marginHorizontal:20,
-        backgroundColor:'#a0d468'
+    },
+    drawCongratulationsButtonLeft: {
+        width:sr.w * 5 / 18,
+        height:50,
+        marginHorizontal:20,
+        backgroundColor:'#a0d468',
     },
     drawCongratulationsInfo: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:180,
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'peachpuff'
+        backgroundColor:'peachpuff',
     },
     infoTitle: {
         paddingHorizontal:50,
@@ -198,22 +195,22 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     touchableHighlight: {
         position:'absolute',
         top:16,
-        left:sr.w*5/6-24,
+        left:sr.w * 5 / 6 - 24,
         width: 30,
         height: 30,
     },
     closeIcon: {
         width: 30,
-        height: 30
+        height: 30,
     },
     awardIcon: {
         width: 40,
         height: 40,
-        marginVertical:10
+        marginVertical:10,
     },
 });

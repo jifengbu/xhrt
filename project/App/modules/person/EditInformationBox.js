@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Animated,
@@ -11,38 +11,38 @@ var {
 } = ReactNative;
 
 module.exports = React.createClass({
-    doConfirm() {
+    doConfirm () {
         this.props.doConfirm();
         app.closeModal();
     },
-    render() {
+    render () {
         return (
-              <View style={styles.overlayContainer}>
+            <View style={styles.overlayContainer}>
                 <View style={styles.container}>
                     <Text style={styles.content}>
                         {this.props.title}
                     </Text>
-                    <View style={styles.lineStyleTop}/>
+                    <View style={styles.lineStyleTop} />
                     <View style={styles.buttonViewStyle}>
                         <TouchableOpacity
                             onPress={app.closeModal}
                             style={styles.buttonStyleContainCannel}>
                             <Text style={styles.buttonStyle}>继续编辑</Text>
                         </TouchableOpacity>
-                        <Text style={styles.lineStyle}/>
+                        <Text style={styles.lineStyle} />
                         <TouchableOpacity
                             onPress={this.doConfirm}
                             style={styles.buttonStyleContain}>
                             <Text style={styles.buttonStyle} >放弃</Text>
                         </TouchableOpacity>
                     </View>
-                  </View>
-              </View>
+                </View>
+            </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     buttonViewStyle: {
         position:'absolute',
         bottom: 0,
@@ -67,12 +67,12 @@ var styles = StyleSheet.create({
     },
     buttonStyle: {
         fontSize: 17,
-        color: '#0076FF'
+        color: '#0076FF',
     },
     lineStyle: {
         width: 1,
         height: 44,
-        backgroundColor: '#D6D6D6'
+        backgroundColor: '#D6D6D6',
     },
     lineStyleTop: {
         position: 'absolute',
@@ -80,7 +80,7 @@ var styles = StyleSheet.create({
         left: 0,
         width: 270,
         height: 1,
-        backgroundColor: '#D6D6D6'
+        backgroundColor: '#D6D6D6',
     },
     container: {
         width:270,
@@ -99,6 +99,6 @@ var styles = StyleSheet.create({
         flex: 1,
         alignItems:'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
-      },
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
 });

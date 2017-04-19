@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Image,
@@ -11,75 +11,73 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var {Button} = COMPONENTS;
+const { Button } = COMPONENTS;
 
-var DrawCongratulations = React.createClass({
-    doDrawAgain() {
-        this.closeModal(()=>{
+const DrawCongratulations = React.createClass({
+    doDrawAgain () {
+        this.closeModal(() => {
             this.props.doClose();
         });
     },
-    doConfirm() {
-        if (this.props.prizeContext.prize.prizeTypeCode!=10001) {
-            this.closeModal(()=>{
+    doConfirm () {
+        if (this.props.prizeContext.prize.prizeTypeCode != 10001) {
+            this.closeModal(() => {
                 this.props.doClose();
             });
         } else {
             this.props.showDrawCongratulationsCompleteInfo();
         }
     },
-    getInitialState() {
+    getInitialState () {
         return {
-            opacity: new Animated.Value(0)
+            opacity: new Animated.Value(0),
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }).start();
     },
-    doClose() {
-        this.closeModal(()=>{
+    doClose () {
+        this.closeModal(() => {
             this.props.doClose();
         });
     },
-    closeModal(callback) {
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
             toValue: 0,
             duration: 500,
-        }).start(()=>{
+        }).start(() => {
             callback();
         });
     },
-    render() {
-        var notWinning = false;
-        var contentStr = this.props.prizeContext.prize.name;
-        if (contentStr.indexOf("啥都没有") >= 0 || contentStr.indexOf("未中奖") >= 0) {
+    render () {
+        let notWinning = false;
+        let contentStr = this.props.prizeContext.prize.name;
+        if (contentStr.indexOf('啥都没有') >= 0 || contentStr.indexOf('未中奖') >= 0) {
             contentStr = '您未抽到任何奖励...';
             notWinning = true;
         }
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <Image
                         resizeMode='stretch'
                         source={app.img.draw_header}
                         style={styles.drawCongratulationsHeaderImage}>
                         <Text style={notWinning ? styles.content2 : styles.content}>
-                            {'你的奖品是 '}<Text style={{color: 'red'}}> {contentStr}</Text>
+                            {'你的奖品是 '}<Text style={{ color: 'red' }}> {contentStr}</Text>
                         </Text>
                         {
                             notWinning ?
-                            <Text>
-                            </Text>
+                                <Text />
                             :
-                            <Image
-                                resizeMode='contain'
-                                defaultSource={app.img.common_default}
-                                source={{uri:this.props.prizeContext.prize.img}}
-                                style={styles.awardIcon}>
-                            </Image>
+                                <Image
+                                    resizeMode='contain'
+                                    defaultSource={app.img.common_default}
+                                    source={{ uri:this.props.prizeContext.prize.img }}
+                                    style={styles.awardIcon} />
                         }
                     </Image>
                     <View style={styles.drawCongratulationsButtonView}>
@@ -94,41 +92,39 @@ var DrawCongratulations = React.createClass({
                 <View style={styles.topContainer}>
                     {
                         notWinning ?
-                        <Text style={styles.notWinningText}>很遗憾</Text>
+                            <Text style={styles.notWinningText}>很遗憾</Text>
                         :
-                        <Image
-                            resizeMode='stretch'
-                            source={app.img.draw_congratulations}
-                            style={styles.drawCongratulationsImage}>
-                        </Image>
+                            <Image
+                                resizeMode='stretch'
+                                source={app.img.draw_congratulations}
+                                style={styles.drawCongratulationsImage} />
                     }
                     <TouchableHighlight
                         onPress={this.doClose}
-                        underlayColor="rgba(0, 0, 0, 0)"
+                        underlayColor='rgba(0, 0, 0, 0)'
                         style={styles.touchableCancel}>
                         <Image
                             resizeMode='contain'
                             source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
+                            style={styles.closeIcon} />
                     </TouchableHighlight>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
-var DrawCongratulationsCompleteInfo = React.createClass({
-    doBack() {
+const DrawCongratulationsCompleteInfo = React.createClass({
+    doBack () {
         this.props.showDrawCongratulations();
     },
-    doSubmit() {
-        var data={
+    doSubmit () {
+        const data = {
             name:this.state.name,
             phone:this.state.phone,
             address:this.state.address,
             lotteryId:this.props.prizeContext.lotteryId,
         };
-        if (data.name=='') {
+        if (data.name == '') {
             Toast('信息不完整，请填写姓名');
             return;
         }
@@ -136,15 +132,15 @@ var DrawCongratulationsCompleteInfo = React.createClass({
             Toast('手机号码不是有效的手机号码');
             return;
         }
-        if (data.address=='') {
+        if (data.address == '') {
             Toast('信息不完整，请填写地址');
             return;
         }
-        this.closeModal(()=>{
+        this.closeModal(() => {
             this.props.doSubmit(data);
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
             opacity: new Animated.Value(0),
             name:'',
@@ -152,129 +148,129 @@ var DrawCongratulationsCompleteInfo = React.createClass({
             address:'',
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         Animated.timing(this.state.opacity, {
             toValue: 1,
             duration: 500,
         }
     ).start();
-},
-doClose() {
-    this.closeModal(()=>{
-        this.props.doClose();
-    });
-},
-closeModal(callback) {
-    Animated.timing(this.state.opacity, {
-        toValue: 0,
-        duration: 500,
-    }
-).start(()=>{
+    },
+    doClose () {
+        this.closeModal(() => {
+            this.props.doClose();
+        });
+    },
+    closeModal (callback) {
+        Animated.timing(this.state.opacity, {
+            toValue: 0,
+            duration: 500,
+        }
+).start(() => {
     callback();
 });
-},
-render() {
-    return (
-        <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
-            <View style={styles.totalContainer}>
-                <View style={styles.container}>
-                    <Image
-                        resizeMode='stretch'
-                        source={app.img.draw_header}
-                        style={styles.drawCongratulationsHeaderImage}>
-                        <Text style={styles.content}>你的奖品是 <Text style={{color: 'red'}}> {this.props.prizeContext.prize.name}</Text> </Text>
+    },
+    render () {
+        return (
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
+                <View style={styles.totalContainer}>
+                    <View style={styles.container}>
                         <Image
-                            resizeMode='contain'
-                            defaultSource={app.img.common_default}
-                            source={{uri:this.props.prizeContext.prize.img}}
-                            style={styles.awardIcon}>
+                            resizeMode='stretch'
+                            source={app.img.draw_header}
+                            style={styles.drawCongratulationsHeaderImage}>
+                            <Text style={styles.content}>你的奖品是 <Text style={{ color: 'red' }}> {this.props.prizeContext.prize.name}</Text> </Text>
+                            <Image
+                                resizeMode='contain'
+                                defaultSource={app.img.common_default}
+                                source={{ uri:this.props.prizeContext.prize.img }}
+                                style={styles.awardIcon} />
                         </Image>
-                    </Image>
-                    <View style={styles.drawCongratulationsInfo}>
-                        <Text style={styles.infoTitle}>请输入你的联系信息，我们的工作人员会联系你发奖</Text>
-                        <TextInput
-                            style={styles.infoInput}
-                            onChangeText={(text) => this.setState({name:text})}
-                            defaultValue={this.state.name}
-                            placeholder={'请输入您的姓名'}
+                        <View style={styles.drawCongratulationsInfo}>
+                            <Text style={styles.infoTitle}>请输入你的联系信息，我们的工作人员会联系你发奖</Text>
+                            <TextInput
+                                style={styles.infoInput}
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ name:text })}
+                                defaultValue={this.state.name}
+                                placeholder={'请输入您的姓名'}
                             />
-                        <TextInput
-                            style={styles.infoInput}
-                            onChangeText={(text) => this.setState({phone:text})}
-                            defaultValue={this.state.phone}
-                            placeholder={'请输入您的手机号'}
+                            <TextInput
+                                style={styles.infoInput}
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ phone:text })}
+                                defaultValue={this.state.phone}
+                                placeholder={'请输入您的手机号'}
                             />
-                        <TextInput
-                            style={styles.infoInput}
-                            onChangeText={(text) => this.setState({address:text})}
-                            defaultValue={this.state.address}
-                            placeholder={'请输入您的详细地址'}
+                            <TextInput
+                                style={styles.infoInput}
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ address:text })}
+                                defaultValue={this.state.address}
+                                placeholder={'请输入您的详细地址'}
                             />
+                        </View>
+                        <View style={styles.drawCongratulationsCompleteButtonView}>
+                            <Button
+                                onPress={this.doBack}
+                                style={styles.drawCongratulationsButtonLeft}>返回</Button>
+                            <Button
+                                onPress={this.doSubmit}
+                                style={styles.drawCongratulationsButtonRight}>提交</Button>
+                        </View>
                     </View>
-                    <View style={styles.drawCongratulationsCompleteButtonView}>
-                        <Button
-                            onPress={this.doBack}
-                            style={styles.drawCongratulationsButtonLeft}>返回</Button>
-                        <Button
-                            onPress={this.doSubmit}
-                            style={styles.drawCongratulationsButtonRight}>提交</Button>
-                    </View>
-                </View>
-                <View style={styles.topCompleteContainer}>
-                    <Image
-                        resizeMode='stretch'
-                        source={app.img.draw_congratulations}
-                        style={styles.drawCongratulationsImage}>
-                    </Image>
-                    <TouchableHighlight
-                        onPress={this.doClose}
-                        underlayColor="rgba(0, 0, 0, 0)"
-                        style={styles.touchableHighlight}>
+                    <View style={styles.topCompleteContainer}>
                         <Image
-                            resizeMode='contain'
-                            source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
-                    </TouchableHighlight>
+                            resizeMode='stretch'
+                            source={app.img.draw_congratulations}
+                            style={styles.drawCongratulationsImage} />
+                        <TouchableHighlight
+                            onPress={this.doClose}
+                            underlayColor='rgba(0, 0, 0, 0)'
+                            style={styles.touchableHighlight}>
+                            <Image
+                                resizeMode='contain'
+                                source={app.img.draw_back}
+                                style={styles.closeIcon} />
+                        </TouchableHighlight>
+                    </View>
                 </View>
-                </View>
-        </Animated.View>
-    );
-}
+            </Animated.View>
+        );
+    },
 });
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
-            showType:this.props.showType
+            showType:this.props.showType,
         };
     },
-    showDrawCongratulations() {
-        this.setState({showType:0});
+    showDrawCongratulations () {
+        this.setState({ showType:0 });
     },
-    showDrawCongratulationsCompleteInfo() {
-        this.setState({showType:1});
+    showDrawCongratulationsCompleteInfo () {
+        this.setState({ showType:1 });
     },
-    render() {
+    render () {
         return (
-            this.state.showType===0?
-            <DrawCongratulations
-                prizeContext={this.props.prizeContext}
-                doClose={this.props.doClose}
-                doDrawAgain={this.props.doDrawAgain}
-                showDrawCongratulationsCompleteInfo={this.showDrawCongratulationsCompleteInfo}/>
+            this.state.showType === 0 ?
+                <DrawCongratulations
+                    prizeContext={this.props.prizeContext}
+                    doClose={this.props.doClose}
+                    doDrawAgain={this.props.doDrawAgain}
+                    showDrawCongratulationsCompleteInfo={this.showDrawCongratulationsCompleteInfo} />
             :
-            <DrawCongratulationsCompleteInfo
-                prizeContext={this.props.prizeContext}
-                doClose={this.props.doClose}
-                doSubmit={this.props.doSubmit}
-                showDrawCongratulations={this.showDrawCongratulations}/>
+                <DrawCongratulationsCompleteInfo
+                    prizeContext={this.props.prizeContext}
+                    doClose={this.props.doClose}
+                    doSubmit={this.props.doSubmit}
+                    showDrawCongratulations={this.showDrawCongratulations} />
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         alignItems:'center',
         justifyContent:'center',
     },
@@ -286,9 +282,9 @@ var styles = StyleSheet.create({
     },
     topContainer: {
         position:'absolute',
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         alignItems:'center',
-        top:sr.h/2-155,
+        top:sr.h / 2 - 155,
         right:30,
     },
     topCompleteContainer: {
@@ -299,7 +295,7 @@ var styles = StyleSheet.create({
         alignItems:'center',
     },
     drawCongratulationsHeaderImage: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:120,
         alignItems:'center',
         justifyContent:'center',
@@ -310,40 +306,40 @@ var styles = StyleSheet.create({
         alignSelf:'center',
     },
     drawCongratulationsButtonView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:70,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'peachpuff'
+        backgroundColor:'peachpuff',
     },
     drawCongratulationsCompleteButtonView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:60,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'peachpuff'
+        backgroundColor:'peachpuff',
     },
     drawCongratulationsButtonRight: {
-        width:sr.w*5/18,
-        height:40,
-        borderRadius: 6,
-        marginHorizontal:20
-    },
-    drawCongratulationsButtonLeft: {
-        width:sr.w*5/18,
+        width:sr.w * 5 / 18,
         height:40,
         borderRadius: 6,
         marginHorizontal:20,
-        backgroundColor:'#6ebe97'
+    },
+    drawCongratulationsButtonLeft: {
+        width:sr.w * 5 / 18,
+        height:40,
+        borderRadius: 6,
+        marginHorizontal:20,
+        backgroundColor:'#6ebe97',
     },
     drawCongratulationsInfo: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:180,
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'peachpuff'
+        backgroundColor:'peachpuff',
     },
     infoTitle: {
         paddingHorizontal:50,
@@ -356,7 +352,7 @@ var styles = StyleSheet.create({
     },
     infoInput: {
         height:35,
-        width: sr.w*3/4,
+        width: sr.w * 3 / 4,
         marginHorizontal:10,
         marginVertical:2,
         paddingVertical: -3,
@@ -365,7 +361,7 @@ var styles = StyleSheet.create({
         borderWidth:1,
         borderRadius: 6,
         fontSize:13,
-        paddingLeft:10
+        paddingLeft:10,
     },
     content: {
         marginTop:30,
@@ -391,35 +387,35 @@ var styles = StyleSheet.create({
         top: 0,
         alignItems:'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     touchableHighlight: {
         position:'absolute',
         top: 10,
-        left:sr.w*5/6+5,
+        left:sr.w * 5 / 6 + 5,
         width: 38,
         height: 38,
     },
     touchableCancel: {
         position:'absolute',
-        top: app.isandroid?5:15,
-        left:sr.w*5/6-22,
+        top: app.isandroid ? 5 : 15,
+        left:sr.w * 5 / 6 - 22,
         width: 38,
         height: 38,
     },
     closeIcon: {
         width: 38,
-        height: 38
+        height: 38,
     },
     awardIcon: {
         width: 50,
         height: 50,
-        marginVertical:10
+        marginVertical:10,
     },
     notWinningText: {
         fontSize: 25,
         alignSelf:'center',
         color: 'blue',
-        marginTop: app.isandroid?40:55,
+        marginTop: app.isandroid ? 40 : 55,
     },
 });

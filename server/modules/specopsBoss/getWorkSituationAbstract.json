@@ -1,0 +1,30 @@
+{
+    "msg":"获取数据成功!",
+    "success":true,
+    "context":{
+        "monthWeekPlanNum":{
+            "complete":"3",
+            "unfinished":"97"
+        },
+        "dayPlanNum":{
+            "complete":"3",
+            "unfinished":"97"
+        },
+        "summaryNum":{
+            "complete":"3",
+            "unfinished":"97"
+        },
+        "submitLog":[
+            {
+                "date":"2017-1-30 15:38:00",
+                "name":" 憨戳戳1",
+                "context":"憨戳戳1提交了日计划"
+            },
+            {
+                "date":"2017-1-30 15:39:00",
+                "name":" 憨戳戳2",
+                "context":"憨戳戳2提交了本月目标"
+            }
+        ]
+    }
+}

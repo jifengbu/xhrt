@@ -1,11 +1,11 @@
 'use strict';
 
-var React = require('react');
-var {
+const React = require('react');
+const {
     PropTypes,
 } = React;
-var ReactNative = require('react-native');
-var {
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -16,23 +16,23 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var Swiper = require('react-native-swiper');
+const Swiper = require('react-native-swiper');
 
-var {Button} = COMPONENTS;
-var currentWinCoinData = {};
+const { Button } = COMPONENTS;
+let currentWinCoinData = {};
 
 module.exports = React.createClass({
-    doPayWechat() {
-        this.closeModal(()=>{
+    doPayWechat () {
+        this.closeModal(() => {
             this.props.doPayWechat(currentWinCoinData.winCoinID);
         });
     },
-    doPayAlipay() {
-        this.closeModal(()=>{
-            this.props.doPayAlipay(currentWinCoinData.winCoinID,currentWinCoinData.price);
+    doPayAlipay () {
+        this.closeModal(() => {
+            this.props.doPayAlipay(currentWinCoinData.winCoinID, currentWinCoinData.price);
         });
     },
-    getInitialState() {
+    getInitialState () {
         return {
             tabIndex: 0,
             checked:false,
@@ -40,89 +40,88 @@ module.exports = React.createClass({
             winCoinList: [],
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         this.getWinCoinGoods();
         Animated.timing(this.state.opacity, {
-                toValue: 1,
-                duration: 500,
-            }
+            toValue: 1,
+            duration: 500,
+        }
         ).start();
     },
-    doSaveCurrentWinCoinData(data,i) {
-        for (var index in this.state.winCoinList) {
+    doSaveCurrentWinCoinData (data, i) {
+        for (let index in this.state.winCoinList) {
             if (index == i) {
                 this.state.winCoinList[index]['checked'] = true;
             } else {
                 this.state.winCoinList[index]['checked'] = false;
             }
         }
-        this.setState({checked:!this.state.checked});
+        this.setState({ checked:!this.state.checked });
         currentWinCoinData = data;
     },
-    doClose() {
-          this.closeModal(()=>{
-              this.props.doClose();
-          });
-      },
-    closeModal(callback) {
+    doClose () {
+        this.closeModal(() => {
+            this.props.doClose();
+        });
+    },
+    closeModal (callback) {
         Animated.timing(this.state.opacity, {
-                toValue: 0,
-                duration: 500,
-            }
-        ).start(()=>{
+            toValue: 0,
+            duration: 500,
+        }
+        ).start(() => {
             callback();
         });
     },
-    getWinCoinGoods() {
-        var param = {
+    getWinCoinGoods () {
+        const param = {
             userID: app.personal.info.userID,
         };
         POST(app.route.ROUTE_GET_WIN_COIN_GOODS, param, this.getWinCoinGoodsSuccess);
     },
-    getWinCoinGoodsSuccess(data) {
+    getWinCoinGoodsSuccess (data) {
         if (data.success) {
-            let winCoinList = data.context.winCoinList||[];
-            this.setState({winCoinList:winCoinList});
-            this.setState({tabIndex:1});
+            const winCoinList = data.context.winCoinList || [];
+            this.setState({ winCoinList:winCoinList });
+            this.setState({ tabIndex:1 });
         } else {
             Toast(data.msg);
         }
     },
-    render() {
+    render () {
         return (
-            <Animated.View style={[styles.overlayContainer, {opacity: this.state.opacity}]}>
+            <Animated.View style={[styles.overlayContainer, { opacity: this.state.opacity }]}>
                 <View style={styles.container}>
                     <View style={styles.panelContainer}>
                         <Text style={styles.title}>1人民币=1赢销币，您当前的赢销币为：</Text>
                         <Text style={styles.winCoinTitle}>{app.personal.info.winCoin}</Text>
-                        <View style={styles.hLine}/>
+                        <View style={styles.hLine} />
                         <View style={styles.recordBottomView}>
-                          <ScrollView style={styles.scrollViewStyle} showsHorizontalScrollIndicator={false} horizontal={true}>
-                            <View style={{flexDirection: 'row'}}>
-                              {
-                                  this.state.winCoinList.map((item, i)=>{
-                                      return(
-                                          <TouchableOpacity key={i} onPress={this.doSaveCurrentWinCoinData.bind(null,item,i)}>
+                            <ScrollView style={styles.scrollViewStyle} showsHorizontalScrollIndicator={false} horizontal>
+                                <View style={{ flexDirection: 'row' }}>
+                                    {
+                                  this.state.winCoinList.map((item, i) => {
+                                      return (
+                                          <TouchableOpacity key={i} onPress={this.doSaveCurrentWinCoinData.bind(null, item, i)}>
                                               <Image
                                                   resizeMode='stretch'
                                                   defaultSource={app.img.common_default}
-                                                  source={{uri:item.winCoinImg}}
+                                                  source={{ uri:item.winCoinImg }}
                                                   style={styles.bannerImage}>
-                                                      {
-                                                          item.checked&&
+                                                  {
+                                                          item.checked &&
                                                           <Image
                                                               resizeMode='contain'
-                                                              source={app.img.common_check}>
-                                                          </Image>
+                                                              source={app.img.common_check} />
                                                       }
-                                                  </Image>
+                                              </Image>
                                           </TouchableOpacity>
-                                      )
+                                      );
                                   })
                               }
-                            </View>
-                          </ScrollView>
-                          <View style={styles.hLine}/>
+                                </View>
+                            </ScrollView>
+                            <View style={styles.hLine} />
                         </View>
                         <View style={styles.trainRankButtonView}>
                             <Button onPress={this.doPayWechat} style={styles.trainRankButton}>微信支付</Button>
@@ -131,22 +130,20 @@ module.exports = React.createClass({
                     </View>
                     <TouchableHighlight
                         onPress={this.doClose}
-                        underlayColor="rgba(0, 0, 0, 0)"
+                        underlayColor='rgba(0, 0, 0, 0)'
                         style={styles.touchableHighlight}>
                         <Image
                             resizeMode='contain'
                             source={app.img.draw_back}
-                            style={styles.closeIcon}>
-                        </Image>
+                            style={styles.closeIcon} />
                     </TouchableHighlight>
                 </View>
             </Animated.View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         alignItems:'center',
         justifyContent:'center',
@@ -158,12 +155,12 @@ var styles = StyleSheet.create({
         paddingTop: 30,
         paddingBottom: 10,
         borderRadius: 6,
-        width:sr.w*6/7,
+        width:sr.w * 6 / 7,
         backgroundColor:'white',
     },
     title: {
         flexDirection:'row',
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         color: 'gray',
         backgroundColor:'white',
         fontSize: 14,
@@ -178,7 +175,7 @@ var styles = StyleSheet.create({
         color:'red',
     },
     recordBottomView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:180,
         alignItems:'center',
         justifyContent:'center',
@@ -186,8 +183,8 @@ var styles = StyleSheet.create({
         marginTop: 10,
     },
     scrollViewStyle: {
-      width: sr.w*5/6,
-      height: 120,
+        width: sr.w * 5 / 6,
+        height: 120,
     },
     overlayContainer: {
         position:'absolute',
@@ -196,23 +193,23 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         width:sr.w,
         height:sr.h,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     trainRankButtonView: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:80,
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'center',
-        backgroundColor:'white'
+        backgroundColor:'white',
     },
     trainRankButton: {
         width:120,
         height:50,
-        marginHorizontal:20
+        marginHorizontal:20,
     },
     tabContainer: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height: 50,
         marginTop: 10,
         marginHorizontal: 10,
@@ -221,7 +218,7 @@ var styles = StyleSheet.create({
         borderColor: '#4FC1E9',
         flexDirection: 'row',
         overflow: 'hidden',
-        backgroundColor:'white'
+        backgroundColor:'white',
     },
     tabButtonLeft: {
         flex: 1,
@@ -236,10 +233,10 @@ var styles = StyleSheet.create({
         borderTopRightRadius: 10,
     },
     hLine: {
-        width:sr.w*5/6-20,
+        width:sr.w * 5 / 6 - 20,
         height:2,
         paddingHorizontal:10,
-        backgroundColor: '#CCC'
+        backgroundColor: '#CCC',
     },
     bannerImage: {
         width:110,
@@ -249,7 +246,7 @@ var styles = StyleSheet.create({
         marginTop: 10,
     },
     wrapper: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height: 150,
         alignSelf:'center',
         marginHorizontal:2,
@@ -257,13 +254,13 @@ var styles = StyleSheet.create({
     touchableHighlight: {
         position:'absolute',
         top:0,
-        left:sr.w*7/8-30,
+        left:sr.w * 7 / 8 - 30,
         width: 30,
         height: 30,
         marginTop:-8,
     },
     closeIcon: {
         width: 30,
-        height: 30
+        height: 30,
     },
 });

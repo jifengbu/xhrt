@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -13,71 +13,70 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var QuestionForCoach = require('./QuestionForCoach.js');
-var AidBigImage = require('../actualCombat/AidBigImage.js');
-var {PageList, Button, DImage} = COMPONENTS;
+const QuestionForCoach = require('./QuestionForCoach.js');
+const AidBigImage = require('../actualCombat/AidBigImage.js');
+const { PageList, Button, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
-  statics: {
+    statics: {
         title: '精彩问答',
     },
-    toQuestion() {
+    toQuestion () {
         app.navigator.push({
             title: '我的答案',
             component: QuestionForCoach,
-            passProps: {QuestionType: 1,questionID:this.props.obj.questionID,taskName:this.props.obj.questionContent,doRefresh:this.doRefresh},//QuestionType 0提问 1回答 2写作业
+            passProps: { QuestionType: 1, questionID:this.props.obj.questionID, taskName:this.props.obj.questionContent, doRefresh:this.doRefresh }, //QuestionType 0提问 1回答 2写作业
         });
     },
-    doRefresh() {
+    doRefresh () {
         this.listView.refresh();
     },
-    showBigImage(imageArray, index) {
+    showBigImage (imageArray, index) {
         app.showModal(
             <AidBigImage
                 doImageClose={app.closeModal}
                 defaultIndex={index}
-                defaultImageArray={imageArray}>
-            </AidBigImage>
+                defaultImageArray={imageArray} />
         );
     },
-    renderRow(obj){
-        var imageArray = obj.answerImages;
-        return(
+    renderRow (obj) {
+        const imageArray = obj.answerImages;
+        return (
             <TouchableHighlight
-                underlayColor="#EEB422"
+                underlayColor='#EEB422'
                 style={styles.itemContainer}
                 onPress={null}>
                 <View>
                     <View style={styles.topContainer}>
-                    <View style={styles.iconConstainer}>
-                        <DImage
-                            resizeMode='stretch'
-                            defaultSource={app.img.personal_head}
-                            source={{uri:obj.answerHead}}
-                            style={styles.iconStyle} />
-                        <Text numberOfLines={1} style={styles.nameTitle}>
-                            {obj.answerAlias}
-                        </Text>
-                    </View>
+                        <View style={styles.iconConstainer}>
+                            <DImage
+                                resizeMode='stretch'
+                                defaultSource={app.img.personal_head}
+                                source={{ uri:obj.answerHead }}
+                                style={styles.iconStyle} />
+                            <Text numberOfLines={1} style={styles.nameTitle}>
+                                {obj.answerAlias}
+                            </Text>
+                        </View>
                         <Text style={styles.textTitle}>
-                            {'回答时间: '+ obj.answerTime}
+                            {'回答时间: ' + obj.answerTime}
                         </Text>
                     </View>
                     {
-                        imageArray&&imageArray.length>0&&
-                        <ScrollView horizontal={true} style={styles.imageContainer}>
+                        imageArray && imageArray.length > 0 &&
+                        <ScrollView horizontal style={styles.imageContainer}>
                             {
-                                imageArray.map((item, i)=>{
+                                imageArray.map((item, i) => {
                                     return (
-                                        <TouchableHighlight key={i} underlayColor="rgba(0, 0, 0, 0)" onPress={this.showBigImage.bind(null, imageArray, i)} style={styles.bigImageTouch}>
+                                        <TouchableHighlight key={i} underlayColor='rgba(0, 0, 0, 0)' onPress={this.showBigImage.bind(null, imageArray, i)} style={styles.bigImageTouch}>
                                             <Image
                                                 resizeMode='stretch'
                                                 defaultSource={app.img.common_default}
-                                                source={{uri: item}}
+                                                source={{ uri: item }}
                                                 style={styles.imageStyle}
                                                 />
                                         </TouchableHighlight>
-                                    )
+                                    );
                                 })
                             }
                         </ScrollView>
@@ -87,49 +86,49 @@ module.exports = React.createClass({
                     </Text>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
-        var {questionImages,questionContent} = this.props.obj;
+    render () {
+        const { questionImages, questionContent } = this.props.obj;
         return (
             <View style={styles.container}>
                 <View style={styles.topStyle}>
                     <Text style={styles.themeTitle}>
-                        {'题目: '+questionContent}
+                        {'题目: ' + questionContent}
                     </Text>
                     {
-                        questionImages.length>0&&
-                        <ScrollView horizontal={true} style={styles.imageContainer}>
+                        questionImages.length > 0 &&
+                        <ScrollView horizontal style={styles.imageContainer}>
                             {
-                                questionImages.map((item, i)=>{
+                                questionImages.map((item, i) => {
                                     return (
-                                        <TouchableHighlight key={i} underlayColor="rgba(0, 0, 0, 0)" onPress={this.showBigImage.bind(null, questionImages, i)} style={styles.bigImageTouch}>
+                                        <TouchableHighlight key={i} underlayColor='rgba(0, 0, 0, 0)' onPress={this.showBigImage.bind(null, questionImages, i)} style={styles.bigImageTouch}>
                                             <Image
                                                 resizeMode='stretch'
                                                 defaultSource={app.img.common_default}
-                                                source={{uri: item}}
+                                                source={{ uri: item }}
                                                 style={styles.imageStyle}
                                                 />
                                         </TouchableHighlight>
-                                    )
+                                    );
                                 })
                             }
                         </ScrollView>
                     }
                 </View>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     disable={this.props.disable}
                     style={styles.list}
                     renderRow={this.renderRow}
-                    renderSeparator={()=>null}
-                    listParam={{questionID: this.props.obj.questionID}}
-                    listName={"answerList"}
+                    renderSeparator={() => null}
+                    listParam={{ questionID: this.props.obj.questionID }}
+                    listName={'answerList'}
                     listUrl={app.route.ROUTE_QAND_ADETAIL}
-                    refreshEnable={true}
+                    refreshEnable
                     />
                 {
-                    this.props.MyQuestionType===1&&
+                    this.props.MyQuestionType === 1 &&
                     <View style={styles.inputStyle}>
                         <TouchableOpacity
                             onPress={this.toQuestion}
@@ -145,10 +144,10 @@ module.exports = React.createClass({
                 }
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#EEEEEE',
@@ -183,12 +182,12 @@ var styles = StyleSheet.create({
         marginLeft: 15,
         height: 30,
         width: 30,
-        borderRadius: app.isandroid? 120: 15,
+        borderRadius: app.isandroid ? 120 : 15,
     },
     nameTitle: {
         fontSize: 16,
         marginHorizontal: 5,
-        color: '#555555'
+        color: '#555555',
     },
     textTitle: {
         fontSize: 12,
@@ -210,7 +209,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#cbcccd',
     },
     inputView: {
-        width: sr.w-90,
+        width: sr.w - 90,
         height: 32,
         marginLeft: 15,
         borderRadius: 4,
@@ -224,7 +223,7 @@ var styles = StyleSheet.create({
         borderRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: CONSTANTS.THEME_COLOR
+        backgroundColor: CONSTANTS.THEME_COLOR,
     },
     bottomInput: {
         flex: 1,

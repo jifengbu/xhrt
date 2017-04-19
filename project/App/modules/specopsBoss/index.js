@@ -1,9 +1,9 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
+const React = require('react');
+const ReactNative = require('react-native');
 
-var {
+const {
     StyleSheet,
     Text,
     View,
@@ -13,27 +13,27 @@ var {
     ListView,
 } = ReactNative;
 
-var moment = require('moment');
-var {DImage} = COMPONENTS;
-var LineChart = require('./lineChart.js');
-var EmployeeStudyDetail = require('./EmployeeStudyDetail.js');
-var SpecopsPerson = require('./SpecopsPerson.js');
-var EmployeeMonthPlan = require('./EmployeeMonthPlan.js');
-var EmployeePlanAndSummary = require('./EmployeePlanAndSummary.js');
-var LineStackChart = require('./lineStackChart.js');
-var EmployeeMonthCommit = require('./EmployeeMonthCommit.js');
+const moment = require('moment');
+const { DImage } = COMPONENTS;
+const LineChart = require('./lineChart.js');
+const EmployeeStudyDetail = require('./EmployeeStudyDetail.js');
+const SpecopsPerson = require('./SpecopsPerson.js');
+const EmployeeMonthPlan = require('./EmployeeMonthPlan.js');
+const EmployeePlanAndSummary = require('./EmployeePlanAndSummary.js');
+const LineStackChart = require('./lineStackChart.js');
+const EmployeeMonthCommit = require('./EmployeeMonthCommit.js');
 
-const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '赢销截拳道',
     },
-    getInitialState() {
+    getInitialState () {
         this.list = [];
         this.pageNo = 1;
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return {
             specopsList: this.ds.cloneWithRows(this.list),
             submitLog: this.ds.cloneWithRows([]),
@@ -49,32 +49,32 @@ module.exports = React.createClass({
             haveData: false,
         };
     },
-    onWillFocus() {
+    onWillFocus () {
         // this.setState({haveData: false});
         // setTimeout(()=>{
         //     this.setState({haveData: true});
         // }, 400);
     },
-    generateMyCurrentYearMonth(){
+    generateMyCurrentYearMonth () {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
         }
 
-        let ret = {};
+        const ret = {};
         ret.year = moment().year();
         ret.month = moment().month();
         if (moment(firstMonday).date() > moment().date()) {
@@ -86,211 +86,211 @@ module.exports = React.createClass({
         }
         return ret;
     },
-    componentDidMount: function() {
+    componentDidMount: function () {
         this.getWorkSituationAbstract();
         this.getSpecialList();
         this.getStudySituationAbstract();
         this.getUserTaskSubmitRate();
     },
-    getUserTaskSubmitRate() {
-        let tTime = moment();
+    getUserTaskSubmitRate () {
+        const tTime = moment();
         tTime.set('date', 15);
         tTime.set('year', this.generateMyCurrentYearMonth().year);
         tTime.set('month', this.generateMyCurrentYearMonth().month);
-        let info = app.personal.info;
-        var param = {
+        const info = app.personal.info;
+        const param = {
             userID: info.userID,
             companyId: info.companyInfo.companyId,
-            date:tTime.format('YYYY-MM-DD')
+            date:tTime.format('YYYY-MM-DD'),
         };
         POST(app.route.ROUTE_GET_USER_TASK_SUBMIT_RATE, param, this.getUserTaskSubmitRateSuccess);
     },
-    getUserTaskSubmitRateSuccess(data) {
+    getUserTaskSubmitRateSuccess (data) {
         if (data.success) {
-            this.setState({taskSubmitRateData: data.context});
+            this.setState({ taskSubmitRateData: data.context });
         }
     },
-    getWorkSituationAbstract() {
-        let info = app.personal.info;
-        var param = {
+    getWorkSituationAbstract () {
+        const info = app.personal.info;
+        const param = {
             userID: info.userID,
             companyId: info.companyInfo.companyId,
         };
-        POST(app.route.ROUTE_GET_WORK_SITUATION_ABSTRACT, param, this.getWorkSituationAbstractSuccess,true);
+        POST(app.route.ROUTE_GET_WORK_SITUATION_ABSTRACT, param, this.getWorkSituationAbstractSuccess, true);
     },
-    getWorkSituationAbstractSuccess(data) {
+    getWorkSituationAbstractSuccess (data) {
         if (data.context) {
-            var {userSum} = data.context;
-            var {submitLog} = data.context;
-            var {monthWeekPlanNum} = data.context;
-            var {dayPlanNum} = data.context;
-            var {summaryNum} = data.context;
-            this.setState({submitLog:this.ds.cloneWithRows(submitLog.slice(0,4)), monthWeekPlanNum, dayPlanNum, summaryNum, userSum})
+            const { userSum } = data.context;
+            const { submitLog } = data.context;
+            const { monthWeekPlanNum } = data.context;
+            const { dayPlanNum } = data.context;
+            const { summaryNum } = data.context;
+            this.setState({ submitLog:this.ds.cloneWithRows(submitLog.slice(0, 4)), monthWeekPlanNum, dayPlanNum, summaryNum, userSum });
         }
     },
-    getSpecialList() {
-        let info = app.personal.info;
-        var param = {
+    getSpecialList () {
+        const info = app.personal.info;
+        const param = {
             companyId: info.companyInfo.companyId,
             userID: info.userID,
             pageNo:this.pageNo,
         };
-        this.setState({infiniteLoadStatus: this.pageNo===1?STATUS_START_LOAD:STATUS_HAVE_MORE});
+        this.setState({ infiniteLoadStatus: this.pageNo === 1 ? STATUS_START_LOAD : STATUS_HAVE_MORE });
         POST(app.route.ROUTE_GET_SPECIAL_LIST, param, this.getSpecialListSuccess, this.getSpecialListFailed);
     },
-    getSpecialListSuccess(data) {
+    getSpecialListSuccess (data) {
         if (data.success) {
             if (data.context) {
-                var list = data.context.userList||[];
+                const list = data.context.userList || [];
                 this.list = this.list.concat(list);
-                var infiniteLoadStatus = list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
+                const infiniteLoadStatus = list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
                 this.setState({
                     infiniteLoadStatus: infiniteLoadStatus,
-                    specopsList:this.ds.cloneWithRows(this.list)
+                    specopsList:this.ds.cloneWithRows(this.list),
                 });
             } else {
-                this.setState({infiniteLoadStatus: STATUS_NO_DATA});
+                this.setState({ infiniteLoadStatus: STATUS_NO_DATA });
             }
-            this.setState({haveData: false});
-            setTimeout(()=>{
-                this.setState({haveData: true});
+            this.setState({ haveData: false });
+            setTimeout(() => {
+                this.setState({ haveData: true });
             }, 400);
         } else {
             this.getSpecialListFailed();
         }
     },
-    getSpecialListFailed() {
+    getSpecialListFailed () {
         this.pageNo--;
-        this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
+        this.setState({ infiniteLoadStatus: STATUS_LOAD_ERROR });
     },
-    getStudySituationAbstract() {
-        let info = app.personal.info;
-        var param = {
+    getStudySituationAbstract () {
+        const info = app.personal.info;
+        const param = {
             userID: info.userID,
             companyId: info.companyInfo.companyId,
         };
         POST(app.route.ROUTE_GET_STUDY_SITUATION_ABSTRACT, param, this.getStudySituationAbstractSuccess);
     },
-    fomatFloat(src,pos){
-        //保留一位小数
-        return Math.round(src*Math.pow(10, pos))/Math.pow(10, pos);
+    fomatFloat (src, pos) {
+        // 保留一位小数
+        return Math.round(src * Math.pow(10, pos)) / Math.pow(10, pos);
     },
-    getStudySituationAbstractSuccess(data) {
+    getStudySituationAbstractSuccess (data) {
         if (data.context) {
-            var xData=[];
-            var yData=[];
-            var whenLongData=data.context.studyWhenLong;
-            var coursesNumber=whenLongData.whenLongList;
-            for (var index in coursesNumber) {
+            const xData = [];
+            const yData = [];
+            const whenLongData = data.context.studyWhenLong;
+            const coursesNumber = whenLongData.whenLongList;
+            for (let index in coursesNumber) {
                 if (coursesNumber.hasOwnProperty(index)) {
                     xData.push(moment(coursesNumber[index].date).format('M.D'));
-                    let num = coursesNumber[index].dayAvgWhenLong;
-                    let number = this.fomatFloat(num/60,1);
+                    const num = coursesNumber[index].dayAvgWhenLong;
+                    const number = this.fomatFloat(num / 60, 1);
                     yData.push(number);
                 }
             }
-            let avgWhenLong = this.fomatFloat((whenLongData.avgWhenLong)/60,1);
-            let rose = this.fomatFloat((whenLongData.rose)/60,1);
+            const avgWhenLong = this.fomatFloat((whenLongData.avgWhenLong) / 60, 1);
+            let rose = this.fomatFloat((whenLongData.rose) / 60, 1);
             if (yData.length > 2) {
-                let n = yData[yData.length-1]-yData[yData.length-2];
+                const n = yData[yData.length - 1] - yData[yData.length - 2];
                 rose = this.fomatFloat(n, 1);
             }
 
-            this.setState({xData:xData,yData:yData,avgWhenLong:avgWhenLong,rose:rose});
+            this.setState({ xData:xData, yData:yData, avgWhenLong:avgWhenLong, rose:rose });
         }
     },
-    toEmployeeTarget() {
+    toEmployeeTarget () {
         app.navigator.push({
             title: '员工目标',
             component: EmployeeMonthPlan,
         });
     },
-    toEmployeePlan() {
+    toEmployeePlan () {
         app.navigator.push({
             title: '员工计划',
             component: EmployeePlanAndSummary,
-            passProps: {isDayPlan: true, isDaySummary: false},
+            passProps: { isDayPlan: true, isDaySummary: false },
         });
     },
-    toEmployeeSummary() {
+    toEmployeeSummary () {
         app.navigator.push({
             title: '员工总结',
             component: EmployeePlanAndSummary,
-            passProps: {isDayPlan: false, isDaySummary: true},
+            passProps: { isDayPlan: false, isDaySummary: true },
         });
     },
-    toEmployeeMonthCommit() {
+    toEmployeeMonthCommit () {
         app.navigator.push({
             title: '员工任务提交详情',
             component: EmployeeMonthCommit,
         });
     },
-    toEmployeeStudy() {
+    toEmployeeStudy () {
         app.navigator.push({
             title: '员工学习详情',
             component: EmployeeStudyDetail,
         });
     },
-    _onPressRow(userId) {
+    _onPressRow (userId) {
         app.navigator.push({
             component: SpecopsPerson,
-            passProps: {userID: userId},
+            passProps: { userID: userId },
         });
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
-            <View style={styles.separator} key={rowID}/>
+            <View style={styles.separator} key={rowID} />
         );
     },
-    renderSpecposSeparator(sectionID, rowID) {
+    renderSpecposSeparator (sectionID, rowID) {
         return (
-            <View style={styles.specposSeparator} key={rowID}/>
+            <View style={styles.specposSeparator} key={rowID} />
         );
     },
-    renderWorkRow(obj, sectionID, rowID) {
+    renderWorkRow (obj, sectionID, rowID) {
         return (
             <View style={styles.rowContainer}>
-                <Text numberOfLines={1} style={styles.rowTime}>{obj.date&&moment(obj.date).format('M.D HH:mm')}</Text>
+                <Text numberOfLines={1} style={styles.rowTime}>{obj.date && moment(obj.date).format('M.D HH:mm')}</Text>
                 <Text numberOfLines={1} style={styles.rowName}>{obj.name}</Text>
                 <Text numberOfLines={1} style={styles.rowTip}>{obj.context}</Text>
             </View>
-        )
+        );
     },
-    calculateStrLength(oldStr) {
+    calculateStrLength (oldStr) {
         let height = 0;
         let linesWidth = 0;
         if (oldStr) {
-            oldStr = oldStr.replace(/<\/?.+?>/g,/<\/?.+?>/g,"");
+            oldStr = oldStr.replace(/<\/?.+?>/g, /<\/?.+?>/g, '');
             oldStr = oldStr.replace(/[\r\n]/g, '|');
-            let StrArr = oldStr.split('|');
-            for (var i = 0; i < StrArr.length; i++) {
-                //计算字符串长度，一个汉字占2个字节
-                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g,"aa").length;
+            const StrArr = oldStr.split('|');
+            for (let i = 0; i < StrArr.length; i++) {
+                // 计算字符串长度，一个汉字占2个字节
+                linesWidth = StrArr[i].replace(/[^\x00-\xff]/g, 'aa').length;
             }
             return linesWidth;
         }
     },
-    renderSpecopsRow(obj, sectionID, rowID) {
-        let headUrl = obj.userImg?obj.userImg:obj.sex===1?app.img.personal_sex_male:app.img.personal_sex_female;
-        let nameTemWidth = this.calculateStrLength(obj.userName);
-        let nameWidth = nameTemWidth*10;
+    renderSpecopsRow (obj, sectionID, rowID) {
+        const headUrl = obj.userImg ? obj.userImg : obj.sex === 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
+        const nameTemWidth = this.calculateStrLength(obj.userName);
+        const nameWidth = nameTemWidth * 10+7;
         return (
             <TouchableHighlight
                 onPress={this._onPressRow.bind(null, obj.userId)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.rowSpecopsContainer}>
                     <DImage
                         resizeMode='cover'
                         defaultSource={app.img.personal_head}
-                        source={obj.userImg?{uri: headUrl}:headUrl}
-                        style={styles.rowHeaderIcon}  />
-                    <View style={{marginLeft:18,width: nameWidth>140?sr.ws(140):sr.ws(nameWidth)}}>
+                        source={obj.userImg ? { uri: headUrl } : headUrl}
+                        style={styles.rowHeaderIcon} />
+                    <View style={{ marginLeft:18, width: nameWidth > 140 ? sr.ws(140) : sr.ws(nameWidth) }}>
                         <Text numberOfLines={1} style={styles.rowSpecopsName}>
                             {obj.userName}
                         </Text>
                     </View>
                     {
-                        obj.post!=''&&
+                        obj.post != '' &&
                         <View style={styles.rowPosition}>
                             <Text numberOfLines={1} style={styles.rowPositionText}>
                                 {obj.post}
@@ -299,11 +299,11 @@ module.exports = React.createClass({
                     }
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    renderUserInfo() {
-        let {companyInfo}=app.personal.info;
-        let headUrl = companyInfo.logo?companyInfo.logo:app.img.common_default;
+    renderUserInfo () {
+        const { companyInfo } = app.personal.info;
+        const headUrl = companyInfo.logo ? companyInfo.logo : app.img.common_default;
         return (
             <View>
                 <View style={styles.personContainer}>
@@ -315,18 +315,18 @@ module.exports = React.createClass({
                             <DImage
                                 resizeMode='cover'
                                 defaultSource={app.img.personal_head}
-                                source={companyInfo.logo?{uri: headUrl}:headUrl}
-                                style={styles.headerIcon}  />
+                                source={companyInfo.logo ? { uri: headUrl } : headUrl}
+                                style={styles.headerIcon} />
                         </DImage>
                         <View style={styles.personalInfoStyle}>
                             <View style={styles.nameContainer}>
-                                <Text style={[styles.nameText, {fontSize: 18}]} numberOfLines={1}>
+                                <Text style={styles.nameText} numberOfLines={1}>
                                     {companyInfo.name}
                                 </Text>
                             </View>
                         </View>
                     </View>
-                    <View style={styles.divisionLine}></View>
+                    <View style={styles.divisionLine} />
                     <View style={styles.studyDetailContainer}>
                         <View style={styles.panelContainer}>
                             <View style={styles.contentContainer}>
@@ -336,7 +336,7 @@ module.exports = React.createClass({
                             </View>
                             <Text style={styles.timeText}>开通特种兵人数</Text>
                         </View>
-                        <View style={styles.vline}/>
+                        <View style={styles.vline} />
                         <View style={styles.panelContainer}>
                             <View style={styles.contentContainer}>
                                 <Text style={styles.numberStyle}>
@@ -345,7 +345,7 @@ module.exports = React.createClass({
                             </View>
                             <Text style={styles.timeText}>企业入驻天数</Text>
                         </View>
-                        <View style={styles.vline}/>
+                        <View style={styles.vline} />
                         <View style={styles.panelContainer}>
                             <View style={styles.contentContainer}>
                                 <Text style={styles.numberStyle}>
@@ -359,15 +359,15 @@ module.exports = React.createClass({
             </View>
         );
     },
-    renderEmployeeWork(){
-        let {monthWeekPlanNum,dayPlanNum,summaryNum,submitLog, userSum}=this.state;
+    renderEmployeeWork () {
+        const { monthWeekPlanNum, dayPlanNum, summaryNum, submitLog, userSum } = this.state;
         return (
             <View style={styles.workContainer}>
                 <View style={styles.workStyle}>
-                    <View style={styles.verticalLine}></View>
+                    <View style={styles.verticalLine} />
                     <Text style={styles.workText}>员工工作情况</Text>
                 </View>
-                <View style={styles.bottomLine}></View>
+                <View style={styles.bottomLine} />
                 <View style={styles.studyDetailContainer}>
                     <TouchableOpacity onPress={this.toEmployeeTarget} style={styles.buttonContainer}>
                         <DImage
@@ -398,29 +398,29 @@ module.exports = React.createClass({
                     <View style={styles.panelContainer}>
                         <View style={styles.contentContainerPlan}>
                             <Text style={styles.numberBlackStyle}>
-                                {monthWeekPlanNum?monthWeekPlanNum.complete:''}
+                                {monthWeekPlanNum ? monthWeekPlanNum.complete : ''}
                             </Text>
                             <Text style={styles.numberAllStyle}>{'/'}</Text>
                             <Text style={styles.numberAllStyle}>{userSum}</Text>
                         </View>
                         <Text style={styles.numberTipStyle}>目标提交人数</Text>
                     </View>
-                    <View style={styles.vline}/>
+                    <View style={styles.vline} />
                     <View style={styles.panelContainer}>
                         <View style={styles.contentContainerPlan}>
                             <Text style={styles.numberBlackStyle}>
-                                {dayPlanNum?dayPlanNum.complete:''}
+                                {dayPlanNum ? dayPlanNum.complete : ''}
                             </Text>
                             <Text style={styles.numberAllStyle}>{'/'}</Text>
                             <Text style={styles.numberAllStyle}>{userSum}</Text>
                         </View>
                         <Text style={styles.numberTipStyle}>计划提交人数</Text>
                     </View>
-                    <View style={styles.vline}/>
+                    <View style={styles.vline} />
                     <View style={styles.panelContainer}>
                         <View style={styles.contentContainerPlan}>
                             <Text style={styles.numberBlackStyle}>
-                                {summaryNum?summaryNum.complete:''}
+                                {summaryNum ? summaryNum.complete : ''}
                             </Text>
                             <Text style={styles.numberAllStyle}>{'/'}</Text>
                             <Text style={styles.numberAllStyle}>{userSum}</Text>
@@ -430,7 +430,7 @@ module.exports = React.createClass({
                 </View>
                 <ListView
                     initialListSize={1}
-                    enableEmptySections={true}
+                    enableEmptySections
                     style={styles.list}
                     dataSource={submitLog}
                     renderRow={this.renderWorkRow}
@@ -440,46 +440,46 @@ module.exports = React.createClass({
 
         );
     },
-    renderEmployeeTask() {
-        let {taskSubmitRateData}=this.state;
+    renderEmployeeTask () {
+        const { taskSubmitRateData } = this.state;
         return (
             <View style={styles.workContainer}>
                 <View style={styles.workStyle}>
-                    <View style={styles.verticalLine}></View>
+                    <View style={styles.verticalLine} />
                     <Text style={styles.workText}>员工任务提交情况</Text>
                 </View>
-                <View style={styles.bottomLine}></View>
+                <View style={styles.bottomLine} />
                 {
                     this.state.haveData &&
-                    <LineStackChart taskSubmitRateData={taskSubmitRateData}/>
+                    <LineStackChart taskSubmitRateData={taskSubmitRateData} />
                 }
-                <View style={[styles.bottomLine, {marginTop: 8}]}></View>
+                <View style={[styles.bottomLine, { marginTop: 8 }]} />
                 <TouchableOpacity onPress={this.toEmployeeMonthCommit}>
-                    <Text style={[styles.chartBottomText, {marginTop: 10}]}>点击查看详情</Text>
+                    <Text style={[styles.chartBottomText, { marginTop: 10 }]}>点击查看详情</Text>
                 </TouchableOpacity>
             </View>
         );
     },
-    renderEmployeeStudy(){
-        let {avgWhenLong,rose} = this.state;
+    renderEmployeeStudy () {
+        const { avgWhenLong, rose } = this.state;
         return (
             <View style={styles.workContainer}>
                 <View style={styles.workStyle}>
-                    <View style={styles.verticalLine}></View>
+                    <View style={styles.verticalLine} />
                     <Text style={styles.workText}>员工学习情况</Text>
                 </View>
-                <View style={styles.bottomLine}></View>
+                <View style={styles.bottomLine} />
                 <View style={styles.chartTopRowView}>
                     <Text style={styles.chartTopAvgText}>{avgWhenLong}<Text style={styles.chartTopRoseText}>h</Text></Text>
                     <View style={styles.chartTopRoseView}>
-                        <View style={[styles.chartTopRoseMark,rose<0?{transform: [{rotate: '180deg'}]}:null]}></View>
-                        <Text style={styles.chartTopRoseText}>{Math.abs(rose) +'h'}</Text>
+                        <View style={[styles.chartTopRoseMark, rose < 0 ? { transform: [{ rotate: '180deg' }] } : null]} />
+                        <Text style={styles.chartTopRoseText}>{Math.abs(rose) + 'h'}</Text>
                     </View>
                 </View>
                 <Text style={styles.chartTopText}>员工今日平均学习时长</Text>
                 {
                     this.state.haveData &&
-                    <LineChart yData={this.state.yData} xData={this.state.xData?this.state.xData:[]} height={200}/>
+                    <LineChart yData={this.state.yData} xData={this.state.xData ? this.state.xData : []} height={200} />
                 }
                 <TouchableOpacity onPress={this.toEmployeeStudy}>
                     <Text style={styles.chartBottomText}>点击查看详情</Text>
@@ -487,7 +487,7 @@ module.exports = React.createClass({
             </View>
         );
     },
-    renderHeader() {
+    renderHeader () {
         return (
             <View style={styles.pageContainer}>
                 <this.renderUserInfo />
@@ -496,36 +496,36 @@ module.exports = React.createClass({
                 <this.renderEmployeeStudy />
                 <View style={styles.workContainer}>
                     <View style={styles.workStyle}>
-                        <View style={styles.verticalLine}></View>
+                        <View style={styles.verticalLine} />
                         <Text style={styles.workText}>我的赢销特种兵</Text>
                     </View>
-                    <View style={styles.bottomLine}></View>
+                    <View style={styles.bottomLine} />
                 </View>
             </View>
-        )
+        );
     },
-    renderFooter() {
+    renderFooter () {
         return (
             <View style={styles.listFooterContainer}>
                 <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
             </View>
-        )
+        );
     },
-    onEndReached() {
+    onEndReached () {
         if (this.state.infiniteLoadStatus === STATUS_ALL_LOADED || this.state.infiniteLoadStatus === STATUS_TEXT_HIDE) {
             return;
         }
         this.pageNo++;
         this.getSpecialList();
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
-                <View style={styles.separator}></View>
+                <View style={styles.separator} />
                 <ListView
                     initialListSize={1}
                     onEndReachedThreshold={10}
-                    enableEmptySections={true}
+                    enableEmptySections
                     removeClippedSubviews={false}
                     style={styles.listStyle}
                     onEndReached={this.onEndReached}
@@ -537,11 +537,10 @@ module.exports = React.createClass({
                     />
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -559,7 +558,7 @@ var styles = StyleSheet.create({
         backgroundColor: '#F1F1F1',
     },
     personContainer: {
-        width: sr.w-6,
+        width: sr.w - 6,
         height: 147,
         alignSelf: 'center',
         backgroundColor: '#FFFFFF',
@@ -591,7 +590,6 @@ var styles = StyleSheet.create({
     personalInfoStyle: {
         marginLeft: 31,
         justifyContent: 'center',
-        flexDirection: 'column',
     },
     nameContainer: {
         alignItems: 'center',
@@ -600,10 +598,11 @@ var styles = StyleSheet.create({
     nameText: {
         color: '#000000',
         fontSize:18,
+        width: sr.w-115,
         fontFamily: 'STHeitiSC-Medium',
     },
     divisionLine: {
-        width: sr.w-24,
+        width: sr.w - 24,
         height: 1,
         alignSelf: 'center',
         backgroundColor: '#F8F8F8',
@@ -712,21 +711,21 @@ var styles = StyleSheet.create({
         fontFamily: 'STHeitiSC-Medium',
     },
     list: {
-        alignSelf:'stretch'
+        alignSelf:'stretch',
     },
     specposSeparator: {
         height:1,
-        backgroundColor: '#ededed'
+        backgroundColor: '#ededed',
     },
     rowContainer: {
         height: 32,
         flexDirection: 'row',
-        alignItems:'center'
+        alignItems:'center',
     },
     rowSpecopsContainer: {
         height: 52,
         flexDirection: 'row',
-        alignItems:'center'
+        alignItems:'center',
     },
     rowTime: {
         width: 75,

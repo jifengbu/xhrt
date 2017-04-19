@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Image,
@@ -12,12 +12,12 @@ var {
 } = ReactNative;
 
 import Swiper from 'react-native-swiper2';
-var TimerMixin = require('react-timer-mixin');
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var Login = require('../login/Login.js');
-var Home = require('../home/index.js');
-var StudyNum = require('../../data/StudyNum.js');
-var LocalDataMgr = require('../../manager/LocalDataMgr.js');
+const TimerMixin = require('react-timer-mixin');
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const Login = require('../login/Login.js');
+const Home = require('../home/index.js');
+const StudyNum = require('../../data/StudyNum.js');
+const LocalDataMgr = require('../../manager/LocalDataMgr.js');
 
 module.exports = React.createClass({
     mixins: [TimerMixin],
@@ -27,7 +27,7 @@ module.exports = React.createClass({
         };
     },
     doGetPersonalInfo () {
-        var param = {
+        const param = {
             userID: app.personal.info.userID,
             __from__: 'splash',
         };
@@ -35,12 +35,12 @@ module.exports = React.createClass({
     },
     getPersonalInfoSuccess (data) {
         if (data.success) {
-            var context = data.context;
+            const context = data.context;
             context['userID'] = app.personal.info.userID;
             context['phone'] = app.personal.info.phone;
             app.personal.set(context);
-            //初始化学习视频数据
-            var studyNumInfo = app.studyNumMgr.info;
+            // 初始化学习视频数据
+            const studyNumInfo = app.studyNumMgr.info;
             if (studyNumInfo) {
                 if (studyNumInfo.time != app.utils.getCurrentDateString()) {
                     app.studyNumMgr.initStudyNum();
@@ -49,12 +49,13 @@ module.exports = React.createClass({
                 app.studyNumMgr.initStudyNum();
             }
             this.changeToHomePage();
+            app.personal.setNeedLogin(false);
         } else {
             this.getInfoError();
         }
     },
     getInfoError () {
-        app.personal.clear();
+        app.personal.setNeedLogin(true);
         this.changeToLoginPage();
     },
     enterLoginPage (needHideSplashScreen) {
@@ -65,7 +66,7 @@ module.exports = React.createClass({
     },
     changeToLoginPage () {
         if (app.updateMgr.needShowSplash) {
-            this.setState({ renderSplashType: 1 }, ()=>{
+            this.setState({ renderSplashType: 1 }, () => {
                 SplashScreen.hide();
             });
         } else {
@@ -80,7 +81,7 @@ module.exports = React.createClass({
     },
     changeToHomePage () {
         if (app.updateMgr.needShowSplash) {
-            this.setState({ renderSplashType: 2 }, ()=>{
+            this.setState({ renderSplashType: 2 }, () => {
                 SplashScreen.hide();
             });
         } else {
@@ -96,21 +97,20 @@ module.exports = React.createClass({
         }
     },
     changeToNextPage () {
-        let loginMethod = LocalDataMgr.getValueFromKey('loginMethod');
+        const loginMethod = LocalDataMgr.getValueFromKey('loginMethod');
         if (loginMethod == 1) {
             this.changeToLoginPage();
         } else {
-            if (app.personal.info) {
-                this.doGetPersonalInfo();
-            } else {
+            if (app.personal.needLogin) {
                 this.changeToLoginPage();
+            } else {
+                this.doGetPersonalInfo();
             }
         }
-
     },
     componentDidMount () {
         app.utils.until(
-            () => app.updateMgr.initialized && app.navigator && app.uniqueLoginMgr.uuid,
+            () => app.personal.initialized && app.updateMgr.initialized && app.navigator && app.uniqueLoginMgr.uuid,
             (cb) => setTimeout(cb, 100),
             () => this.changeToNextPage()
         );
@@ -118,24 +118,24 @@ module.exports = React.createClass({
     componentWillUnmount () {
         app.updateMgr.checkUpdate();
     },
-    onLayout(e) {
-        var {height} = e.nativeEvent.layout;
+    onLayout (e) {
+        const { height } = e.nativeEvent.layout;
         if (this.state.height !== height) {
             this.heightHasChange = !!this.state.height;
             this.setState({ height });
         }
     },
     renderSwiperSplash () {
-        const {height} = this.state;
-        const marginBottom = (!this.heightHasChange || Math.floor(height)===Math.floor(sr.th)) ? 0 : 30;
+        const { height } = this.state;
+        const marginBottom = (!this.heightHasChange || Math.floor(height) === Math.floor(sr.th)) ? 0 : 30;
         return (
-            <View style={{flex: 1}} onLayout={this.onLayout}>
+            <View style={{ flex: 1 }} onLayout={this.onLayout}>
                 {
                     height &&
                     <Swiper
                         paginationStyle={styles.paginationStyle}
-                        dot={<View style={{ backgroundColor:'#FFFCF4', width: 8, height: 8, borderRadius: 4, marginLeft: 8, marginRight: 8, marginBottom}} />}
-                        activeDot={<View style={{ backgroundColor:'#FFCD53', width: 16, height: 8, borderRadius: 4, marginLeft: 8, marginRight: 8, marginBottom}} />}
+                        dot={<View style={{ backgroundColor:'#FFFCF4', width: 8, height: 8, borderRadius: 4, marginLeft: 8, marginRight: 8, marginBottom }} />}
+                        activeDot={<View style={{ backgroundColor:'#FFCD53', width: 16, height: 8, borderRadius: 4, marginLeft: 8, marginRight: 8, marginBottom }} />}
                         height={height}
                         loop={false}>
                         {
@@ -145,7 +145,7 @@ module.exports = React.createClass({
                                         key={i}
                                         resizeMode='stretch'
                                         source={app.img['splash_splash' + i]}
-                                        style={[styles.bannerImage, {height}]}>
+                                        style={[styles.bannerImage, { height }]}>
                                         {
                                             i === 4 &&
                                             <TouchableOpacity
@@ -168,7 +168,7 @@ module.exports = React.createClass({
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     paginationStyle: {
         bottom: 30,
     },

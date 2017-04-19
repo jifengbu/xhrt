@@ -1,53 +1,53 @@
 'use strict';
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     AsyncStorage,
 } = ReactNative;
-var EventEmitter = require('EventEmitter');
+const EventEmitter = require('EventEmitter');
 
-const ITEM_NAME = "leftTimes";
+const ITEM_NAME = 'leftTimes';
 
 class LeftTimes extends EventEmitter {
-  	constructor() {
-          super();
-          this.get();
-  	}
-    get() {
-        return new Promise(async(resolve, reject)=>{
-            var INIT_INFO = {'10001':0, '10002':0, '10003':0};
-            var info = INIT_INFO;
+    constructor () {
+        super();
+        this.get();
+    }
+    get () {
+        return new Promise(async(resolve, reject) => {
+            const INIT_INFO = { '10001':0, '10002':0, '10003':0 };
+            let info = INIT_INFO;
             try {
-                var infoStr = await AsyncStorage.getItem(ITEM_NAME);
+                const infoStr = await AsyncStorage.getItem(ITEM_NAME);
                 info = JSON.parse(infoStr);
-            } catch(e) {
+            } catch (e) {
                 info = INIT_INFO;
             }
             this.info = info;
         });
     }
-    set(info) {
-        return new Promise(async(resolve, reject)=>{
+    set (info) {
+        return new Promise(async(resolve, reject) => {
             this.info = info;
             await AsyncStorage.setItem(ITEM_NAME, JSON.stringify(info));
             resolve();
         });
     }
-    setLeftTimes(type, times) {
+    setLeftTimes (type, times) {
         this.info[type] = times;
         this.set(this.info);
     }
-    addLeftTimes(type, times) {
-        this.info[type] = (this.info[type]||0)+times;
+    addLeftTimes (type, times) {
+        this.info[type] = (this.info[type] || 0) + times;
         this.set(this.info);
     }
-    subLeftTime(type) {
-        this.info[type] = (this.info[type]||0)-1;
+    subLeftTime (type) {
+        this.info[type] = (this.info[type] || 0) - 1;
         this.set(this.info);
     }
-    getLeftTimeByType(type) {
+    getLeftTimeByType (type) {
         return this.info[type];
     }
-    clear() {
+    clear () {
         this.info = null;
         AsyncStorage.removeItem(ITEM_NAME);
     }

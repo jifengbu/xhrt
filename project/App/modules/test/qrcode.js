@@ -3,20 +3,19 @@ import React from 'react';
 import {
     StyleSheet,
     Text,
-    View
+    View,
 } from 'react-native';
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
+const SplashScreen = require('@remobile/react-native-splashscreen');
 import BarcodeScanner from 'react-native-barcode-scanner-universal';
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    onBarCodeRead(code) {
-        var {data} = code;
+    onBarCodeRead (code) {
+        const { data } = code;
         Toast(data);
-    
     },
     render () {
         return (
@@ -47,13 +46,13 @@ module.exports = React.createClass({
                     }
                 </BarcodeScanner>
             </View>
-        )
-    }
+        );
+    },
 });
 
-var OVERLAY = 'rgba(0, 0, 0, 0.2)';
-var BORDER = 2;
-var styles = StyleSheet.create({
+const OVERLAY = 'rgba(0, 0, 0, 0.2)';
+const BORDER = 2;
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },

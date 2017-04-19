@@ -2,6 +2,9 @@ rootProject.name = 'YXjqd'
 
 include ':app'
 
+include ':ReactAndroid'
+project(':ReactAndroid').projectDir = new File(rootProject.projectDir, '../node_modules/react-native/ReactAndroid')
+
 //RemobileLibraries
 include ':react-native-splashscreen'
 project(':react-native-splashscreen').projectDir = new File(settingsDir, '../App/node_modules/@remobile/react-native-splashscreen/android')
@@ -38,6 +41,9 @@ project(':react-native-capture').projectDir = new File(settingsDir, '../App/node
 
 include ':react-native-image-picker'
 project(':react-native-image-picker').projectDir = new File(settingsDir, '../App/node_modules/@remobile/react-native-image-picker/android')
+
+include ':react-native-picker'
+project(':react-native-picker').projectDir = new File(settingsDir, '../App/node_modules/@remobile/react-native-picker/android')
 
 include ':react-native-video'
 project(':react-native-video').projectDir = new File(settingsDir, '../App/node_modules/@remobile/react-native-video/android')

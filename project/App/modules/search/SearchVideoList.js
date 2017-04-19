@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -9,39 +9,39 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var VideoPlay = require('../study/VideoPlay.js');
-var ShowMealBox = require('../package/ShowMealBox.js');
-var PackageList = require('../package/PackageList.js');
-var {PageList} = COMPONENTS;
-const {STATUS_TEXT_HIDE,  STATUS_ALL_LOADED} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
-//备注：因为没有课程亮点标签，所以后台选的类型事课程亮点的话就显示特种兵
+const VideoPlay = require('../study/VideoPlay.js');
+const ShowMealBox = require('../package/ShowMealBox.js');
+const PackageList = require('../package/PackageList.js');
+const { PageList } = COMPONENTS;
+const { STATUS_TEXT_HIDE, STATUS_ALL_LOADED } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+// 备注：因为没有课程亮点标签，所以后台选的类型事课程亮点的话就显示特种兵
 const LABEL_IMAGES = [
-     app.img.home_class,
-     app.img.study_mark_1,
-     app.img.study_mark_2,
-     app.img.study_mark_3,
-     app.img.study_mark_3,
+    app.img.home_class,
+    app.img.study_mark_1,
+    app.img.study_mark_2,
+    app.img.study_mark_3,
+    app.img.study_mark_3,
 ];
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             ShowMealBox: false,
         };
     },
-    doCancle() {
-        this.setState({ShowMealBox: false});
+    doCancle () {
+        this.setState({ ShowMealBox: false });
     },
-    doPayConfirm() {
+    doPayConfirm () {
         app.navigator.push({
             title: '套餐',
             component: PackageList,
         });
-        this.setState({ShowMealBox: false});
+        this.setState({ ShowMealBox: false });
     },
-    updateClickOrLikeNum(clickNum) {
-        this.listView.updateList((list)=>{
-            var video = _.find(list, (item)=>item.videoID==clickNum.videoID);
+    updateClickOrLikeNum (clickNum) {
+        this.listView.updateList((list) => {
+            const video = _.find(list, (item) => item.videoID == clickNum.videoID);
             if (video) {
                 if (clickNum.type === 'click') {
                     video.clicks += 1;
@@ -52,45 +52,45 @@ module.exports = React.createClass({
             return list;
         });
     },
-    playVideo(obj) {
-        if (app.personal.info.userType == "0" && obj.isFree != 1) {
-            this.setState({ShowMealBox: true});
+    playVideo (obj) {
+        if (app.personal.info.userType == '0' && obj.isFree != 1) {
+            this.setState({ ShowMealBox: true });
             return;
         }
-        if (app.personal.info.userType == "1" && obj.isFree != 1) {
-            if (_.find(app.personal.info.validVideoList,(item)=>item==obj.videoID)) {
+        if (app.personal.info.userType == '1' && obj.isFree != 1) {
+            if (_.find(app.personal.info.validVideoList, (item) => item == obj.videoID)) {
                 app.navigator.push({
                     title: obj.name,
                     component: VideoPlay,
-                    passProps: {videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum},
+                    passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
                 });
                 return;
             }
-            this.setState({ShowMealBox: true});
+            this.setState({ ShowMealBox: true });
             return;
         }
         app.navigator.push({
             title: obj.name,
             component: VideoPlay,
-            passProps: {videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum},
+            passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
         });
     },
-    renderRow(obj) {
+    renderRow (obj) {
         return (
             <TouchableHighlight
                 onPress={this.playVideo.bind(null, obj)}
                 style={styles.renderStyle}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.row}>
                     <View style={styles.rowLeft}>
                         <Image
                             resizeMode='stretch'
                             defaultSource={app.img.common_default}
-                            source={{uri:obj.videoListImg||obj.urlImg}}
+                            source={{ uri:obj.videoListImg || obj.urlImg }}
                             style={styles.icon} />
                         <Image
                             resizeMode='stretch'
-                            source={LABEL_IMAGES[obj.videoType-1]}
+                            source={LABEL_IMAGES[obj.videoType - 1]}
                             style={styles.labelStyle} />
                     </View>
                     <View style={styles.rowRight}>
@@ -99,28 +99,28 @@ module.exports = React.createClass({
                         </Text>
                         <View style={styles.contentContainer}>
                             <Text style={styles.content} >
-                                {'主讲: '+obj.author}
+                                {'主讲: ' + obj.author}
                             </Text>
                         </View>
                         <View style={styles.contentContainer}>
                             <Text style={styles.content} >
-                                {'点击: '+(obj.clicks*3+50)}
+                                {'点击: ' + (obj.clicks * 3 + 50)}
                             </Text>
                             <Text style={styles.content} >
-                                {'    赞: '+obj.likes}
+                                {'    赞: ' + obj.likes}
                             </Text>
                         </View>
                         <View style={styles.buttonContainer}>
                             {
-                                obj.label.map((item, i)=>{
-                                    if (i<3) {
+                                obj.label.map((item, i) => {
+                                    if (i < 3) {
                                         return (
                                             <View key={i} style={styles.buttonTextContainer}>
                                                 <Text style={styles.button} >
                                                     {item.labelName}
                                                 </Text>
                                             </View>
-                                        )
+                                        );
                                     }
                                 })
                             }
@@ -128,39 +128,37 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    render() {
-        const {keyword, videoList} = this.props;
+    render () {
+        const { keyword, videoList } = this.props;
         return (
             <View style={styles.container}>
                 <Text style={styles.titleText}>学习</Text>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID, keyword, searchType: 0,}}
-                    listName="videoList"
+                    listParam={{ userID: app.personal.info.userID, keyword, searchType: 0 }}
+                    listName='videoList'
                     listUrl={app.route.ROUTE_SEARCH_VIDEO}
-                    refreshEnable={true}
+                    refreshEnable
                     autoLoad={false}
                     list={videoList}
                     pageNo={1}
                     infiniteLoadStatus={videoList.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_TEXT_HIDE}
                     />
-                    {
+                {
                         this.state.ShowMealBox &&
                         <ShowMealBox
                             doConfirm={this.doPayConfirm}
-                            doCancle={this.doCancle}>
-                        </ShowMealBox>
+                            doCancle={this.doCancle} />
                     }
             </View>
         );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -198,7 +196,7 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
     },
     renderStyle: {
         height: 105,
@@ -246,6 +244,6 @@ var styles = StyleSheet.create({
     },
     button: {
         color:'#95999f',
-        fontSize: 12
+        fontSize: 12,
     },
 });

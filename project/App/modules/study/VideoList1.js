@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Text,
@@ -12,40 +12,39 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var VideoPlay = require('./VideoPlay.js');
-var {PageList} = COMPONENTS;
+const VideoPlay = require('./VideoPlay.js');
+const { PageList } = COMPONENTS;
 
 module.exports = React.createClass({
-    checkFirstPageList() {
+    checkFirstPageList () {
         if (!this.hasGetList) {
             this.hasGetList = true;
             this.listView.getList(true);
         }
     },
-    //更新视频的播放和点赞数量
-    updateClickOrLikeNum(clickNum) {
-        var video = _.find(this.props.videoList, (item)=>item.videoID==clickNum.videoID);
+    // 更新视频的播放和点赞数量
+    updateClickOrLikeNum (clickNum) {
+        const video = _.find(this.props.videoList, (item) => item.videoID == clickNum.videoID);
         if (video) {
             if (clickNum.type === 'click') {
                 video.clicks += 1;
             } else if (clickNum.type === 'heart') {
                 video.likes += 1;
             }
-            this.setState({dataSource: this.ds.cloneWithRows(this.props.videoList)})
+            this.setState({ dataSource: this.ds.cloneWithRows(this.props.videoList) });
         }
     },
-    _onPressRow(obj) {
-        if (app.personal.info.userType == "0" && obj.isFree != 1) {
+    _onPressRow (obj) {
+        if (app.personal.info.userType == '0' && obj.isFree != 1) {
             this.props.ShowMealBoxChange();
             return;
         }
-        if (app.personal.info.userType == "1" && obj.isFree != 1) {
-
-            if (_.find(app.personal.info.validVideoList,(item)=>item==obj.videoID)) {
+        if (app.personal.info.userType == '1' && obj.isFree != 1) {
+            if (_.find(app.personal.info.validVideoList, (item) => item == obj.videoID)) {
                 app.navigator.push({
                     title: obj.name,
                     component: VideoPlay,
-                    passProps: {videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum},
+                    passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
                 });
                 return;
             }
@@ -55,22 +54,22 @@ module.exports = React.createClass({
         app.navigator.push({
             title: obj.name,
             component: VideoPlay,
-            passProps: {videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum},
+            passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
         });
     },
-    renderSeparator(sectionID, rowID) {
+    renderSeparator (sectionID, rowID) {
         return (
-            <View style={styles.separator} key={rowID}/>
+            <View style={styles.separator} key={rowID} />
         );
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <TouchableOpacity
                 onPress={this._onPressRow.bind(null, obj)}>
                 <Image
                     resizeMode='stretch'
                     defaultSource={app.img.common_default}
-                    source={{uri:obj.urlImg}}
+                    source={{ uri:obj.urlImg }}
                     style={styles.row} >
                     <Image
                         resizeMode='stretch'
@@ -82,13 +81,13 @@ module.exports = React.createClass({
                             </Text>
                             <View style={styles.infoContainer}>
                                 <Text style={styles.content} >
-                                    {'主讲: '+obj.author}
+                                    {'主讲: ' + obj.author}
                                 </Text>
                                 <Text style={styles.content} >
-                                    {'     播放: '+(obj.clicks*3+50)}
+                                    {'     播放: ' + (obj.clicks * 3 + 50)}
                                 </Text>
                                 <Text style={styles.content} >
-                                    {'     赞: '+obj.likes}
+                                    {'     赞: ' + obj.likes}
                                 </Text>
                             </View>
                         </View>
@@ -97,22 +96,22 @@ module.exports = React.createClass({
                                 <Image
                                     resizeMode='stretch'
                                     source={app.img.study_prize_label}
-                                    style={styles.prize}/>
+                                    style={styles.prize} />
                                 <Text style={styles.bannerText}>
                                     {'有奖视频'}
                                 </Text>
                             </View>
                             <View style={styles.rightTextContainer}>
                                 {
-                                    obj.label.map((item, i)=>{
+                                    obj.label.map((item, i) => {
                                         return (
-                                            i<3 &&
+                                            i < 3 &&
                                             <View style={styles.buttonTextContainer} key={i}>
                                                 <Text style={styles.labelText}>
                                                     {item.labelName}
                                                 </Text>
                                             </View>
-                                        )
+                                        );
                                     })
                                 }
                             </View>
@@ -120,39 +119,38 @@ module.exports = React.createClass({
                     </Image>
                 </Image>
             </TouchableOpacity>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={this.props.style}>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     autoLoad={false}
                     disable={this.props.disable}
                     renderRow={this.renderRow}
                     renderSeparator={this.renderSeparator}
-                    listParam={{videoType: this.props.type,userID: app.personal.info.userID}}
-                    listName="videoList"
+                    listParam={{ videoType: this.props.type, userID: app.personal.info.userID }}
+                    listName='videoList'
                     listUrl={app.route.ROUTE_GET_VIDEO_LIST}
-                    refreshEnable={true}
+                    refreshEnable
                     />
             </View>
         );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
     list: {
-        alignSelf:'stretch'
+        alignSelf:'stretch',
     },
     separator: {
-        backgroundColor: '#CCC'
+        backgroundColor: '#CCC',
     },
     row: {
         height: 195,

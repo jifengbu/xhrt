@@ -37,8 +37,8 @@
 		}
 
 		.mui-herder-projection {
-			margin: 9px 9px -20px 9px;
-			height: 85px;
+			margin: 9px 9px 2px 9px;
+			/*height: 85px;*/
 			border-radius: 8px;
 			padding-right: 5px;
 		}
@@ -53,6 +53,7 @@
 		.mui-footer {
 			height: 40px;
 			padding: 10px;
+			margin-bottom: 5px;
 			color: #999999;
 			font-size:12px
 		}
@@ -103,11 +104,13 @@
 			</div>
 			<div class="mui-content bg-color">
 				<div style="color: #575757;margin: 19px;">
-					<hr style="border : 1px dashed grey;" />
-					<img style="width:100px;height:30px;margin-left:-20px" src="../../img/homeworkQuestion.png"/>
-					<br/>
-					<p id="homeworkTitle" style="margin-top:20px"></p>
-					<hr style="border : 1px dashed grey;" />
+					<hr style="border : 1px dashed #898989;" />
+					<div class="homeworkTitleDiv">
+						<img style="width:100px;height:30px;margin-left:-20px" src="../../img/homeworkQuestion.png"/>
+						<br/>
+						<p id="homeworkTitle" style="margin-top:20px"></p>
+						<hr style="border : 1px dashed #bbbbbb;" />
+					</div>
 				</div>
 
 				<div style="color: #575757;margin: 19px;">
@@ -117,9 +120,10 @@
 			<div class="mui-footer">
 				<div style="float: left; margin-left: 2px;margin-top:3px">字数:<span id='homeworkLength'></span></div>
 				<div style="float: left; margin-left: 40px;" id='praiseDiv'></div>
+				<div style="float: left; margin-left: 40px;margin-top:3px"  id='lookedNum'>阅读次数:<span></span></div>
 				<div id='leaveMessage' style="float: right; margin-right: 12px;margin-top:2px">
 					<!--<img class="mui-icon" src="../../img/leaveMessage.png" />&nbsp写留言-->
-					<img src="../../img/time.png" />
+					<img src="../../img/clock.png" />
 					<div id="submitTime" class="mui-time"></div><br />
 				</div>
 			</div>
@@ -158,11 +162,13 @@
 		function getDataSuccess(data) {
 			if (data.success) {
 				showPage(data.context||{})
-				app.weixin.registerWeixinConfig(window.location.href, function() {
-					app.weixin.setWeixinMenuShare(window.location.href, {
+				var html = window.location.href;
+				app.weixin.registerWeixinConfig(html, function() {
+					app.weixin.setWeixinMenuShare(html, {
 						homeworkId:params.homeworkId,
+						isShare:1,
 						title:params.courseName,
-						desc:data.context.authorCompany+data.context.authorPosition+data.context.authorName+params.courseName==undefined?'':params.courseName+'的作业',
+						desc:data.context.authorCompany+' | '+data.context.authorPosition+' | '+data.context.authorName+' | '+data.context.homeworkDetail.length+'字 |  课程学习总结',
 					});
 				});
 			}
@@ -216,11 +222,12 @@
 			$('#homeworkTitle').html(titleHtml);
 			$('#homeworkDetail').html(html);
 			$('#authortite').text(data.authorName);
-			$('#submitTime').text(data.homeworkSubmitTime);
+			$('#submitTime').text(data.homeworkSubmitTime.slice(0,16));
 			$('#authorName').text(data.authorName);
 			$('#authorCompany').text(data.authorCompany);
 			$('#authorPosition').text(data.authorPosition);
 			$('#homeworkLength').text(data.homeworkDetail.length);
+			$('#lookedNum span').text(data.lookedNum);
 			updatePraise();
 		}
 	   function doSubmit() {
@@ -281,6 +288,12 @@
 			swipeBack: true
 		});
 		var params = app.router.getParameter();
+		if (typeof(params.praise)=='undefined' || params.isShare==1) {
+			$("#praiseDiv").hide();
+		} else {
+			$("#lookedNum").hide();
+		}
+		$(".homeworkTitleDiv").hide();
 		app.global.set("params", params);
 		getData(params.homeworkId);
 	</script>

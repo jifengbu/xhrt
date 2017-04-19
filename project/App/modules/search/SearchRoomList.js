@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {
+const React = require('react');
+const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     View,
@@ -10,26 +10,25 @@ var {
     Image,
 } = ReactNative;
 
-var moment = require('moment');
-var MeetingRoom = require('../meeting/MeetingRoom.js');
+const moment = require('moment');
+const MeetingRoom = require('../meeting/MeetingRoom.js');
 
-var {Button, PageList} = COMPONENTS;
-const {STATUS_TEXT_HIDE,  STATUS_ALL_LOADED} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+const { Button, PageList } = COMPONENTS;
+const { STATUS_TEXT_HIDE, STATUS_ALL_LOADED } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
 
 module.exports = React.createClass({
-    enterMeetingRoom(obj) {
+    enterMeetingRoom (obj) {
         if (app.personal.info.isSpecialSoldier === 1) {
             app.navigator.push({
                 title: obj.theme,
                 component: MeetingRoom,
-                passProps: {roomInfo: obj},
+                passProps: { roomInfo: obj },
             });
-        }
-        else {
-            Toast("特种兵身份才能进入!!");
+        } else {
+            Toast('特种兵身份才能进入!!');
         }
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.sectionContainer}>
@@ -41,7 +40,7 @@ module.exports = React.createClass({
                     <Text
                         numberOfLines={1}
                         style={styles.roomNo}>
-                        {'('+obj.roomNO+')'}
+                        {'(' + obj.roomNO + ')'}
                     </Text>
                 </View>
                 <View style={styles.sectionContainer}>
@@ -61,20 +60,20 @@ module.exports = React.createClass({
                     </Button>
                 </View>
             </View>
-        )
+        );
     },
-    render() {
-        const {keyword, roomList} = this.props;
+    render () {
+        const { keyword, roomList } = this.props;
         return (
             <View style={styles.container}>
                 <Text style={styles.titleText}>房间</Text>
                 <PageList
-                    ref={listView=>this.listView=listView}
+                    ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
-                    listParam={{userID: app.personal.info.userID, keyword}}
-                    listName="roomList"
+                    listParam={{ userID: app.personal.info.userID, keyword }}
+                    listName='roomList'
                     listUrl={app.route.ROUTE_SEARCH_ROOM}
-                    refreshEnable={true}
+                    refreshEnable
                     autoLoad={false}
                     list={roomList}
                     pageNo={1}
@@ -82,11 +81,10 @@ module.exports = React.createClass({
                     />
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -121,7 +119,7 @@ var styles = StyleSheet.create({
         color: '#939495',
         fontSize: 15,
         backgroundColor: 'transparent',
-        width: sr.w-40,
+        width: sr.w - 40,
     },
     time: {
         color: '#939495',

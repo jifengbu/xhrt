@@ -12,25 +12,24 @@ import {
     InteractionManager,
 } from 'react-native';
 
-var moment = require('moment');
-var {Button, InputBox, DImage} = COMPONENTS;
-var CopyBox = require('../home/CopyBox.js');
+const moment = require('moment');
+const { Button, InputBox, DImage, Picker } = COMPONENTS;
+const CopyBox = require('../home/CopyBox.js');
 import Swiper from 'react-native-swiper2';
-import Picker from './Picker.js';
 
-var NoCommitUserHead = require('./NoCommitUserHead.js');
-var WeekPlanItem = require('./WeekPlanItem.js');
-var WeekSummaryItem = require('./WeekSummaryItem.js');
-const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+const NoCommitUserHead = require('./NoCommitUserHead.js');
+const WeekPlanItem = require('./WeekPlanItem.js');
+const WeekSummaryItem = require('./WeekSummaryItem.js');
+const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
 
 module.exports = React.createClass({
-    onStartShouldSetResponderCapture(evt){
+    onStartShouldSetResponderCapture (evt) {
         app.touchPosition.x = evt.nativeEvent.pageX;
         app.touchPosition.y = evt.nativeEvent.pageY;
         return false;
     },
-    getInitialState() {
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    getInitialState () {
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         this.monthData = [];
         this.isDayPlan = true;
         this.isDaySummary = false;
@@ -46,20 +45,23 @@ module.exports = React.createClass({
             DaySummaryAndProblem: [],
         };
     },
-    clearMonthData() {
-        this.setState({NoCommitUser: []});
-        this.setState({DayPlanAndActual: []});
-        this.setState({DaySummaryAndProblem: []});
+    onWillHide() {
+        Picker.hide();
+    },
+    clearMonthData () {
+        this.setState({ NoCommitUser: [] });
+        this.setState({ DayPlanAndActual: [] });
+        this.setState({ DaySummaryAndProblem: [] });
         this.pageNo = 1;
     },
-    componentDidMount() {
+    componentDidMount () {
         this.clearMonthData();
 
         // is plan and summary
         if (this.props.isDayPlan == true) {
             this.isDayPlan = true;
             this.isDaySummary = false;
-        }else if (this.props.isDaySummary == true){
+        } else if (this.props.isDaySummary == true) {
             this.isDayPlan = false;
             this.isDaySummary = true;
         }
@@ -76,30 +78,30 @@ module.exports = React.createClass({
         this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
         this.getMonthPlanNoFinishList(this.monthData[this.currentIndex][this.tabIndex]);
 
-        setTimeout(()=>{
-            this.setState({haveTimeData: true});
+        setTimeout(() => {
+            this.setState({ haveTimeData: true });
         }, 600);
     },
-    generateMyCurrentYearMonth(){
+    generateMyCurrentYearMonth () {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
         }
 
-        let ret = {};
+        const ret = {};
         ret.year = moment().year();
         ret.month = moment().month();
         if (moment(firstMonday).date() > moment().date()) {
@@ -111,9 +113,9 @@ module.exports = React.createClass({
         }
         return ret;
     },
-    generateCurrentTimeStr(timeStr){
-        let currentTimeStr = moment(timeStr).format('YYYY年MM月D日')
-        let weekNum = moment(timeStr).day();
+    generateCurrentTimeStr (timeStr) {
+        let currentTimeStr = moment(timeStr).format('YYYY年MM月D日');
+        const weekNum = moment(timeStr).day();
         let currentWeekStr = '';
 
         switch (weekNum) {
@@ -140,63 +142,63 @@ module.exports = React.createClass({
                 break;
         }
 
-        currentTimeStr = currentTimeStr+'   '+currentWeekStr;
+        currentTimeStr = currentTimeStr + '   ' + currentWeekStr;
         console.log(currentTimeStr);
         return currentTimeStr;
     },
-    generateMonthData(year, month){
+    generateMonthData (year, month) {
         this.monthData = [];
-        for (var i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++) {
             this.monthData[i] = [];
         }
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).set('month', month).set('year', year).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
         }
         // get week first day date
-        for (var i = 0; i < 6; i++) {
-            if (moment(firstMonday).add(7*i, 'd').month() === moment(firstMonday).month()) {
-                this.monthData[i].push(moment(firstMonday).add(7*i, 'd').format('YYYY-MM-DD'));
-            }else {
-                this.setState({weekCount: i});
+        for (let i = 0; i < 6; i++) {
+            if (moment(firstMonday).add(7 * i, 'd').month() === moment(firstMonday).month()) {
+                this.monthData[i].push(moment(firstMonday).add(7 * i, 'd').format('YYYY-MM-DD'));
+            } else {
+                this.setState({ weekCount: i });
                 this.memWeekCount = i;
                 break;
             }
         }
         // generate 7 day date
-        for (var i = 0; i < this.monthData.length; i++) {
-            for (var j = 1; j < 7; j++) {
+        for (let i = 0; i < this.monthData.length; i++) {
+            for (let j = 1; j < 7; j++) {
                 if (this.monthData[i].length > 0) {
                     this.monthData[i][j] = moment(this.monthData[i][0]).add(j, 'd').format('YYYY-MM-DD');
                 }
             }
         }
-        _.remove(this.monthData, (item)=>item.length===0);
+        _.remove(this.monthData, (item) => item.length === 0);
 
         console.log(this.monthData);
     },
-    getCurrentWeekIndex() {
-        var index = 0;
-        var strWeek = '';
+    getCurrentWeekIndex () {
+        let index = 0;
+        let strWeek = '';
         if (moment().day() === 0) {
             strWeek = moment().subtract(1, 'd').format('YYYY-MM-DD');
-        }else {
+        } else {
             strWeek = moment().format('YYYY-MM-DD');
         }
-        for (var i = 0; i < this.memWeekCount; i++) {
+        for (let i = 0; i < this.memWeekCount; i++) {
             if (moment(this.monthData[i][0]).week() === moment(strWeek).week()) {
                 index = i;
                 break;
@@ -204,37 +206,37 @@ module.exports = React.createClass({
         }
         return index;
     },
-    getCurrentDayIndex() {
-        var index = 0;
+    getCurrentDayIndex () {
+        let index = 0;
         if (moment().day() === 0) {
             index = 6;
-        }else {
-            index = moment().day()-1;
+        } else {
+            index = moment().day() - 1;
         }
         return index;
     },
-    getWeekNum(time){
+    getWeekNum (time) {
         let currentWeek = moment(time).week();
-        let currentWeekday = moment(time).weekday();
-        if (currentWeekday===0) {
+        const currentWeekday = moment(time).weekday();
+        if (currentWeekday === 0) {
             currentWeek = currentWeek - 1;
         }
         return currentWeek;
     },
-    getCurrentMonthMonday(){
+    getCurrentMonthMonday () {
         // find month first monday
-        var isFirstMonday = false;
-        var addPos = 0;
+        let isFirstMonday = false;
+        let addPos = 0;
 
-        var firstDay = '';
+        let firstDay = '';
         firstDay = moment().set('date', 1).format('YYYY-MM-DD');
 
-        var firstMonday = '';
+        let firstMonday = '';
         while (isFirstMonday === false) {
-            var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+            const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
             if (isMonday === 1) {
                 isFirstMonday = true;
-                firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                 break;
             }
             addPos++;
@@ -245,10 +247,10 @@ module.exports = React.createClass({
             firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
             firstMonday = '';
             while (isFirstMonday === false) {
-                var isMonday = moment(firstDay).add(1*addPos, 'd').day();
+                const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
                 if (isMonday === 1) {
                     isFirstMonday = true;
-                    firstMonday = moment(firstDay).add(1*addPos, 'd').format('YYYY-MM-DD');
+                    firstMonday = moment(firstDay).add(1 * addPos, 'd').format('YYYY-MM-DD');
                     break;
                 }
                 addPos++;
@@ -256,91 +258,91 @@ module.exports = React.createClass({
         }
         return firstMonday;
     },
-    getCurrentMonth(){
-        var strFirstMonday = this.getCurrentMonthMonday();
-        var monthNum = 0;
+    getCurrentMonth () {
+        const strFirstMonday = this.getCurrentMonthMonday();
+        let monthNum = 0;
         if (moment().date() < moment(strFirstMonday).date()) {
             return moment().month();
-        }else {
-            return moment().month()+1;
+        } else {
+            return moment().month() + 1;
         }
     },
-    getCurrentYear(){
-        var strFirstMonday = this.getCurrentMonthMonday();
-        var monthNum = 0;
+    getCurrentYear () {
+        const strFirstMonday = this.getCurrentMonthMonday();
+        let monthNum = 0;
         if (moment().date() < moment(strFirstMonday).date()) {
             if (moment().month() == 0) {
-                return moment().year()-1;
+                return moment().year() - 1;
             }
         }
         return moment().year();
     },
     // get time data
-    createTimeData(joinTime) {
-        let joinYear = moment(joinTime).year();
-        let joinMonth = moment(joinTime).month();
+    createTimeData (joinTime) {
+        const joinYear = moment(joinTime).year();
+        const joinMonth = moment(joinTime).month();
 
-        let date = {};
-        let currentYear = moment().year();
-        let currentMonth = moment().month();
+        const date = [];
+        const currentYear = moment().year();
+        const currentMonth = moment().month();
 
-        for (var i = joinYear; i <= currentYear; i++) {
-            let month = [];
-            for (var j = 1; j < 13; j++) {
+        for (let i = joinYear; i <= currentYear; i++) {
+            const month = [];
+            for (let j = 1; j < 13; j++) {
                 if (i == joinYear) {
                     if (j >= joinMonth) {
-                        month.push(j+'月');
+                        month.push(j + '月');
                     }
-                }else if (i == currentYear) {
+                } else if (i == currentYear) {
                     if (j <= currentMonth) {
-                        month.push(j+'月');
+                        month.push(j + '月');
                     }
-                }else {
-                    month.push(j+'月');
+                } else {
+                    month.push(j + '月');
                 }
             }
-            date[i+'年'] = month;
+            let _date = {};
+            _date[i + '年'] = month;
+            date.push(_date);
         }
 
         return date;
     },
-    onPressShowPicker(type) {
-        if (!this.picker.isPickerShow()) {
-            let date = moment();
-            let currentData = [date.year()+'年', (date.month()+1)+'月'];
-            this.setState({defaultSelectValue: currentData, pickerData: this.createTimeData(app.personal.info.companyInfo.enterDate)});
-            this.picker.show();
-        } else {
-            this.picker.hide();
-        }
+    onPressShowPicker (type) {
+        let date = moment();
+        let defaultSelectValue = [date.year() + '年', (date.month() + 1) + '月'];
+        let pickerData = this.createTimeData(app.personal.info.companyInfo.enterDate);
+        Picker(pickerData, defaultSelectValue, '').then((value)=>{
+            this.setChooseValue(value);
+        });
     },
-    getMonthPlanNoFinishList(month) {
-        let info = app.personal.info;
-        var param = {
+    getMonthPlanNoFinishList (month) {
+        const info = app.personal.info;
+        const param = {
             companyId: info.companyInfo.companyId,
             date: month,
             userID: info.userID,
-            type: this.isDayPlan?2:3,
+            type: this.isDayPlan ? 2 : 3,
         };
         POST(app.route.ROUTE_GET_NO_FINISH_EMPLOYEES, param, this.getMonthPlanNoFinishListSuccess, true);
     },
-    getMonthPlanNoFinishListSuccess(data) {
+    getMonthPlanNoFinishListSuccess (data) {
         if (data.success) {
             // no commit user
             // this.state.NoCommitUser = data.context.list.slice(0);
-            this.setState({NoCommitUser: data.context.list});
+            this.setState({ NoCommitUser: data.context.list });
         }
     },
-    getDayViewData(dayDate){
+    getDayViewData (dayDate) {
         if (this.isDayPlan) {
             this.getDayPlanList(dayDate);
         } else if (this.isDaySummary) {
             this.getDaySummaryList(dayDate);
         }
     },
-    getDayPlanList(dayDate) {
-        let info = app.personal.info;
-        var param = {
+    getDayPlanList (dayDate) {
+        const info = app.personal.info;
+        const param = {
             companyId: info.companyInfo.companyId,
             date: dayDate,
             userID: info.userID,
@@ -348,16 +350,16 @@ module.exports = React.createClass({
         };
         POST(app.route.ROUTE_GET_DAY_PLAN_USER_LIST, param, this.getDayPlanListSuccess, this.getDayPlanListFailed);
     },
-    getDayPlanListSuccess(data) {
+    getDayPlanListSuccess (data) {
         if (data.success) {
             // add new pageData to DayPlanAndActual
-            for (var i = 0; i < data.context.list.length; i++) {
-                var item = _.find(this.state.DayPlanAndActual, (o)=>o.userId==data.context.list[i].userId);
+            for (let i = 0; i < data.context.list.length; i++) {
+                const item = _.find(this.state.DayPlanAndActual, (o) => o.userId == data.context.list[i].userId);
                 if (!item) {
                     this.state.DayPlanAndActual.push(data.context.list[i]);
                 }
             }
-            var infiniteLoadStatus = data.context.list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
+            const infiniteLoadStatus = data.context.list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
             this.setState({
                 infiniteLoadStatus: infiniteLoadStatus,
             });
@@ -365,13 +367,13 @@ module.exports = React.createClass({
             this.getDayPlanListFailed();
         }
     },
-    getDayPlanListFailed() {
+    getDayPlanListFailed () {
         this.pageNo--;
-        this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
+        this.setState({ infiniteLoadStatus: STATUS_LOAD_ERROR });
     },
-    getDaySummaryList(dayDate) {
-        let info = app.personal.info;
-        var param = {
+    getDaySummaryList (dayDate) {
+        const info = app.personal.info;
+        const param = {
             companyId: info.companyInfo.companyId,
             date: dayDate,
             userID: info.userID,
@@ -379,16 +381,16 @@ module.exports = React.createClass({
         };
         POST(app.route.ROUTE_GET_DAY_SUMMER_USER_LIST, param, this.getDaySummaryListSuccess, this.getDaySummaryListFailed);
     },
-    getDaySummaryListSuccess(data) {
+    getDaySummaryListSuccess (data) {
         if (data.success) {
             // add new pageData to DaySummaryAndProblem
-            for (var i = 0; i < data.context.list.length; i++) {
-                var item = _.find(this.state.DaySummaryAndProblem, (o)=>o.userId==data.context.list[i].userId);
+            for (let i = 0; i < data.context.list.length; i++) {
+                const item = _.find(this.state.DaySummaryAndProblem, (o) => o.userId == data.context.list[i].userId);
                 if (!item) {
                     this.state.DaySummaryAndProblem.push(data.context.list[i]);
                 }
             }
-            var infiniteLoadStatus = data.context.list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
+            const infiniteLoadStatus = data.context.list.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_HAVE_MORE;
             this.setState({
                 infiniteLoadStatus: infiniteLoadStatus,
             });
@@ -396,11 +398,11 @@ module.exports = React.createClass({
             this.getDaySummaryListFailed();
         }
     },
-    getDaySummaryListFailed() {
+    getDaySummaryListFailed () {
         this.pageNo--;
-        this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
+        this.setState({ infiniteLoadStatus: STATUS_LOAD_ERROR });
     },
-    onEndReached() {
+    onEndReached () {
         console.log('onEndReached', this.state.infiniteLoadStatus);
         if (this.state.infiniteLoadStatus == STATUS_ALL_LOADED || this.state.infiniteLoadStatus == STATUS_TEXT_HIDE) {
             return;
@@ -410,7 +412,7 @@ module.exports = React.createClass({
             this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
         }
     },
-    changeTab(index, time){
+    changeTab (index, time) {
         if (this.tabIndex == index) {
             return;
         }
@@ -421,7 +423,7 @@ module.exports = React.createClass({
         this.getDayViewData(time);
         this.getMonthPlanNoFinishList(time);
     },
-    onChangePage(weekIndex){
+    onChangePage (weekIndex) {
         if (this.currentIndex == weekIndex) {
             return;
         }
@@ -432,11 +434,11 @@ module.exports = React.createClass({
         this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
         this.getMonthPlanNoFinishList(this.monthData[this.currentIndex][this.tabIndex]);
     },
-    setChooseValue(value){
+    setChooseValue (value) {
         this.clearMonthData();
 
         this.currentYear = parseInt(value[0]);
-        this.currentMonth = parseInt(value[1])-1;
+        this.currentMonth = parseInt(value[1]) - 1;
         this.generateMonthData(this.currentYear, this.currentMonth);
 
         console.log('year, month , date', this.currentYear, this.currentMonth, this.monthData);
@@ -448,54 +450,54 @@ module.exports = React.createClass({
         this.getDayViewData(this.monthData[this.currentIndex][this.tabIndex]);
         this.getMonthPlanNoFinishList(this.monthData[this.currentIndex][this.tabIndex]);
 
-        this.setState({haveTimeData: false});
-        setTimeout(()=>{
-            this.setState({haveTimeData: true});
+        this.setState({ haveTimeData: false });
+        setTimeout(() => {
+            this.setState({ haveTimeData: true });
         }, 600);
     },
-    renderWeekView(dateArray, index) {
-        var menuAdminArray = ['一', '二', '三', '四', '五', '六', '日'];
+    renderWeekView (dateArray, index) {
+        const menuAdminArray = ['一', '二', '三', '四', '五', '六', '日'];
         return (
-                <View style={styles.tabContainer}
-                        key={index}
+            <View style={styles.tabContainer}
+                key={index}
                         >
-                    {
-                        menuAdminArray.map((item, i)=>{
+                {
+                        menuAdminArray.map((item, i) => {
                             return (
-                                <View key={i} style={{flexDirection: 'row',flex: 1,alignItems: 'center'}}>
+                                <View key={i} style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
                                     <TouchableOpacity
                                         onPress={this.changeTab.bind(null, i, dateArray[i])}
-                                        style={[styles.tabButton, this.tabIndex===i?{borderTopWidth: 4, backgroundColor: '#FF8686', borderColor: '#FF6262'}:null]}>
-                                        <Text style={[styles.tabText, this.tabIndex===i?{marginTop: 2, color: '#FFFFFF'}:null]} >
+                                        style={[styles.tabButton, this.tabIndex === i ? { borderTopWidth: 4, backgroundColor: '#FF8686', borderColor: '#FF6262' } : null]}>
+                                        <Text style={[styles.tabText, this.tabIndex === i ? { marginTop: 2, color: '#FFFFFF' } : null]} >
                                             {item}
                                         </Text>
-                                        <Text style={[styles.tabTextTime, this.tabIndex===i?{color: '#FFFFFF'}:null]} >
+                                        <Text style={[styles.tabTextTime, this.tabIndex === i ? { color: '#FFFFFF' } : null]} >
                                             {moment(dateArray[i]).format('D')}
                                         </Text>
                                     </TouchableOpacity>
                                     {
-                                        (i!==menuAdminArray.length-1 && this.tabIndex-1 !== i && this.tabIndex !== i) &&
-                                        <View style={styles.vline}/>
+                                        (i !== menuAdminArray.length - 1 && this.tabIndex - 1 !== i && this.tabIndex !== i) &&
+                                        <View style={styles.vline} />
                                     }
                                 </View>
-                            )
+                            );
                         })
                     }
-                </View>
-            )
+            </View>
+        );
     },
-    renderRowWeekPlanItem(obj, sectionID, rowID) {
+    renderRowWeekPlanItem (obj, sectionID, rowID) {
         return (
-            <WeekPlanItem planData={obj}/>
-        )
+            <WeekPlanItem planData={obj} />
+        );
     },
-    renderRowWeekSummaryItem(obj, sectionID, rowID) {
+    renderRowWeekSummaryItem (obj, sectionID, rowID) {
         return (
-            <WeekSummaryItem planData={obj}/>
-        )
+            <WeekSummaryItem planData={obj} />
+        );
     },
 
-    renderFooter() {
+    renderFooter () {
         return (
             <View style={styles.listFooterContainer}>
                 {
@@ -503,43 +505,43 @@ module.exports = React.createClass({
                     <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
                 }
             </View>
-        )
+        );
     },
-    renderHeader() {
+    renderHeader () {
         return (
             <View>
                 {
                     this.state.NoCommitUser.length > 0 &&
-                    <NoCommitUserHead userData={this.state.NoCommitUser} style={styles.separator}/>
+                    <NoCommitUserHead userData={this.state.NoCommitUser} style={styles.separator} />
                 }
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.containerAll}
-                  onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
-                  <ScrollView>
-                  <View>
-                      <View style={styles.container}>
-                          <TouchableOpacity
-                              onPress={this.onPressShowPicker}>
-                              <View style={styles.dataMonthView}>
-                                  <Text style={styles.dataMonthText}>
-                                      {`${this.currentMonth+1}`}
-                                  </Text>
-                                  <Text style={styles.dataMonthText}>
+                onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
+                <ScrollView>
+                    <View>
+                        <View style={styles.container}>
+                            <TouchableOpacity
+                                onPress={this.onPressShowPicker}>
+                                <View style={styles.dataMonthView}>
+                                    <Text style={styles.dataMonthText}>
+                                        {`${this.currentMonth + 1}`}
+                                    </Text>
+                                    <Text style={styles.dataMonthText}>
                                       月
                                   </Text>
-                              </View>
-                          </TouchableOpacity>
-                          <View style={styles.vline}/>
-                          {
+                                </View>
+                            </TouchableOpacity>
+                            <View style={styles.vline} />
+                            {
                               this.state.haveTimeData &&
                               <View style={styles.bannerContainer}>
                                   <Swiper
                                       height={sr.ws(56)}
-                                      width={sr.ws(sr.w-56)}
+                                      width={sr.ws(sr.w - 56)}
                                       showsPagination={false}
                                       loop={false}
                                       onChangePage={this.onChangePage}
@@ -547,48 +549,41 @@ module.exports = React.createClass({
                                       >
                                       {
                                           this.monthData.length > 0 &&
-                                          this.monthData.map((item, i)=>{
+                                          this.monthData.map((item, i) => {
                                               return (
                                                   this.renderWeekView(item, i)
-                                              )
+                                              );
                                           })
                                       }
                                   </Swiper>
                               </View>
                           }
-                      </View>
-                      <View style={styles.currentTimeView}>
-                          <Text style={styles.currentTimeText} >
-                              {this.currentTimeStr}
-                          </Text>
-                      </View>
-                  </View>
-                  <ListView
-                      initialListSize={1}
-                      onEndReachedThreshold={10}
-                      enableEmptySections={true}
-                      style={styles.listStyle}
-                      onEndReached={this.onEndReached}
-                      dataSource={this.isDayPlan?this.ds.cloneWithRows(this.state.DayPlanAndActual):this.ds.cloneWithRows(this.state.DaySummaryAndProblem)}
-                      renderRow={this.isDayPlan?this.renderRowWeekPlanItem:this.renderRowWeekSummaryItem}
-                      renderHeader={this.renderHeader}
-                      renderFooter={this.renderFooter}
+                        </View>
+                        <View style={styles.currentTimeView}>
+                            <Text style={styles.currentTimeText} >
+                                {this.currentTimeStr}
+                            </Text>
+                        </View>
+                    </View>
+                    <ListView
+                        initialListSize={1}
+                        onEndReachedThreshold={10}
+                        enableEmptySections
+                        style={styles.listStyle}
+                        onEndReached={this.onEndReached}
+                        dataSource={this.isDayPlan ? this.ds.cloneWithRows(this.state.DayPlanAndActual) : this.ds.cloneWithRows(this.state.DaySummaryAndProblem)}
+                        renderRow={this.isDayPlan ? this.renderRowWeekPlanItem : this.renderRowWeekSummaryItem}
+                        renderHeader={this.renderHeader}
+                        renderFooter={this.renderFooter}
                       />
-                    </ScrollView>
-                <Picker
-                    style={{height: sr.ws(298)}}
-                    ref={picker => this.picker = picker}
-                    selectedValue={this.state.defaultSelectValue}
-                    pickerData={this.state.pickerData}
-                    onPickerDone={(value) => this.setChooseValue(value)}
-                    />
+                </ScrollView>
             </View>
 
         );
     },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     containerAll: {
         flex: 1,
         backgroundColor: 'transparent',
@@ -657,7 +652,7 @@ var styles = StyleSheet.create({
         fontFamily:'STHeitiSC-Medium',
     },
     tabContainer: {
-        width:sr.w-56,
+        width:sr.w - 56,
         height: 56,
         flexDirection: 'row',
         // backgroundColor: '#F4F4F4',

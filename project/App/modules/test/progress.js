@@ -1,35 +1,34 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
+const React = require('react');const ReactNative = require('react-native');
 
-var {
+const {
     StyleSheet,
     View,
     Text,
     Image,
 } = ReactNative;
 
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var Progress = require('react-native-progress');
-
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const Progress = require('react-native-progress');
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState () {
         return {
             progress: 0,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         SplashScreen.hide();
-        setInterval(()=>{
-            var progress = this.state.progress + 0.01;
+        setInterval(() => {
+            let progress = this.state.progress + 0.01;
             if (progress >= 1) {
                 progress = 0;
             }
-            this.setState({progress});
+            this.setState({ progress });
         }, 100);
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <Progress.Circle
@@ -37,25 +36,25 @@ module.exports = React.createClass({
                     size={200}
                     unfilledColor='blue'
                     borderWidth={5}
-                    borderColor="black"
+                    borderColor='black'
                     thickness={20}
-                    direction="clockwise"
-                    textStyle={{color:'black', fontSize: 80, fontWeight:'800'}}
-                    showsText={true}
-                    formatText={(p)=>{
-                        p = Math.floor(p*10);
-                        return 10-p;
+                    direction='clockwise'
+                    textStyle={{ color:'black', fontSize: 80, fontWeight:'800' }}
+                    showsText
+                    formatText={(p) => {
+                        p = Math.floor(p * 10);
+                        return 10 - p;
                     }}
                     color='red' />
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
 });

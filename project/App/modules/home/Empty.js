@@ -1,17 +1,16 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
+const React = require('react');const ReactNative = require('react-native');
 
-var {
+const {
     Image,
     StyleSheet,
     Text,
     View,
 } = ReactNative;
 
-
 module.exports = React.createClass({
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <View style={styles.container1}>
@@ -20,10 +19,10 @@ module.exports = React.createClass({
                 </View>
             </View>
         );
-    }
+    },
 });
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -32,7 +31,7 @@ var styles = StyleSheet.create({
         paddingBottom: 80,
     },
     container1: {
-        width:sr.w*5/6,
+        width:sr.w * 5 / 6,
         height:120,
         alignItems:'center',
         justifyContent:'center',

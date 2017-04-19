@@ -1,31 +1,30 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     View,
     Image,
     Text,
 } = ReactNative;
 
-var Button = require('@remobile/react-native-simple-button');
-var SplashScreen = require('@remobile/react-native-splashscreen');
-var QRCode = require('@remobile/react-native-qrcode-local-image');
-
+const Button = require('@remobile/react-native-simple-button');
+const SplashScreen = require('@remobile/react-native-splashscreen');
+const QRCode = require('@remobile/react-native-qrcode-local-image');
 
 module.exports = React.createClass({
-    componentWillMount() {
+    componentWillMount () {
         SplashScreen.hide();
     },
-    getInitialState() {
-        return {text: ''}
+    getInitialState () {
+        return { text: '' };
     },
-    onPress() {
-        QRCode.decode(!app.isandroid?'/Users/fang/Desktop/qr.png':'/sdcard/qr.png', (error, result)=>{
-            this.setState({text: JSON.stringify({error, result})});
+    onPress () {
+        QRCode.decode(!app.isandroid ? '/Users/fang/Desktop/qr.png' : '/sdcard/qr.png', (error, result) => {
+            this.setState({ text: JSON.stringify({ error, result }) });
         });
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 <Button onPress={this.onPress}>测试</Button>
@@ -34,11 +33,10 @@ module.exports = React.createClass({
                 </Text>
             </View>
         );
-    }
+    },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',

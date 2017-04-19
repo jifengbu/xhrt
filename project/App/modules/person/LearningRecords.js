@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     View,
     Text,
     Image,
@@ -12,28 +12,28 @@ var {
     TouchableHighlight,
 } = ReactNative;
 
-var VideoPlay = require('../study/VideoPlay.js');
-var CoursePlayer = require('../specops/CoursePlayer.js');
-var {Button, MessageBox} = COMPONENTS;
+const VideoPlay = require('../study/VideoPlay.js');
+const CoursePlayer = require('../specops/CoursePlayer.js');
+const { Button, MessageBox } = COMPONENTS;
 
-var moment = require('moment');
+const moment = require('moment');
 
 const VIDEO_TYPES = ['精品课程', '精彩案例', '编辑推荐', '课程亮点'];
-const {STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR} = CONSTANTS.LISTVIEW_INFINITE.STATUS;
+const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
         title: '学习记录',
-        leftButton: { image: app.img.common_back2, handler: ()=>{app.navigator.pop()}},
+        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
     },
-    getInitialState() {
+    getInitialState () {
         this.list = [];
         this.personRecord = {};
         this.pageNo = 1;
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
-        if (this.props.briefDisplay && this.props.learningRecordBase!=undefined && this.props.learningRecordBase.videoList!=undefined) {
+        if (this.props.briefDisplay && this.props.learningRecordBase != undefined && this.props.learningRecordBase.videoList != undefined) {
             this.list = this.props.learningRecordBase.videoList;
         }
         return {
@@ -42,156 +42,156 @@ module.exports = React.createClass({
             infiniteLoadStatus: STATUS_TEXT_HIDE,
         };
     },
-    componentDidMount() {
+    componentDidMount () {
         if (!this.props.briefDisplay) {
             this.getList();
         }
         this.strTime1 = '0';
         this.strTime2 = '';
     },
-    componentWillReceiveProps: function(nextProps) {
-        const {learningRecordBase} = nextProps;
+    componentWillReceiveProps: function (nextProps) {
+        const { learningRecordBase } = nextProps;
         const oldLearningRecordBase = this.props.learningRecordBase;
         if (!_.isEqual(learningRecordBase, oldLearningRecordBase)) {
-            this.list = this.props.briefDisplay&&learningRecordBase!=undefined&&learningRecordBase.videoList!=undefined?learningRecordBase.videoList:[];
-            this.setState({dataSource: this.ds.cloneWithRows(this.list)});
+            this.list = this.props.briefDisplay && learningRecordBase != undefined && learningRecordBase.videoList != undefined ? learningRecordBase.videoList : [];
+            this.setState({ dataSource: this.ds.cloneWithRows(this.list) });
         }
     },
-    getList() {
-        var param = {
+    getList () {
+        const param = {
             userID: app.personal.info.userID,
             pageNo: this.pageNo,
         };
-        this.setState({infiniteLoadStatus: this.pageNo===1?STATUS_START_LOAD:STATUS_HAVE_MORE});
+        this.setState({ infiniteLoadStatus: this.pageNo === 1 ? STATUS_START_LOAD : STATUS_HAVE_MORE });
         POST(app.route.ROUTE_SUBMIT_GETMYLEARNINGRECORD, param, this.getListSuccess, this.getListFailed);
     },
-    getListSuccess(data) {
+    getListSuccess (data) {
         if (data.success) {
             if (!this.state.isTime) {
-                this.setState({isTime: true});
+                this.setState({ isTime: true });
                 this.personRecord = {
                     total:data.context.total,
                     lastTimeWatch:data.context.lastTimeWatch,
                     monthTotal:data.context.monthTotal,
-                }
+                };
             }
             if (this.personRecord.lastTimeWatch) {
-                if (this.personRecord.lastTimeWatch=='0') {
+                if (this.personRecord.lastTimeWatch == '0') {
                     this.strTime1 = '0';
-                }else {
-                    var diffMs = moment().diff(this.personRecord.lastTimeWatch);
-                    var dayMs = 24*60*60*1000;
-                    var hourMs = 60*60*1000;
-                    var minMs = 60*1000;
-                    var day = parseInt(diffMs / dayMs);
-                    var hour = parseInt(diffMs / hourMs);
-                    var min = parseInt(diffMs / minMs);
+                } else {
+                    const diffMs = moment().diff(this.personRecord.lastTimeWatch);
+                    const dayMs = 24 * 60 * 60 * 1000;
+                    const hourMs = 60 * 60 * 1000;
+                    const minMs = 60 * 1000;
+                    const day = parseInt(diffMs / dayMs);
+                    const hour = parseInt(diffMs / hourMs);
+                    const min = parseInt(diffMs / minMs);
 
                     if (day > 0) {
-                        this.strTime1 = day+'';
+                        this.strTime1 = day + '';
                         this.strTime2 = '天前';
-                    }else if (hour > 0) {
-                        this.strTime1 = hour+'';
+                    } else if (hour > 0) {
+                        this.strTime1 = hour + '';
                         this.strTime2 = '小时前';
-                    }else if (min > 0) {
-                        this.strTime1 = min+'';
+                    } else if (min > 0) {
+                        this.strTime1 = min + '';
                         this.strTime2 = '分钟前';
-                    }else {
+                    } else {
                         this.strTime1 = '刚刚';
                         this.strTime2 = '';
                     }
                 }
-            }else {
+            } else {
                 this.strTime1 = '0';
                 this.strTime2 = '';
             }
             if (data.context.videoList) {
                 if (this.props.briefDisplay) {
-                    this.list = data.context.videoList.length>=3?data.context.videoList.slice(0,3):data.context.videoList;
-                }else {
-                    for (var i = 0; i < data.context.videoList.length; i++) {
+                    this.list = data.context.videoList.length >= 3 ? data.context.videoList.slice(0, 3) : data.context.videoList;
+                } else {
+                    for (let i = 0; i < data.context.videoList.length; i++) {
                         this.list.push(data.context.videoList[i]);
                     }
                 }
-                var infiniteLoadStatus = data.context.videoList.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_TEXT_HIDE;
+                const infiniteLoadStatus = data.context.videoList.length < CONSTANTS.PER_PAGE_COUNT ? STATUS_ALL_LOADED : STATUS_TEXT_HIDE;
                 this.setState({
                     dataSource: this.ds.cloneWithRows(this.list),
                     infiniteLoadStatus: infiniteLoadStatus,
                 });
             }
-
         } else {
             this.getListFailed();
         }
     },
-    getListFailed() {
+    getListFailed () {
         this.pageNo--;
-        this.setState({infiniteLoadStatus: STATUS_LOAD_ERROR});
+        this.setState({ infiniteLoadStatus: STATUS_LOAD_ERROR });
     },
-    onEndReached() {
+    onEndReached () {
         if (this.state.infiniteLoadStatus !== STATUS_TEXT_HIDE) {
             return;
         }
         this.pageNo++;
         this.getList();
     },
-    playVideo(obj) {
+    playVideo (obj) {
         app.updateNavbarColor(CONSTANTS.THEME_COLORS[1]);
-        const {isAgent, isSpecialSoldier} = app.personal.info;
-        let authorized = isAgent||isSpecialSoldier; //是否是特种兵1—是  0—不是
-        if (obj.videoType==6) {
+        const { isAgent, isSpecialSoldier } = app.personal.info;
+        const authorized = isAgent || isSpecialSoldier; // 是否是特种兵1—是  0—不是
+        if (obj.videoType == 6) {
             if (!authorized) {
-                //跳转到购买特种兵页
+                // 跳转到购买特种兵页
+                app.navigator.popToTop();
                 app.showMainScene(1);
             } else {
-                //跳转到特种兵视频播放页
+                // 跳转到特种兵视频播放页
                 app.navigator.push({
                     component: CoursePlayer,
-                    passProps: {otherVideoID:obj.videoID, isCourseRecord:true},
+                    passProps: { otherVideoID:obj.videoID, isCourseRecord:true },
                     sceneConfig: {
-                        ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null
-                    }
+                        ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null,
+                    },
                 });
             }
         } else {
-            //跳转到普通视频播放页
+            // 跳转到普通视频播放页
             app.navigator.push({
                 title: obj.name,
                 component: VideoPlay,
-                passProps: {videoInfo:obj, isFromRecords: this.props.briefDisplay},
+                passProps: { videoInfo:obj, isFromRecords: this.props.briefDisplay },
                 sceneConfig: {
-                    ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null
-                }
+                    ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null,
+                },
             });
         }
     },
-    renderRow(obj, sectionID, rowID) {
+    renderRow (obj, sectionID, rowID) {
         let timeArr = [];
-        let time = obj.lastTime;
+        const time = obj.lastTime;
         if (time) {
             timeArr = time.split(' ');
         }
-        let videoType = obj.videoType&&obj.videoType < 5? VIDEO_TYPES[obj.videoType-1]+'：':'';
-        let name = obj.name ? obj.name: '';
+        const videoType = obj.videoType && obj.videoType < 5 ? VIDEO_TYPES[obj.videoType - 1] + '：' : '';
+        const name = obj.name ? obj.name : '';
 
         return (
             <TouchableHighlight
                 onPress={this.playVideo.bind(null, obj)}
-                underlayColor="#EEB422">
+                underlayColor='#EEB422'>
                 <View style={styles.listViewItemContain}>
-                    <View style={styles.separator}/>
+                    <View style={styles.separator} />
                     <View style={styles.flex_4}>
                         <View style={styles.ItemContentContain}>
                             <Image
                                 resizeMode='stretch'
-                                source={{uri:obj.urlImg}}
+                                source={{ uri:obj.urlImg }}
                                 style={styles.LeftImage} />
                             <View style={styles.flexConten}>
                                 <View style={styles.rowViewStyle}>
                                     <Text
                                         numberOfLines={2}
                                         style={styles.nameTextStyles}>
-                                        {videoType+name}
+                                        {videoType + name}
                                     </Text>
                                 </View>
                                 <View style={styles.columnViewStyle}>
@@ -212,9 +212,9 @@ module.exports = React.createClass({
                     </View>
                 </View>
             </TouchableHighlight>
-        )
+        );
     },
-    renderFooter() {
+    renderFooter () {
         if (this.props.briefDisplay) {
             return null;
         }
@@ -222,13 +222,13 @@ module.exports = React.createClass({
             <View style={styles.listFooterContainer}>
                 <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
             </View>
-        )
+        );
     },
-    render() {
+    render () {
         return (
             <View style={styles.container}>
                 {
-                    !this.props.briefDisplay&&
+                    !this.props.briefDisplay &&
                     <View style={styles.listHeaderContainer}>
                         <View style={styles.headerLeft}>
                             <Text style={styles.headText1}>上次学习</Text>
@@ -241,11 +241,11 @@ module.exports = React.createClass({
                                 </Text>
                             </View>
                         </View>
-                        <View style={styles.headerCenter}/>
+                        <View style={styles.headerCenter} />
                         <View style={styles.headerRight}>
                             <Text style={styles.headText1}>本月学习课程</Text>
                             <Text style={styles.headText2}>
-                                {this.personRecord.monthTotal==undefined?0:this.personRecord.monthTotal+'节'}
+                                {this.personRecord.monthTotal == undefined ? 0 : this.personRecord.monthTotal + '节'}
                             </Text>
                         </View>
                     </View>
@@ -253,20 +253,19 @@ module.exports = React.createClass({
                 <ListView
                     initialListSize={1}
                     onEndReachedThreshold={10}
-                    enableEmptySections={true}
-                    onEndReached={this.props.briefDisplay?null:this.onEndReached}
+                    enableEmptySections
+                    onEndReached={this.props.briefDisplay ? null : this.onEndReached}
                     style={styles.listStyle}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
                     renderFooter={this.renderFooter}
                     />
             </View>
-        )
+        );
     },
 });
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -326,7 +325,7 @@ var styles = StyleSheet.create({
     },
     separator: {
         position: 'absolute',
-        width: sr.w-37,
+        width: sr.w - 37,
         height: 1,
         left: 23,
         right: 14,

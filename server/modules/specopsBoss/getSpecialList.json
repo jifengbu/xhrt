@@ -1,0 +1,19 @@
+
+{
+    "msg":"获取数据成功!",
+    "success":true,
+    "context":[
+        {
+            "userId":"fdsa43",
+            "userImg":"http://",
+            "userName":"憨戳戳",
+            "post":"营销主席"
+        },
+        {
+            "userId":"fdsa44",
+            "userImg":"http://",
+            "userName":"憨戳戳2",
+            "post":"营销主席3"
+        }
+    ]
+}

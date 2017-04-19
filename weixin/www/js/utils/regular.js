@@ -151,7 +151,34 @@ function chkDate (pdate) {
 	}
 	return true;
 }
-
+/**
+ * 判断当前日期是否小于等于选取的日期
+*/
+function chkSmallDate (pdate) {
+	var d = new Date;
+	var today = new Date(d.getFullYear (), d.getMonth (), d.getDate ());
+	var reg = /\d+/g;
+	var temp = pdate.match (reg);
+	var foday = new Date (temp[0], parseInt (temp[1]) - 1, temp[2]);
+	if (foday >= today){
+		return true;
+	}
+	return false;
+}
+/**
+ * 判断当前日期是否大于选取的日期
+*/
+function chkBigDate (pdate) {
+	var d = new Date;
+	var today = new Date(d.getFullYear (), d.getMonth (), d.getDate ());
+	var reg = /\d+/g;
+	var temp = pdate.match (reg);
+	var foday = new Date (temp[0], parseInt (temp[1]) - 1, temp[2]);
+	if (foday > today){
+		return false;
+	}
+	return true;
+}
 function showDateTime(str){
     var show_day=new Array('周日','周一','周二','周三','周四','周五','周六');
     var time=new Date(str.replace(/-/g,"/"));
@@ -164,4 +191,3 @@ function showDateTime(str){
     var now_time=year+'-'+month+'-'+date+' '+show_day[day];
     return now_time;
 }
-

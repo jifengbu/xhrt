@@ -1,21 +1,21 @@
 'use strict';
 
-var React = require('react');var ReactNative = require('react-native');
-var {
+const React = require('react');const ReactNative = require('react-native');
+const {
     StyleSheet,
     Text,
     Platform,
 } = ReactNative;
 
-var RText = React.createClass({
-    render() {
-        const {children, style, ...props} = this.props;
+const RText = React.createClass({
+    render () {
+        const { children, style, ...props } = this.props;
         const s = StyleSheet.flatten(style);
-        const {lineHeight, fontSize} = s;
-        const paddingVertical = (lineHeight-fontSize)/2;
+        const { lineHeight, fontSize } = s;
+        const paddingVertical = (lineHeight - fontSize) / 2;
         return (
             <Text
-                style={[{paddingVertical}, style]}
+                style={[{ paddingVertical }, style]}
                 testID={this.props.testID}
                 {...props}
                 >
@@ -25,4 +25,4 @@ var RText = React.createClass({
     },
 });
 
-module.exports = Platform.OS==='android' ?  RText : Text;
+module.exports = Platform.OS === 'android' ? RText : Text;

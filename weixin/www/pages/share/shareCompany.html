@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>赢销截拳道</title>
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.css">
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+</head>
+<style>
+	iframe {
+        width:100%;
+        margin:0 0 1em;
+        border:0;
+    }
+    .bodyView {
+		width: 100%;
+        margin-bottom: 10px;
+		background-color: #FFFFFF;
+    }
+    #title {
+        font-size: 18px;
+        color: #494949;
+        font-weight: 600;
+        font-family: 'STHeitiSC-Medium';
+        margin-bottom: 10px;
+        padding-top: 10px;
+        text-align: center;
+        margin-top: 80px;
+    }
+    #logoUrl {
+        width: 100%;
+        height: 165px;
+        border-radius: 2px;
+    }
+</style>
+<body>
+	<div class="bodyView">
+	    <div id="title"></div>
+	    <img id="logoUrl"></img>
+	    <div id="iframeContainer"></div>
+	    <video id="video" width="100%" height="210" controls="controls"></video>
+	</div>
+    <div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+        <button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button>
+        <div class="installTipCell">
+            <img src="../../img/logo.png"></img>
+            <div class="cellRight">
+                <div class="cellTitle">赢销截拳道</div>
+                <div class="cellContent">赢销截拳道人人都需要</div>
+            </div>
+        </div>
+    </div>
+</body>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+    <script src="../../js/utils/regular.js"></script>
+    <script src="../../js/utils/app.js"></script>
+	<script>
+	$(function(){
+		var params = app.router.getParameter();
+		var title = params.title;
+		var logoUrl = params.logoUrl;
+		var webUrl = params.webUrl.replace(/http[s]{0,1}/,httpHead);
+		var videoUrl = params.videoUrl;
+		var videoImgUrl = params.videoImgUrl;
+        $("#title").text(title);
+        document.getElementById("logoUrl").src=logoUrl;
+        $('#iframeContainer').html('<iframe src="'+webUrl+'" rameborder="0" id="webUrl" scrolling="" onload="reinitIframe()"></iframe>');
+        $("#video").html("<source src="+videoUrl+">")
+        $("#video").attr("poster",videoImgUrl);
+		mui.os.ios?$('.installTipCell').append('<button class="downloadApp"><a href="https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8">下载APP</a></button>'):$('.installTipCell').append('<button class="downloadApp"><a href="market://details?id=com.yxjqd">下载APP</a></button>');
+	});
+    function reinitIframe() {
+        var iframe = document.getElementById("webUrl");
+        try{
+            var bHeight = iframe.contentWindow.document.body.scrollHeight;
+            var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+            iframe.height = Math.max(bHeight, dHeight);
+        }catch (ex){
+            iframe.height = 30;
+        }
+    }
+    function closeWarning () {
+        document.getElementById('warning').style.display='none';
+        document.getElementById('title').style.margin='0';
+    }
+	</script>
+</html>
