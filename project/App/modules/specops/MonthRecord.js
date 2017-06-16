@@ -187,26 +187,12 @@ module.exports = React.createClass({
         this.setState({ currentWeekID: obj.id });
         this.setState({ haveCannel: true });
     },
-    showMonthPlanDetail (obj) {
-        this.setState({ isInputBoxShow: true });
-        this.onInputBoxFun = this.doCancel;
-        this.setState({ inputBoxText: obj.content });
-        this.setState({ currentDayID: obj.id });
-        this.setState({ haveCannel: false });
-    },
-    showWeekPlanDetail (obj) {
-        this.setState({ isInputBoxShow: true });
-        this.onInputBoxFun = this.doCancel;
-        this.setState({ inputBoxText: obj.content });
-        this.setState({ currentWeekID: obj.id });
-        this.setState({ haveCannel: false });
-    },
     doCancel () {
         this.setState({ isInputBoxShow: false });
     },
     changeTab (tabIndex) {
         this.setState({ tabIndex });
-        const weekData = this.getWeekPlan(tabIndex);
+        let weekData = this.getWeekPlan(tabIndex);
 
         this.setState({ weekDataSource: this.ds.cloneWithRows(weekData) });
         this.getWeekSummary(tabIndex);
@@ -235,7 +221,7 @@ module.exports = React.createClass({
     },
     render () {
         return (
-            <View style={styles.container}
+            <View style={[styles.container, this.props.showDetail?null:{height: 0}]}
                 onStartShouldSetResponderCapture={this.onStartShouldSetResponderCapture}>
                 <ScrollView>
                     <this.monthPlanPurpose />

@@ -28,6 +28,20 @@ const CompanyDetail = React.createClass({
             actionSheetVisible: false,
         };
     },
+    componentDidMount () {
+        AppState.addEventListener('change', this._handleAppStateChange);
+    },
+    componentWillUnmount () {
+        AppState.removeEventListener('change', this._handleAppStateChange);
+    },
+    _handleAppStateChange: function (currentAppState) {
+        this.setState({ currentAppState });
+        if (currentAppState === 'active') {
+            // this.playerPlay && this.playerPlay.stopPlayVideo();
+        } else {
+            this.refs.webviewbridge.reload();// 重新加载webview 让视频播放暂停
+        }
+    },
     doShowActionSheet () {
         this.setState({ actionSheetVisible:true });
     },
@@ -73,6 +87,7 @@ const CompanyDetail = React.createClass({
                 <View style={styles.line} />
                 <WebView
                     style={styles.webview}
+                    ref='webviewbridge'
                     scrollEnabled
                     source={{ uri: htmlUrl || 'http://www.baidu.com' }}
                     scalesPageToFit={false}

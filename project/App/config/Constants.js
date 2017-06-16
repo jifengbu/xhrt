@@ -22,33 +22,33 @@ const TEST_CONFIG = {
 // web服务器 依次是本地服务器， 测试服务器， 正式服务器
 const BASE_SERVERS = ['localhost:3000', 'test.gyyxjqd.com', 'www.gyyxjqd.com'];
 // 聊天服务器 依次是本地服务器(石毅的测试ip)， 测试服务器， 正式服务器
-const BASE_CHAT_SERVERS = ['192.168.1.102', '120.76.207.56', '120.76.24.185'];
+// const BASE_CHAT_SERVERS = ['192.168.1.102', '120.76.207.56', '120.76.24.185'];
 
 const BASE_SERVER = CONFIG.ISSUE ? BASE_SERVERS[2] : TEST_CONFIG.ISSUE ? BASE_SERVERS[1] : BASE_SERVERS[TEST_CONFIG.BASE_SERVER_INDEX];
-const CHAT_SERVER_IP = CONFIG.ISSUE ? BASE_CHAT_SERVERS[2] : TEST_CONFIG.ISSUE ? BASE_CHAT_SERVERS[1] : BASE_CHAT_SERVERS[TEST_CONFIG.BASE_CHAT_SERVER_INDEX];
+// const CHAT_SERVER_IP = CONFIG.ISSUE ? BASE_CHAT_SERVERS[2] : TEST_CONFIG.ISSUE ? BASE_CHAT_SERVERS[1] : BASE_CHAT_SERVERS[TEST_CONFIG.BASE_CHAT_SERVER_INDEX];
 
 module.exports = {
     ISSUE_IOS: CONFIG.ISSUE_IOS,
     MINIFY: CONFIG.ISSUE, // 是否压缩js文件，我们采取测试服务器为了查找问题不用压缩js文件，正式服务器需要压缩js文件，并且不能看到调试信息
     CHANNEL: CONFIG.CHANNEL,
-    API_VERSION: 3, // 服务器请求的接口版本号
+    API_VERSION: 5, // 服务器请求的接口版本号 3 没有单一，4有
     // IOS的appid
     IOS_APPID: '1096525384',
     // IOS_APPID: '',
     // web服务器
     DES_KEY:'SV#Y!jAz', // DES加密KEY
-    SERVER: 'http://' + BASE_SERVER + '/app/api/', // web服务器地址
-    DOWNLOAD_SERVER: 'http://' + BASE_SERVER + '/download/apks/admin/apks/', // 程序更新下载地址
+    SERVER: 'https://' + BASE_SERVER + '/app/api/', // web服务器地址
+    DOWNLOAD_SERVER: 'https://' + BASE_SERVER + '/download/apks/admin/apks/', // 程序更新下载地址
     WEBSOCKET_CHAT_SERVER: 'ws://' + BASE_SERVER + '/websocket/',   // 聊天服务器地址
-    SHARE_IMGDIR_SERVER: 'http://' + BASE_SERVER + '/app/www/img/',   // 分享图片目录
-    SHARE_HOMEWORKDETAIL_SERVER: 'http://' + BASE_SERVER + '/app/www/pages/homework/',   // 分享作业详情目录
-    SHARE_APPDOWNLOAD_SERVER: 'http://' + BASE_SERVER + '/app/www/pages/sign/download.html',   // 分享下载app页面
-    SHARE_SHAREDIR_SERVER: 'http://' + BASE_SERVER + '/app/www/pages/share/',   // 分享网页目录
-    INTEGRAL_EXPLAINDIR_SERVER: 'http://' + BASE_SERVER + '/web/www/integral/integralExplain.html',   // 积分说明页面
+    SHARE_IMGDIR_SERVER: 'https://' + BASE_SERVER + '/app/www/img/',   // 分享图片目录
+    SHARE_HOMEWORKDETAIL_SERVER: 'https://' + BASE_SERVER + '/app/www/pages/homework/',   // 分享作业详情目录
+    SHARE_APPDOWNLOAD_SERVER: 'https://' + BASE_SERVER + '/app/www/pages/sign/download.html',   // 分享下载app页面
+    SHARE_SHAREDIR_SERVER: 'https://' + BASE_SERVER + '/app/www/pages/share/',   // 分享网页目录
+    INTEGRAL_EXPLAINDIR_SERVER: 'https://' + BASE_SERVER + '/web/www/integral/integralExplain.html',   // 积分说明页面
     // 获取验证码的超时时间
     DEFAULT_CODE_TIMEOUT: 90,
     // 聊天服务器
-    CHAT_SERVER_IP: CHAT_SERVER_IP, // 测试专用聊天服务器IP
+    CHAT_SERVER_IP: '0', // 测试专用聊天服务器IP
     CHAT_SERVER_PORT: 52347, // 聊天服务器端口
     // 服务器超时
     TRAIN_SERVER_TIMEOUT: 30,
@@ -97,9 +97,9 @@ module.exports = {
             0: '',
             1: '',
             2: '正在加载更多...',
-            3: '暂无数据!',
+            3: '暂无数据',
             4: '没有更多内容',
-            5: '加载错误，请稍后再试',
+            5: '暂无数据',
         },
     },
 };

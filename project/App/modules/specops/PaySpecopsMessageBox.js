@@ -67,7 +67,7 @@ module.exports = React.createClass({
     aliPayConfirmResult (data) {
         Toast(data.msg);
         if (data.success) {
-            this.props.doPayByAlipay();
+            this.props.doPayByAlipay(this.props.orderType);
         }
     },
     wechatPayConfirm (tradeNo) {
@@ -79,7 +79,7 @@ module.exports = React.createClass({
     wechatPayConfirmResult (data) {
         Toast(data.msg);
         if (data.success) {
-            this.props.doPayByWechat();
+            this.props.doPayByWechat(this.props.orderType);
         }
     },
     doPayByWechat () {

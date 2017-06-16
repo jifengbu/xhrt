@@ -101,7 +101,7 @@ module.exports = React.createClass({
             return;
         }
         if (!app.utils.checkPassword(this.state.password)) {
-            Toast('密码必须有6-20位的数字，字母，下划线组成');
+            Toast('密码错误');
             return;
         }
         const param = {

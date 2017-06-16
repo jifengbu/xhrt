@@ -87,11 +87,6 @@ module.exports = React.createClass({
             this.props.noticeShow(videoID, praiseOrCollection);
         });
     },
-    noticeShowBox (title, point) {
-        this.show(() => {
-            this.props.noticeShowBox(title, point);
-        });
-    },
     show (callback) {
         return callback();
     },

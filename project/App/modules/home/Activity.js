@@ -20,10 +20,6 @@ const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, S
 
 module.exports = React.createClass({
     mixins: [SceneMixin],
-    statics: {
-        title: '热门活动',
-        leftButton: { handler: () => { app.navigator.pop(); } },
-    },
     getInitialState () {
         this.pageNo = 1;
         this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
@@ -81,11 +77,11 @@ module.exports = React.createClass({
         const title = obj.title ? obj.title : '';
         let des = '';
         if (obj.mode == 1) {
-            des = obj.address ? '地点：' + obj.address : '';
+            des = obj.address ? obj.address : '';
         } else {
-            des = obj.mainTeacher ? '主讲人：' + obj.mainTeacher : '';
+            des = obj.mainTeacher ? obj.mainTeacher : '';
         }
-        const time = obj.startDate && obj.endDate ? '时间：' + moment(obj.startDate).format('M月D号 HH:mm') + '-' + moment(obj.endDate).format('MM月DD号 HH:mm') : '';
+        const time = obj.startDate && obj.endDate ? moment(obj.startDate).format('M月D号 HH:mm') + '-' + moment(obj.endDate).format('MM月DD号 HH:mm') : '';
         return (
             <TouchableHighlight
                 onPress={this.playVideo.bind(null, obj)}
@@ -96,28 +92,41 @@ module.exports = React.createClass({
                         resizeMode='stretch'
                         defaultSource={app.img.common_default}
                         source={{ uri:obj.minImage }}
-                        style={styles.LeftImage} />
+                        style={styles.LeftImage} >
+                        <Image
+                            resizeMode='stretch'
+                            source={obj.mode == 1 ? app.img.home_offline : app.img.home_liveTitle}
+                            style={styles.LabelImage} />
+                    </DImage>
                     <View style={styles.flexConten}>
                         <Text
                             numberOfLines={2}
                             style={styles.nameTitle}>
                             {title}
                         </Text>
-                        <Text
-                            numberOfLines={1}
-                            style={styles.midTitle}>
-                            {des}
-                        </Text>
-                        <Text
-                            numberOfLines={1}
-                            style={styles.midTitle}>
-                            {time}
-                        </Text>
+                        <View style={{flexDirection: 'row',alignItems: 'center'}}>
+                            <Image
+                                resizeMode='stretch'
+                                source={obj.mode == 1 ? app.img.home_adress : app.img.home_icon_speaker}
+                                style={styles.iconImage} />
+                            <Text
+                                numberOfLines={1}
+                                style={styles.midAdress}>
+                                {des}
+                            </Text>
+                        </View>
+                        <View style={{flexDirection: 'row',alignItems: 'center'}}>
+                            <Image
+                                resizeMode='stretch'
+                                source={app.img.home_time}
+                                style={styles.iconImage} />
+                            <Text
+                                numberOfLines={1}
+                                style={styles.midTitle}>
+                                {time}
+                            </Text>
+                        </View>
                     </View>
-                    <Image
-                        resizeMode='stretch'
-                        source={obj.mode == 1 ? app.img.home_offline : app.img.home_liveTitle}
-                        style={styles.LabelImage} />
                 </View>
             </TouchableHighlight>
         );
@@ -165,23 +174,24 @@ const styles = StyleSheet.create({
     },
     listViewItemContain: {
         flexDirection: 'row',
-        width: sr.w - 14,
-        marginLeft: 7,
-        marginTop: 5,
-        borderRadius: 2,
+        width: sr.w,
+        marginBottom: 1,
         backgroundColor: '#FFFFFF',
     },
     ItemContentContain: {
         flexDirection: 'row',
-        width: sr.w - 14,
-        paddingVertical: 10,
-        paddingHorizontal:7,
-        borderRadius: 2,
+        width: sr.w,
+        paddingVertical: 20,
+        paddingHorizontal:10,
     },
     LeftImage: {
-        width: 118,
-        height:72,
-        borderRadius: 2,
+        width: 125,
+        height: 85,
+    },
+    iconImage: {
+        marginHorizontal: 5,
+        width: 12,
+        height: 12,
     },
     flexConten: {
         width: 225,
@@ -189,21 +199,25 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     nameTitle: {
-        color: '#313131',
-        fontFamily: 'STHeitiSC-Medium',
+        color: '#383838',
         fontSize:14,
-        width: 200,
+        width: 220,
     },
     midTitle: {
-        color: '#313131',
-        fontFamily: 'STHeitiSC-Medium',
+        color: '#FFB235',
+        width: 200,
+        fontSize:12,
+    },
+    midAdress: {
+        color: '#AFAFAF',
+        width: 200,
         fontSize:12,
     },
     LabelImage: {
-        height: 28,
-        width: 28,
+        height: 35,
+        width: 40,
         position: 'absolute',
         top: 0,
-        right: 0,
+        left: 0,
     },
 });

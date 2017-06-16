@@ -36,7 +36,7 @@ module.exports = React.createClass({
         return {
             daySummary: '',
             problemArray: [],
-            lineHeight: 0,
+            lineHeight: 20,
             isLookAll: false,
             isShow: false,
         };

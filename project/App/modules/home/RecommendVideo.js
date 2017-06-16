@@ -12,13 +12,13 @@ const {
 } = ReactNative;
 
 const RecommendVideoPlayer = require('./RecommendVideoPlayer.js');
+const WinVideoPlayer = require('./WinVideoPlayer.js');
 const CoursePlayer = require('../specops/CoursePlayer.js');
 const moment = require('moment');
 const Unauthorized = require('../specops/Unauthorized.js');
 
 const { MessageBox } = COMPONENTS;
 
-const VIDEO_TYPES = ['精品课程', '精彩案例', '编辑推荐', '课程亮点'];
 const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
 
 module.exports = React.createClass({
@@ -32,6 +32,7 @@ module.exports = React.createClass({
         return {
             dataSource: this.ds.cloneWithRows([]),
             infiniteLoadStatus: STATUS_TEXT_HIDE,
+            lineWidth: 0,
         };
     },
     componentDidMount () {
@@ -85,40 +86,49 @@ module.exports = React.createClass({
         }
     },
     playVideo (obj) {
-        const { isAgent, isSpecialSoldier } = app.personal.info;
-        const authorized = isAgent || isSpecialSoldier; // 是否是特种兵1—是  0—不是
-        if (obj.videoType == 6) {
-            if (!authorized) {
-                // 跳转到购买特种兵页
-                app.navigator.pop();
-                app.showMainScene(1);
-            } else {
-                // 跳转到特种兵视频播放页
-                const param = {
-                    userID:app.personal.info.userID,
-                    videoID: obj.videoID,
-                };
-                POST(app.route.ROUTE_STUDY_PROGRESS, param, (data) => {
-                    if (data.success) {
-                        app.navigator.push({
-                            component: CoursePlayer,
-                            passProps: { isCourseRecord:true, lastStudyProgress: data.context, updateClickOrLikeNum: this.updateClickOrLikeNum, otherVideoID: obj.videoID },
-                        });
-                    } else {
-                        Toast('该特种兵课程学习进度获取失败，请重试！');
-                    }
-                });
-            }
-        } else {
-            // 跳转到普通视频播放页
-            app.navigator.push({
-                component: RecommendVideoPlayer,
-                passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
-            });
+        app.navigator.push({
+            component: WinVideoPlayer,
+            passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
+        });
+        // const { isAgent, isSpecialSoldier } = app.personal.info;
+        // const authorized = isAgent || isSpecialSoldier; // 是否是特种兵1—是  0—不是
+        // if (obj.videoType == 6) {
+        //     if (!authorized) {
+        //         // 跳转到购买特种兵页
+        //         app.navigator.pop();
+        //         app.showMainScene(1);
+        //     } else {
+        //         // 跳转到特种兵视频播放页
+        //         const param = {
+        //             userID:app.personal.info.userID,
+        //             videoID: obj.videoID,
+        //         };
+        //         POST(app.route.ROUTE_STUDY_PROGRESS, param, (data) => {
+        //             if (data.success) {
+        //                 app.navigator.push({
+        //                     component: CoursePlayer,
+        //                     passProps: { isCourseRecord:true, lastStudyProgress: data.context, updateClickOrLikeNum: this.updateClickOrLikeNum, otherVideoID: obj.videoID },
+        //                 });
+        //             } else {
+        //                 Toast('该特种兵课程学习进度获取失败，请重试！');
+        //             }
+        //         });
+        //     }
+        // } else {
+        //     // 跳转到普通视频播放页
+        //     app.navigator.push({
+        //         component: RecommendVideoPlayer,
+        //         passProps: { videoInfo:obj, updateClickOrLikeNum: this.updateClickOrLikeNum },
+        //     });
+        // }
+    },
+    _measureLineHeight (e) {
+        if (!this.state.lineWidth) {
+            const { width } = e.nativeEvent.layout;
+            this.setState({ lineWidth: width-6 });
         }
     },
     renderRow (obj, sectionID, rowID, onRowHighlighted) {
-        const videoType = obj.videoType && obj.videoType < 5 ? VIDEO_TYPES[obj.videoType - 1] + '：' : '';
         const name = obj.name ? obj.name : '';
         return (
             <TouchableHighlight
@@ -133,36 +143,41 @@ module.exports = React.createClass({
                         <Image
                             resizeMode='stretch'
                             source={{ uri:obj.urlImg }}
-                            style={styles.LeftImage} />
+                            style={styles.LeftImage} >
+                        </Image>
                         <View style={styles.flexConten}>
                             <View style={styles.rowViewStyle}>
                                 <Text
-                                    numberOfLines={1}
+                                    numberOfLines={2}
                                     style={styles.nameTextStyles}>
-                                    {videoType + name}
+                                    {name}
                                 </Text>
                                 <Text
-                                    numberOfLines={2}
+                                    numberOfLines={1}
                                     style={styles.detailTextStyles}>
                                     {obj.detail}
                                 </Text>
                             </View>
                             <View style={styles.columnViewStyle}>
                                 <View style={styles.mainSpeakStyles}>
-                                    <Image
-                                        resizeMode='stretch'
-                                        source={app.img.personal_eye}
-                                        style={styles.eyeImage} />
-                                    <Text style={styles.mainSpeakTag}>{obj.clicks * 3 + 50}</Text>
-                                    <Image
-                                        resizeMode='stretch'
-                                        source={obj.isPraise === 0 ? app.img.personal_praise_pressed : app.img.personal_praise}
-                                        style={styles.praiseImage} />
-                                    <Text style={styles.mainSpeakTag}>{obj.likes}</Text>
+                                    {
+                                        <View onLayout={this._measureLineHeight}>
+                                            <Text style={styles.beforeText}>{'￥'}<Text numberOfLines={1} style={styles.beforeText}>
+                                                {'9.9'}
+                                            </Text>
+                                            </Text>
+                                            <View style={[styles.textLine,{ width: this.state.lineWidth }]}></View>
+                                        </View>
+                                    }
+                                    <Text style={styles.money}>{'￥'}<Text numberOfLines={1} style={styles.lastTimeText}>
+                                        {'9.9'}
+                                    </Text>
+                                    </Text>
                                 </View>
-                                <Text numberOfLines={1} style={styles.lastTimeText}>
-                                    { moment(obj.createTime).format('YYYY.MM.DD')}
-                                </Text>
+                                <View style={styles.mainSpeakStyles}>
+                                    <Text style={styles.mainSpeakTag}>{obj.likes}<Text style={styles.numStyle}>{'人正在学习'}
+                                    </Text></Text>
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -180,7 +195,6 @@ module.exports = React.createClass({
     render () {
         return (
             <View style={styles.container}>
-                <View style={styles.line} />
                 <ListView
                     ref={listView => { this.listView = listView; }}
                     initialListSize={1}
@@ -214,10 +228,9 @@ const styles = StyleSheet.create({
     },
     separator: {
         position: 'absolute',
-        width: sr.w - 20,
+        width: sr.w,
         height: 1,
-        left: 10,
-        right: 10,
+        left: 0,
         top: 0,
         backgroundColor: '#F7F7F7',
     },
@@ -225,7 +238,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         left: 0,
-        width: 228,
+        width: 220,
         height: 20,
         flexDirection: 'row',
         alignItems: 'flex-end',
@@ -243,12 +256,11 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     LeftImage: {
-        width: 112.5,
-        height:77,
-        borderRadius: 2,
+        width: 125,
+        height: 85,
     },
     flexConten: {
-        width: 232,
+        width: 220,
         marginLeft: 10,
         flexDirection: 'column',
     },
@@ -256,12 +268,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     nameTextStyles: {
-        color: '#252525',
+        color: '#383838',
         fontSize:16,
         backgroundColor: 'transparent',
     },
     detailTextStyles: {
-        marginTop: 3,
+        marginTop: 10,
         color: '#989898',
         fontSize:12,
         backgroundColor: 'transparent',
@@ -270,27 +282,35 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    eyeImage: {
-        height: 12,
-        width: 13,
-    },
-    praiseImage: {
-        height: 12,
-        width: 12,
-    },
     mainSpeakTag: {
-        color: '#989898',
-        fontSize: 12,
+        fontSize: 10,
+        color: '#FFB235',
+        backgroundColor: 'transparent',
+    },
+    numStyle: {
+        fontSize: 10,
         marginLeft: 5,
-        marginRight: 15,
+        color: '#AFAFAF',
+        backgroundColor: 'transparent',
+    },
+    money: {
+        color: '#FB771A',
+        fontSize: 9,
+    },
+    beforeText: {
+        color: '#A7A7A7',
+        fontSize: 10,
+        marginRight: 10,
+    },
+    textLine: {
+        position: 'absolute',
+        top: 6,
+        left: 0,
+        height: 1,
+        backgroundColor: '#A7A7A7',
     },
     lastTimeText: {
-        color: '#B2B2B2',
-        fontSize: 12,
-    },
-    line: {
-        height: 1,
-        width: sr.w,
-        backgroundColor: '#E0E0E0',
+        color: '#FB771A',
+        fontSize: 14,
     },
 });

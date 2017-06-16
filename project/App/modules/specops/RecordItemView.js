@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         color: '#2A2A2A',
         marginLeft: 23,
         fontFamily:'STHeitiSC-Medium',
-        width: sr.w - 46,
+        width: sr.w - 56,
     },
     textStyleAnother: {
         fontSize: 14,

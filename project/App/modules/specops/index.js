@@ -7,18 +7,11 @@ const {
 } = ReactNative;
 const Unauthorized = require('./UnauthorizedMainPage.js');
 const MainPage = require('./MainPage.js');
-const PersonInfo = require('../person/PersonInfo.js');
 // const Search = require('../search/index.js');
 
 module.exports = React.createClass({
     statics: {
         title: '赢销特种兵',
-        leftButton: { image: app.img.personal_entrance, handler: () => {
-            app.navigator.push({
-                component: PersonInfo,
-                fromLeft: true,
-            });
-        } },
     },
     getInitialState () {
         const { isAgent, isSpecialSoldier } = app.personal.info;
@@ -27,6 +20,7 @@ module.exports = React.createClass({
         };
     },
     onWillFocus (flag) {
+        app.updateNavbarColor('#DE3031');
         const { isAgent, isSpecialSoldier } = app.personal.info;
         const authorized = isAgent || isSpecialSoldier;
         setTimeout(() => {

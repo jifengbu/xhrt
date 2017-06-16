@@ -546,7 +546,7 @@ const QRCode = React.createClass({
             typeNumber: 4,
             colorDark: '#000000',
             colorLight: '#ffffff',
-            correctLevel: QRErrorCorrectLevel.H,
+            correctLevel: QRErrorCorrectLevel.M,
         };
     },
     componentWillMount () {
@@ -586,8 +586,8 @@ const QRCode = React.createClass({
         let { colorDark, colorLight, width, height } = this.props;
         const oQRCode = this.oQRCode;
         const nCount = oQRCode.getModuleCount();
-        const nWidth = Math.floor(width / nCount);
-        const nHeight = Math.floor(height / nCount);
+        const nWidth = (width / nCount);
+        const nHeight = (height / nCount);
         width = nCount * nWidth;
         height = nCount * nHeight;
 

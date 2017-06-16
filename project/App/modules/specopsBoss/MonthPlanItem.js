@@ -306,7 +306,7 @@ module.exports = React.createClass({
         const nameTemWidth = this.calculateStrLength(this.userHeadName);
         const postTemWidth = this.calculateStrLength(this.userHeadJob);
         const nameWidth = nameTemWidth * 13 + 3;
-        const postWidth = postTemWidth * 6 + 3;
+        const postWidth = postTemWidth * 6 + 8;
         const headUrl = this.userHeadImage ? this.userHeadImage : this.sex === 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
         return (
             <View style={styles.monthPlanHeadView}>

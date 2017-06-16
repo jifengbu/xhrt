@@ -18,6 +18,7 @@ const Login = require('../login/Login.js');
 const Home = require('../home/index.js');
 const StudyNum = require('../../data/StudyNum.js');
 const LocalDataMgr = require('../../manager/LocalDataMgr.js');
+const DeviceInfo = require('react-native-device-info');
 
 module.exports = React.createClass({
     mixins: [TimerMixin],
@@ -109,6 +110,26 @@ module.exports = React.createClass({
         }
     },
     componentDidMount () {
+        // console.log('getUniqueID', DeviceInfo.getUniqueID());
+        // console.log('getManufacturer', DeviceInfo.getManufacturer());
+        // console.log('getBrand', DeviceInfo.getBrand());
+        // console.log('getModel', DeviceInfo.getModel());
+        // console.log('getDeviceId', DeviceInfo.getDeviceId());
+        // console.log('getSystemName', DeviceInfo.getSystemName());
+        // console.log('getSystemVersion', DeviceInfo.getSystemVersion());
+        //
+        // navigator.geolocation.getCurrentPosition(
+        //   (position) => {
+        //     console.log('initialPosition-----', position);
+        //     // 经度
+        //     console.log('经度-----', position.coords.longitude);
+        //     // 纬度
+        //     console.log('纬度-----', position.coords.latitude);
+        //   },
+        //   (error) => console.log('getCurrentPosition error', error),
+        //   {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+        // );
+
         app.utils.until(
             () => app.personal.initialized && app.updateMgr.initialized && app.navigator && app.uniqueLoginMgr.uuid,
             (cb) => setTimeout(cb, 100),
@@ -116,7 +137,9 @@ module.exports = React.createClass({
         );
     },
     componentWillUnmount () {
-        app.updateMgr.checkUpdate();
+        if (app.isandroid) {
+            app.updateMgr.checkUpdate();
+        }
     },
     onLayout (e) {
         const { height } = e.nativeEvent.layout;

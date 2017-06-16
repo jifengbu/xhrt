@@ -28,6 +28,9 @@ module.exports = React.createClass({
             tabIndex: 0,
         };
     },
+    onWillFocus () {
+        app.updateNavbarColor(CONSTANTS.THEME_COLORS[0]);
+    },
     componentWillMount () {
         app.updateNavbarColor(CONSTANTS.THEME_COLORS[0]);
     },
@@ -78,6 +81,7 @@ module.exports = React.createClass({
                         {this.state.tabIndex === 0 ? <LoginPanel phone={this.state.phone} /> : <RegisterPanel changeToLoginPanel={this.changeToLoginPanel} />}
                     </View>
                 </Image>
+                <View style={{height: 1}}/>
             </ScrollView>
         );
     },

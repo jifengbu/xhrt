@@ -25,6 +25,8 @@ import com.remobile.audio.RCTAudioPackage;
 import com.remobile.filetransfer.RCTFileTransferPackage;
 import com.remobile.call.RCTCallPackage;
 import com.remobile.qrcodeLocalImage.RCTQRCodeLocalImagePackage;
+import fr.greweb.reactnativeviewshot.RNViewShotPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 
 import com.rnfs.RNFSPackage;
 import com.yoloci.fileupload.FileUploadPackage;
@@ -82,7 +84,9 @@ public class MainApplication extends Application implements ReactApplication {
                     new BarcodeScanner(),
                     new RNSharePackage(),
                     new JPushPackage(),
-                    new WebViewBridgePackage()
+                    new RNViewShotPackage(),
+                    new WebViewBridgePackage(),
+                    new RNDeviceInfo()
             );
         }
     };

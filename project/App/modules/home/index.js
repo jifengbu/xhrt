@@ -15,6 +15,7 @@ const {
 import TabNavigator from 'react-native-tab-navigator';
 const Home = require('./Home.js');
 const Study = require('../study/index.js');
+const Person = require('../person/PersonInfo.js');
 const TrainHome = require('../train/TrainHome.js');
 const ActualCombat = require('./Empty.js');// require('../actualCombat/index.js');
 const Specops = require('../specops/index.js');
@@ -25,7 +26,7 @@ let INIT_ROUTE_INDEX = 0;
 const ROUTE_STACK = [
     { index: 0, component: Home },
     { index: 1, component: Specops },
-    { index: 2, component: Study },
+    { index: 2, component: Person },
     { index: 3, component: TrainHome },
 ];
 if (CONSTANTS.ISSUE_IOS) {
@@ -73,8 +74,7 @@ const HomeTabBar = React.createClass({
         const menus = [
             { index: 0, title: '首页', icon: app.img.home_home, selected: app.img.home_home_press },
             { index: 1, title: '特种兵', icon: app.img.home_specops, selected: app.img.home_specops_press },
-            { index: 2, title: '学习场', icon: app.img.home_learn, selected: app.img.home_learn_press },
-            { index: 3, title: '训练场', icon: app.img.home_train, selected: app.img.home_train_press },
+            { index: 2, title: '我的', icon: app.img.home_mine, selected: app.img.home_mine_press },
         ];
         if (CONSTANTS.ISSUE_IOS) {
             _.remove(menus, (o) => o.index === 3 || o.index === 4);
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     },
     titleSelectedStyle: {
         fontSize:10,
-        color: '#DF3932',
+        color: '#FB5631',
     },
     tabBarStyle: {
         borderColor: '#EEEEEE',

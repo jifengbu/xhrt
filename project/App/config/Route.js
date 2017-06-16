@@ -258,4 +258,15 @@ module.exports = {
     ROUTE_EXTERNAL_LOGIN: SERVER + 'externalLogin', // 三方登录
     ROUTE_USER_INFO_BINDING: SERVER + 'userInfoBinding', //登录后绑定手机
 
+    //推荐大使+钱包
+    ROUTE_INVITATION_LIST: SERVER + 'invitationList', //邀请记录
+    ROUTE_APPLY_RECOMMEND: SERVER + 'applyRecommend', //成为推荐大使
+    ROUTE_GET_USER_SUMAMOUNT: SERVER + 'getUserSumAmount', //获取钱包余额
+    ROUTE_GET_USER_BANK_LIST: SERVER + 'getUserBankList', //获取银行卡信息
+    ROUTE_GET_BANK_NAME_LIST: SERVER + 'getBankNameList', //获取银行卡名称
+    ROUTE_BINDING_USER_BANK_INFO: SERVER + 'bindingUserBankInfo', //绑定银行卡信息
+    ROUTE_SUBMIT_WITHDRAW_APPLY: SERVER + 'submitWithdrawApply', //申请提现
+    ROUTE_GET_APPLY_DETAILED: SERVER + 'getApplyDetailed', //获取提现记录
+    ROUTE_GET_ACCOUNT_DETAILED: SERVER + 'getAccountDetailed', //获取账单明细
+
 };

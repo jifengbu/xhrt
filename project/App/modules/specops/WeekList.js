@@ -11,9 +11,11 @@ const {
     TouchableOpacity,
     TouchableHighlight,
 } = ReactNative;
+
 const moment = require('moment');
 require('moment-range');
 const WeekRecord = require('./WeekRecord.js');
+const LocalPageList = require('./LocalPageList.js');
 
 const weekNumArray = ['一', '二', '三', '四', '五'];
 const { STATUS_TEXT_HIDE, STATUS_START_LOAD, STATUS_HAVE_MORE, STATUS_NO_DATA, STATUS_ALL_LOADED, STATUS_LOAD_ERROR } = CONSTANTS.LISTVIEW_INFINITE.STATUS;
@@ -25,8 +27,11 @@ const WeekListRow = React.createClass({
         };
     },
     _onPressRow (obj, rowID) {
-        rowID == 0 ? this.setState({ showFirstDetail: !this.state.showFirstDetail }) : this.setState({ showDetail: !this.state.showDetail });
-        this.setState({ firstInto: false });
+        if (rowID == 0) {
+            this.setState({ showFirstDetail: !this.state.showFirstDetail });
+        }else {
+            this.setState({ showDetail: !this.state.showDetail });
+        }
     },
     render () {
         const obj = this.props.obj.time;
@@ -64,13 +69,12 @@ const WeekListRow = React.createClass({
                     <View style={styles.greyLine} />
                 }
                 {
-                    rowID == 0 ? (
+                    rowID == 0?
                         this.state.showFirstDetail &&
-                        <WeekRecord time={obj} haveImage={haveImage} userID={this.props.userID} />
-                    ) : (
+                        <WeekRecord time={obj} haveImage={haveImage} userID={this.props.userID}/>
+                    :
                         this.state.showDetail &&
-                        <WeekRecord time={obj} haveImage={haveImage} userID={this.props.userID} />
-                    )
+                        <WeekRecord time={obj} haveImage={haveImage} userID={this.props.userID}/>
                 }
             </View>
         );
@@ -111,45 +115,14 @@ module.exports = React.createClass({
         return range.toArray('months');
     },
     getInitialState () {
-        this.list = {};
-        this.personRecord = {};
-        this.pageNo = 1;
-        this.ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2,
-            sectionHeaderHasChanged : (s1, s2) => s1 !== s2,
-        });
-
-        this.list[0] = this.props.briefDisplay && this.props.learningRecordBase != undefined && this.props.learningRecordBase.videoList != undefined ? this.props.learningRecordBase.videoList : {};
+        this.dataList = this.getWeekArray(moment(app.personal.info.gotoSpecialSoldierTime, 'YYYY.MM.DD'), moment())
         return {
-            dataSource: this.ds.cloneWithRows(this.getWeekArray(moment(app.personal.info.gotoSpecialSoldierTime, 'YYYY.MM.DD'), moment())),
             selects: {},
-            infiniteLoadStatus: STATUS_TEXT_HIDE,
         };
     },
-    componentDidMount () {
-
-    },
-    componentWillReceiveProps: function (nextProps) {
-        const { learningRecordBase } = nextProps;
-        const oldLearningRecordBase = this.props.learningRecordBase;
-        if (!_.isEqual(learningRecordBase, oldLearningRecordBase)) {
-            this.list[0] = this.props.briefDisplay && learningRecordBase != undefined && learningRecordBase.videoList != undefined ? learningRecordBase.videoList : {};
-            this.setState({ dataSource: this.ds.cloneWithRowsAndSections(this.list) });
-        }
-    },
-    playVideo (obj) {
-
-    },
-    renderRow (obj, sectionID, rowID, onRowHighlighted) {
+    renderRow(obj, sectionID, rowID){
         return (
             <WeekListRow obj={obj} rowID={rowID} haveImage={this.props.haveImage} userID={this.props.userID} />
-        );
-    },
-    renderFooter () {
-        return (
-            <View style={styles.listFooterContainer}>
-                <Text style={styles.listFooter}>{CONSTANTS.LISTVIEW_INFINITE.TEXT[this.state.infiniteLoadStatus]}</Text>
-            </View>
         );
     },
     renderSeparator (sectionID, rowID) {
@@ -162,17 +135,11 @@ module.exports = React.createClass({
     render () {
         return (
             <View style={styles.container}>
-                <ListView
-                    initialListSize={1}
-                    onEndReachedThreshold={10}
-                    enableEmptySections
-                    onEndReached={this.props.briefDisplay ? null : this.onEndReached}
-                    style={styles.listStyle}
-                    dataSource={this.state.dataSource}
+                <LocalPageList
+                    list={this.dataList}
+                    pageCount={15}
                     renderRow={this.renderRow}
-                    renderFooter={this.renderFooter}
-                    renderSeparator={this.renderSeparator}
-                    />
+                />
             </View>
         );
     },

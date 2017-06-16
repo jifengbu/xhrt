@@ -112,6 +112,7 @@ module.exports = React.createClass({
                     videoListLength ?
                         <ListView
                             initialListSize={1}
+                            removeClippedSubviews={false}
                             enableEmptySections
                             dataSource={this.state.dataSource}
                             renderRow={this.renderRow}

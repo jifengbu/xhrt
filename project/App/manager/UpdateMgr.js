@@ -17,14 +17,16 @@ class Manager extends EventEmitter {
         this.getNeedShowSplash();
     }
     checkUpdate () {
-        Update.checkVersion({
-            versionUrl: app.route.ROUTE_VERSION_INFO_URL,
-            iosAppId: CONSTANTS.IOS_APPID,
-        }).then((options) => {
-            if (options && options.newVersion && (app.scene || {}).pageName !== 'UpdatePage') {
-                app.showModal(<UpdateInfoBox options={options} />, { backgroundColor:'rgba(0, 0, 0, 0.6)' });
-            }
-        });
+        if (app.isandroid) {
+            Update.checkVersion({
+                versionUrl: app.route.ROUTE_VERSION_INFO_URL,
+                iosAppId: CONSTANTS.IOS_APPID,
+            }).then((options) => {
+                if (options && options.newVersion && (app.scene || {}).pageName !== 'UpdatePage') {
+                    app.showModal(<UpdateInfoBox options={options} />, { backgroundColor:'rgba(0, 0, 0, 0.6)' });
+                }
+            });
+        }
     }
     getNeedShowSplash () {
         return new Promise(async(resolve, reject) => {

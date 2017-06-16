@@ -158,18 +158,36 @@ public class UMengSharePlugin extends ReactContextBaseJavaModule  implements Act
                 @Override
                 public void run() {
                     try {
-                    UMImage img = new UMImage(activity,
-                            args.getString("imageUrl"));
+                    UMImage img = new UMImage(activity,args.getString("imageUrl"));
+                    String thumbStr = args.getString("thumbUrl");
+                    if (thumbStr != null){
+                        if (thumbStr != "") {
+                            UMImage thumb = new UMImage(activity,thumbStr);
+                            if (args.getString("shareType").equals("image")) {
+                                img.setThumb(thumb);
+                            }
+                        }
+                    }
+
                     ShareProgressDialog dialog =  new ShareProgressDialog(activity);
                     Config.dialog = dialog;
-                    new ShareAction(activity)
-                            .setPlatform(SHARE_MEDIA.convertToEmun(platfrom))
-                            .withMedia(img)
-                            .setCallback(umShareListener)
-                            .withText(text)
-                            .withTitle(title)
-                            .withTargetUrl(url)
-                            .share();
+                        if (args.getString("shareType").equals("image")) {
+                            new ShareAction(activity)
+                                .setPlatform(SHARE_MEDIA.convertToEmun(platfrom))
+                                    .setCallback(umShareListener)
+                                    .withMedia(img)
+                                    .share();
+                        } else {
+                            new ShareAction(activity)
+                                .setPlatform(SHARE_MEDIA.convertToEmun(platfrom))
+                                    .withMedia(img)
+                                    .setCallback(umShareListener)
+                                    .withText(text)
+                                    .withTitle(title)
+                                    .withTargetUrl(url)
+                                    .share();
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

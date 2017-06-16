@@ -76,10 +76,8 @@ const CoursePlayer = React.createClass({
         }, 5000);
         const { isAgent, isSpecialSoldier } = app.personal.info;
         const authorized = isAgent || isSpecialSoldier;
-        const showTime = LocalDataMgr.getValueFromKey('showJoinSpecopsBox');
-        if (!authorized && (showTime == null || showTime != moment().format('YYYY-MM-DD'))) {
+        if (!authorized) {
             this.setState({ showJoinSpecopsBox: true });
-            LocalDataMgr.setValueAndKey('showJoinSpecopsBox', moment().format('YYYY-MM-DD'));
         }
     },
     goBack () {
@@ -246,12 +244,6 @@ const CoursePlayer = React.createClass({
             this.getWatchVideoReward(videoID);
             this.isStarting = false;
         }
-        setTimeout(() => {
-            if (this.state.pageData && this.state.pageData.isNextVideo == 0 && !authorized) {
-                this.setState({ showJoinSpecopsBox: true });
-                LocalDataMgr.setValueAndKey('showJoinSpecopsBox', moment().format('YYYY-MM-DD'));
-            }
-        }, 200);
     },
     onLoaded (duration) {
         if (!this.isStarting) {
@@ -383,7 +375,7 @@ const CoursePlayer = React.createClass({
         this.stopVideoSaveTime();
         const { watchVideoList } = this.state.pageData;
         const index = rowID == 0 ? 1 : watchVideoList.length - 1 == rowID ? rowID : parseInt(rowID) + 1;
-        if (!obj.isOver && !watchVideoList[index].isOver) {
+        if (!obj.isOver && !watchVideoList[index].isOver && rowID != watchVideoList.length - 1) {
             Toast('请按顺序把前面未看完的视频完整看完后，才能按顺序解锁下一集视频哦！');
             return;
         }
@@ -539,7 +531,7 @@ const CoursePlayer = React.createClass({
                                 underlayColor='rgba(0, 0, 0, 0)'
                                 style={styles.touchableHighlight}>
                                 <Image
-                                    resizeMode='contain'
+                                    resizeMode='stretch'
                                     source={app.img.draw_back}
                                     style={styles.closeIcon} />
                             </TouchableHighlight>
@@ -660,7 +652,7 @@ module.exports = CoursePlayer;
 const styles = StyleSheet.create({
     panelContainer: {
         width: sr.w,
-        height: sr.w * 2 / 3,
+        height: sr.w * 9 / 16,
         alignItems:'center',
         justifyContent:'center',
     },
@@ -668,7 +660,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         width: sr.w - 40,
-        height: sr.w * 2 / 3 - 40,
+        height: sr.w * 9 / 16 - 25,
         backgroundColor: 'white',
         opacity: 255,
     },
@@ -676,10 +668,9 @@ const styles = StyleSheet.create({
         position:'absolute',
         top: 0,
         width: sr.w,
-        height: sr.w * 2 / 3,
+        height: sr.w * 9 / 16,
         justifyContent: 'center',
         alignItems:'center',
-        backgroundColor: 'transparent',
     },
     studyAwardTitle: {
         color: 'black',
@@ -752,14 +743,14 @@ const styles = StyleSheet.create({
     },
     touchableHighlight: {
         position:'absolute',
-        top:5,
-        right:5,
-        width: 38,
-        height: 38,
+        top:1,
+        right:10,
+        width: 30,
+        height: 30,
     },
     closeIcon: {
-        width: 38,
-        height: 38,
+        width: 28,
+        height: 28,
     },
     container: {
         flex: 1,
@@ -775,7 +766,7 @@ const styles = StyleSheet.create({
     },
     playerContainer: {
         width: sr.w,
-        height: sr.w * 2 / 3,
+        height: sr.w * 9 / 16,
         justifyContent: 'center',
         alignItems:'center',
         backgroundColor: 'white',

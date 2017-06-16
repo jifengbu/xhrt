@@ -8,6 +8,7 @@ const {
     View,
     Image,
     TouchableOpacity,
+    TouchableHighlight,
 } = ReactNative;
 
 const { Button } = COMPONENTS;
@@ -15,6 +16,7 @@ const { Button } = COMPONENTS;
 module.exports = React.createClass({
     finishGuide () {
         this.props.doGuidance();
+        app.closeModal();
     },
     render () {
         return (
@@ -36,21 +38,30 @@ module.exports = React.createClass({
                             </Text>
                         </View>
                         <Text style={styles.promptText}>
-                            {'点击立即体验'}
+                            {'点击立即开通'}
                         </Text>
                         <Text style={styles.detailText}>
-                            {'即可免费观看3集特种兵视频'}
+                            {'即可观看48集赢销截拳道系列课程'}
                         </Text>
                         <View style={styles.bottomContainer}>
                             <TouchableOpacity
                                 onPress={this.finishGuide}
                                 style={styles.bannerTouch}>
                                 <Text style={styles.btnText}>
-                                    {'立即体验'}
+                                    {'立即开通'}
                                 </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
+                    <TouchableHighlight
+                        onPress={app.closeModal}
+                        underlayColor='rgba(0, 0, 0, 0)'
+                        style={styles.touchableHighlight}>
+                        <Image
+                            resizeMode='contain'
+                            source={app.img.draw_back}
+                            style={styles.closeIcon} />
+                    </TouchableHighlight>
                 </Image>
             </View>
         );
@@ -120,5 +131,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#DE3031',
+    },
+    closeIcon: {
+        width: 30,
+        height: 30,
+    },
+    touchableHighlight: {
+        position:'absolute',
+        top: 128,
+        right: 12,
+        width: 30,
+        height: 30,
     },
 });

@@ -512,7 +512,7 @@ module.exports = React.createClass({
                             <View style={styles.itemBgStyle}>
                                 <Text style={styles.headText}>职业</Text>
                                 <View style={styles.itemView}>
-                                    <Text style={styles.contentText}>
+                                    <Text style={styles.contentTextTrade} numberOfLines={1}>
                                         {this.state.trade ? this.state.trade : '请选择您的当前职业'}
                                     </Text>
                                     {
@@ -648,6 +648,15 @@ const styles = StyleSheet.create({
     contentText: {
         fontSize: 16,
         marginLeft: 20,
+        width: 217,
+        fontFamily: 'STHeitiSC-Medium',
+        color: '#BABABA',
+        alignSelf : 'center',
+    },
+    contentTextTrade: {
+        fontSize: 16,
+        marginLeft: 20,
+        height: 20,
         width: 217,
         fontFamily: 'STHeitiSC-Medium',
         color: '#BABABA',

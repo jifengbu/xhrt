@@ -165,7 +165,6 @@ module.exports = React.createClass({
                 onPress={this.playVideo.bind(null, obj, sectionID, rowID)}
                 underlayColor='#EEB422'>
                 <View style={styles.rowItem}>
-                    <View style={styles.separator} />
                     {this.state.showDeletePanel &&
                         <TouchableOpacity
                             style={styles.btnTouchStyle}
@@ -211,6 +210,7 @@ module.exports = React.createClass({
     render () {
         return (
             <View style={styles.container}>
+                <View style={styles.line} />
                 <PageList
                     ref={listView => { this.listView = listView; }}
                     renderRow={this.renderRow}
@@ -285,15 +285,6 @@ const styles = StyleSheet.create({
         color:'gray',
         fontSize: 12,
     },
-    separator: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        backgroundColor: '#F7F7F7',
-        width: 342,
-        height: 1,
-        marginLeft: 13,
-    },
     btnTouchStyle: {
         width: 23,
         height: 23,
@@ -317,5 +308,10 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         backgroundColor: '#E93536',
         alignSelf: 'center',
+    },
+    line: {
+        width: sr.w,
+        height: 1,
+        backgroundColor: '#EFEFEF',
     },
 });

@@ -225,49 +225,7 @@ module.exports = React.createClass({
                             renderSeparator={this.renderSeparator}
                             />
                     </View>
-                    {!CONSTANTS.ISSUE_IOS &&
-                    <View style={styles.divisionContainer}>
-                        <View style={styles.separator} />
-                        <Text style={{ fontSize: 12, color: '#595959' }}>或者你也可以</Text>
-                        <View style={styles.separator} />
-                    </View>
-                      }
-                    {!CONSTANTS.ISSUE_IOS &&
-                    <View style={[styles.panelContainer, { backgroundColor: 'white' }]}>
-                        <Image
-                            resizeMode='contain'
-                            source={app.img.train_home}
-                            style={styles.icon} />
-                        <View style={styles.titleContainer}>
-                            <Text
-                                style={styles.titleText}>
-                                      特种兵交流场
-                                  </Text>
-                            <Text
-                                style={styles.detailText}
-                                numberOfLines={1}>
-                                      申请特种兵交流场房间
-                                  </Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={styles.detailText}>
-                                          邀请您的特种兵好友入场交流
-                                      </Text>
-                            </View>
-                            <View style={styles.entranceContainer}>
-                                <TouchableOpacity
-                                    style={styles.ownContainerApply}
-                                    onPress={this.applyCustomRoom}>
-                                    <Text style={styles.entranceTextApply}>进场交流</Text>
-                                    <Image
-                                        resizeMode='contain'
-                                        source={app.img.home_train_go}
-                                        style={styles.goIcon} />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                      }
-                    <View style={styles.emptyView} />
+                    <View style={styles.layerView}></View>
                 </ScrollView>
                 {
                     this.state.ShowMealBox &&
@@ -421,5 +379,9 @@ const styles = StyleSheet.create({
         height: 15,
         marginLeft: 10,
         marginTop:10,
+    },
+    layerView: {
+        width: sr.w,
+        height: 60,
     },
 });

@@ -11,8 +11,6 @@ const {
     View,
 } = ReactNative;
 
-const moment = require('moment');
-
 const { Button, DImage } = COMPONENTS;
 
 module.exports = React.createClass({
@@ -52,16 +50,6 @@ module.exports = React.createClass({
         this.props.doRestart(obj);
     },
     renderRow (obj) {
-        let videoType = '';
-        if (obj.videoType === 1) {
-            videoType = '精品课程:';
-        } else if (obj.videoType === 2) {
-            videoType = '精彩案例:';
-        } else if (obj.videoType === 3) {
-            videoType = '编辑推荐:';
-        } else if (obj.videoType === 4) {
-            videoType = '课程亮点:';
-        }
         return (
             <TouchableHighlight
                 onPress={this._onPressRow.bind(null, obj)}
@@ -76,35 +64,28 @@ module.exports = React.createClass({
                     <View style={styles.titleStyle}>
                         <View style={styles.rowViewStyle}>
                             <Text
-                                numberOfLines={1}
+                                numberOfLines={2}
                                 style={styles.nameTextStyles}>
-                                {videoType + obj.name}
+                                { obj.name}
                             </Text>
                             <Text
-                                numberOfLines={2}
+                                numberOfLines={1}
                                 style={styles.detailTextStyles}>
                                 {obj.detail}
                             </Text>
                         </View>
                         <View style={styles.iconContainer}>
                             <View style={styles.praiseContainer}>
-                                <DImage
+                                <Image
                                     resizeMode='contain'
-                                    source={app.img.personal_eye}
-                                    style={styles.eyeIcon} />
-                                <Text style={styles.textStyle}>
-                                    {obj.clicks * 3 + 50}
-                                </Text>
-                                <DImage
-                                    resizeMode='contain'
-                                    source={!obj.isPraise ? app.img.personal_praise_pressed : app.img.personal_praise}
-                                    style={styles.iconStyle} />
-                                <Text style={styles.textStyle}>
-                                    {obj.likes}
-                                </Text>
+                                    source={app.img.home_icon_specops}
+                                    style={styles.iconSpecops} />
                             </View>
-                            <Text style={styles.textStyle}>
-                                {moment(obj.createTime).format('YYYY/MM/DD')}
+                            <Text style={[styles.playTimesText,{color: '#FFB235'}]}>
+                                {obj.clicks * 3 + 50}
+                                <Text style={[styles.playTimesText,{color: '#979797'}]}>
+                                    {'人正在学习'}
+                                </Text>
                             </Text>
                         </View>
                     </View>
@@ -157,33 +138,31 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     videoImg: {
-        width: 112,
-        height: 77,
-        borderRadius: 4,
+        width: 125,
+        height: 85,
         justifyContent:'flex-end',
     },
     titleStyle: {
-        width: 236,
+        width: 220,
         marginLeft: 10,
-        flexDirection: 'column',
     },
     rowViewStyle: {
         backgroundColor: 'transparent',
     },
     nameTextStyles: {
-        color: '#252525',
-        fontSize:16,
+        color: '#383838',
+        fontSize:14,
     },
     detailTextStyles: {
-        marginTop: 3,
-        color: '#989898',
+        marginTop: 10,
+        color: '#AFAFAF',
         fontSize:12,
     },
     iconContainer: {
         position: 'absolute',
         bottom: 0,
         left: 0,
-        width: 236,
+        width: 220,
         height: 20,
         flexDirection: 'row',
         alignItems: 'flex-end',
@@ -193,25 +172,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    eyeIcon: {
-        width: 16,
-        height: 15,
-        marginRight: 5,
-    },
-    iconStyle: {
-        width: 14,
-        height: 14,
-        marginRight: 5,
-        marginLeft: 15,
-    },
-    textStyle: {
-        fontSize: 14,
-        color: '#989898',
-        fontFamily: 'STHeitiSC-Medium',
+    playTimesText: {
+        fontSize: 11,
     },
     line: {
         height: 1,
         width: sr.w,
         backgroundColor: '#E0E0E0',
+    },
+    iconSpecops: {
+        width: 55,
+        height: 17,
     },
 });

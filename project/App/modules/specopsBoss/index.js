@@ -87,10 +87,12 @@ module.exports = React.createClass({
         return ret;
     },
     componentDidMount: function () {
-        this.getWorkSituationAbstract();
-        this.getSpecialList();
-        this.getStudySituationAbstract();
-        this.getUserTaskSubmitRate();
+        if (!this.props.isPrompt) {
+            this.getWorkSituationAbstract();
+            this.getSpecialList();
+            this.getStudySituationAbstract();
+            this.getUserTaskSubmitRate();
+        }
     },
     getUserTaskSubmitRate () {
         const tTime = moment();
@@ -522,19 +524,26 @@ module.exports = React.createClass({
         return (
             <View style={styles.container}>
                 <View style={styles.separator} />
-                <ListView
-                    initialListSize={1}
-                    onEndReachedThreshold={10}
-                    enableEmptySections
-                    removeClippedSubviews={false}
-                    style={styles.listStyle}
-                    onEndReached={this.onEndReached}
-                    dataSource={this.state.specopsList}
-                    renderRow={this.renderSpecopsRow}
-                    renderHeader={this.renderHeader}
-                    renderFooter={this.renderFooter}
-                    renderSeparator={this.renderSeparator}
-                    />
+                {
+                    (app.personal.info.companyInfo&&!this.props.isPrompt)?
+                    <ListView
+                        initialListSize={1}
+                        onEndReachedThreshold={10}
+                        enableEmptySections
+                        removeClippedSubviews={false}
+                        style={styles.listStyle}
+                        onEndReached={this.onEndReached}
+                        dataSource={this.state.specopsList}
+                        renderRow={this.renderSpecopsRow}
+                        renderHeader={this.renderHeader}
+                        renderFooter={this.renderFooter}
+                        renderSeparator={this.renderSeparator}
+                        />:
+                    <DImage
+                        resizeMode='stretch'
+                        source={app.img.specopsBoss_guide}
+                        style={styles.guideImage}/>
+                }
             </View>
         );
     },
@@ -825,5 +834,9 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         color: 'gray',
         fontSize: 14,
+    },
+    guideImage: {
+        width: sr.w,
+        height: sr.ch,
     },
 });

@@ -142,7 +142,7 @@ module.exports = React.createClass({
                                           <Text style={[styles.chartTopText, { marginTop: item === 1 ? 0 : 10 }]}>{tableTitle}</Text>
                                           {
                                               item === 1 ?
-                                                  <LineChart yData={this.state.tabIndex === 0 ? durationList : courseList} xData={this.state.tabIndex === 0 ? durationDate : courseDate} height={230} /> :
+                                                  <LineChart yData={this.state.tabIndex === 0 ? durationList : courseList} xData={this.state.tabIndex === 0 ? durationDate : courseDate} height={220} /> :
                                                   <BarChart data={this.state.tabIndex === 0 ? durationArr : courseArr} date={this.state.tabIndex === 0 ? durationTime : courseTime} />
                                           }
                                       </View>

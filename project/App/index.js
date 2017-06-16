@@ -43,16 +43,20 @@ const NetMgr = require('./manager/NetMgr.js');
 const JPushMgr = require('./manager/JPushMgr.js');
 const SettingMgr = require('./manager/SettingMgr.js');
 const UpdateMgr = require('./manager/UpdateMgr.js');
+const LocalDataMgr = require('./manager/LocalDataMgr.js');
 const LoginMgr = require('./manager/LoginMgr.js');
 const ChatMgr = require('./manager/ChatMgr.js');
 const PhoneMgr = require('./manager/PhoneMgr.js');
 const AudioFileMgr = require('./manager/AudioFileMgr.js');
+const ImgFileMgr = require('./manager/ImgFileMgr.js');
 const ReplaceBGColorMgr = require('./manager/ReplaceBGColorMgr.js');
 const RefreshComments = require('./manager/RefreshComments.js');
 const GlobalVarMgr = require('./manager/GlobalVarMgr.js');
 const UniqueLoginMgr = require('./manager/UniqueLoginMgr.js');
 const LeftTimes = require('./manager/LeftTimes.js');
 const StudyNum = require('./data/StudyNum.js');
+
+const Update = require('@remobile/react-native-update');
 
 const ITEM_NAME_SAM = 'showAssistModal';
 const ITEM_NAME_PRMB = 'PublishRuleMessageBox';
@@ -72,6 +76,8 @@ global.app = {
     phoneMgr:PhoneMgr,
     updateMgr:UpdateMgr,
     audioFileMgr:AudioFileMgr,
+    imgFileMgr:ImgFileMgr,
+    localDataMgr:LocalDataMgr,
     leftTimesMgr:LeftTimes,
     uniqueLoginMgr:UniqueLoginMgr,
     studyNumMgr:StudyNum,
@@ -122,7 +128,7 @@ app.configureScene = function (route) {
     return sceneConfig;
 };
 
-const Splash = require('./modules/splash/index.js');
+const Splash = require('./modules/test/button.js');
 
 const NavigationBarRouteMapper = {
     LeftButton (route, navigator, index, navState) {
@@ -134,7 +140,13 @@ const NavigationBarRouteMapper = {
         const title = leftButton && leftButton.title || '';
         const textColor = leftButton && leftButton.color || '#1F1F1F';
         const handler = leftButton && leftButton.handler || navigator.pop;
-        if (!image && !title) {
+        const noLeftButton = leftButton && leftButton.noLeftButton;
+        if (noLeftButton) {
+            return (
+                <View style={styles.navBarButton}>
+                </View>
+            );
+        }else if (!image && !title) {
             return (
                 <DelayTouchableOpacity
                     onPress={handler}
@@ -178,6 +190,7 @@ const NavigationBarRouteMapper = {
             return <View style={[styles.navBarRightEmptyButton, { backgroundColor: (app.root) ? app.root.state.navbarColor : app.THEME_COLOR }]} />;
         }
         const image = rightButton && rightButton.image;
+        const smallTitle = rightButton && rightButton.smallTitle;
         const leftImage = rightButton && rightButton.leftImage;
         if (image) {
             if (leftImage) {
@@ -189,7 +202,7 @@ const NavigationBarRouteMapper = {
                             <Image
                                 resizeMode='stretch'
                                 source={rightButton.leftImage}
-                                style={styles.navBarIcon} />
+                                style={styles.navBarIconRight} />
                         </DelayTouchableOpacity>
                         <DelayTouchableOpacity
                             onPress={rightButton.handler}
@@ -197,7 +210,7 @@ const NavigationBarRouteMapper = {
                             <Image
                                 resizeMode='stretch'
                                 source={rightButton.image}
-                                style={styles.navBarIcon} />
+                                style={styles.navBarIconRight} />
                         </DelayTouchableOpacity>
                     </View>
                 );
@@ -209,21 +222,35 @@ const NavigationBarRouteMapper = {
                         <Image
                             resizeMode='stretch'
                             source={rightButton.image}
-                            style={styles.navBarIcon} />
+                            style={styles.navBarIconRight} />
                     </DelayTouchableOpacity>
                 );
             }
         } else {
-            return (
-                <DelayTouchableOpacity
-                    onPress={rightButton.handler}
-                    delayTime={rightButton.delayTime || 1000}
-                    style={styles.navBarButton}>
-                    <Text style={styles.navBarButtonText}>
-                        {rightButton.title}
-                    </Text>
-                </DelayTouchableOpacity>
-            );
+            if (smallTitle) {
+                return (
+                    <DelayTouchableOpacity
+                        onPress={rightButton.handler}
+                        delayTime={rightButton.delayTime || 1000}
+                        style={styles.navBarButton}>
+                        <Text style={styles.navBarSmallText}>
+                            {rightButton.title}
+                        </Text>
+                    </DelayTouchableOpacity>
+                );
+            } else {
+                return (
+                    <DelayTouchableOpacity
+                        onPress={rightButton.handler}
+                        delayTime={rightButton.delayTime || 1000}
+                        style={styles.navBarButton}>
+                        <Text style={styles.navBarButtonText}>
+                            {rightButton.title}
+                        </Text>
+                    </DelayTouchableOpacity>
+                );
+            }
+
         }
     },
     Title (route, navigator, index, navState) {
@@ -250,7 +277,7 @@ const NavigationBarRouteMapper = {
 };
 
 module.exports = React.createClass({
-    mixins: [ProgressHud.Mixin, TimerMixin],
+    mixins: [TimerMixin],
     getInitialState () {
         return {
             showNavBar: false,
@@ -304,11 +331,23 @@ module.exports = React.createClass({
 
             await AsyncStorage.setItem(ITEM_NAME_SAM, 'no');
         })();
+        let version = app.localDataMgr.getValueFromKey('version');
+        if (version) {
+            if (version != Update.getVersion()) {
+                app.localDataMgr.setValueAndKey('version', Update.getVersion());
+                app.imgFileMgr.clear();
+            }
+        }else {
+            app.localDataMgr.setValueAndKey('version', Update.getVersion());
+            app.imgFileMgr.clear();
+        }
         app.audioFileMgr.checkRootDir();
         app.root = this;
-        app.showProgressHUD = this.showProgressHUD;
+        app.showProgressHUD = ()=>{
+            this.refs.progressHud.show();
+        };
         app.dismissProgressHUD = () => {
-            this.dismissProgressHUD();
+            this.refs.progressHud.hide();
         };
         app.showModal = (view, options = {}) => {
             const { title, backgroundColor, touchHide } = options;
@@ -514,8 +553,7 @@ module.exports = React.createClass({
                     </COMPONENTS.Modal>
                 }
                 <ProgressHud
-                    isVisible={this.state.is_hud_visible}
-                    isDismissible={false}
+                    ref='progressHud'
                     overlayColor='rgba(0, 0, 0, 0.6)'
                     color='#239FDB'
                     />
@@ -553,6 +591,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontFamily: 'STHeitiSC-Medium',
     },
+    navBarSmallText: {
+        fontSize: 14,
+        color: '#FFFFFF',
+    },
     navBarTitleText: {
         fontSize: 18,
         textAlign: 'center',
@@ -570,6 +612,10 @@ const styles = StyleSheet.create({
         height: NAVBAR_HEIGHT,
     },
     navBarIcon: {
+        width: NAVBAR_HEIGHT * 0.5,
+        height: NAVBAR_HEIGHT * 0.5,
+    },
+    navBarIconRight: {
         width: NAVBAR_HEIGHT * 0.5,
         height: NAVBAR_HEIGHT * 0.5,
     },

@@ -34,7 +34,7 @@ module.exports = React.createClass({
         const param = {
             userID: app.personal.info.userID,
         };
-        POST(app.route.ROUTE_STUDY_PROGRESS_LIST, param, this.getStudyProgressListSuccess);
+        POST(app.route.ROUTE_STUDY_PROGRESS_LIST, param, this.getStudyProgressListSuccess,true);
     },
     getStudyProgressListSuccess (data) {
         if (data.success) {
@@ -120,7 +120,7 @@ module.exports = React.createClass({
                                 source={app.img.personal_eye}
                                 style={styles.icon_wicth} />
                             <Text style={styles.commentText}>
-                                {obj.clicks}
+                                {obj.clicks*3+50}
                             </Text>
                         </View>
                     </View>
@@ -140,7 +140,7 @@ module.exports = React.createClass({
                     <View style={styles.line} />
                 }
                 <ListView
-                    enableEmptySections                    style={styles.listStyle}
+                    enableEmptySections                    removeClippedSubviews={false}                    style={styles.listStyle}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
                     />

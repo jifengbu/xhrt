@@ -72,6 +72,7 @@ module.exports = React.createClass({
             memWeekTime: [],
             haveCannel: false,
             isModify:true,
+            isAfterWeek:false,
         };
     },
     getWeekPlan (index) {
@@ -233,6 +234,7 @@ module.exports = React.createClass({
         // can modify.
         const currentIndex = this.getCurrentWeekIndex();
         this.setState({ isModify: !(index < currentIndex) });
+        this.setState({ isAfterWeek: index > currentIndex });
     },
     getWeekSummarySuccess (data) {
         if (data.success) {
@@ -563,6 +565,10 @@ module.exports = React.createClass({
         }
     },
     editWeekSummary () {
+        if (this.state.isAfterWeek) {
+            Toast('不能编写未来的总结');
+            return;
+        }
         if (!this.state.isModify && this.state.weekSummary != '') {
             return;
         }

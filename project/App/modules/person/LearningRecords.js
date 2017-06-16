@@ -179,7 +179,10 @@ module.exports = React.createClass({
                 onPress={this.playVideo.bind(null, obj)}
                 underlayColor='#EEB422'>
                 <View style={styles.listViewItemContain}>
-                    <View style={styles.separator} />
+                    {
+                      rowID == 0 ? <View style={{ backgroundColor: '#FFFFFF' }} /> :
+                      <View style={styles.separator} />
+                    }
                     <View style={styles.flex_4}>
                         <View style={styles.ItemContentContain}>
                             <Image

@@ -17,13 +17,14 @@ const Player = require('./Player.js');
 const WebView = require('react-native-webview-bridge');
 const UmengMgr = require('../../manager/UmengMgr.js');
 const Umeng = require('../../native/index.js').Umeng;
+const VideoTimeMgr = require('../../manager/VideoTimeMgr.js');
 
 const { DImage, ShareSheet } = COMPONENTS;
 
 const CompanyDetail = React.createClass({
     statics: {
         title: '明星企业',
-        leftButton: { handler: () => { app.navigator.pop(); } },
+        leftButton: { handler: () => { app.scene.goBack(); } },
         rightButton: { image: app.img.home_share, handler: () => { app.scene.doShowActionSheet(); } },
     },
     getInitialState () {
@@ -37,11 +38,45 @@ const CompanyDetail = React.createClass({
             actionSheetVisible: false,
         };
     },
+    goBack() {
+        this.stopVideoSaveTime();
+        app.navigator.pop();
+    },
+    stopVideoSaveTime () {
+        const { dataDetail } = this.state;
+        if (this.state.playing === false) {
+            return;
+        }
+        this.playerPlay && this.playerPlay.stopPlayVideo();
+        const videoUrl = dataDetail ? dataDetail.videoDesc : null;
+        const time = this.playerPlay && this.playerPlay.getPlayTime();
+
+        console.log('stop time is ', time, videoUrl);
+        if (time && videoUrl) {
+            VideoTimeMgr.setPlayTime(videoUrl, time);
+        }
+        this.setState({ playing:false });
+    },
+    getVideoTimeSeek () {
+        const { dataDetail } = this.state;
+        this.setState({ playing: true });
+        const videoUrl = dataDetail ? dataDetail.videoDesc : null;
+        if (videoUrl) {
+            const time = VideoTimeMgr.getPlayTime(videoUrl);
+            if (time > 0) {
+                setTimeout(() => {
+                    this.playerPlay && this.playerPlay.setLastPlayTime(time);
+                    console.log('seek time is ', time, videoUrl);
+                }, 60);
+            }
+        }
+    },
     componentDidMount: function () {
         this.getDetail();
         AppState.addEventListener('change', this._handleAppStateChange);
     },
     doShowActionSheet () {
+        this.stopVideoSaveTime();
         this.setState({ actionSheetVisible:true });
     },
     doCloseActionSheet () {
@@ -98,13 +133,15 @@ const CompanyDetail = React.createClass({
         }
     },
     componentWillUnmount () {
+        this.stopVideoSaveTime();
         AppState.removeEventListener('change', this._handleAppStateChange);
     },
     _handleAppStateChange: function (currentAppState) {
         if (currentAppState === 'active') {
-            // this.playerPlay && this.playerPlay.stopPlayVideo();
+            this.getVideoTimeSeek();
         } else {
-            this.playerPlay && this.playerPlay.stopPlayVideo();
+            this.stopVideoSaveTime();
+            this.fullScreenListener(false);
         }
     },
     fullScreenListener (isFullScreen) {
@@ -130,11 +167,11 @@ const CompanyDetail = React.createClass({
         }, 600);
     },
     onEnd () {
+        this.stopVideoSaveTime();
         this.fullScreenListener(false);
-        this.setState({ playing: false });
     },
     changePlaying () {
-        this.setState({ playing: true });
+        this.getVideoTimeSeek();
     },
     onLoadEnd () {
         app.dismissProgressHUD();
@@ -215,7 +252,7 @@ const CompanyDetail = React.createClass({
                                         fullScreenListener={this.fullScreenListener}
                                         onEnd={this.onEnd}
                                         width={sr.ws(343)}
-                                        height={sr.ws(231)}
+                                        height={sr.ws(193)}
                                         />
                                     :
                                     <DImage
@@ -315,7 +352,7 @@ const styles = StyleSheet.create({
     playerContainer: {
         width: 343,
         marginLeft: 16,
-        height: 231,
+        height: 193,
         justifyContent: 'center',
         alignItems:'center',
         backgroundColor: 'white',

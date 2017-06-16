@@ -20,6 +20,7 @@ const VideoCollect = require('../specops/VideoCollectBox.js');
 const TimerMixin = require('react-timer-mixin');
 const UmengMgr = require('../../manager/UmengMgr.js');
 const Umeng = require('../../native/index.js').Umeng;
+const VideoTimeMgr = require('../../manager/VideoTimeMgr.js');
 
 const { DImage, ShareSheet } = COMPONENTS;
 
@@ -27,7 +28,7 @@ const RecommendVideoPlayer = React.createClass({
     mixins: [TimerMixin],
     statics: {
         title: '课程学习',
-        leftButton: { handler: () => { app.navigator.pop(); } },
+        leftButton: { handler: () => { app.scene.goBack(); } },
         rightButton: { image: app.img.home_share, handler: () => { app.scene.doShowActionSheet(); } },
     },
     getInitialState () {
@@ -43,23 +44,57 @@ const RecommendVideoPlayer = React.createClass({
             actionSheetVisible: false,
         };
     },
+    goBack() {
+        this.stopVideoSaveTime();
+        app.navigator.pop();
+    },
     componentDidMount () {
         this.doUpdateClicks();
         this.getRelevantVideo();
         AppState.addEventListener('change', this._handleAppStateChange);
     },
     componentWillUnmount () {
+        this.stopVideoSaveTime();
         AppState.removeEventListener('change', this._handleAppStateChange);
     },
     _handleAppStateChange: function (currentAppState) {
         this.setState({ currentAppState });
         if (currentAppState === 'active') {
-            // this.playerPlay && this.playerPlay.stopPlayVideo();
+            this.getVideoTimeSeek();
         } else {
-            this.playerPlay && this.playerPlay.stopPlayVideo();
+            this.stopVideoSaveTime();
+            this.fullScreenListener(false);
+        }
+    },
+    stopVideoSaveTime () {
+        if (this.state.playing === false) {
+            return;
+        }
+        this.playerPlay && this.playerPlay.stopPlayVideo();
+        const videoUrl = this.state.pageData ? this.state.pageData.urlPlay : null;
+        const time = this.playerPlay && this.playerPlay.getPlayTime();
+
+        console.log('stop time is ', time, videoUrl);
+        if (time && videoUrl) {
+            VideoTimeMgr.setPlayTime(videoUrl, time);
+        }
+        this.setState({ playing:false });
+    },
+    getVideoTimeSeek () {
+        this.setState({ playing: true });
+        const videoUrl = this.state.pageData ? this.state.pageData.urlPlay : null;
+        if (videoUrl) {
+            const time = VideoTimeMgr.getPlayTime(videoUrl);
+            if (time > 0) {
+                setTimeout(() => {
+                    this.playerPlay && this.playerPlay.setLastPlayTime(time);
+                    console.log('seek time is ', time, videoUrl);
+                }, 60);
+            }
         }
     },
     doShowActionSheet () {
+        this.stopVideoSaveTime();
         this.setState({ actionSheetVisible:true });
     },
     doCloseActionSheet () {
@@ -134,8 +169,7 @@ const RecommendVideoPlayer = React.createClass({
     onEnd () {
         this.fullScreenListener(false);
         this.getWatchVideoReward(this.state.pageData.videoID);
-        this.playerPlay && this.playerPlay.stopPlayVideo();
-        this.setState({ playing: false });
+        this.stopVideoSaveTime();
     },
     getWatchVideoReward (videoID) {
         const param = {
@@ -174,11 +208,8 @@ const RecommendVideoPlayer = React.createClass({
             this.setState({ pageData: this.state.pageData });
         }
     },
-    updatePoint (boxTitle, boxPoint) {
-        // this.setState({boxTitle:boxTitle,boxPoint:boxPoint, overlayFirstMessageBox:true});
-    },
     goVideoListPage () {
-        this.playerPlay && this.playerPlay.stopPlayVideo();
+        this.stopVideoSaveTime();
         app.navigator.push({
             title: '相关课程',
             component: RecommendHisttory,
@@ -186,6 +217,7 @@ const RecommendVideoPlayer = React.createClass({
         });
     },
     doRestart (obj) {
+        this.stopVideoSaveTime();
         app.navigator.replace({
             title: '课程学习',
             component: RecommendVideoPlayer,
@@ -202,7 +234,7 @@ const RecommendVideoPlayer = React.createClass({
         }
     },
     changePlaying () {
-        this.setState({ playing: true });
+        this.getVideoTimeSeek();
     },
     render () {
         const { urlPlay, urlImg } = this.state.pageData || {};
@@ -239,8 +271,7 @@ const RecommendVideoPlayer = React.createClass({
                     <View style={styles.personCtainer}>
                         <SpecopsVideoMenuPanel
                             data={this.state.pageData}
-                            noticeShow={this.updateHeart}
-                            noticeShowBox={this.updatePoint} />
+                            noticeShow={this.updateHeart} />
                     </View>
                 }
                     {
@@ -315,7 +346,7 @@ const styles = StyleSheet.create({
     },
     playerContainer: {
         width: sr.w,
-        height: sr.w * 2 / 3,
+        height: sr.w * 9 / 16,
         justifyContent: 'center',
         alignItems:'center',
         backgroundColor: 'white',

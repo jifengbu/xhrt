@@ -19,6 +19,7 @@ const Update = require('@remobile/react-native-update');
 const UpdatePage = require('../update/UpdatePage');
 const BindingBox = require('../login/BindingBox.js');
 // const AgentManager = require('./AgentManager.js');
+const ModifyPassword = require('./ModifyPassword.js');
 
 const { Button, WebviewMessageBox } = COMPONENTS;
 
@@ -97,6 +98,7 @@ module.exports = React.createClass({
         const tempTitle = (isAgent == 1) ? '我是代理商' : '我的二维码';
         return [
             { seprator:false, title:'个人信息设置', module: EditPersonInfo },
+            { seprator:false, title:'修改密码', module: ModifyPassword },
             { seprator:false, title:'等级任务积分', module: MyIntegral },
             // {seprator:false, title: '我的二维码', module: AgentManager, hidden:isAgent==0&&isSpecialSoldier==0},
             { seprator:false, title:'我的收藏', module: MyCollects },

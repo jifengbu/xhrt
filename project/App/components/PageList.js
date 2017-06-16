@@ -89,9 +89,6 @@ module.exports = React.createClass({
             return;
         }
         this.list = [];
-        this.setState({
-            dataSource: this.ds.cloneWithRows(this.list),
-        });
         this.pageNo = 1;
         this.getList();
     },

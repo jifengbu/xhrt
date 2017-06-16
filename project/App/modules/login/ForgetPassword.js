@@ -16,8 +16,8 @@ module.exports = React.createClass({
         leftButton: { color: CONSTANTS.THEME_COLORS[1], handler: () => { app.navigator.pop(); } },
     },
     doSubmit () {
-        if (!app.utils.checkPassword(this.state.pwd)) {
-            Toast('密码必须有6-20位的数字，字母，下划线组成');
+        if (!app.utils.checkPassword2(this.state.pwd)) {
+            Toast('密码长度为6-16位');
             return;
         }
         if (this.state.pwd !== this.state.pwdAgain) {

@@ -57,7 +57,7 @@ const ControlPanel = React.createClass({
     },
     render () {
         return (
-            <TouchableOpacity
+            <View
                 style={this.props.isFullScreen ? styles.controlFullPanel : styles.controlNormalPanel}
                 activeOpacity={1}>
                 <TouchableOpacity onPress={this.props.togglePlayVideo}>
@@ -94,7 +94,7 @@ const ControlPanel = React.createClass({
                         source={app.img.play_enlarge}
                         style={[styles.video_icon, { marginLeft: 20, marginRight: 10 }]} />
                 </TouchableOpacity>
-            </TouchableOpacity>
+            </View>
         );
     },
 });
@@ -128,23 +128,14 @@ module.exports = React.createClass({
         if (currentAppState !== 'active') {
             console.log('_handleAppStateChange');
             this.toggleFullScreenFalse();
-        }
-
-        if (currentAppState === 'background') {
-            this.oldpaused = this.state.paused;
-            this.setState({ paused: true });
-            this.lock(this.state.paused);
-        } else if (currentAppState === 'active') {
-            this.setState({ paused: true });
-            if (!this.oldpaused) {
-                this.setState({ paused: false });
-                this.lock(this.state.paused); ;
-            }
+        }else {
+            this.toggleFullScreenFalse();
+            this.lock(true);
         }
     },
     onHardwareBackPress () {
         BackAndroid.removeEventListener('hardwareBackPress', this.onHardwareBackPress);
-        this.toggleFullScreen();
+        this.toggleFullScreenFalse();
         return true;
     },
     componentDidMount () {
@@ -163,7 +154,7 @@ module.exports = React.createClass({
         if (!this.state.isControlShow) {
             this.timeoutID = this.setTimeout(() => {
                 this.timeoutID = null;
-                this.setState({ isControlShow: !this.state.isControlShow });
+                this.setState({ isControlShow: false });
             }, 5000);
         }
     },
@@ -174,14 +165,28 @@ module.exports = React.createClass({
         }
     },
     toggleControlPanel () {
+        if (this.state.paused) {
+            return;
+        }
+        if (this.state.isEnd) {
+            return;
+        }
         this.clearControlPanelTimeout();
-        this.setState({ isControlShow: !this.state.isControlShow });
-        this.startControlPanelTimeout();
+
+        if (!this.state.isControlShow) {
+            this.startControlPanelTimeout();
+            this.setState({ isControlShow: !this.state.isControlShow });
+        }else {
+            this.setState({ isControlShow: !this.state.isControlShow });
+        }
     },
     toggleFullScreen () {
         const isFullScreen = !this.state.isFullScreen;
         if (app.isandroid && isFullScreen) {
             BackAndroid.addEventListener('hardwareBackPress', this.onHardwareBackPress);
+        }
+        if (app.isandroid && !isFullScreen) {
+            BackAndroid.removeEventListener('hardwareBackPress', this.onHardwareBackPress);
         }
         this.props.fullScreenListener(isFullScreen);
         this.setState({
@@ -191,12 +196,12 @@ module.exports = React.createClass({
     },
     toggleFullScreenFalse () {
         console.log('toggleFullScreenFalse');
-        this.props.fullScreenListener(false);
         this.setState({
             isFullScreen: false,
             isControlShow:false,
         });
         this.stopPlayVideo();
+        this.props.fullScreenListener(false);
     },
     togglePlayVideo () {
         if (this.videoRewardTime === -1) {
@@ -206,6 +211,7 @@ module.exports = React.createClass({
             this.setState({ paused: !this.state.paused }, () => {
                 this.lock(this.state.paused);
             });
+            this.setState({ isControlShow: false });
             videoEnable = true;
         }
         this.setState({ isEnd: false });
@@ -227,7 +233,7 @@ module.exports = React.createClass({
         this.lastPlayTimeSave = time;
     },
     setRestartVideo (time) {
-        this.setState({ indicator: true, paused: true });
+        this.setState({ indicator: true, paused: false });
         this.video.seek(time);
         this.setTimeout(() => {
             if (this.videoRewardTime === -1) {
@@ -237,6 +243,7 @@ module.exports = React.createClass({
             this.lock(this.state.paused);
             videoEnable = true;
         }, app.isandroid ? 2000 : 1000);
+        this.setState({isEnd: false});
     },
     onVideoSeek () {
         if (this.videoRewardTime === -1) {
@@ -301,12 +308,17 @@ module.exports = React.createClass({
             this.props.onComplete && this.props.onComplete();
         }
         this.setState({ isEnd: true });
+        this.setState({ isControlShow: false });
+
     },
     onPause () {
         hasPause = true;
         this.lastPlayTimeSave = this.lastPlayTime;
     },
     onResume () {
+    },
+    reStartVideo () {
+        this.setRestartVideo(0);
     },
     render () {
         return (
@@ -371,7 +383,13 @@ module.exports = React.createClass({
                 {
                     this.state.paused &&
                     <TouchableOpacity style={!this.state.isFullScreen ? styles.togglePlayTouch : styles.togglePlaylFullFrame} onPress={this.togglePlayVideo}>
-                        <Image resizeMode='stretch' source={app.img.specops_play} style={styles.togglePlayImage} />
+                        <Image resizeMode='stretch' source={this.state.isFullScreen?app.img.specops_playFull:app.img.specops_play} style={styles.togglePlayImage} />
+                    </TouchableOpacity>
+                }
+                {
+                    (this.state.isEnd && this.state.paused==false) &&
+                    <TouchableOpacity style={!this.state.isFullScreen ? styles.togglePlayTouch : styles.togglePlaylFullFrame} onPress={this.reStartVideo}>
+                        <Image resizeMode='stretch' source={this.state.isFullScreen?app.img.specops_playFull:app.img.specops_play} style={styles.togglePlayImage} />
                     </TouchableOpacity>
                 }
             </View>
@@ -380,7 +398,7 @@ module.exports = React.createClass({
 });
 
 const NORMAL_WIDTH = sr.w;
-const NORMAL_HEIGHT = NORMAL_WIDTH * 2 / 3;
+const NORMAL_HEIGHT = NORMAL_WIDTH * 9 / 16;
 const FULL_WIDTH = sr.fh;
 const FULL_HEIGHT = sr.w;
 
@@ -439,7 +457,6 @@ const styles = StyleSheet.create({
         top: FULL_WIDTH / 2 - 33,
         left: FULL_HEIGHT / 2 - 33,
         position: 'absolute',
-        transform:[{ rotate: '90deg' }],
     },
     togglePlayImage: {
         width: 65,

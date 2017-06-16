@@ -26,6 +26,8 @@ const moment = require('moment');
 const UmengMgr = require('../../manager/UmengMgr.js');
 const Umeng = require('../../native/index.js').Umeng;
 const LivePlayer = require('../live/LivePlayer.js');
+const VideoTimeMgr = require('../../manager/VideoTimeMgr.js');
+const BindingBox = require('../login/BindingBox.js');
 
 const { PageList, DImage, ShareSheet } = COMPONENTS;
 let exitActicity = false;
@@ -58,13 +60,44 @@ const ActicityDetail = React.createClass({
     },
     componentWillUnmount () {
         exitActicity = true;
+        this.stopVideoSaveTime();
         AppState.removeEventListener('change', this._handleAppStateChange);
     },
     _handleAppStateChange: function (currentAppState) {
         if (currentAppState === 'active') {
-            // this.playerPlay && this.playerPlay.stopPlayVideo();
+            this.getVideoTimeSeek();
         } else {
-            this.playerPlay && this.playerPlay.stopPlayVideo();
+            this.stopVideoSaveTime();
+            this.fullScreenListener(false);
+        }
+    },
+    stopVideoSaveTime () {
+        const { detailData } = this.state;
+        if (this.state.playing === false) {
+            return;
+        }
+        this.playerPlay && this.playerPlay.stopPlayVideo();
+        const videoUrl = detailData ? detailData.activityVideo : null;
+        const time = this.playerPlay && this.playerPlay.getPlayTime();
+
+        console.log('stop time is ', time, videoUrl);
+        if (time && videoUrl) {
+            VideoTimeMgr.setPlayTime(videoUrl, time);
+        }
+        this.setState({ playing:false });
+    },
+    getVideoTimeSeek () {
+        const { detailData } = this.state;
+        this.setState({ playing: true });
+        const videoUrl = detailData ? detailData.activityVideo : null;
+        if (videoUrl) {
+            const time = VideoTimeMgr.getPlayTime(videoUrl);
+            if (time > 0) {
+                setTimeout(() => {
+                    this.playerPlay && this.playerPlay.setLastPlayTime(time);
+                    console.log('seek time is ', time, videoUrl);
+                }, 60);
+            }
         }
     },
     fullScreenListener (isFullScreen) {
@@ -82,17 +115,22 @@ const ActicityDetail = React.createClass({
         }
     },
     onEnd () {
+        this.stopVideoSaveTime();
         this.fullScreenListener(false);
-        this.setState({ playing: false });
     },
     changePlaying () {
-        this.setState({ playing: true });
+        this.getVideoTimeSeek();
     },
     doCloseActionSheet () {
         this.setState({ actionSheetVisible:false });
     },
     doShowActionSheet () {
+        this.stopVideoSaveTime();
         this.setState({ actionSheetVisible:true });
+    },
+    goBack() {
+        this.stopVideoSaveTime();
+        app.navigator.pop();
     },
     getList () {
         const param = {
@@ -105,7 +143,7 @@ const ActicityDetail = React.createClass({
         if (data.success) {
             const object = data.context.activityDetailed;
             if (object && object.mode == 1) {
-                app.getCurrentRoute().leftButton = { handler: () => { app.navigator.pop(); } };
+                app.getCurrentRoute().leftButton = { handler: () => { app.scene.goBack(); } };
                 app.getCurrentRoute().rightButton = { image: app.img.home_share, handler: () => { app.scene.doShowActionSheet(); } };
                 app.forceUpdateNavbar();
             }
@@ -119,16 +157,28 @@ const ActicityDetail = React.createClass({
         }
     },
     doConfirm () {
+        this.stopVideoSaveTime();
         app.navigator.push({
             component: EditPersonInfo,
         });
     },
     apply () {
+        this.stopVideoSaveTime();
+        if (app.isBind == false) {
+            Toast('要先绑定手机号才能报名');
+            app.showModal(
+                <BindingBox doRefresh={this.doRefresh}/>
+            );
+            return;
+        }
         if (this.state.detailData.isEnroll) {
             this.getSignUp();
         } else {
             Toast('不在活动报名时间范围内');
         }
+    },
+    doRefresh() {
+
     },
     getSignUp () {
         const param = {
@@ -195,6 +245,7 @@ const ActicityDetail = React.createClass({
 
     },
     replace (obj) {
+        this.stopVideoSaveTime();
         app.navigator.replace({
             title: '活动详情页',
             component: ActicityDetail,
@@ -205,6 +256,7 @@ const ActicityDetail = React.createClass({
         const { live } = this.state.detailData;
         if (live.broadcastLive == 1) {
             if (app.personal.info.isWatchLive === 1) {
+                this.stopVideoSaveTime();
                 app.navigator.push({
                     component: LivePlayer,
                     passProps: {
@@ -404,7 +456,7 @@ const ActicityDetail = React.createClass({
                                         fullScreenListener={this.fullScreenListener}
                                         onEnd={this.onEnd}
                                         width={sr.ws(323)}
-                                        height={sr.ws(217)}
+                                        height={sr.ws(182)}
                                     /> :
                                     <DImage
                                         resizeMode='stretch'

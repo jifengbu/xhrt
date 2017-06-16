@@ -27,7 +27,7 @@ const Umeng = require('../../native/index.js').Umeng;
 
 const { Button, InputBox, ShareSheet } = COMPONENTS;
 
-module.exports = React.createClass({
+const WeekPlan = React.createClass({
     mixins: [TimerMixin, SceneMixin],
     statics: {
         title: '本周工作任务',
@@ -270,13 +270,13 @@ module.exports = React.createClass({
             }
         }
     },
-    getCurrentMonthMonday () {
+    getCurrentMonthMonday (currentTimeStr) {
         // find month first monday
         let isFirstMonday = false;
         let addPos = 0;
 
         let firstDay = '';
-        firstDay = moment().set('date', 1).format('YYYY-MM-DD');
+        firstDay = moment(currentTimeStr).set('date', 1).format('YYYY-MM-DD');
 
         let firstMonday = '';
         while (isFirstMonday === false) {
@@ -288,10 +288,10 @@ module.exports = React.createClass({
             }
             addPos++;
         }
-        if (moment().date() < moment(firstMonday).date()) {
+        if (moment(currentTimeStr).date() < moment(firstMonday).date()) {
             isFirstMonday = false;
             addPos = 0;
-            firstDay = moment().subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
+            firstDay = moment(currentTimeStr).subtract(1, 'M').set('date', 1).format('YYYY-MM-DD');
             firstMonday = '';
             while (isFirstMonday === false) {
                 const isMonday = moment(firstDay).add(1 * addPos, 'd').day();
@@ -305,8 +305,8 @@ module.exports = React.createClass({
         }
         return firstMonday;
     },
-    getCurrentMonth () {
-        const strFirstMonday = this.getCurrentMonthMonday();
+    getCurrentMonth (currentTimeStr) {
+        const strFirstMonday = this.getCurrentMonthMonday(currentTimeStr);
         let monthNum = 0;
         if (moment().date() < moment(strFirstMonday).date()) {
             return moment().month();
@@ -314,8 +314,8 @@ module.exports = React.createClass({
             return moment().month() + 1;
         }
     },
-    getCurrentYear () {
-        const strFirstMonday = this.getCurrentMonthMonday();
+    getCurrentYear (currentTimeStr) {
+        const strFirstMonday = this.getCurrentMonthMonday(currentTimeStr);
         let monthNum = 0;
         if (moment().date() < moment(strFirstMonday).date()) {
             if (moment().month() == 0) {
@@ -325,8 +325,8 @@ module.exports = React.createClass({
             }
         }
     },
-    getCurrentTimeWeekSeq () {
-        const curWeekNum = this.getWeekNum(moment().format('YYYY-MM-DD'));
+    getCurrentTimeWeekSeq (currentTimeStr) {
+        const curWeekNum = this.getWeekNum(currentTimeStr);
         for (let i = 0; i < this.state.memWeekTime.length; i++) {
             const weekNum = this.getWeekNum(this.state.memWeekTime[i]);
             if (curWeekNum == weekNum) {
@@ -335,10 +335,10 @@ module.exports = React.createClass({
         }
         return 0;
     },
-    getWorkTask () {
+    getWorkTask (currentTimeStr) {
         const param = {
             userID:app.personal.info.userID,
-            date:moment().format('YYYY-MM-DD'),
+            date:currentTimeStr,
         };
         POST(app.route.ROUTE_SHARE_WORK_TASK, param, this.getWorkTaskSuccess, true);
     },
@@ -383,7 +383,7 @@ module.exports = React.createClass({
                 this.changeTab(this.currentIndex);
                 this.currentIndex = -1;
             } else {
-                this.changeTab(this.getCurrentDayIndex());
+                this.changeTab(this.getCurrentDayIndex(this.currentTimeStr));
             }
         } else {
             Toast(data.msg);
@@ -456,10 +456,10 @@ module.exports = React.createClass({
             Toast(data.msg);
         }
     },
-    getCurrentDayIndex () {
-        let index = 0;
+    getCurrentDayIndex (currentTimeStr) {
+        let index = -1;
         for (let i = 0; i < 7; i++) {
-            if (moment(this.state.memDayTime[i]).day() === moment().day()) {
+            if (moment(this.state.memDayTime[i]).day() === moment(currentTimeStr).day()) {
                 index = i;
                 break;
             }
@@ -505,40 +505,36 @@ module.exports = React.createClass({
         this.weekData = {};
         this.onInputBoxFun = null;
         this.clearWeekData();
-        this.currentMonthNum = this.getCurrentMonth();
+
+        this.currentTimeStr = moment().format('YYYY-MM-DD');
+        if (this.props.isTomorrow) {
+            this.currentTimeStr = moment().add(1, 'd').format('YYYY-MM-DD');
+        }
+
+        this.currentMonthNum = this.getCurrentMonth(this.currentTimeStr);
 
         this.processWeekTime(this.currentMonthNum - 1);
-        this.processDayTime(moment().format('YYYY-MM-DD'));
+        this.processDayTime(this.currentTimeStr);
 
-        this.currentWeekSeq = this.getCurrentTimeWeekSeq();
+        this.currentWeekSeq = this.getCurrentTimeWeekSeq(this.currentTimeStr);
 
-        // const param = {
-        //     userID:app.personal.info.userID,
-        //     planDate:moment().format('YYYY-MM-DD'),
-        // };
-        // POST(app.route.ROUTE_GET_MONTH_PLAN, param, this.getMonthDataSuccess, true);
-
-        // let tTime = '';
-        // if (this.state.isNextWeek) {
-        //     tTime = this.state.memDayTime[0];
-        // }else {
-        //     tTime = moment().format('YYYY-MM-DD');
-        // }
-        // this.currentTime = tTime;
-        // this.timeFunc(tTime);
-
-        this.getWorkTask();
+        this.getWorkTask(this.currentTimeStr);
     },
     componentDidMount () {
         this.weekData = {};
         this.onInputBoxFun = null;
         this.clearWeekData();
-        this.currentMonthNum = this.getCurrentMonth();
+
+        this.currentTimeStr = moment().format('YYYY-MM-DD');
+        if (this.props.isTomorrow) {
+            this.currentTimeStr = moment().add(1, 'd').format('YYYY-MM-DD');
+        }
+        this.currentMonthNum = this.getCurrentMonth(this.currentTimeStr);
 
         this.processWeekTime(this.currentMonthNum - 1);
-        this.processDayTime(moment().format('YYYY-MM-DD'));
+        this.processDayTime(this.currentTimeStr);
 
-        this.currentWeekSeq = this.getCurrentTimeWeekSeq();
+        this.currentWeekSeq = this.getCurrentTimeWeekSeq(this.currentTimeStr);
 
         if (this.props.doWeek) {
             this.currentIndex = parseInt(this.props.doWeek) - 1;
@@ -546,21 +542,7 @@ module.exports = React.createClass({
             this.currentIndex = 6;
         }
 
-        // const param = {
-        //     userID:app.personal.info.userID,
-        //     planDate:moment().format('YYYY-MM-DD'),
-        // };
-        // POST(app.route.ROUTE_GET_MONTH_PLAN, param, this.getMonthDataSuccess, true);
-        //
-        // let tTime = '';
-        // if (this.state.isNextWeek) {
-        //     tTime = this.state.memDayTime[0];
-        // }else {
-        //     tTime = moment().format('YYYY-MM-DD');
-        // }
-        // this.currentTime = tTime;
-        // this.timeFunc(tTime);
-        this.getWorkTask();
+        this.getWorkTask(this.currentTimeStr);
 
         this.firstMove = false;
     },
@@ -773,6 +755,10 @@ module.exports = React.createClass({
         );
     },
     modifyDayProblemView (obj) {
+        if (!this.state.isDayPlanModify) {
+            Toast('不能填写未来的备注');
+            return;
+        }
         if (!this.state.isProblemModify && obj.problemContent !== '') {
             return;
         }
@@ -787,11 +773,31 @@ module.exports = React.createClass({
                 haveTitle
                 title={obj.problemTitle}
                 index={obj.index}
-                modifyTitle={false}
+                modifyTitle={true}
                 />
         );
     },
     modifyFixDayProblemView (obj, index) {
+        if (index==2
+                && this.getCurrentDayIndex(moment().format('YYYY-MM-DD'))==this.state.tabIndex
+                && obj.problemContent == '')
+        {
+            app.navigator.replace({
+                component: WeekPlan,
+                passProps: {
+                    indexPos: 0,
+                    isTomorrow: true,
+                },
+            });
+            return;
+        }
+        if (index==2)
+            return;
+
+        if (!this.state.isDayPlanModify) {
+            Toast('不能填写未来的备注');
+            return;
+        }
         if (!this.state.isProblemModify && obj.problemContent !== '') {
             return;
         }
@@ -804,7 +810,7 @@ module.exports = React.createClass({
                 textID={textID}
                 inputText={obj.problemContent ? obj.problemContent : textContent}
                 doCancel={app.closeModal}
-                haveTitle
+                haveTitle={true}
                 title={obj.problemTitle}
                 index={obj.index}
                 modifyTitle={false}
@@ -1340,7 +1346,7 @@ module.exports = React.createClass({
                                         onPress={this.changeTab.bind(null, i)}
                                         style={[styles.tabButton, this.state.tabIndex === i ? { borderTopWidth: 4, backgroundColor: '#FF8686', borderColor: '#FF6262' } : null]}>
                                         <Text style={[styles.tabText, this.state.tabIndex === i ? { marginTop: 6, color: '#FFFFFF' } : null]} >
-                                            {i === this.getCurrentDayIndex() ? '今日' : item}
+                                            {i === this.getCurrentDayIndex(moment().format('YYYY-MM-DD')) ? '今日' : item}
                                         </Text>
                                         <Text style={[styles.tabTextTime, this.state.tabIndex === i ? { color: '#FFFFFF' } : null]} >
                                             {moment(this.state.memDayTime[i]).format('MM.DD')}
@@ -1495,7 +1501,11 @@ module.exports = React.createClass({
                                                 <Text
                                                     style={styles.detailStyle2}
                                                     multiline>
-                                                    {'轻触开始填写'}
+                                                    {(i==2
+                                                        && this.getCurrentDayIndex(moment().format('YYYY-MM-DD'))==this.state.tabIndex)
+                                                        ?
+                                                        '去填写明天的计划':'轻触开始填写'
+                                                    }
                                                 </Text>
                                             :
                                                 <Text
@@ -1530,6 +1540,7 @@ module.exports = React.createClass({
         );
     },
 });
+module.exports = WeekPlan;
 
 const styles = StyleSheet.create({
     container: {

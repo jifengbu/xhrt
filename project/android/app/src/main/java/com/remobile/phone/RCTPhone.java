@@ -31,15 +31,15 @@ public class RCTPhone extends ReactContextBaseJavaModule implements bearViewInte
 
 
     private Activity activity;
-    private bearInterface bear;
-    private bearIFCallback bearCallback;
+    // private bearInterface bear;
+    // private bearIFCallback bearCallback;
     private int currVolume;
 
     public RCTPhone(ReactApplicationContext reactContext, Activity activity) {
         super(reactContext);
         this.activity = activity;
-        bear = new bearInterface();
-        bearCallback = new bearIFCallback(this);
+        // bear = new bearInterface();
+        // bearCallback = new bearIFCallback(this);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class RCTPhone extends ReactContextBaseJavaModule implements bearViewInte
     public void connectAudioServer(ReadableMap args) {
         String serverIP = args.getString("serverIP");
         int serverPort = args.getInt("serverPort");
-        bear.setParam(serverIP, serverPort, activity.getApplicationContext(), bearCallback);
+        // bear.setParam(serverIP, serverPort, activity.getApplicationContext(), bearCallback);
     }
 
     @ReactMethod
@@ -59,14 +59,16 @@ public class RCTPhone extends ReactContextBaseJavaModule implements bearViewInte
         String options = args.getString("options");
         String chatroomID = args.getString("chatroomID");
 
-        return bear.joinChatroom(options, chatroomID);
+        // return bear.joinChatroom(options, chatroomID);
+        return 0;
     }
 
     @ReactMethod
     public int exitChatroom(ReadableMap args) {
         String userID = args.getString("userID");
         String chatroomID = args.getString("chatroomID");
-        return bear.exitChatroom(userID, chatroomID);
+        // return bear.exitChatroom(userID, chatroomID);
+        return 0;
     }
 
     @ReactMethod
@@ -75,14 +77,16 @@ public class RCTPhone extends ReactContextBaseJavaModule implements bearViewInte
         String chatroomID = args.getString("chatroomID");
         int message = args.getInt("message");
 
-        return bear.setMessageToServer(userID, chatroomID, message);
+        // return bear.setMessageToServer(userID, chatroomID, message);
+        return 0;
     }
 
     @ReactMethod
     public int matchingChatroom(ReadableMap args) {
         String options = args.getString("options");
 
-        return bear.matchingChatroom(options);
+        // return bear.matchingChatroom(options);
+        return 0;
     }
 
     @ReactMethod
@@ -92,27 +96,32 @@ public class RCTPhone extends ReactContextBaseJavaModule implements bearViewInte
         String gradeUserID = args.getString("gradeUserID");
         int gradeCount = args.getInt("gradeCount");
 
-        return bear.setGradeToServer(userID, chatroomID, gradeUserID, gradeCount);
+        // return bear.setGradeToServer(userID, chatroomID, gradeUserID, gradeCount);
+        return 0;
     }
 
     @ReactMethod
     public int pausePlayout() {
-        return bear.pausePlayout();
+        // return bear.pausePlayout();
+        return 0;
     }
 
     @ReactMethod
     public int resumePlayout() {
-        return bear.resumePlayout();
+        // return bear.resumePlayout();
+        return 0;
     }
 
     @ReactMethod
     public int pauseRecord() {
-        return bear.pauseRecord();
+        // return bear.pauseRecord();
+        return 0;
     }
 
     @ReactMethod
     public int resumeRecord() {
-        return bear.resumeRecord();
+        // return bear.resumeRecord();
+        return 0;
     }
 
     @ReactMethod
@@ -150,7 +159,8 @@ public class RCTPhone extends ReactContextBaseJavaModule implements bearViewInte
     }
     @ReactMethod
     public int request(String data) {
-        return bear.request(data);
+        // return bear.request(data);
+        return 0;
     }
 
     public int onJoinChatroomRS(final int result, final String chatroomID, final String userID) {

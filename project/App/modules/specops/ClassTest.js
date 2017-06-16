@@ -466,7 +466,6 @@ const styles = StyleSheet.create({
         marginRight: 20,
     },
     optionContianer: {
-        height: 40,
         marginHorizontal: 20,
         paddingLeft: 10,
         marginTop: 6,
@@ -491,7 +490,6 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     optionMarkContianer: {
-        height: 40,
         flex: 1,
         marginRight: 20,
         paddingLeft: 10,
@@ -501,6 +499,7 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontSize: 14,
+        paddingVertical: 10,
     },
     buttonContainer: {
         height: 80,

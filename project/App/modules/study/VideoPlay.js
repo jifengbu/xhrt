@@ -23,16 +23,56 @@ const Draw = require('./Draw.js');
 const Player = require('./Player.js');
 const ShowMealBox = require('../package/ShowMealBox.js');
 const FirstMessageBox = require('./FirstMessageBox.js');
+const VideoTimeMgr = require('../../manager/VideoTimeMgr.js');
+const TimerMixin = require('react-timer-mixin');
 
 const { Button, DImage } = COMPONENTS;
 const ITEM_NAME = 'DO_REFRESH_COMMENTS';
 
 const VideoPlay = React.createClass({
-    mixins: [SceneMixin],
+    mixins: [SceneMixin, TimerMixin],
     statics: {
         color: '#000000',
         guideLayer: require('../guide/StudyGuide.js'),
-        leftButton: { image: app.img.common_back2, handler: () => { app.navigator.pop(); } },
+        leftButton: { image: app.img.common_back2, handler: () => {
+            app.scene.goBack(); } },
+    },
+    goBack () {
+        this.stopVideoSaveTime();
+        app.navigator.pop();
+    },
+    onWillFocus() {
+        if (this.showDraw) {
+            this.showDraw=false;
+            this.setState({playing:true});
+            this.getVideoTimeSeek();
+        }
+    },
+    stopVideoSaveTime () {
+        if (this.state.playing === false) {
+            return;
+        }
+        this.playerPlay && this.playerPlay.stopPlayVideo();
+        const videoUrl = this.props.videoInfo ? this.props.videoInfo.urlPlay : null;
+        const time = this.playerPlay && this.playerPlay.getPlayTime();
+
+        console.log('stop time is ', time, videoUrl);
+        if (time && videoUrl) {
+            VideoTimeMgr.setPlayTime(videoUrl, time);
+        }
+        this.setState({ playing:false });
+    },
+    getVideoTimeSeek () {
+        const videoUrl = this.props.videoInfo ? this.props.videoInfo.urlPlay : null;
+        if (videoUrl) {
+            const time = VideoTimeMgr.getPlayTime(videoUrl);
+            if (time > 0) {
+                this.setTimeout(() => {
+                    this.playerPlay && this.playerPlay.setLastPlayTime(time);
+                    console.log('seek time is ', time, videoUrl);
+                }, 60);
+            }
+        }
     },
     componentWillMount () {
         app.updateNavbarColor(CONSTANTS.THEME_COLORS[1]);
@@ -46,6 +86,8 @@ const VideoPlay = React.createClass({
     componentDidMount () {
         this.doUpdateClicks();
         AppState.addEventListener('change', this._handleAppStateChange);
+
+        this.getVideoTimeSeek();
     },
     componentWillUnmount () {
         AppState.removeEventListener('change', this._handleAppStateChange);
@@ -53,6 +95,12 @@ const VideoPlay = React.createClass({
     _handleAppStateChange: function (currentAppState) {
         if (currentAppState !== 'active') {
             this.fullScreenListener(false);
+            this.stopVideoSaveTime();
+        }else {
+            if (!this.showDraw) {
+                this.setState({playing:true});
+                this.getVideoTimeSeek();
+            }
         }
     },
     doUpdateClicks () {
@@ -71,6 +119,7 @@ const VideoPlay = React.createClass({
         }
     },
     getInitialState () {
+        this.showDraw=false;
         return {
             overlayShowStudyAward:false,
             overlayFirstMessageBox: false,
@@ -86,6 +135,7 @@ const VideoPlay = React.createClass({
             tempPublisherName: '',
             commentContent: '',
             scrollEnabled: true,
+            playing: true,
         };
     },
     doCancle () {
@@ -127,6 +177,8 @@ const VideoPlay = React.createClass({
     },
     doGetRewardListSuccess (data) {
         this.setState({ overlayShowStudyAward:false });
+        this.showDraw=true;
+        this.stopVideoSaveTime();
         app.navigator.push({
             component: Draw,
             passProps: { rewardBackImg:data.context.rewardImg, costCoin:data.context.consMarsCoin },
@@ -135,9 +187,22 @@ const VideoPlay = React.createClass({
     doDraw () {
         this.doGetRewardList();
     },
+    doShareCallVideo(){
+        if (this.state.playing === false) {
+            return;
+        }
+        this.playerPlay && this.playerPlay.stopPlayVideo();
+        const videoUrl = this.props.videoInfo ? this.props.videoInfo.urlPlay : null;
+        const time = this.playerPlay && this.playerPlay.getPlayTime();
+
+        console.log('stop time is ', time, videoUrl);
+        if (time && videoUrl) {
+            VideoTimeMgr.setPlayTime(videoUrl, time);
+        }
+    },
     doShare (makePoint) {
         this.setState({ overlayShowStudyAward:false });
-        const name = '亲爱的特种兵' + app.personal.info.name + '同志';
+        const name = '亲爱' + app.personal.info.name + '同志';
         const percentage = makePoint > 0 ? ('获得赢销积分+' + makePoint + '分') : '';
         const encourage = makePoint > 0 ? '并且获得一次抽奖机会' : '获得一次抽奖机会';
         const desc = name + percentage + encourage;
@@ -190,6 +255,7 @@ const VideoPlay = React.createClass({
         }
     },
     doRestart (obj) {
+        this.stopVideoSaveTime();
         if (app.personal.info.userType == '0' && obj.isFree != 1) {
             this.setState({ ShowMealBox: true });
             return;
@@ -307,23 +373,26 @@ const VideoPlay = React.createClass({
         return (
             <View style={styles.container}>
                 <ScrollView scrollEnabled={this.state.scrollEnabled}>
+                {
+                    this.state.playing &&
                     <Player
+                        ref={(ref) => { this.playerPlay = ref; }}
                         uri={videoInfo.urlPlay}
                         fullScreenListener={this.fullScreenListener}
                         onComplete={this.onComplete}
                     />
-                    {
+                }
+                {
                     !this.state.isFullScreen &&
                     <View style={styles.container}>
-
                         <VideoMenuPanel
                             data={videoInfo}
                             noticeShow={this.updateHeart}
+                            doShareCallVideo={this.doShareCallVideo}
                             noticeShowBox={this.updatePoint} />
                         <VideoRecommend
                             doRestart={this.doRestart}
                             data={videoInfo} />
-
                     </View>
                 }
                 </ScrollView>

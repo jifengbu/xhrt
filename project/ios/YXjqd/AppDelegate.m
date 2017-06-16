@@ -44,7 +44,7 @@ UIViewController *globalViewController;
   [RCTJPush application:application didFinishLaunchingWithOptions:launchOptions];
   
 #ifdef DEBUG
-  NSURL *jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
+  NSURL *jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.126:8081/index.ios.bundle?platform=ios&dev=true"];
 #else //DEBUG画丶
   NSURL *jsCodeLocation = [RCTUpdate getBundleUrl];
 #endif //DEBUG

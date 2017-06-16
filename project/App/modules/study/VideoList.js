@@ -128,6 +128,7 @@ module.exports = React.createClass({
         return (
             <View style={styles.container}>
                 <ListView                    initialListSize={1}
+                    removeClippedSubviews={false}
                     enableEmptySections
                     style={styles.list}
                     dataSource={this.state.dataSource}

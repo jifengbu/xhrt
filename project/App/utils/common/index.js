@@ -219,7 +219,10 @@ module.exports = {
         return /^1\d{10}$/.test(phone);
     },
     checkPassword (pwd) {
-        return /^[\d\w_]{6,20}$/.test(pwd);
+        return /^.{6,20}$/.test(pwd);
+    },
+    checkPassword2 (pwd) {
+        return /^.{6,16}$/.test(pwd);
     },
     checkVerificationCode (code) {
         return /^\d{6}$/.test(code);

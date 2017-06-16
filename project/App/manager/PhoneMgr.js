@@ -174,29 +174,29 @@ class Manager extends EventEmitter {
     }
     connectAccessServer () {
         console.log('connectAccessServer');
-        this.phone.connectAudioServer({
-            serverIP: CONSTANTS.CHAT_SERVER_IP,
-            serverPort: CONSTANTS.CHAT_SERVER_PORT,
-        });
+        // this.phone.connectAudioServer({
+        //     serverIP: CONSTANTS.CHAT_SERVER_IP,
+        //     serverPort: CONSTANTS.CHAT_SERVER_PORT,
+        // });
     }
     connectTrainServer () {
         console.log('connectTrainServer');
-        this.phone.request(JSON.stringify({
-            chatroomNumber: 'none',
-            functionName: this.phone.meetFunctions.MCAS_REQUEST_FUNCTION_CONNECT_MCAS,
-            requestTimeOut: CONSTANTS.TRAIN_SERVER_TIMEOUT,
-            isBroadcast: 1,
-        }));
+        // this.phone.request(JSON.stringify({
+        //     chatroomNumber: 'none',
+        //     functionName: this.phone.meetFunctions.MCAS_REQUEST_FUNCTION_CONNECT_MCAS,
+        //     requestTimeOut: CONSTANTS.TRAIN_SERVER_TIMEOUT,
+        //     isBroadcast: 1,
+        // }));
     }
     connectMeetingServer (meetingRoom) {
         console.log('connectMeetingServer');
         this.meetingRoom = meetingRoom;
-        this.phone.request(JSON.stringify({
-            chatroomNumber: meetingRoom.roomNO,
-            functionName: this.phone.meetFunctions.MCAS_REQUEST_FUNCTION_CONNECT_MCAS,
-            requestTimeOut: CONSTANTS.MEETING_SERVER_TIMEOUT,
-            isBroadcast: 1,
-        }));
+        // this.phone.request(JSON.stringify({
+        //     chatroomNumber: meetingRoom.roomNO,
+        //     functionName: this.phone.meetFunctions.MCAS_REQUEST_FUNCTION_CONNECT_MCAS,
+        //     requestTimeOut: CONSTANTS.MEETING_SERVER_TIMEOUT,
+        //     isBroadcast: 1,
+        // }));
     }
     closeSocket () {
         console.log('closeSocket');
@@ -847,8 +847,8 @@ class Manager extends EventEmitter {
         POST(app.route.ROUTE_SUBMIT_ONLINE_PERSON, param, (data) => { console.log(data); });
     }
     deviceNetOffline () {
-        this.closeSocket();
-        this.emit('EVENT_DEVICE_NET_OFFLINE');
+        // this.closeSocket();
+        // this.emit('EVENT_DEVICE_NET_OFFLINE');
     }
 }
 module.exports = new Manager();

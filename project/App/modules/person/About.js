@@ -21,6 +21,7 @@ module.exports = React.createClass({
     render () {
         return (
             <View style={styles.container}>
+                <View style={styles.line} />
                 <View style={styles.versionView}>
                     <DImage resizeMode='contain' source={app.img.login_logo} style={styles.logoImage} />
                     <Text style={styles.versionText}>{'版本号:' + Update.getVersion()}</Text>
@@ -60,5 +61,10 @@ const styles = StyleSheet.create({
     },
     webview: {
         width:sr.w - 40,
+    },
+    line: {
+        width: sr.w,
+        height: 1,
+        backgroundColor: '#EFEFEF',
     },
 });

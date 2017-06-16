@@ -1,7 +1,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 #import <React/RCTEventDispatcher.h>
-#include "bear_interface_ios.h"
+//#include "bear_interface_ios.h"
 
 #define EVENT_ON_JOIN_ROOM @"EVENT_ON_JOIN_ROOM"
 #define EVENT_ON_EXIT_ROOM @"EVENT_ON_EXIT_ROOM"
@@ -14,7 +14,7 @@
 #define EVENT_ON_REQUEST @"EVENT_ON_REQUEST"
 
 
-@interface RCTPhone : NSObject <RCTBridgeModule, BearCallBackProtocol>
+@interface RCTPhone : NSObject <RCTBridgeModule>
 
 @end
 
@@ -35,31 +35,31 @@ RCT_EXPORT_MODULE(Phone);
 RCT_EXPORT_METHOD(connectAudioServer:(NSDictionary *)data) {
   NSString *serverIP = data[@"serverIP"];
   int serverPort = [data[@"serverPort"] intValue];
-  [[BearInterface getInstance] initNetioIos:serverIP :serverPort :self];
+//  [[BearInterface getInstance] initNetioIos:serverIP :serverPort :self];
 }
 
 RCT_EXPORT_METHOD(joinChatroom:(NSDictionary *)data) {
   NSString *options = data[@"options"];
   NSString *chatroomID = data[@"chatroomID"];
-  [[BearInterface getInstance] joinChatroom:options :chatroomID];
+//  [[BearInterface getInstance] joinChatroom:options :chatroomID];
 }
 
 RCT_EXPORT_METHOD(exitChatroom:(NSDictionary *)data) {
   NSString *userID = data[@"userID"];
   NSString *chatroomID = data[@"chatroomID"];
-  [[BearInterface getInstance] exitChatroom:userID :chatroomID];
+//  [[BearInterface getInstance] exitChatroom:userID :chatroomID];
 }
 
 RCT_EXPORT_METHOD(setMessageToServer:(NSDictionary *)data) {
   NSString *userID = data[@"userID"];
   NSString *chatroomID = data[@"chatroomID"];
   int message = [data[@"message"] intValue];
-  [[BearInterface getInstance] setMessageToServer:userID :chatroomID :message];
+//  [[BearInterface getInstance] setMessageToServer:userID :chatroomID :message];
 }
 
 RCT_EXPORT_METHOD(matchingChatroom:(NSDictionary *)data) {
   NSString *options = data[@"options"];
-  [[BearInterface getInstance] matchingChatroom:options];
+//  [[BearInterface getInstance] matchingChatroom:options];
 }
 
 RCT_EXPORT_METHOD(setGradeToServer:(NSDictionary *)data) {
@@ -67,36 +67,36 @@ RCT_EXPORT_METHOD(setGradeToServer:(NSDictionary *)data) {
   NSString *chatroomID = data[@"chatroomID"];
   NSString *gradeUserID = data[@"gradeUserID"];
   int gradeCount = [data[@"gradeCount"] intValue];
-  [[BearInterface getInstance] setGradeToServer:userID :chatroomID :gradeUserID :gradeCount];
+//  [[BearInterface getInstance] setGradeToServer:userID :chatroomID :gradeUserID :gradeCount];
 }
 
 RCT_EXPORT_METHOD(pausePlayout) {
-  [[BearInterface getInstance] pausePlayout];
+//  [[BearInterface getInstance] pausePlayout];
 }
 
 RCT_EXPORT_METHOD(resumePlayout) {
-  [[BearInterface getInstance] resumePlayout];
+//  [[BearInterface getInstance] resumePlayout];
 }
 
 RCT_EXPORT_METHOD(pauseRecord) {
-  [[BearInterface getInstance] pauseRecord];
+//  [[BearInterface getInstance] pauseRecord];
 }
 
 RCT_EXPORT_METHOD(resumeRecord) {
-  [[BearInterface getInstance] resumeRecord];
+//  [[BearInterface getInstance] resumeRecord];
 }
 
 
 RCT_EXPORT_METHOD(speakerOn) {
-  [[BearInterface getInstance] speakerOn];
+//  [[BearInterface getInstance] speakerOn];
 }
 
 RCT_EXPORT_METHOD(speakerOff) {
- [[BearInterface getInstance] speakerOff];
+// [[BearInterface getInstance] speakerOff];
 }
 
 RCT_EXPORT_METHOD(request:(NSString *)data) {
-  [[BearInterface getInstance] request: data];
+//  [[BearInterface getInstance] request: data];
 }
 
 - (void)onJoinChatroomRS : (int32_t) result : (NSString *) chatroomID : (NSString *) userID {

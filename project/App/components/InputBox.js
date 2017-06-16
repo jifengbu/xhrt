@@ -6,10 +6,12 @@ const {
     Text,
     Animated,
     View,
+    Platform,
     Image,
     TouchableOpacity,
     TextInput,
     Modal,
+    KeyboardAvoidingView,
     TouchableHighlight,
 } = ReactNative;
 
@@ -102,6 +104,7 @@ module.exports = React.createClass({
                     activeOpacity={1}
                     onPress={this.doHideDismissKeyboard}
                     style={styles.overlayContainer}>
+                    <KeyboardAvoidingView behavior={'position'}>
                     <View style={[styles.background, { height:this.props.haveTitle ? sr.ws(332) : sr.ws(282) }]}>
                         <View style={[styles.container, { height:this.props.haveTitle ? sr.ws(312) : sr.ws(262) }]}>
                             {
@@ -111,7 +114,7 @@ module.exports = React.createClass({
                                     {
                                         !this.props.modifyTitle && this.props.index &&
                                         <TextInput
-                                            editable
+                                            editable={false}
                                             style={[styles.topStyle, { height: textHeight - 10 }]}
                                             onChangeText={(text) => {
                                                 this.setState({ title: text });
@@ -142,7 +145,8 @@ module.exports = React.createClass({
                                           />
                                     }
                                 </View>
-                                <View style={styles.lineView} />
+                                <View style={styles.lineView} >
+                                </View>
                             </View>
                         }
                             <View style={[styles.textStyleViewNoSide, { height: sr.ws(250 - textHeight) }]}>
@@ -187,7 +191,8 @@ module.exports = React.createClass({
                                 source={app.img.draw_back}
                                 style={styles.closeIcon} />
                         </TouchableHighlight>
-                    </View>
+                        </View>
+                    </KeyboardAvoidingView>
                 </TouchableOpacity>
             </Modal>
         );
@@ -245,7 +250,7 @@ const styles = StyleSheet.create({
     },
     background: {
         width: sr.w,
-        marginTop: 150,
+        marginTop: Platform.OS === 'android' ? 105:150,
         alignItems: 'center',
         backgroundColor: 'transparent',
     },

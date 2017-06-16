@@ -15,25 +15,31 @@ const {
     ScrollView,
 } = ReactNative;
 
-const MyNews = require('./MyNews.js');
 const Setting = require('./Setting.js');
 const TaskRecords = require('./TaskRecords.js');
 const LearningRecords = require('./LearningRecords.js');
 const CourseRecords = require('./CourseRecords.js');
+const AlreadyBuyCourse = require('./AlreadyBuyCourse.js');
 const MyRoomList = require('../meeting/MyRoomList.js');
 const ActualCombatRecord = require('../actualCombat/ActualCombatRecord.js');
 const AgentManager = require('./AgentManager.js');
 const AgentReturns = require('../theAgent/AgentReturns.js');
 const AppointmentSetting = require('../live/AppointmentSetting.js');
 const MyIntegral = require('./MyIntegral.js');
+const Wallet = require('../wallet/index.js');
 const BossIndex = require('../specopsBoss/index.js');
+const BuyRecommend = require('../wallet/BuyRecommend.js');
+const BuySpecops = require('../wallet/BuySpecops.js');
+const Recommend = require('../wallet/Recommend.js');
+const ImgFileMgr = require('../../manager/ImgFileMgr.js');
+var NewsList = require('../home/NewsList.js');
 
 const { Button, DImage, WebviewMessageBox } = COMPONENTS;
 import Badge from 'react-native-smart-badge';
 
 const MenuItem = React.createClass({
     showChildPage () {
-        if (this.props.page.title === '我的课程') {
+        if (this.props.page.title === '特种兵课程') {
             app.navigator.push({
                 title: this.props.page.title,
                 component: this.props.page.module,
@@ -44,7 +50,7 @@ const MenuItem = React.createClass({
             });
             return;
         }
-        if (this.props.page.title === '学习记录') {
+        if (this.props.page.title === '学习记录' || '已购视频') {
             app.updateNavbarColor(CONSTANTS.THEME_COLORS[1]);
             app.navigator.push({
                 component: this.props.page.module,
@@ -107,9 +113,10 @@ const MenuItem = React.createClass({
                                     <Text style={styles.companyNameText} numberOfLines={2}>
                                         {companyInfo.name}
                                     </Text>
-                                    <Image resizeMode='stretch' source={app.img.specopsBoss_boss_entrance} style={styles.goBossIcon}>
-                                        <Text style={styles.goBossText} numberOfLines={1}>{'进入管理端'}</Text>
-                                    </Image>
+                                    <View style={styles.goBossView}>
+                                        <Image resizeMode='stretch' source={app.img.personal_enter_boss} style={styles.goBossIcon}>
+                                        </Image>
+                                    </View>
                                 </View>
                             </View>
                             <View style={styles.companyDetailContainer}>
@@ -144,7 +151,11 @@ const MenuItem = React.createClass({
                     </TouchableOpacity>
                 }
                 {
-                    title === '我的课程' &&
+                    title === '已购视频' &&
+                    <AlreadyBuyCourse briefDisplay={true} learningRecordBase={this.props.learningRecordBase}/>
+                }
+                {
+                    title === '特种兵课程' &&
                     <CourseRecords showCount />
                 }
                 {
@@ -159,15 +170,20 @@ const MenuItem = React.createClass({
 module.exports = React.createClass({
     mixins: [SceneMixin],
     statics: {
-        leftButton: { image: app.img.common_back, handler: () => { app.scene.goBack && app.scene.goBack(); } },
-        rightButton: { image: app.img.personal_set, handler: () => { app.scene.toggleMenuPanel(); } },
+        leftButton: { image: app.img.personal_set, handler: () => { app.scene.toggleMenuPanel(); } },
+        rightButton: { image: app.img.wallet_message, handler: ()=>{
+            app.navigator.push({
+                component: NewsList,
+            });
+        }},
     },
     getChildPages (courseData, learningRecordBase, companyInfo) {
         const total = learningRecordBase.total || '';
         const { isAgent, isSpecialSoldier } = app.personal.info;
         return [
             { seprator:true, title:'企业管理', module: BossIndex, img:app.img.personal_order, info:'', hidden:!companyInfo },
-            { seprator:true, title:'我的课程', module: CourseRecords, img:app.img.personal_order, info:courseData && courseData.length + '节课', hidden:(isAgent == 0 && isSpecialSoldier == 0) },
+            { seprator:true, title:'已购视频', module: AlreadyBuyCourse, img:app.img.personal_order, info:courseData && courseData.length + '个视频', hidden:(isAgent == 0 && isSpecialSoldier == 0) },
+            { seprator:true, title:'特种兵课程', module: CourseRecords, img:app.img.personal_order, info:courseData && courseData.length + '节课', hidden:(isAgent == 0 && isSpecialSoldier == 0) },
             { seprator:true, title:'学习记录', module: LearningRecords, img:app.img.personal_order, info:'已经学习' + total + '节课' },
         ].map((item, i) => !item.hidden && <MenuItem page={item} key={i} learningRecordBase={learningRecordBase} courseData={courseData} companyInfo={companyInfo} />);
     },
@@ -175,32 +191,24 @@ module.exports = React.createClass({
         return {
             learningRecordBase:{},
             courseData:[],
+            amount: 0,
         };
     },
     componentWillMount () {
         app.updateNavbarColor('#DE3031');
     },
-    goBack () {
-        app.updateNavbarColor(CONSTANTS.THEME_COLORS[0]);
-        app.navigator.pop();
-    },
     onWillFocus () {
         app.updateNavbarColor('#DE3031');
+        this.getUserSumAmount();// 获取钱包余额
     },
     onWillHide () {
         app.updateNavbarColor(CONSTANTS.THEME_COLORS[1]);
     },
-    // onWillHide() {
-    //     app.toggleNavigationBar(true);
-    // },
-    // componentWillMount(){
-    //     this.setState({integral:app.personal.info.integral});
-    //     app.toggleNavigationBar(false);
-    // },
     componentDidMount () {
         this.doGetPersonalInfo();
         this.getLearningRecord();
         this.getStudyProgressList();// 获取我的课程列表
+        this.getUserSumAmount();// 获取钱包余额
     },
     doRefresh () {
         this.doGetPersonalInfo();
@@ -243,6 +251,19 @@ module.exports = React.createClass({
             }
         }
     },
+    getUserSumAmount () {
+        const param = {
+            userID: app.personal.info.userID,
+        };
+        POST(app.route.ROUTE_GET_USER_SUMAMOUNT, param, this.getUserSumAmountSuccess);
+    },
+    getUserSumAmountSuccess (data) {
+        if (data.success) {
+            const { amount } = data.context;
+            let money = amount*1/100;
+            this.setState({ amount:money});
+        }
+    },
     doGetPersonalInfo () {
         const param = {
             userID: app.personal.info.userID,
@@ -264,6 +285,9 @@ module.exports = React.createClass({
             } else {
                 app.studyNumMgr.initStudyNum();
             }
+
+            // down share img
+            ImgFileMgr.downImgFile(data.context.extensionImg);
         }
     },
     toggleMenuPanel () {
@@ -280,15 +304,24 @@ module.exports = React.createClass({
         });
     },
     showNews () {
-        // app.THEME_COLOR = CONSTANTS.THEME_COLORS[1];
-        // app.update();
-        app.updateNavbarColor(CONSTANTS.THEME_COLORS[1]);
-        app.navigator.push({
-            component: MyNews,
-            sceneConfig: {
-                ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null,
-            },
-        });
+        const { isAgent, isSpecialSoldier, recommendAmbassador, feeQRCode} = app.personal.info;
+        let isSpecops = isAgent || isSpecialSoldier;
+        if (isSpecops) {
+            if (recommendAmbassador==1) {
+                app.navigator.push({
+                    component: Recommend,
+                    passProps:{ feeQRCode },
+                });
+            } else {
+                app.navigator.push({
+                    component: BuyRecommend,
+                });
+            }
+        } else {
+            app.navigator.push({
+                component: BuySpecops,
+            });
+        }
     },
     showIntegral () {
         // app.THEME_COLOR = CONSTANTS.THEME_COLORS[1];
@@ -297,6 +330,15 @@ module.exports = React.createClass({
         app.navigator.push({
             component: MyIntegral,
             passProps: {},
+            sceneConfig: {
+                ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null,
+            },
+        });
+    },
+    showWallet () {
+        app.updateNavbarColor('red');
+        app.navigator.push({
+            component: Wallet,
             sceneConfig: {
                 ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: null,
             },
@@ -323,12 +365,13 @@ module.exports = React.createClass({
         const post = info.post ? info.post : '';
         const company = info.company ? info.company : '';
         const headUrl = info.headImg ? info.headImg : info.sex === 1 ? app.img.personal_sex_male : app.img.personal_sex_female;
-        const { courseData, learningRecordBase } = this.state;
+        const { courseData, learningRecordBase, amount} = this.state;
         const nameTemWidth = this.calculateStrLength(name);
         const nameWidth = nameTemWidth * 10+7;
+        const money = parseFloat(amount).toFixed(2);
         return (
             <View style={styles.container}>
-                <ScrollView>
+                <ScrollView style={styles.pageContainer}>
                     <View
                         style={styles.headItemBg}>
                         <View
@@ -340,19 +383,12 @@ module.exports = React.createClass({
                                         defaultSource={app.img.personal_head}
                                         source={info.headImg ? { uri: headUrl } : headUrl}
                                         style={styles.headStyle} />
-                            }
+                                }
                                 <View style={styles.headRightView}>
                                     <View style={styles.nameStyle}>
                                         <Text style={[styles.nameText, { width: nameWidth > 150 ? sr.ws(150) : sr.ws(nameWidth) }]} numberOfLines={1}>
                                             {name}
                                         </Text>
-                                        {
-                                        // true &&
-                                        // <Image
-                                        //     resizeMode='stretch'
-                                        //     source={app.img.personal_badge2}
-                                        //     style={styles.icon_vip} />
-                                    }
                                         <Text style={styles.levelText}>
                                             {info.alias}
                                         </Text>
@@ -383,7 +419,6 @@ module.exports = React.createClass({
                                     </View>
                                 </View>
                             </View>
-
                             <View style={styles.infoStyle2}>
                                 <View style={styles.loginTimesView}>
                                     <Text
@@ -392,31 +427,32 @@ module.exports = React.createClass({
                                         {'本月你第' + app.personal.info.monthLoginNum + '次登录'}
                                     </Text>
                                 </View>
-                                {
-                                // !CONSTANTS.ISSUE_IOS &&
-                                // <View style={styles.moneyStyle}>
-                                //     <View style={styles.cashStyle}>
-                                //         <Text style={styles.moneyText}>
-                                //             {this.state.integral}
-                                //         </Text>
-                                //         <Text style={styles.cashText}>
-                                //             {'赢销积分'}
-                                //         </Text>
-                                //     </View>
-                                //     <View style={styles.cashStyle}>
-                                //         <Text style={styles.moneyText}>
-                                //             {app.personal.info.winCoin}
-                                //         </Text>
-                                //         <Text style={styles.cashText}>
-                                //             {'赢销币'}
-                                //         </Text>
-                                //     </View>
-                                // </View>
-                            }
+                                <TouchableOpacity
+                                    activeOpacity={0.6}
+                                    onPress={this.showNews}
+                                    style={styles.recommend}>
+                                    <Image
+                                        resizeMode='stretch'
+                                        source={app.img.personal_recommend}
+                                        style={styles.recommendImg} />
+                                </TouchableOpacity>
                             </View>
                             <Image resizeMode='cover'
                                 source={app.img.personal_right}
                                 style={styles.buttonStyle}>
+                                <TouchableOpacity
+                                    activeOpacity={0.6}
+                                    onPress={this.showWallet}
+                                    style={styles.buttonStyle1}>
+                                    <View style={styles.iconBackgroundLeft}>
+                                        <Image
+                                            resizeMode='stretch'
+                                            source={app.img.wallet_wallet}
+                                            style={styles.iconSmall} />
+                                        <Text style={styles.infoTextLeft}>{'钱包  ￥' + money}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <View style={{ width:1, borderRadius:1, height:28, alignSelf:'center', backgroundColor:'#BE4546' }} />
                                 <TouchableOpacity
                                     activeOpacity={0.6}
                                     onPress={this.showIntegral}
@@ -424,26 +460,9 @@ module.exports = React.createClass({
                                     <View style={styles.iconBackgroundLeft}>
                                         <Image
                                             resizeMode='stretch'
-                                            source={app.img.personal_talent}
-                                            style={styles.iconSmall1} />
-                                        <Text style={[styles.infoTextLeft, { color: '#FFFFFF' }]}>{'成长积分: ' + info.integral}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <View style={{ width:1, borderRadius:1, height:28, alignSelf:'center', backgroundColor:'#BE4546' }} />
-                                <TouchableOpacity
-                                    activeOpacity={0.6}
-                                    onPress={this.showNews}
-                                    style={styles.buttonStyle1}>
-                                    <View style={styles.iconBackground1}>
-                                        <Image
-                                            resizeMode='stretch'
-                                            source={app.img.personal_letter_white}
+                                            source={app.img.wallet_integral}
                                             style={styles.iconSmall} />
-                                        <Text style={[styles.infoText1, { color: '#FFFFFF' }]}>消息中心</Text>
-                                        {
-                                        info.newMsgCount !== 0 &&
-                                        <Badge style={[styles.infoTextBadge, { backgroundColor: '#C96B6D' }]} textStyle={{ color: '#FFFFFF' }}>{info.newMsgCount == 0 ? '' : info.newMsgCount}</Badge>
-                                    }
+                                        <Text style={styles.infoTextRight}>{'积分  ' + info.integral}</Text>
                                     </View>
                                 </TouchableOpacity>
                             </Image>
@@ -465,9 +484,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#F0EFF5',
         flexDirection: 'column',
     },
+    pageContainer: {
+        flex:1,
+        marginBottom: 49,
+    },
     headItemBg: {
         height: 195,
         width: sr.w,
+        backgroundColor: 'blue',
     },
     ItemBg2: {
         marginTop: 7,
@@ -523,8 +547,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     headStyle: {
-        marginTop: 25,
-        marginLeft:62,
+        marginTop: 15,
+        marginLeft: 46,
         width: 71,
         height: 71,
         borderWidth: 3,
@@ -532,14 +556,8 @@ const styles = StyleSheet.create({
         borderRadius: 35.5,
     },
     headRightView: {
-        marginTop: 22,
+        marginTop: 12,
         marginBottom: 8,
-    },
-    icon_vip: {
-        width: 22,
-        height: 14,
-        marginTop:-5,
-        marginLeft:5,
     },
     iconBackground: {
         width: sr.w,
@@ -549,23 +567,13 @@ const styles = StyleSheet.create({
     iconBackgroundLeft: {
         flex: 1,
         alignItems: 'center',
-        flexDirection: 'row',
-    },
-    iconBackground1: {
-        flex: 1,
-        alignItems: 'center',
+        justifyContent: 'center',
         flexDirection: 'row',
     },
     iconSmall: {
-        width: 21,
+        width: 16,
         height: 15,
         marginLeft: 35,
-        marginRight: 5,
-    },
-    iconSmall1: {
-        width: 18,
-        height: 18,
-        marginLeft: 30,
         marginRight: 5,
     },
     buttonStyle: {
@@ -586,9 +594,10 @@ const styles = StyleSheet.create({
     },
     infoStyle2: {
         width: sr.w,
-        height: 50,
+        height: 60,
         alignItems: 'center',
         justifyContent: 'flex-end',
+        flexDirection: 'row',
     },
     nameBottomText: {
         fontSize: 12,
@@ -607,9 +616,9 @@ const styles = StyleSheet.create({
         marginTop: -5,
     },
     loginTimesText: {
+        marginLeft: 26,
         fontSize: 12,
         color:'#FFB6B7',
-        marginBottom: 6,
         textAlign: 'center',
         backgroundColor: 'transparent',
     },
@@ -628,18 +637,16 @@ const styles = StyleSheet.create({
     },
     infoTextLeft: {
         fontSize: 12,
-        width: 98,
+        color: '#FFFFFF',
         marginHorizontal: 5,
         backgroundColor: 'transparent',
     },
-    infoText1: {
+    infoTextRight: {
         fontSize: 12,
-        width: 54,
+        width: 98,
+        color: '#FFFFFF',
         marginHorizontal: 5,
         backgroundColor: 'transparent',
-    },
-    infoTextBadge: {
-        marginHorizontal: 5,
     },
     nameStyle: {
         height: 26,
@@ -667,10 +674,20 @@ const styles = StyleSheet.create({
     },
     loginTimesView: {
         height: 38,
-        width: sr.w - 115,
+        width: sr.w - 180,
+        justifyContent: 'center',
+
+    },
+    recommend: {
+        height: 60,
+        width: 90,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
+    },
+    recommendImg: {
+        width: 78,
+        height: 59,
     },
     moneyStyle: {
         height: 39,
@@ -757,19 +774,18 @@ const styles = StyleSheet.create({
         color: '#000000',
         fontFamily: 'STHeitiSC-Medium',
     },
-    goBossIcon: {
-        width: 96,
-        height: 47,
+    goBossView: {
+        width: 75,
+        height: 31,
+        marginRight: 10,
         justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: 3,
+        backgroundColor: '#F15D5F'
     },
-    goBossText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#FFFFFF',
-        marginLeft: 5,
-        marginBottom: 4,
-        backgroundColor: 'transparent',
+    goBossIcon: {
+        width: 54,
+        height: 18,
     },
     divisionLine: {
         width: sr.w - 24,

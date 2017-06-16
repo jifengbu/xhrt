@@ -78,22 +78,22 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     itemContainer: {
-        height: 43,
+        // height: 43,
         backgroundColor: '#FFFFFF',
     },
     rowContainer: {
-        height: 43,
+        // height: 43,
         flexDirection: 'row',
         alignItems:'center',
     },
     textContainer: {
-        height: 43,
-        width: 325,
+        // height: 43,
+        width: sr.w-130,
         justifyContent: 'center',
     },
     labelText: {
         fontSize: 12,
-        width: 35,
+        width: 100,
         marginLeft: 11,
         marginRight: 5,
         paddingTop: 0,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         height: 1,
-        width: 325,
+        width: sr.w,
         backgroundColor: '#E8E8E8',
     },
 

@@ -45,6 +45,9 @@ class Manager extends EventEmitter {
     updateSpecopsTask () {
         this.emit('UPDATE_SPECOPS_TASK_EVENT');
     }
+    closeShareSheetOverlay () {
+        this.emit('CLOSE_SHARE_SHEET_OVERLAY_EVENT');
+    }
     setSpecialSoldier (flag) {
         this.info.isSpecialSoldier = flag;
         this.info.becomeSpecialSoldierDay = moment().format('YYYY-MM-DD HH:mm:ss');

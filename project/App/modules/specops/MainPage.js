@@ -25,7 +25,6 @@ const Guidance = require('./GuidanceBox.js');
 const GuideSwiper = require('./GuideSwiper.js');
 const Progress = require('react-native-progress');
 const LocalDataMgr = require('../../manager/LocalDataMgr.js');
-const PaySpecopsMessageBox = require('./PaySpecopsMessageBox.js');
 const OpenSpecops = require('./OpenSpecops.js');
 const UnauthorizedCoursePlayer = require('./UnauthorizedCoursePlayer.js');
 
@@ -66,9 +65,17 @@ module.exports = React.createClass({
         this.getHomePagePlan();
     },
     doGuidance () {
-        app.showModal(
-            <GuideSwiper />
-        );
+        const { isAgent, isSpecialSoldier } = app.personal.info;
+        const authorized = isAgent || isSpecialSoldier;
+        if (authorized) {
+            Toast('您已经开通过特种兵');
+        } else {
+            app.navigator.push({
+                title: '开通赢销特种兵',
+                component: OpenSpecops,
+                passProps: { setAuthorized:this.props.setAuthorized, isPop:true },
+            });
+        }
     },
     getSpecialSoldierData () {
         const param = {

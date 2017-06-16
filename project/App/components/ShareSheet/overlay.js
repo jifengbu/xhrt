@@ -9,23 +9,31 @@ const {
 } = ReactNative;
 
 const DEFAULT_ANIMATE_TIME = 300;
+const Subscribable = require('Subscribable');
+const TimerMixin = require('react-timer-mixin');
 
 module.exports = React.createClass({
+    mixins: [Subscribable.Mixin, TimerMixin],
+    componentWillMount () {
+        this.addListenerOn(app.personal, 'CLOSE_SHARE_SHEET_OVERLAY_EVENT', this.closeModel);
+    },
     getInitialState () {
         return {
             fadeAnim: new Animated.Value(0),
             overlayStyle: styles.emptyOverlay, //on android opacity=0 also can cover screen, so use overlayStyle fix it
         };
     },
-    onAnimatedEnd () {
+    closeModel (result) {
         !this.props.visible && this.setState({ overlayStyle:styles.emptyOverlay });
     },
     componentWillReceiveProps (newProps) {
+        const { visible } = newProps;
+        const oldVisible = this.props.visible;
         newProps.visible && this.setState({ overlayStyle: styles.fullOverlay });
         return Animated.timing(this.state.fadeAnim, {
             toValue: newProps.visible ? 1 : 0,
             duration: DEFAULT_ANIMATE_TIME,
-        }).start(this.onAnimatedEnd);
+        }).start();
     },
 
     render () {

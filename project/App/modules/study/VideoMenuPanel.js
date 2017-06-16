@@ -108,20 +108,7 @@ module.exports = React.createClass({
         return callback();
     },
     doShare () {
-// const shareOptions = {
-//   title: "title",
-//   message: "message",
-//   url: "https://itunes.apple.com/cn/app/ying-xiao-jie-quan-dao/id1096525384?mt=8",
-//   subject: "Share Link" //  for email
-// };
-// Share.open(shareOptions)
-// .then(function (successResult) {
-//     console.log(successResult);
-// })
-// .catch(function (err) {
-//     console.log(err);
-// })
-
+        this.props.doShareCallVideo();
         const { name, clicks, urlPlay, urlImg, videoType } = this.props.data;
         const data = 'videoTitle=' + name + '&playTimes=' + clicks + '&videoUrl=' + urlPlay + '&videoImg=' + urlImg + '&videoType=' + videoType;
         const dataEncode = encodeURI(data);

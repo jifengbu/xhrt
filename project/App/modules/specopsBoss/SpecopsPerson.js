@@ -375,6 +375,9 @@ module.exports = React.createClass({
         this.setState({ weekDataSource: this.ds.cloneWithRows(weekData) });
     },
     doLookAll () {
+        if (this.state.isLookAll) {
+            this.scrollView.scrollTo({ y: this.todayPlanHeightView });
+        }
         this.setState({ isLookAll: !this.state.isLookAll });
     },
     goMonthPlanPage () {
@@ -418,7 +421,7 @@ module.exports = React.createClass({
                 {
                     this.state.studyInfo && <this.personalStudyInfoTop />
                 }
-                <ScrollView onScroll={(e) => {
+                <ScrollView ref={(scrollView) => { this.scrollView = scrollView; }} onScroll={(e) => {
                     if (e.nativeEvent.contentOffset.y >= this.viewSummaryHeight) {
                         if (!this.isRefresh) {
                             this.setState({ changePage: true });
@@ -836,11 +839,14 @@ module.exports = React.createClass({
             this.setState({ lineHeight: height + 26 });
         }
     },
+    _measurePlanHeight (e) {
+        this.todayPlanHeightView =e.nativeEvent.layout.y;
+    },
     // 今日计划
     todayPlanPurpose () {
         const { isLookAll, isShowBtn, lineHeight, actualWorks, dayPlan, daySummary } = this.state;
         return (
-            <View style={styles.monthPlanPurposeViewStyle}>
+            <View onLayout={this._measurePlanHeight} style={styles.monthPlanPurposeViewStyle}>
                 <View style={styles.titleContainerWeek}>
                     <View style={styles.titleContainerWeekSub}>
                         <View style={styles.headRedView} />

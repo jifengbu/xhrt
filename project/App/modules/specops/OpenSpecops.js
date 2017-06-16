@@ -68,16 +68,22 @@ module.exports = React.createClass({
             this.props.setAuthorized();
         }
     },
-    doPayByWechat () {
-        this.onBuySuccess();
+    doPayByWechat (orderType) {
+        this.onBuySuccess(orderType);
     },
-    doPayByAlipay () {
-        this.onBuySuccess();
+    doPayByAlipay (orderType) {
+        this.onBuySuccess(orderType);
     },
-    onBuySuccess () {
+    onBuySuccess (orderType) {
+        if (this.props.setAuthorized) {
+            this.props.setAuthorized();
+        }
+        app.personal.setSpecialSoldier(true);
+        app.personal.info.specopsPrice = orderType==5?4800:500;
+        app.personal.set(app.personal.info);
+        Toast(orderType==5?'恭喜你成为总裁特种兵':'恭喜你成为特种兵');
+
         app.closeModal();
-        this.props.setAuthorized();
-        Toast('恭喜你成为特种兵');
         if (this.props.isPop) {
             app.navigator.pop();
         }

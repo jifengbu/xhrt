@@ -51,6 +51,7 @@ module.exports = React.createClass({
     render () {
         return (
             <View style={styles.container}>
+                <View style={styles.line} />
                 <View style={styles.topViewContainer}>
                     <View style={styles.topView}>
                         <View style={styles.integralView}>
@@ -171,5 +172,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+    },
+    line: {
+        width: sr.w,
+        height: 1,
+        backgroundColor: '#EFEFEF',
     },
 });

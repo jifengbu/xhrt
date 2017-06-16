@@ -31,6 +31,7 @@ module.exports = React.createClass({
         this.roundTime = CONSTANTS.TRAIN_TYPES[this.props.trainingCode].roundTime;
         this.competitors = this.getCompetitors();
         this.propIndex = 0;
+        this.isNotRecord = false;
     },
     doStartSpeach () {
         if (this.recordOn) {
@@ -54,11 +55,14 @@ module.exports = React.createClass({
             }, this.roundTime * 3 / 4);
         }, (error) => {
             Toast('录制音频文件失败，请稍后再试');
+            this.isNotRecord = true;
         }, filepath);
     },
     doConfirm (name) {
         this.fileInfo.name = name;
-        app.audioFileMgr.saveRecordFile(this.fileInfo);
+        if (!this.isNotRecord) {
+            app.audioFileMgr.saveRecordFile(this.fileInfo);
+        }
         this.setState({ showVideoNameInputBox: false });
     },
     doCancelCustomMessageBox () {
@@ -72,10 +76,12 @@ module.exports = React.createClass({
         } else {
             app.navigator.pop();
         }
-        AudioRecorder.stop((result) => {
-            fs.unlink(this.fileInfo.filepath);
-        }, (error) => {
-        });
+        if (!this.isNotRecord) {
+            AudioRecorder.stop((result) => {
+                fs.unlink(this.fileInfo.filepath);
+            }, (error) => {
+            });
+        }
     },
     goBack () {
         if (this.recordOn) {
@@ -87,11 +93,14 @@ module.exports = React.createClass({
     },
     doStopSpeach () {
         this.setState({ showCustomMessageBox: false, showVideoNameInputBox: true, showStopBtn: false, start: false });
-        AudioRecorder.stop((result) => {
-            this.recordOn = false;
-        }, (error) => {
-            Toast('录制音频文件失败，请稍后再试');
-        });
+        this.recordOn = false;
+        if (!this.isNotRecord) {
+            AudioRecorder.stop((result) => {
+                this.recordOn = false;
+            }, (error) => {
+                Toast('录制音频文件失败，请稍后再试');
+            });
+        }
     },
     showRecordList () {
         if (this.recordOn) {
