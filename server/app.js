@@ -26,9 +26,9 @@ var modules = [
     'specops',
     'search',
     'live',
+    'chat',
     'task',
     'specopsBoss',
-    'websocket',
 ];
 
 app.use(express.static(__dirname + '/public'));
@@ -56,7 +56,6 @@ app.sendObj = function(req, res, obj) {
 
 app.subPost = function(url, callback) {
     app.post('/app/api'+url, function(req, res) {
-        console.log("===============", url);
         var body = des.decode(req.body, deskey);
         callback(req, res, JSON.parse(body));
     });

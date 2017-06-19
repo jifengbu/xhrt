@@ -7,7 +7,9 @@
 		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
 		<meta http-equiv="content-security-policy"/>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
-
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
 		<link rel="stylesheet" href="../../css/mui.min.css"/>
 		<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
 	</head>
@@ -226,6 +228,7 @@
 		</div>
 	</body>
 
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script src="../../js/thirdparty/mui.min.js"></script>
 	<script src="../../js/thirdparty/mui.pullToRefresh.js" ></script>
 	<script src="../../js/thirdparty/mui.pullToRefresh.material.js" ></script>
@@ -264,7 +267,7 @@
 		function setScrollTop() {
 			setTimeout(function() {
 				var y = saved.homeworkScrollTop[saved.tabIndex];
-				mui('#day'+saved.tabIndex+' #pullrefresh').pullRefresh().scrollTo(0, y);
+				mui('#homework'+saved.tabIndex+' #pullrefresh').pullRefresh().scrollTo(0, y);
 			}, 0);
 		}
 
@@ -407,28 +410,28 @@
 		mui('#homework-list0').on('tap','li', function() {
 			var index = $(this).data('index');
 			var data = {
-				courseId:saved.list[saved.tabIndex][index].id,
-				openid:params.openid,
-				userID: saved.list[saved.tabIndex][index].userID,
-				courseName:saved.list[saved.tabIndex][index].courseName,
-				isSelf:0,
-				tabIndex:0,
-				currentDay:saved.list[saved.tabIndex][index].currentDay,
+				// courseId:saved.list[saved.tabIndex][index].id,
+				// openid:params.openid,
+				// userID: saved.list[saved.tabIndex][index].userID,
+				// courseName:saved.list[saved.tabIndex][index].courseName,
+				// isSelf:0,
+				// tabIndex:0,
+				// currentDay:saved.list[saved.tabIndex][index].currentDay,
 			}
-			app.router.showView('./excellentHomeworkList.html', data,saved);
+			app.router.showView('./excellentHomeworkList.html?'+'courseId='+saved.list[saved.tabIndex][index].id+'&openid='+params.openid+'&courseName='+saved.list[saved.tabIndex][index].courseName+'&userID='+saved.list[saved.tabIndex][index].userID+'&currentDay='+saved.list[saved.tabIndex][index].currentDay+'&isSelf=0'+'&tabIndex=0', data,saved);
 		});
 		mui('#homework-list1').on('tap','li', function() {
 			var index = $(this).data('index');
 			var data = {
-				courseId:saved.list[saved.tabIndex][index].id,
-				openid:params.openid,
-				userID: saved.list[saved.tabIndex][index].userID,
-				courseName:saved.list[saved.tabIndex][index].courseName,
-				isSelf:1,
-				tabIndex:1,
-				currentDay:saved.list[saved.tabIndex][index].currentDay,
+				// courseId:saved.list[saved.tabIndex][index].id,
+				// openid:params.openid,
+				// userID: saved.list[saved.tabIndex][index].userID,
+				// courseName:saved.list[saved.tabIndex][index].courseName,
+				// isSelf:1,
+				// tabIndex:1,
+				// currentDay:saved.list[saved.tabIndex][index].currentDay,
 			}
-			app.router.showView('./excellentHomeworkList.html', data,saved);
+			app.router.showView('./excellentHomeworkList.html?'+'courseId='+saved.list[saved.tabIndex][index].id+'&openid='+params.openid+'&courseName='+saved.list[saved.tabIndex][index].courseName+'&userID='+saved.list[saved.tabIndex][index].userID+'&currentDay='+saved.list[saved.tabIndex][index].currentDay+'&isSelf=1'+'&tabIndex=1', data,saved);
 		});
 
 		var FIRST_PAGE_NO = 1;

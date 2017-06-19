@@ -7,7 +7,9 @@
 		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
 		<meta http-equiv="content-security-policy"/>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
-
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
 		<!--标准mui.css-->
 		<link rel="stylesheet" href="../../css/mui.min.css"/>
 		<!--App自定义的css-->
@@ -320,16 +322,17 @@
 		mui('#homework-list').on('tap','li', function() {
 			var index = $(this).data('index');
 			var data = {
-				openid:params.openid,
-				homeworkId: saved.list[index].homeworkId,
-				isPraise: saved.list[index].isPraise,
-				praise: saved.list[index].praise,
-				courseName:params.courseName,
-				index:index,
+				// openid:params.openid,
+				// homeworkId: saved.list[index].homeworkId,
+				// isPraise: saved.list[index].isPraise,
+				// praise: saved.list[index].praise,
+				// courseName:params.courseName,
+				// index:index,
 			}
 			saved.list[index].isLooked = true;
 			saved.homeworkScrollTop = app.utils.getScrollTop($('.mui-scroll-wrapper .mui-scroll'));
-			app.router.showView('./homeworkDetail.html', data, saved);
+			app.router.showView('./homeworkDetail.html?'+'homeworkId='+ saved.list[index].homeworkId+'&openid='+params.openid+'&courseName='+params.courseName+'&isPraise='+saved.list[index].isPraise+'&praise='+saved.list[index].praise+'&index='+index, data,saved);
+			// app.router.showView('./homeworkDetail.html', data, saved);
 		});
 
 		function showList(list, append) {

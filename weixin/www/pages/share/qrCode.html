@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<style>
+			body {
+		    		display: block;
+		    		margin: auto;
+			}
+			.bodyView {
+		    		width: 100%;
+		    		text-align: center;
+		    }
+			.icon {
+				width: 100%;
+				height: 100%;
+			}
+			.QRCode {
+				width: 100%;
+				height: 140px;
+				position: absolute;
+				top: 280px;
+				left: 0px;
+			}
+			.QRCode .QRCodeImg {
+				width: 100%;
+				height: 140px;
+			}
+			.nameDiv {
+				width: 100%;
+				position: absolute;
+				top: 425px;
+				left: 0px;
+				text-align: center;
+			}
+			.nameDiv .WeChatName {
+				font-family: "宋体";
+				font-size: 18px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="bodyView">
+			<img class="icon" src="../../img/qr_code_bg.png" />
+			<div class="QRCode">
+				<div class="QRCodeImg"></div>
+			</div>
+			<div class="nameDiv">
+				<span id="weChatName" class="WeChatName">zhangtao</span>
+			</div>
+		</div>
+	</body>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script type="text/javascript" src="../../js/thirdparty/jquery-1.11.1.js" ></script>
+	<script type="text/javascript" src="../../js/thirdparty/jquery-qrcode-0.14.0.js" ></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		$(function(){
+			var code = getParameter("code");
+			var weChatName = getParameter("weChatName");
+//			$(".nameDiv .weChatName").text(weChatName);
+			$("#weChatName").html(weChatName);
+			var options = {
+				size: 130,
+	            render: 'image',
+			    background: 'white',
+			    text: code,
+	            image: '../../img/circular_logo.png'
+	        };
+	        $('.QRCode .QRCodeImg').qrcode(options);
+		});
+		/**
+		 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+		 * @param {Object} val要获取的参数名称
+		 */
+		function getParameter(val){
+			var uri = window.location.search;
+			var re = new RegExp("" + val + "=([^&?]*)", "ig");
+			var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+			return decodeURIComponent(str);
+		}
+	</script>
+</html>

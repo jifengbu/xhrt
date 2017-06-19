@@ -15,30 +15,84 @@ const {
 } = ReactNative;
 
 const SplashScreen = require('@remobile/react-native-splashscreen');
-const Button = require('@remobile/react-native-simple-button');
+const { ScoreSelect } = COMPONENTS;
 
 module.exports = React.createClass({
     componentWillMount () {
         SplashScreen.hide();
     },
-    open () {
-        app.showProgressHUD();
-        setTimeout(app.dismissProgressHUD, 1000000);
+    getInitialState () {
+        return {
+            index: 0,
+        };
     },
     render () {
+        const { index } = this.state;
         return (
-            <View style={styles.container}>
-                <Button onPress={this.open}>开启</Button>
+            <View style={styles.outerContainer}>
+                <Image
+                    resizeMode='cover'
+                    source={app.img.personal_head}
+                    style={styles.videoPlayer} />
+                <KeyboardAvoidingView behavior='Padding' style={styles.container}>
+                    <TextInput
+                        placeholder='<TextInput />'
+                        style={styles.textInput} />
+                    <TextInput
+                        placeholder='<TextInput />'
+                        style={styles.textInput} />
+                    <TextInput
+                        placeholder='<TextInput />'
+                        style={styles.textInput} />
+                    <TextInput
+                        placeholder='<TextInput />'
+                        style={styles.textInput} />
+                    <TextInput
+                        placeholder='<TextInput />'
+                        style={styles.textInput} />
+                    <TextInput
+                        placeholder='<TextInput />'
+                        style={styles.textInput} />
+                    <TextInput
+                        placeholder='<TextInput />'
+                        style={styles.textInput} />
+                    <TextInput
+                        placeholder='<TextInput />'
+                        style={styles.textInput} />
+                </KeyboardAvoidingView>
             </View>
         );
     },
 });
 
 const styles = StyleSheet.create({
+    outerContainer: {
+        flex: 1,
+    },
+    videoPlayer: {
+        backgroundColor: 'pink',
+        position: 'absolute',
+        width: sr.w,
+        height: sr.h,
+    },
     container: {
         flex: 1,
-        backgroundColor: 'transparent',
-        justifyContent: 'space-around',
-        paddingVertical: 150,
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        paddingTop: 20,
+    },
+    textInput: {
+        borderRadius: 5,
+        borderWidth: 1,
+        height: 44,
+        paddingHorizontal: 10,
+    },
+    segment: {
+        marginBottom: 10,
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 30,
+        left: 10,
     },
 });

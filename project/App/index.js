@@ -128,7 +128,7 @@ app.configureScene = function (route) {
     return sceneConfig;
 };
 
-const Splash = require('./modules/test/button.js');
+const Splash = require('./modules/splash/index.js');
 
 const NavigationBarRouteMapper = {
     LeftButton (route, navigator, index, navState) {
@@ -277,7 +277,7 @@ const NavigationBarRouteMapper = {
 };
 
 module.exports = React.createClass({
-    mixins: [TimerMixin],
+    mixins: [ProgressHud.Mixin, TimerMixin],
     getInitialState () {
         return {
             showNavBar: false,
@@ -343,11 +343,9 @@ module.exports = React.createClass({
         }
         app.audioFileMgr.checkRootDir();
         app.root = this;
-        app.showProgressHUD = ()=>{
-            this.refs.progressHud.show();
-        };
+        app.showProgressHUD = this.showProgressHUD;
         app.dismissProgressHUD = () => {
-            this.refs.progressHud.hide();
+            this.dismissProgressHUD();
         };
         app.showModal = (view, options = {}) => {
             const { title, backgroundColor, touchHide } = options;
@@ -553,7 +551,8 @@ module.exports = React.createClass({
                     </COMPONENTS.Modal>
                 }
                 <ProgressHud
-                    ref='progressHud'
+                    isVisible={this.state.is_hud_visible}
+                    isDismissible={false}
                     overlayColor='rgba(0, 0, 0, 0.6)'
                     color='#239FDB'
                     />

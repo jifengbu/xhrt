@@ -1,5 +1,5 @@
 window.app = {};
-app.serverType=2;
+app.serverType=0;
 var httpHead = window.location.href.split(':')[0];
 var SERVER = httpHead+'://www.gyyxjqd.com/app/api/';
 
@@ -11,7 +11,7 @@ if (app.serverType==0) {
 	SERVER = httpHead+'://test.gyyxjqd.com/app/api/';
 	appid = 'wx6f776c4a6e6d5ce5';
 }else if(app.serverType==2) {
-	SERVER = httpHead+'://192.168.1.126:3000/';
+	SERVER = httpHead+'://192.168.1.222:3000/';
 }
 var logoImgUrl = SERVER.replace('api/','www/img/logo.png');
 app.route = {
@@ -39,6 +39,15 @@ app.route = {
 	ROUTE_GET_PLAN_SUMMARY: SERVER + 'getPlanSummary',//获取月、周、日计划,总结
 	ROUTE_GET_RELEVANT_VIDEO: SERVER + 'relevantVideo',//获取推荐视频详情
 	ROUTE_SHARE_INTRODUCE: SERVER + 'getIntroduceHtml5',
+	ROUTE_CREATE_WIN_CONIN_ORDER: SERVER+'createWinCoinOrder',//赢销币购买--生成订单
+	ROUTE_SEND_VERIFICATION_CODE: SERVER+'sendVerificationCode',//发送验证码
+    ROUTE_REGISTER: SERVER+'register',//注册
+    ROUTE_PACKAGE_LIST: SERVER+'packageList', //	获取套餐列表
+    ROUTE_ADD_DISTRIBUTION_USER: SERVER+'addDistributionUser',//分享绑定上下级关系
+    ROUTE_PAY_BY_ALIPAY: SERVER+'html5Alipay',//支付宝支付
+    ROUTE_CHECK_ALIPAY_ISSUCCESS: SERVER+'aliPayConfirm',//验证支付宝支付是否成功
+    ROUTE_SAVE_ORDER_USER_RELATIONS: SERVER+'saveOrderUserRelations',//保存订单信息及用户和用户上级信息
+    ROUTE_FIND_PWD: SERVER+'findPwd',//验证码确认
 };
 
 app.global = (function() {

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>赢销截拳道</title>
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="content-security-policy">
+		<meta name='apple-itunes-app' content='app-id=1096525384'>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+		<style>
+			body {
+		    		display: block;
+		    		margin: auto;
+			}
+			.bodyView {
+		    		width: 100%;
+		    		text-align: center;
+		    }
+		    .downloadApp {
+		    		float: none;
+			    cursor: pointer;
+			    width: 80%;
+			    height: 45px;
+			    border-bottom: 2px solid #900719;
+			    margin-top: 100px;
+			    margin-bottom: 20px;
+			    background: #db3237;
+			    border-radius: 5px;
+			    border: 0;
+			    font-family: "宋体";
+			    font-size: 16px;
+			    line-height: 24px;
+			    font-weight: 700;
+			    color: #fff;
+			    text-shadow: 0 1px 2px rgba(0,0,0,.1);
+			    -o-transition: all .2s;
+			    -moz-transition: all .2s;
+			    -webkit-transition: all .2s;
+			    -ms-transition: all .2s;
+			}
+			.icon-div{
+				margin-top: 80px;
+				text-align: center;
+			}
+			.icon {
+				width: 80px,;
+				height: 80px;
+			}
+			.title {
+				font-size: 20px;
+				font-family: "宋体";
+				color: #242424;
+				margin-top: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="bodyView">
+			<div class="icon-div">
+				<img class="icon" src="../../img/success_icon.png" /><br />
+			</div>
+			<div class="title">恭喜您！购买成功！</div>
+			<button id="show" onclick="openInstallApp()" class="downloadApp" type="button">去APP使用</button>
+		</div>
+	</body>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+	<script src="../../js/thirdparty/mui.min.js"></script>
+	<script src="../../js/thirdparty/spin.min.js"></script>
+	<script src="../../js/utils/regular.js"></script>
+	<script src="../../js/thirdparty/crypto-js.js"></script>
+	<script src="../../js/utils/app.js"></script>
+	<script>
+		function openInstallApp() {
+			window.location.href = "http://a.app.qq.com/o/simple.jsp?pkgname=com.yxjqd";
+		}
+	</script>
+</html>

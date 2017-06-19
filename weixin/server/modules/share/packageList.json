@@ -1,0 +1,30 @@
+{
+    "success": true,
+    "msg": "申请成功",
+    "context": {
+        "packageList": [
+            {
+                "packageID": "fdsg234",
+                "type":6,
+                "packageName": "用户名称",
+                "packagePrice": 500,
+                "discountPrice": 480,
+                "packageContent": "../../img/answer.png",
+                "images":["../../img/answer.png","../../img/answer.png","../../img/answer.png"],
+                "packageIntroduction": "简介",
+                "purchaseNumber": 578
+            },
+            {
+                "packageID": "123123",
+                "type":5,
+                "packageName": "用户名称",
+                "packagePrice": 4800,
+                "discountPrice": 4600,
+                "packageContent": "../../img/button_2.png",
+                "images":["../../img/button_2.png","../../img/button_2.png","../../img/button_2.png"],
+                "packageIntroduction": "简介",
+                "purchaseNumber": 456
+            }
+        ]
+    }
+}

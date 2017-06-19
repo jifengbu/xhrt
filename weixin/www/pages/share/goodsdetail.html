@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/apply.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/common.css"/>
+	<title>赢销截拳道</title>
+</head>
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+		background-color: #EEEEEE;
+	}
+	#topView {
+		margin-top: 70px;
+	}
+	#topView img{
+		height: 250px;
+		width: 100%;
+	}
+	.mui-slider-indicator.mui-segmented-control {
+	    margin-left: 5%;
+	    margin-right: 5%;
+	    margin-bottom: 10px;
+	    width: 90%;
+	    margin-top: -12%;
+    }
+    .mui-segmented-control .mui-control-item {
+	     line-height: 32px;
+	     margin-right: 20px;
+	     background-color: white;
+	     border-radius: 5px;
+	     width: 49%;
+		 padding-top: 8px;
+	}
+	.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+	    color: rgb(219,47,51);
+	    border-bottom: 2px solid rgb(219,47,51);
+	    border-radius: 5px;
+	    background-color: white;
+	}
+	#sliderSegmentedControl img {
+		width: 15px;
+		height: 15px;
+		margin-right: 4px;
+	}
+	#sliderSegmentedControl span {
+		color: rgb(219,219,219);
+		font-size: 13px;
+	}
+	#goods-container img {
+		width: 100%;
+	}
+	.mui-scroll {
+	    padding-bottom: 50px;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+	.message-box{
+		display: none;
+		position: fixed;
+	    width: 100%;
+	    height: 100%;
+	    left: 0px;
+	    top: 0px;
+	    right: 0px;
+	    background-color: rgba(0,0,0,0.3);
+	    border: 1px solid rgba(0, 0, 0, 0.3);
+	    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	    outline: 0 none;
+	    -moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+		font-size: 16px;
+	    z-index: 1050;
+	}
+	.modal-dialog {
+	    position: absolute;
+	    bottom:0px;
+	    width: 100%;
+	}
+	.modal-content {
+	    position: relative;
+	    background-color: #fff;
+	    -webkit-background-clip: padding-box;
+	    background-clip: padding-box;
+	    border: 1px solid #999;
+	    border: 1px solid rgba(0,0,0,.2);
+	    border-radius: 6px;
+	    outline: 0;
+	    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+	    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+	    height: 100%;
+	}
+	.modal-body {
+	    text-align: left;
+	    color: #787878;
+	    font-size: 16px;
+	    padding-left: 15px;
+	    padding-right: 15px;
+	}
+	.modal-footer {
+	    text-align: center;
+		border-top: 1px solid #e5e5e5;
+	}
+	.btn-warning {
+	    color: #fff;
+	    background-color: #f0ad4e;
+	    border-color: #eea236;
+	}
+	.btn-success {
+		width: 100%;
+		height: 48px;
+	    color: #fff;
+	    background-color: #de3031;
+	}
+	.alert-warning {
+		margin-left: 0;
+		color: rgb(58,0,0);
+		background-color: white;
+		border-color: white;
+	}
+	button.close {
+	    float: right;
+	    padding: 0;
+	    cursor: pointer;
+	    background: 0 0;
+	    border: 0;
+	    margin-top: -10px;
+	    margin-right: -20px;
+	    opacity: 1;
+	}
+	.close img {
+		width: 20px;
+		height: 20px;
+	}
+	table tr {
+	    text-align: center;
+	}
+	.phone {
+		position: relative;
+		left: 75%;
+		z-index: 1;
+		margin-left: 2px;
+	}
+	.phone  img{
+		width: 80px;
+		height: 80px;
+	}
+	.modal-title {
+		color:#333333;
+		overflow:hidden;
+		text-overflow:ellipsis;
+		white-space:nowrap;
+	}
+	.modal-title span {
+		position: absolute;
+		width: 3px;
+		height:18px;
+		background-color: rgb(169,0,0);
+	}
+	.openByBrowser {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 1050;
+		margin: 0 auto;
+		text-align: center;
+	}
+	.openByBrowser img {
+		float: right;
+		width: 120%;
+		height: 100%;
+		margin-top: -60px;
+	}
+	.aliLog {
+		width: 25px;
+	}
+	.aliSelect {
+		width: 15px;
+		margin-left: 15px;
+		margin-right: 10px;
+	}
+	.alert {
+     	margin-bottom: 0px;
+	}
+	.tipPhone {
+		width: 70%;
+		margin-left: 15px;
+		font-size: 11px;
+		color: #de3031;
+		float: right;
+	}
+	.tipBox {
+		width: 100%;
+		display: flex;
+	}
+	.itemTitle {
+		margin-bottom: -10px;
+	}
+</style>
+<body>
+	<div class="header" id="topView">
+		<img src="../../img/banner.png"></img>
+	</div>
+	<div class="centent">
+		<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+			<a class="mui-control-item mui-active" href="#goods0" data-tap=0 >
+				<div class="itemTitle">
+					赢销特种兵计划
+				</div>
+				<img align="absmiddle" src="../../img/people.png"/><span id="good0Num"></span><span>人已加入</span>
+			</a>
+			<span style="width: 1px;"></span>
+			<a class="mui-control-item" href="#goods1" data-tap=1>
+				<div class="itemTitle">
+					boss端-企业管理系统
+				</div>
+				<img align="absmiddle" src="../../img/company.png"/><span id="good1Num"></span><span>家企业正在使用</span>
+			</a>
+		</div>
+		<div class="mui-slider-group"  id="goods-container">
+			<div id="goods0" style="background: lightgrey;" class="mui-slider-item mui-control-content goods-content mui-active">
+				<div class="mui-scroll" id="good0Img">
+				</div>
+			</div>
+			<div id="goods1" style="background: lightgrey;" class="mui-slider-item mui-control-content goods-content">
+				<div class="mui-scroll" id="good1Img" >
+				</div>
+			</div>
+		</div>
+		<div class="openByBrowser over-openByBrowser hide" id="master">
+
+		</div>
+	</div>
+	<div id="warning" class="downloadAlert downloadAlert-warning" role="downloadAlert">
+		<!-- <button onclick="closeWarning()" type="button" class="downloadClose" data-dismiss="downloadAlert">×</button> -->
+		<div class="installTipCell">
+			<img src="../../img/logo.png"></img>
+			<div class="cellRight">
+				<div class="cellTitle">赢销截拳道</div>
+				<div class="cellContent">助你成就精彩人生</div>
+			</div>
+		</div>
+	</div>
+	<!--底部导航-->
+	<nav class="mui-bar mui-bar-tab">
+		 <div id="orderType" style="display: none;"></div>
+		<div id="winCoinID" style="display: none;"></div>
+		<label class="mui-tab-item" id ="packagePrice" style="background-color:rgb(50,50,50);font-size:14px;color: rgb(161,161,161);clear: all;text-decoration:line-through">
+
+	  	</label>
+		<div class="mui-tab-item"  style="background-color: rgb(50,50,50);color: rgb(212,52,54);">
+			<label id="discountPrice"></label><span style="color:rgb(240,240,240);font-size:14px;">元/年</span>
+	  	</div>
+	  	<div class="mui-tab-item" style="background-color: rgb(219,50,55);color: rgb(240,240,240);">
+	  		<div id="buyNow" style="color: white;font-size:14px;height:50px;line-height:50px">立即购买</div>
+	  	</div>
+	</nav>
+	<a class="phone" href="tel:0851-86810083"> <img src="../../img/phone.png" /> </a>
+	<div id="messageBox" class="message-box">
+		<div class="modal-dialog">
+	        <div class="modal-content">
+	        	 <div id="boxWarning" class="modal-header alert alert-warning" role="alert">
+					<button onclick="closeBoxWarning()" type="button" class="close" data-dismiss="modal"><img src="../../img/close.png"/></button>
+					<div class="modal-title"><span ></span>&nbsp;&nbsp;若您尚未注册，该手机号将是您的登录账号</div>
+				</div>
+				<div class="modal-body">
+					<div class="tipBox hide">
+						<div style="width:23%;float:left;"></div>
+						<div class="tipPhone"></div>
+					</div>
+					<table width="100%" cellpadding="10" cellspacing="0" border="0px">
+						<tbody>
+							<tr>
+								<td width="23%">手机号:</td>
+								<td width="75%">
+									<input required="" type="text" id="phone" placeholder="请输入您的手机号"/>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					    <div style="display:flex;margin-top:10px;">
+					            <div style="width:23%;text-align:center;height:40px;line-height:40px;float:left;margin-left:2px">验证码:</div>
+					            <input style="width:49%;height:40px;font-size:13px;border-radius:5px;float:left" type="text" id="code" placeholder="请输入您的验证码"/>
+					            <button style="width:27%;height:40px;border-radius:5px;float:right;text-align:center;padding:0;border-color: #de3031;color: #de3031;margin-left:2px" onclick="getVerificationCode(this)">获取验证码</button>
+					    </div>
+					<!-- <table width="100%" cellpadding="10" cellspacing="0" border="0px">
+						<tbody>
+							<tr>
+								<td width="24%">验证码:</td>
+								<td width="46%">
+									<input type="text" id="code" placeholder="请输入您的验证码"/>
+								</td>
+								<td width="30%"><button onclick="getVerificationCode(this)">获取验证码</button></td>
+							</tr>
+						</tbody>
+					</table> -->
+					<table width="100%" cellpadding="10" cellspacing="0" border="0px">
+						<tbody>
+							<tr style="text-align: left;">
+								<!--<td width="10%"><input name="radio1" type="radio" value="1" checked/></td>
+								<td width="40%">
+									<img align="absmiddle" src="../../img/weixin.png" /><span>微信支付</span>
+								</td>-->
+
+								<!-- <td width="30%"><input name="radio1" type="radio" value="2" checked/></td> -->
+								<td width="23%"></td>
+								<td width="75%">
+									<img align="absmiddle" class="aliSelect" src="../../img/xz.png" />
+									<img align="absmiddle" class="aliLog" src="../../img/zhifubao.png" />&nbsp;&nbsp;<span>支付宝支付</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button onclick="register()" type="button" class="btn-success">确认购买</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div>
+	</div>
+</body>
+<script src="../../js/thirdparty/mui.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="../../js/thirdparty/zepto.1.1.6.min.js"></script>
+<script src="../../js/utils/regular.js"></script>
+<script src="../../js/thirdparty/crypto-js.js"></script>
+<script src="../../js/utils/app.js"></script>
+<script src="http://192.168.1.222:8082/target/target-script-min.js#fang"></script>
+<script>
+	var gPackageList = [];
+	var gUserStatus = 0;//未注册，已注册的普通用户，已注册的500特种兵，已注册的4800特种兵
+	$(function(){
+		$('.installTipCell').append('<button class="downloadApp"><a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.yxjqd">打开APP</a></button>');
+		packageList();
+		$('#master').append(mui.os.android?'<img src="../../img/openByBrowser.png" />':'<img src="../../img/openBySafari.png" />');
+		if (isWeiXin()) {
+			displayOpenByBrowser();
+		}
+	});
+	var countdown=60;
+	//构造一个倒计时函数叫settime
+	function setTime(obj) {
+	    //开始判断倒计时是否为0
+	    if (countdown == 0) {
+	        obj.removeAttribute("disabled");
+	        obj.innerHTML="重新发送";
+	        countdown = 60;
+	        //立即跳出settime函数，不再执行函数后边的步骤
+	        return;
+	    } else {
+	        obj.setAttribute("disabled", true);
+	        obj.innerHTML=countdown+'s';
+	        countdown--;
+	    }
+	  //过1秒后执行倒计时函数
+	  setTimeout(function() {setTime(obj)},1000)
+	}
+	function isWeiXin(){
+	    var ua = window.navigator.userAgent.toLowerCase();
+	    if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+	        return true;
+	    }else{
+	        return false;
+	    }
+	}
+	/**
+	 * 获取URL链接参数，在通过URL跳转页面时，可通过此方法获取URL的参数
+	 * @param {Object} val要获取的参数名称
+	 */
+	function getParameter(val){
+		var uri = window.location.search;
+		var re = new RegExp("" + val + "=([^&?]*)", "ig");
+		var str = ((uri.match(re)) ? (uri.match(re)[0].substr(val.length + 1)) : null);
+		return decodeURIComponent(str);
+	}
+	function packageList() {
+		var url = app.route.ROUTE_PACKAGE_LIST;
+		var data = {};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: packageListSuccess,
+		});
+	}
+	function getImgsHtml (list)
+	{
+		var html = '';
+		for (var i in list) {
+			html += '<img src="'+list[i]+'" />'
+		}
+		return html;
+	}
+	function packageListSuccess(data) {
+		if (data.success) {
+			gPackageList = data.context.packageList;
+			$("#good0Num").text(gPackageList[0].purchaseNumber+17660);
+			$("#good1Num").text(gPackageList[1].purchaseNumber+12690);
+//			$("#good0Img").attr('src',gPackageList[0].packageContent);
+//			$("#good1Img").attr('src',gPackageList[1].packageContent);
+			$("#good0Img").html(getImgsHtml(gPackageList[0].images));
+			$("#good1Img").html(getImgsHtml(gPackageList[1].images));
+			$("#packagePrice").text('¥'+gPackageList[0].packagePrice.toFixed(2));
+			$("#discountPrice").text('¥'+gPackageList[0].discountPrice.toFixed(2));
+			$("#orderType").text(gPackageList[0].type);
+			$("#winCoinID").text(gPackageList[0].packageID);
+		}
+	}
+	function getVerificationCode(obj) {
+		$('.tipBox').hide();
+		if(!testPhone($("#phone").val())) {
+			$('.tipPhone').text("* 请输入正确的手机号码");
+			$('.tipBox').show();
+			return;
+		}
+		var url = app.route.ROUTE_SEND_VERIFICATION_CODE;
+		var data = {
+			phone:$("#phone").val(),
+			type : 5,
+		};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: getVerificationCodeSuccess.bind(null,obj),
+		});
+	}
+	function getVerificationCodeSuccess(obj,data) {
+		$('.tipBox').hide();
+		setTime(obj);
+		if (!data.context.isRegistered) {//没有注册
+			gUserStatus = 0;
+		} else {//已经注册
+			if (data.context.userType==5) {//已经是特种兵
+				if (data.context.isEntrepreneur ==1) {//4800
+					$('.tipPhone').text("* 该账号已购买boss端");
+					$('.tipBox').show();
+					gUserStatus =3;
+				} else{//500
+					$('.tipPhone').text("* 该账号已是特种兵用户");
+					$('.tipBox').show();
+					gUserStatus = 2;
+				}
+			} else{
+				// mui.toast("你已经注册！不用输入验证码，请直接购买！")
+				gUserStatus = 1;
+			}
+		}
+	}
+	function register() {
+		$('.tipBox').hide();
+		if(!testPhone($("#phone").val())) {
+			$('.tipPhone').text("* 请输入正确的手机号码");
+			$('.tipBox').show();
+			return;
+		}
+		if($("#code").val() == null || $("#code").val() == "") {
+			$('.tipPhone').text("* 验证码错误");
+			$('.tipBox').show();
+			return;
+		}
+		if (gUserStatus == 0) {
+			var url = app.route.ROUTE_REGISTER;
+			var phone = $("#phone").val();
+			var data = {
+				phone:phone,
+				verificationCode : $("#code").val(),
+				pwd:phone.substr(phone.length-6,phone.length),
+			};
+			app.utils.post({
+				url: url,
+				data: data,
+				success: registerSuccess,
+			});
+		} else {
+			findPwd($("#phone").val(),$("#code").val());
+		}
+	}
+	function registerSuccess(data) {
+		$('.tipBox').hide();
+		if (data.success) {
+			gUserStatus = 1;
+			mui.toast("你已注册成功，默认密码是注册电话号码的后6位！")
+			addDistributionUser();
+		} else {
+			gUserStatus = 0;
+			$('.tipPhone').text("* "+data.msg);
+			$('.tipBox').show();
+		}
+	}
+	function findPwd(phone,verificationCode) {
+		var url = app.route.ROUTE_FIND_PWD;
+		var data = {
+			phone: phone,
+			verificationCode: verificationCode,
+		};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: findPwdSuccess,
+		});
+	}
+	function findPwdSuccess(data) {
+		$('.tipBox').hide();
+		if (!data.success) {
+			$('.tipPhone').text("* "+data.msg);
+			$('.tipBox').show();
+		} else {
+			addDistributionUser();
+		}
+	}
+	function addDistributionUser() {
+		$('.tipBox').hide();
+		if (gUserStatus == 0) {
+			mui.toast("你没有注册！请先点击获取验证码！");
+			return;
+		} else if (gUserStatus == 2){
+			if ($("#orderType").text() == 6) {
+				$('.tipPhone').text("* 该账号已是特种兵用户");
+				$('.tipBox').show();
+				return;
+			}
+		} else if (gUserStatus == 3) {
+			$('.tipPhone').text("* 该账号已购买boss端");
+			$('.tipBox').show();
+			return;
+		}
+		if(!testPhone($("#phone").val())) {
+			$('.tipPhone').text("* 请输入正确的手机号码");
+			$('.tipBox').show();
+        	return;
+        }
+		var url = app.route.ROUTE_ADD_DISTRIBUTION_USER;
+		var data = {
+			phone: $("#phone").val(),
+            feeQRCode: getParameter("feeQRCode"),
+		};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: addDistributionUserSuccess,
+		});
+	}
+	function addDistributionUserSuccess(data) {
+		createOrder(data.context.userID);
+	}
+    function createOrder(userID) {
+		var url = app.route.ROUTE_CREATE_WIN_CONIN_ORDER;
+		var data = {
+			userID: userID,
+            winCoinID: $("#winCoinID").text(),
+			orderType: $("#orderType").text(),
+			isDiscount:1,
+		};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: createOrderSuccess.bind(null,userID),
+		});
+	}
+
+	function createOrderSuccess(userID,data) {
+		if (data.success) {
+			$("#messageBox").hide();
+			saveOrderUserRelations(userID,data.context.orderNo);
+//			var type = $("input[type='radio']:checked").val();
+//			if (type == 1) {//微信支付
+//				mui.toast("暂不支持微信支付！")
+//			} else if(type == 2) {//支付宝支付
+//				payByAlipay(userID,data.context.orderNo)
+//				mui.toast("你已经选择使用支付宝支付！")
+//			}
+		}
+	}
+    function saveOrderUserRelations(userID,orderNo) {
+		var url = app.route.ROUTE_SAVE_ORDER_USER_RELATIONS;
+		var data = {
+			userID: userID,
+            orderNo: orderNo,
+			payType:1,
+		};
+		app.utils.post({
+			url: url,
+			data: data,
+			success: saveOrderUserRelationsSuccess.bind(null,userID,orderNo),
+		});
+	}
+	function saveOrderUserRelationsSuccess(userID,orderNo,data) {
+		if (data.success) {
+			payByAlipay(userID,orderNo);
+		} else {
+			mui.toast("下单失败，请重新购买");
+		}
+
+	}
+	function payByAlipay(userID,orderNo) {
+		window.location.href = app.route.ROUTE_PAY_BY_ALIPAY+"?userID="+userID+"&orderNo="+orderNo;
+	}
+	function closeWarning () {
+		document.getElementById('warning').style.display='none';
+		document.getElementById('topView').style.margin='0';
+	}
+	function closeBoxWarning () {
+		$("#messageBox").hide();
+	}
+	//显示遮罩
+	function displayOpenByBrowser() {
+		$("body").append('<div class="modal-backdrop over-openByBrowser"></div>');
+		$(".openByBrowser").show();
+		// setTimeout(function() {
+		// 	$(".modal-backdrop").remove();
+		// 	$(".openByBrowser").hide();
+		// }, 3000);
+	}
+	mui('.mui-bar-tab').on('tap','#buyNow',function(){$("#messageBox").show();});
+	mui('.mui-slider-group').on('shown.mui.tab', '.goods-content', function(e) {
+		var id = e.target.id;
+		var index = 1*id.slice(5);
+		$("#packagePrice").text('¥'+gPackageList[index].packagePrice.toFixed(2));
+		$("#discountPrice").text('¥'+gPackageList[index].discountPrice.toFixed(2));
+		$("#orderType").text(gPackageList[index].type);
+		$("#winCoinID").text(gPackageList[index].packageID);
+	});
+</script>
+</html>

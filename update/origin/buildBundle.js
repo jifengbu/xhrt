@@ -5,25 +5,15 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @flow
  */
 
-'use strict';
-
 const log = require('../util/log').out('bundle');
-const Server = require('../../packager/src/Server');
-const TerminalReporter = require('../../packager/src/lib/TerminalReporter');
-
 const outputBundle = require('./output/bundle');
 const path = require('path');
+const Promise = require('promise');
 const saveAssets = require('./saveAssets');
-const defaultAssetExts = require('../../packager/defaults').assetExts;
-const defaultPlatforms = require('../../packager/defaults').platforms;
-const defaultProvidesModuleNodeModules = require('../../packager/defaults').providesModuleNodeModules;
-
-import type {RequestOptions, OutputOptions} from './types.flow';
-import type {ConfigT} from '../core';
+const Server = require('../../packager/react-packager/src/Server');
+const defaultAssetExts = require('../../packager/defaultAssetExts');
 
 function saveBundle(output, bundle, args) {
   return Promise.resolve(
@@ -31,22 +21,12 @@ function saveBundle(output, bundle, args) {
   ).then(() => bundle);
 }
 
-function buildBundle(
-  args: OutputOptions & {
-    assetsDest: mixed,
-    entryFile: string,
-    resetCache: boolean,
-    transformer: string,
-  },
-  config: ConfigT,
-  output = outputBundle,
-  packagerInstance,
-) {
+function buildBundle(args, config, output = outputBundle, packagerInstance) {
   // This is used by a bazillion of npm modules we don't control so we don't
   // have other choice than defining it as an env variable here.
   process.env.NODE_ENV = args.dev ? 'development' : 'production';
 
-  const requestOpts: RequestOptions = {
+  const requestOpts = {
     entryFile: args.entryFile,
     sourceMapUrl: args.sourcemapOutput && path.basename(args.sourcemapOutput),
     dev: args.dev,
@@ -58,31 +38,18 @@ function buildBundle(
   // bundle command and close it down afterwards.
   var shouldClosePackager = false;
   if (!packagerInstance) {
-    const assetExts = (config.getAssetExts && config.getAssetExts()) || [];
-    const platforms = (config.getPlatforms && config.getPlatforms()) || [];
-
-    const transformModulePath =
-      args.transformer ? path.resolve(args.transformer) :
-      typeof config.getTransformModulePath === 'function' ? config.getTransformModulePath() :
-      undefined;
-
-    const providesModuleNodeModules =
-      typeof config.getProvidesModuleNodeModules === 'function' ? config.getProvidesModuleNodeModules() :
-      defaultProvidesModuleNodeModules;
+    let assetExts = (config.getAssetExts && config.getAssetExts()) || [];
 
     const options = {
-      assetExts: defaultAssetExts.concat(assetExts),
-      blacklistRE: config.getBlacklistRE(),
-      extraNodeModules: config.extraNodeModules,
-      getTransformOptions: config.getTransformOptions,
-      globalTransformCache: null,
-      platforms: defaultPlatforms.concat(platforms),
       projectRoots: config.getProjectRoots(),
-      providesModuleNodeModules: providesModuleNodeModules,
+      assetExts: defaultAssetExts.concat(assetExts),
+      assetRoots: config.getAssetRoots(),
+      blacklistRE: config.getBlacklistRE(args.platform),
+      getTransformOptionsModulePath: config.getTransformOptionsModulePath,
+      transformModulePath: args.transformer,
+      extraNodeModules: config.extraNodeModules,
+      nonPersistent: true,
       resetCache: args.resetCache,
-      reporter: new TerminalReporter(),
-      transformModulePath: transformModulePath,
-      watch: false,
     };
 
     packagerInstance = new Server(options);

@@ -1,0 +1,9 @@
+{
+    "success": false,
+    "msg": "获取数据成功",
+    "context": {
+        "userID": "jeklwr12",
+        "userType": 5,
+        "isEntrepreneur": 0
+    }
+}
